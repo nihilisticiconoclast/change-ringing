@@ -40,6 +40,14 @@ actually use.
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
       `dove-tower-id` (the handbell-in-a-private-house records are not
       resolvable in principle and are out of scope)
+- [ ] Decide join semantics for the 13 Dove towers holding more than one ring.
+      `dove.TowerID` is **not unique** (7,262 rows, 7,249 distinct TowerIDs) --
+      Farnham S Andrew, for instance, has both a full-circle and a lightweight
+      ring under TowerID 11301. Joining on `TowerID` alone therefore fans out
+      and silently inflates counts: `v_first_tower_peals` gains 11 rows this
+      way. Tower-level questions should join against a deduplicated tower list
+      or `towers`; ring-level questions should use `RingID`, which BellBoard
+      supplies as `dove_ring_id` but the Methods Library does not.
 - [ ] CompLib linkage
 - [ ] First analytical output (method/performance atlas, ringer-lineage tool,
       or method-genealogy tool -- see `docs/RATIONALE.md`)
