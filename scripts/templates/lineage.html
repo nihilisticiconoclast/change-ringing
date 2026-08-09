@@ -231,8 +231,8 @@ footer{padding:48px 0;color:var(--ink-3);font-size:14px;border-top:1px solid var
 
         <div class="lead-diagram-panel" id="lead-panel">
           <div class="lead-canvas-wrap">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--bronze);margin-bottom:8px">LEAD DIAGRAM MATRIX</div>
-            <canvas id="canvas-single" width="300" height="420"></canvas>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--bronze);margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase">LEAD DIAGRAM MATRIX</div>
+            <svg id="lead-svg" viewBox="0 0 340 440" style="width:100%;max-width:320px;height:auto;display:block;margin:0 auto"></svg>
             <div class="lead-meta" id="lead-single-meta"></div>
           </div>
 
@@ -648,114 +648,97 @@ function onNodeClick(mid) {
   drawLeadDiagram(m);
 }
 
-// Interactive Change-Ringing Lead Diagram / Blue Line Renderer
+// Interactive Change-Ringing Lead Diagram / Blue Line SVG Renderer
 function drawLeadDiagram(m) {
   if (!m) return;
   $('#lead-diag-title').textContent = `${m.title} (${m.id})`;
 
-  const cv = $('#canvas-single');
-  const ctx = cv.getContext('2d');
+  const svg = $('#lead-svg');
   const stage = m.stage;
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-
-  // Expand changes
   const notation = m.not || '';
   const isPal = m.sym && m.sym.toLowerCase().includes('palindromic');
-  
+
   const rows = generateLeadRows(notation, stage, isPal);
   if (!rows || rows.length === 0) {
-    ctx.fillStyle = 'var(--ink-3)';
-    ctx.font = '12px var(--mono)';
-    ctx.fillText('Notation unavailable', 20, 40);
+    svg.innerHTML = `<text x="170" y="80" text-anchor="middle" font-family="var(--mono)" font-size="12" fill="var(--ink-3)">Notation unavailable</text>`;
     return;
   }
 
   const rowCount = rows.length;
-  const padX = 36;
-  const padYTop = 38;
+  const padX = 58;
+  const padYTop = 44;
   const padYBottom = 22;
+  const W = 340;
+  const rowH = Math.min(13.5, 360 / Math.max(1, rowCount - 1));
+  const H = Math.max(380, padYTop + (rowCount - 1) * rowH + padYBottom);
   const colW = (W - padX * 2) / Math.max(1, stage - 1);
-  const rowH = Math.min(14, (H - padYTop - padYBottom) / Math.max(1, rowCount - 1));
 
-  // 1. Draw Column Number Headers (1 to N)
-  ctx.font = '10px var(--mono)';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  let s = '';
+
+  // 1. Front Work Block Highlight (positions 1 to 4 if stage >= 6)
+  if (stage >= 6) {
+    const fwWidth = 3 * colW + 12;
+    s += `<rect x="${padX - 6}" y="${padYTop - 4}" width="${fwWidth}" height="${(rowCount - 1) * rowH + 8}" rx="2" fill="var(--surface-2)" opacity="0.45"/>`;
+  }
+
+  // 2. Column Numbers (1 to N) and Lead/Lie Headers
   for (let c = 0; c < stage; c++) {
     const x = padX + c * colW;
-    ctx.fillStyle = 'var(--ink-2)';
-    ctx.fillText(c + 1, x, 14);
+    s += `<text x="${x}" y="18" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="600" fill="var(--ink)">${c + 1}</text>`;
 
-    // Subtle Lead/Lie labels under first and last column
     if (c === 0) {
-      ctx.fillStyle = 'var(--bronze)';
-      ctx.font = '7.5px var(--mono)';
-      ctx.fillText('LEAD', x, 25);
-      ctx.font = '10px var(--mono)';
+      s += `<text x="${x}" y="28" text-anchor="middle" font-family="var(--mono)" font-size="7.5" font-weight="600" fill="var(--bronze)">LEAD</text>`;
     } else if (c === stage - 1) {
-      ctx.fillStyle = 'var(--bronze)';
-      ctx.font = '7.5px var(--mono)';
-      ctx.fillText('LIE', x, 25);
-      ctx.font = '10px var(--mono)';
+      s += `<text x="${x}" y="28" text-anchor="middle" font-family="var(--mono)" font-size="7.5" font-weight="600" fill="var(--bronze)">LIE</text>`;
     }
+
+    // Vertical dotted guide line
+    s += `<line x1="${x}" y1="${padYTop - 4}" x2="${x}" y2="${padYTop + (rowCount - 1) * rowH + 4}" stroke="var(--rule)" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.55"/>`;
   }
 
-  // Header separator line
-  ctx.strokeStyle = 'var(--rule)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(padX - 10, 30);
-  ctx.lineTo(W - padX + 10, 30);
-  ctx.stroke();
+  // Separator rule under column numbers
+  s += `<line x1="${padX - 16}" y1="33" x2="${W - padX + 16}" y2="33" stroke="var(--rule)" stroke-width="1"/>`;
 
-  // 2. Draw subtle grid dots for each striking change
-  ctx.fillStyle = 'var(--rule)';
+  // 3. Grid dots
   for (let r = 0; r < rowCount; r++) {
+    const y = padYTop + r * rowH;
     for (let c = 0; c < stage; c++) {
       const x = padX + c * colW;
-      const y = padYTop + r * rowH;
-      ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
+      s += `<circle cx="${x}" cy="${y}" r="1" fill="var(--rule)"/>`;
     }
   }
 
-  // 3. Draw Working Bell 2 (The Blue Line)
-  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--blue-line').trim() || '#2563eb';
-  ctx.lineWidth = 2.4;
-  ctx.beginPath();
+  // 4. Working Bell 2 Path (Blue Line)
+  let bluePath = '';
   for (let r = 0; r < rowCount; r++) {
     const colIdx = rows[r].indexOf(2);
     if (colIdx >= 0) {
       const x = padX + colIdx * colW;
       const y = padYTop + r * rowH;
-      if (r === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      bluePath += (r === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
     }
   }
-  ctx.stroke();
+  s += `<path d="${bluePath}" fill="none" stroke="var(--blue-line)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  // 4. Draw Treble 1 (Hunt Bell Red Line)
-  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--treble-line').trim() || '#dc2626';
-  ctx.lineWidth = 2.6;
-  ctx.beginPath();
+  // 5. Treble 1 Path (Red Line)
+  let treblePath = '';
   for (let r = 0; r < rowCount; r++) {
     const colIdx = rows[r].indexOf(1);
     if (colIdx >= 0) {
       const x = padX + colIdx * colW;
       const y = padYTop + r * rowH;
-      if (r === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      treblePath += (r === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
     }
   }
-  ctx.stroke();
+  s += `<path d="${treblePath}" fill="none" stroke="var(--treble-line)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  // 5. Row annotations (Rounds at top, Lead Head at bottom)
-  ctx.font = '8px var(--mono)';
-  ctx.fillStyle = 'var(--ink-3)';
-  ctx.textAlign = 'left';
-  ctx.fillText('Rounds', 6, padYTop + 3);
-  ctx.fillText('Lead Head', 6, padYTop + (rowCount - 1) * rowH + 3);
+  // 6. Clean margin labels (Rounds at row 0, Lead Head at final row) positioned safely in margin
+  s += `<text x="${padX - 10}" y="${padYTop + 3}" text-anchor="end" font-family="var(--mono)" font-size="8.5" fill="var(--ink-3)">Rounds</text>`;
+  s += `<text x="${padX - 10}" y="${padYTop + (rowCount - 1) * rowH + 3}" text-anchor="end" font-family="var(--mono)" font-size="8.5" fill="var(--ink-3)">Lead Head</text>`;
+
+  svg.innerHTML = s;
 
   $('#lead-single-meta').innerHTML = `
     <strong>Stage ${m.stage}</strong> · ${rowCount} changes per lead<br>
