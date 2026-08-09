@@ -26,11 +26,14 @@ actually use.
       `dove-tower-id` on each performance, so this is an integer join, not a
       name match. ~94% of performances carry it and 99.5% of those resolve.
       See the header of `schema/002_init_bellboard.sql`.
+- [x] CCCBR Methods Library schema, ingestion script, and verification
+      (see `schema/003_init_methods.sql` and `scripts/ingest_methods.py`)
+- [x] CCCBR Methods first-performance location resolution candidates and analysis
+      (see `data/method_location_candidates.csv` and `docs/method_location_resolution.md`)
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
       `dove-tower-id` (the handbell-in-a-private-house records are not
       resolvable in principle and are out of scope)
-- [ ] Ringer name resolution across decades of performances
-- [ ] CCCBR Methods Library / CompLib linkage
+- [ ] CompLib linkage
 - [ ] First analytical output (method/performance atlas, ringer-lineage tool,
       or method-genealogy tool -- see `docs/RATIONALE.md`)
 
