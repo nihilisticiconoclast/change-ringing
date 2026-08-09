@@ -447,6 +447,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <a href="index.html">Founder Atlas</a>
     <a href="lineage.html">Method Lineage</a>
     <a href="ringers.html" class="active">Ringer Constellation</a>
+    <a href="nexus.html">The Temporal Nexus</a>
   </div>
   <button class="theme-btn" id="themeToggle">Dark Mode</button>
 </div>
