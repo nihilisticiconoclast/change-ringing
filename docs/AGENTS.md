@@ -70,8 +70,16 @@ known traps in this codebase. Write a new one before dispatching rather than
 briefing an agent ad hoc -- the boundaries section is what stops two agents
 editing the same files.
 
-- `mistral-vibe-methods-ingestion.md` -- load the CCCBR Methods Library
-- `gemini-location-resolution.md` -- resolve its first-performance locations
+- `mistral-vibe-bellboard-backfill.md` -- resumable historical backfill runner
+- `gemini-method-extension-lineage.md` -- derive extension lineage from notation
+
+Completed and removed: the CCCBR Methods Library loader and the
+first-performance location resolution, both landed in PR #1.
+
+One process note from that PR: a single agent did both briefs in one branch.
+The work was sound, but it defeated the split -- the boundaries sections exist
+so two agents can run concurrently without editing the same files. Both current
+briefs say explicitly not to take on the other's task.
 
 ## In practice
 
