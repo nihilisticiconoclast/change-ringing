@@ -287,6 +287,7 @@
                 
                 if (node.group === 'performance') {
                     html += `<p>This performance took place at <strong>${node.tower}</strong>, ringing <strong>${node.method}</strong>.</p>`;
+                    html += `<p><strong>Why is it here?</strong> Its position is determined by the combined gravity of its Tower, Method, and Ringers. Highly active towers and common methods pull performances tightly toward the dense center. Isolated or unique performances drift toward the outer edges.</p>`;
                     html += `<p><strong>Ringers:</strong></p><ul>`;
                     if (node.ringers && node.ringers.length > 0) {
                         node.ringers.forEach(r => {
@@ -314,18 +315,19 @@
                 sidePanel.classList.remove('visible');
             });
             
-        // Add Astrolabe / Celestial Spheres for visual reference (thicker & more opaque for better visibility)
+        // Add Astrolabe / Celestial Spheres for visual reference
         const scene = Graph.scene();
         const createRing = (radius, color, axis) => {
-            const geometry = new THREE.TorusGeometry(radius, 4, 12, 100);
-            const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.25 });
+            const geometry = new THREE.TorusGeometry(radius, 15, 12, 120);
+            const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.35 });
             const ring = new THREE.Mesh(geometry, material);
             if (axis === 'x') ring.rotation.y = Math.PI / 2;
             if (axis === 'y') ring.rotation.x = Math.PI / 2;
             scene.add(ring);
         };
         
-        [200, 500, 800, 1100].forEach(r => {
+        // Massive scale for the 5000+ nodes
+        [1000, 2000, 3000, 4000, 5000].forEach(r => {
             createRing(r, 0x38bdf8, 'x'); // Blue rings
             createRing(r, 0xfbbf24, 'y'); // Gold rings
             createRing(r, 0xf472b6, 'z'); // Pink rings
