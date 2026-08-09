@@ -26,11 +26,21 @@ inconsistencies between what Gemini and Vibe produce.
 ## Gemini CLI -- large-context ingestion and cross-referencing
 
 Use for: any task that benefits from holding a large volume of source text
-in context at once without chunking -- parsing a full BellBoard XML export
-for a county or a decade in one pass, cross-referencing a large batch of
+in context at once without chunking -- cross-referencing a large batch of
 candidate ringer-name matches against each other in a single sweep, or
-holding a substantial slice of the CCCBR Methods Library XML in context
-while classifying methods into families.
+resolving the CCCBR Methods Library's free-text first-performance locations
+against Dove's tower register (4,445 distinct town/county pairs against
+7,262 towers -- see `docs/tasks/gemini-location-resolution.md`).
+
+Two caveats learned since this document was first written, both pointing the
+same way: check whether the source already carries the identifier before
+assigning inference work. Linking BellBoard performances to Dove towers
+looked like a large entity-resolution problem and is not one -- BellBoard
+publishes `dove-tower-id` on each performance. Classifying methods into
+families likewise needs no inference: the CCCBR Methods Library states
+`<classification>` explicitly on every method set. Route to Gemini the cases
+where the identifier genuinely is absent, which is a smaller set than the
+original plan assumed.
 
 Why: Gemini's context window is the largest of the three by a wide margin.
 Entity resolution and corpus-linking tasks are exactly the case where
@@ -51,6 +61,17 @@ natively. That makes it the natural choice for anything that should be
 *reviewed* before it lands, which most schema and ingestion-script changes
 should be. Don't route open-ended judgement calls here; route them tasks
 with a clear definition of done.
+
+## Task briefs
+
+Ready-to-dispatch briefs live in `docs/tasks/`, one file per task. Each states
+its deliverables, its boundaries against the other agents' work, and the
+known traps in this codebase. Write a new one before dispatching rather than
+briefing an agent ad hoc -- the boundaries section is what stops two agents
+editing the same files.
+
+- `mistral-vibe-methods-ingestion.md` -- load the CCCBR Methods Library
+- `gemini-location-resolution.md` -- resolve its first-performance locations
 
 ## In practice
 
