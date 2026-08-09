@@ -19,9 +19,16 @@ actually use.
 - [x] Schema exported and migration script written
 - [x] Database provisioned on Turso and loaded with all seven Dove tables
       (owner-managed, see `docs/CONNECTING.md`)
-- [ ] BellBoard performance data ingested
-- [ ] Tower name -> TowerID entity resolution (BellBoard's free-text tower
-      names against Dove's canonical IDs)
+- [x] BellBoard schema, ingestion script and incremental sync (see
+      `schema/002_init_bellboard.sql`); first window loaded
+- [ ] BellBoard historical backfill (the corpus back to 2012)
+- [x] Tower -> Dove ID linkage -- largely a non-problem: BellBoard publishes
+      `dove-tower-id` on each performance, so this is an integer join, not a
+      name match. ~94% of performances carry it and 99.5% of those resolve.
+      See the header of `schema/002_init_bellboard.sql`.
+- [ ] Fallback resolution for the ~2% of *tower* performances with no
+      `dove-tower-id` (the handbell-in-a-private-house records are not
+      resolvable in principle and are out of scope)
 - [ ] Ringer name resolution across decades of performances
 - [ ] CCCBR Methods Library / CompLib linkage
 - [ ] First analytical output (method/performance atlas, ringer-lineage tool,
@@ -34,7 +41,19 @@ schema/     -- SQL schema (tables, indexes, views), source of truth for structur
 scripts/    -- migration and ingestion scripts
 docs/       -- architecture, agent division of labour, connection instructions
 data/       -- NOT the raw CSVs (see data/SOURCES.md) -- provenance and licensing only
+.github/    -- scheduled refresh: Dove weekly, BellBoard daily
 ```
+
+## Keeping the data current
+
+Two GitHub Actions workflows keep the database fresh without anyone running
+anything locally. Both need `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` as
+repository secrets, and both can be run on demand from the Actions tab.
+
+| Workflow | Schedule | Strategy |
+| --- | --- | --- |
+| `refresh-dove.yml` | Mondays 04:17 UTC | Full drop-and-reload -- Dove publishes a snapshot, not a changelog |
+| `sync-bellboard.yml` | Daily 03:42 UTC | Incremental via BellBoard's `changed_since` |
 
 The raw Dove CSVs are not committed here. They're licensed CC BY-SA 4.0 and
 live in Turso, the actual database; this repo holds the code and schema that

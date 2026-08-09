@@ -23,7 +23,14 @@ attribution is owed if any output of this project is published.
 - API docs: https://bb.ringingworld.co.uk/help/api.php
 - Coverage: near-complete since 2012; earlier records exist but are
   incomplete
-- Not yet ingested (see README status)
+- Ingested via `scripts/ingest_bellboard.py` into the tables defined in
+  `schema/002_init_bellboard.sql`
+- Each `<performance>` carries `dove-tower-id` and `dove-ring-id` on its
+  `<place>`, which resolve directly against `dove.TowerID` / `dove.RingID`.
+  This is the linkage between the two corpora and it is supplied at source,
+  not inferred.
+- Deletions are not tracked: BellBoard does not record deletion dates, so a
+  performance removed upstream persists locally until a full reload.
 
 ## CCCBR Methods Library
 

@@ -55,6 +55,13 @@ def main() -> int:
         default=str(Path(__file__).parent.parent / "schema" / "001_init_dove_bells.sql"),
         help="Path to the schema SQL file to apply before loading data",
     )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Drop the seven Dove tables (and dependent views) before loading. "
+        "Required to re-run against a populated database: Dove's export is a "
+        "full snapshot, so a refresh is a drop-and-reload, not an append.",
+    )
     args = parser.parse_args()
 
     url = os.environ.get("TURSO_DATABASE_URL")
@@ -74,9 +81,45 @@ def main() -> int:
 
     conn = libsql.connect(database=url, auth_token=token)
 
-    print(f"Applying schema from {args.schema} ...")
     with open(args.schema) as f:
         schema_sql = f.read()
+
+    # Only ever drop objects this schema file declares, so a --reset cannot
+    # take out tables or views someone else added to the database.
+    owned = re.findall(
+        r'CREATE\s+(TABLE|VIEW)\s+"?([A-Za-z0-9_]+)"?', schema_sql, re.IGNORECASE
+    )
+    existing = {
+        row[0]
+        for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type IN ('table','view')"
+        ).fetchall()
+    }
+    clashes = [name for _, name in owned if name in existing]
+
+    if clashes and not args.reset:
+        print(
+            f"ERROR: these objects already exist: {', '.join(sorted(clashes))}.\n"
+            "Dove's export is a full snapshot, so refreshing it means dropping and\n"
+            "reloading -- appending would duplicate every row. Re-run with --reset\n"
+            "to drop the schema's own tables and views first.",
+            file=sys.stderr,
+        )
+        return 1
+
+    if args.reset:
+        if clashes:
+            print(f"Resetting: dropping {len(clashes)} existing object(s) ...")
+            # Views first: dropping a table out from under a view leaves the
+            # view behind as a broken definition.
+            for kind, name in sorted(owned, key=lambda o: o[0].upper() != "VIEW"):
+                if name in existing:
+                    conn.execute(f'DROP {kind.upper()} IF EXISTS "{name}"')
+            conn.commit()
+        else:
+            print("Reset requested; nothing to drop.")
+
+    print(f"Applying schema from {args.schema} ...")
     # executescript handles statement splitting itself. Splitting on ";" by hand
     # breaks on semicolons inside the schema's own -- comments.
     conn.executescript(schema_sql)

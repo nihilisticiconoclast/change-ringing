@@ -1,0 +1,52 @@
+name: Sync BellBoard performances
+
+# Incremental, unlike the Dove refresh: BellBoard exposes changed_since, so
+# each run picks up only what was added or edited. Writes are idempotent, so
+# a missed run costs nothing -- the next one covers the gap.
+#
+# Runs daily rather than weekly. The window is driven by the newest
+# bb_timestamp already stored, so a shorter interval means smaller pages, not
+# duplicated work.
+#
+# Requires the same two secrets as refresh-dove.yml.
+
+on:
+  schedule:
+    - cron: "42 3 * * *"
+  workflow_dispatch:
+    inputs:
+      changed_since:
+        description: "Backfill from this date (YYYY-MM-DD). Blank = resume from newest stored record."
+        required: false
+        type: string
+
+concurrency:
+  group: turso-write
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ingest performances
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          CHANGED_SINCE: ${{ inputs.changed_since }}
+        run: |
+          if [ -n "$CHANGED_SINCE" ]; then
+            python scripts/ingest_bellboard.py --changed-since "$CHANGED_SINCE"
+          else
+            python scripts/ingest_bellboard.py --since-last
+          fi
