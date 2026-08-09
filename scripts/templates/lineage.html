@@ -456,65 +456,67 @@ function renderTree() {
   if (!fam) return;
 
   const svg = $('#tree-svg');
-  const W = 1000, H = Math.max(380, fam.methods.length * 60 + 80);
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-
   const methods = fam.methods;
   const stages = [...new Set(methods.map(m => m.stage))].sort((a, b) => a - b);
   const minStage = stages[0], maxStage = stages[stages.length - 1];
+
+  const stageGroups = {};
+  methods.forEach(m => {
+    stageGroups[m.stage] = stageGroups[m.stage] || [];
+    stageGroups[m.stage].push(m);
+  });
+
+  let maxPerStage = 1;
+  Object.values(stageGroups).forEach(g => { maxPerStage = Math.max(maxPerStage, g.length); });
+
+  const W = Math.max(1000, stages.length * 130 + 100);
+  const H = Math.max(400, maxPerStage * 90 + 70);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
   // Node positioning map
   const pos = {};
   const stageColWidth = (W - 160) / Math.max(1, stages.length - 1);
 
   if (viewMode === 'tree') {
-    // Stage-based column layout
-    const stageGroups = {};
-    methods.forEach(m => {
-      stageGroups[m.stage] = stageGroups[m.stage] || [];
-      stageGroups[m.stage].push(m);
-    });
-
     stages.forEach((stg, cIdx) => {
-      const x = 80 + cIdx * stageColWidth;
-      const grp = stageGroups[stg];
-      const yStep = (H - 100) / (grp.length + 1);
+      const x = 90 + cIdx * stageColWidth;
+      const grp = stageGroups[stg] || [];
+      const yStep = (H - 90) / (grp.length + 1);
       grp.forEach((m, rIdx) => {
-        const y = 50 + (rIdx + 1) * yStep;
+        const y = 45 + (rIdx + 1) * yStep;
         pos[m.id] = { x, y, m };
       });
     });
   } else {
-    // Chronological Timeline Layout (1690 to 2026 on X-axis, Stage on Y-axis)
     const minYear = 1690, maxYear = 2026;
     methods.forEach((m, idx) => {
-      const yr = m.year || (1950 + idx * 5); // fallback estimate if unrecorded
-      const x = 80 + ((yr - minYear) / (maxYear - minYear)) * (W - 160);
+      const yr = m.year || (1950 + idx * 5);
+      const x = 90 + ((yr - minYear) / (maxYear - minYear)) * (W - 180);
       const yRatio = (m.stage - minStage) / Math.max(1, maxStage - minStage);
-      const y = 60 + yRatio * (H - 120);
+      const y = 55 + yRatio * (H - 110);
       pos[m.id] = { x, y, m };
     });
   }
 
   let s = '';
 
-  // Background stage grid lines (Tree view) or Year axis (Timeline view)
+  // Background grid
   if (viewMode === 'tree') {
     stages.forEach((stg, cIdx) => {
-      const x = 80 + cIdx * stageColWidth;
-      s += `<line x1="${x}" y1="30" x2="${x}" y2="${H-30}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3"/>`;
-      s += `<text x="${x}" y="24" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--bronze)">Stage ${stg}</text>`;
+      const x = 90 + cIdx * stageColWidth;
+      s += `<line x1="${x}" y1="26" x2="${x}" y2="${H-24}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3"/>`;
+      s += `<text x="${x}" y="20" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--bronze)">Stage ${stg}</text>`;
     });
   } else {
     [1700, 1750, 1800, 1850, 1900, 1950, 2000].forEach(yr => {
-      const x = 80 + ((yr - 1690) / (2026 - 1690)) * (W - 160);
-      s += `<line x1="${x}" y1="30" x2="${x}" y2="${H-30}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3"/>`;
-      s += `<text x="${x}" y="24" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--bronze)">${yr}</text>`;
+      const x = 90 + ((yr - 1690) / (2026 - 1690)) * (W - 180);
+      s += `<line x1="${x}" y1="26" x2="${x}" y2="${H-24}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3"/>`;
+      s += `<text x="${x}" y="20" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--bronze)">${yr}</text>`;
     });
   }
 
   // Draw Lineage Edges (Curved Cubic Bézier)
-  fam.links.forEach(link => {
+  fam.links.forEach((link, lIdx) => {
     const p = pos[link.p_id];
     const c = pos[link.c_id];
     if (!p || !c) return;
@@ -527,26 +529,49 @@ function renderTree() {
     const cy2 = c.y;
 
     const cls = link.rel === 'extension' ? 'link-ext' : (link.rel === 'variant' ? 'link-var' : 'link-name');
-    s += `<path d="M ${p.x} ${p.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${c.x} ${c.y}" class="tree-link ${cls}"><title>${link.p_title} -> ${link.c_title} (${link.rel})</title></path>`;
+    s += `<path id="link-${lIdx}" data-p="${link.p_id}" data-c="${link.c_id}" d="M ${p.x} ${p.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${c.x} ${c.y}" class="tree-link ${cls}"><title>${link.p_title} -> ${link.c_title} (${link.rel}): ${link.ev}</title></path>`;
   });
 
-  // Draw Nodes
+  // Draw Nodes on top of links with frosted background badges
   Object.values(pos).forEach(p => {
     const m = p.m;
     const isSel = selectedMethod && selectedMethod.id === m.id;
     const fill = isSel ? 'var(--bronze)' : (m.class === 'Surprise' ? 'var(--s1)' : (m.class === 'Delight' ? 'var(--s2)' : (m.class === 'Treble Bob' ? 'var(--s3)' : 'var(--s4)')));
-    const r = isSel ? 9 : 7;
+    const r = isSel ? 8 : 6.5;
+
+    const labelText = m.title.replace(fam.name, '').trim() || m.title;
+    const subText = `${m.year ? `${m.year} · ` : ''}Lead ${m.lol}`;
+    const badgeW = Math.max(115, Math.min(190, Math.max(labelText.length, subText.length) * 7.2 + 20));
 
     s += `
-      <g class="tree-node" onclick="onNodeClick('${m.id}')" transform="translate(${p.x}, ${p.y})">
+      <g class="tree-node" data-id="${m.id}" onclick="onNodeClick('${m.id}')" onmouseenter="highlightNodeBranches('${m.id}')" onmouseleave="resetBranches()" transform="translate(${p.x}, ${p.y})">
+        <!-- Frosted semi-transparent background pill -->
+        <rect x="8" y="-12" width="${badgeW}" height="32" rx="3" fill="var(--surface)" fill-opacity="0.92" stroke="${isSel?'var(--bronze)':'var(--rule)'}" stroke-width="${isSel?'1.5':'0.8'}"/>
         <circle r="${r}" fill="${fill}" stroke="var(--ground)" stroke-width="2"/>
-        <text x="12" y="4" font-weight="${isSel?'600':'400'}">${m.title.replace(fam.name, '').trim() || m.title}</text>
-        <text x="12" y="16" fill="var(--ink-3)" font-size="9.5">${m.year ? `${m.year} · ` : ''}Lead ${m.lol}</text>
+        <text x="16" y="2" font-weight="${isSel?'600':'500'}" fill="var(--ink)">${labelText}</text>
+        <text x="16" y="14" fill="var(--ink-3)" font-size="9">${subText}</text>
       </g>
     `;
   });
 
   svg.innerHTML = s;
+}
+
+function highlightNodeBranches(mid) {
+  const paths = document.querySelectorAll('.tree-link');
+  paths.forEach(p => {
+    const isConnected = p.getAttribute('data-p') === mid || p.getAttribute('data-c') === mid;
+    p.style.opacity = isConnected ? '1' : '0.15';
+    p.style.strokeWidth = isConnected ? '3.5px' : '1.5px';
+  });
+}
+
+function resetBranches() {
+  const paths = document.querySelectorAll('.tree-link');
+  paths.forEach(p => {
+    p.style.opacity = '';
+    p.style.strokeWidth = '';
+  });
 }
 
 function onNodeClick(mid) {
