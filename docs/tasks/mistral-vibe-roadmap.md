@@ -8,9 +8,10 @@ ones find.
 
 | # | Task | State |
 | --- | --- | --- |
-| 1 | BellBoard historical backfill runner | **Done** — PR #2, merged |
+| 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
+| 5 | Backfill completeness gate | **Urgent** — brief below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
@@ -121,3 +122,51 @@ silently *drops* 160 records as well as duplicating 19.
 Acceptance test: `method_performances` joined to the new `v_towers_unique` must
 return exactly **22,111**, the number of rows carrying a `dove_tower_id`. A join
 cannot create or destroy a linked record, so anything else is wrong.
+
+---
+
+## Task 5 — Backfill completeness gate *(urgent, do this before Task 2)*
+
+The backfill runner is merged and the run it produced is **wrong**: 55,000 rows
+against a true corpus of **336,654**. It captured 16% and reported success.
+Full adjudication with the measurements is in
+`docs/decisions/002-backfill-count-discrepancy.md`.
+
+This is not a criticism of the runner's design — it was defeated by a server
+that truncates silently, which is the hazard the brief led with. What it lacks
+is a way to *know* it was truncated.
+
+**Ground truth, measured 2026-08-09.** BellBoard's `search.php` reports a
+result count for any window, cheaply, in the HTML:
+
+```
+https://bb.ringingworld.co.uk/search.php?from=2023-01-01&to=2023-12-31
+  -> "25,859 performances"
+```
+
+2023: 25,859 · 2024: 25,267 · 2012-01-01 to 2026-08-09: **336,654**.
+
+**What to add**
+
+1. **A per-window expected count.** Before fetching a window, ask `search.php`
+   what it holds. After fetching, compare. A window that returns materially
+   fewer rows than advertised is throttled, not finished.
+2. **Refuse to checkpoint a short window.** Retry it with a longer cool-off;
+   after repeated failures, stop the run and exit non-zero. Silence is the bug
+   — a truncated run must be loud.
+3. **A final total check.** At the end, compare rows loaded against the
+   corpus count for the full range and report both. Do not print a success
+   message when they disagree.
+4. **Discard the existing checkpoint file.** It marks windows complete that are
+   not, so a resumed run would inherit the gap. Start clean.
+5. **Investigate the size signal.** The run produced ~2.0 KB per row against
+   Gemini's ~1.0 KB, while holding fewer unique records — consistent with the
+   same performances being fetched repeatedly, which would happen if windows
+   are not advancing or `changed_since` semantics have leaked into the window
+   loop. Confirm or rule this out and say which in the PR.
+
+**Definition of done:** a bounded run over one known window — 2024, say —
+loading a row count that matches 25,267, and a demonstration that an
+artificially truncated window causes a non-zero exit rather than a checkpoint.
+Do not attempt the full backfill in the PR; it is a long job and the freeze
+means it cannot reach production until 2026-09-01 regardless.

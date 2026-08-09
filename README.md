@@ -53,8 +53,11 @@ can be checked instead of taken on trust.
       `data/method_location_adjudication.csv`
 - [x] BellBoard historical backfill runner -- resumable and checkpointed
       (PR #2, usage below). `export.php` honours `from`/`to`, not
-      `date_from`/`date_to`, and returns results newest-first. **Not yet run**:
-      the corpus still holds a single recent window of 1,401 performances.
+      `date_from`/`date_to`, and returns results newest-first. **The run so far
+      has failed**: it captured 55,000 rows against a true corpus of 336,654
+      (measured via `search.php`), stopping early without erroring. See
+      `docs/decisions/002-backfill-count-discrepancy.md`. The corpus still
+      holds a single recent window of 1,401 performances.
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
