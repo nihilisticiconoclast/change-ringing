@@ -91,12 +91,15 @@ def build_page():
         c_id = row["canon_id"]
         if not c_id:
             continue
-        if row["association"]:
+        if pd.notna(row["association"]) and isinstance(row["association"], str) and row["association"].strip():
             ringer_assocs[c_id][row["association"].strip()] += 1
-        if row["dove_tower_id"]:
-            ringer_towers[c_id][int(row["dove_tower_id"])] += 1
-        if row["perf_date"]:
-            ringer_dates[c_id].append(row["perf_date"])
+        if pd.notna(row["dove_tower_id"]):
+            try:
+                ringer_towers[c_id][int(row["dove_tower_id"])] += 1
+            except (ValueError, TypeError):
+                pass
+        if pd.notna(row["perf_date"]):
+            ringer_dates[c_id].append(str(row["perf_date"]))
 
     # Select top 200 most active canonical ringers for network graph
     top_200 = canon_ringers.sort_values(by="cluster_total_peals", ascending=False).head(200)
@@ -217,14 +220,22 @@ def build_page():
             "aliases": aliases
         })
 
+    stats = {
+        "total_ringers": len(perf_df),
+        "total_raw_names": len(cand_df),
+        "total_canonical": len(canon_ringers),
+        "multi_clusters": int(cand_df.groupby("canonical_ringer_id").size().gt(1).sum()),
+        "total_peals": int(perf_df["perf_id"].nunique())
+    }
+
     # Write HTML page
-    html_content = generate_html(nodes, edges, search_data)
+    html_content = generate_html(nodes, edges, search_data, stats)
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUT_HTML.write_text(html_content, encoding="utf-8")
     print(f"\nWrote {OUT_HTML} ({OUT_HTML.stat().st_size / 1024:.1f} KB)", flush=True)
 
 
-def generate_html(nodes, edges, search_data):
+def generate_html(nodes, edges, search_data, stats):
     nodes_json = json.dumps(nodes)
     edges_json = json.dumps(edges)
     search_json = json.dumps(search_data)
@@ -423,13 +434,13 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <h1>The Ringer <em>Constellation</em></h1>
     <div class="standfirst">
       Interactive band co-occurrence networks and canonical entity resolution across
-      <strong>355,550 ringer instances</strong> and <strong>51,126 historical peals</strong>.
+      <strong>{stats['total_ringers']:,} ringer instances</strong> and <strong>{stats['total_peals']:,} historical peals</strong> (2021–2024).
     </div>
     <div class="figures">
-      <div class="fig"><div class="n">355,550</div><div class="l">Ringer Peal Records</div></div>
-      <div class="fig"><div class="n">35,090</div><div class="l">Raw Name Variants</div></div>
-      <div class="fig"><div class="n">29,446</div><div class="l">Canonical Ringers</div></div>
-      <div class="fig"><div class="n">4,835</div><div class="l">Unified Alias Clusters</div></div>
+      <div class="fig"><div class="n">{stats['total_ringers']:,}</div><div class="l">Ringer Peal Records</div></div>
+      <div class="fig"><div class="n">{stats['total_raw_names']:,}</div><div class="l">Raw Name Variants</div></div>
+      <div class="fig"><div class="n">{stats['total_canonical']:,}</div><div class="l">Canonical Ringers</div></div>
+      <div class="fig"><div class="n">{stats['multi_clusters']:,}</div><div class="l">Unified Alias Clusters</div></div>
     </div>
   </header>
 
