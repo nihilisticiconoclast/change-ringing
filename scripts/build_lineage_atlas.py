@@ -11,6 +11,7 @@ Writes docs/lineage.html: self-contained single-page visualization with inlined 
 import argparse
 import collections
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -31,10 +32,17 @@ def load_query(filename: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def extract_year(date_str):
+    if not date_str or pd.isna(date_str):
+        return None
+    m = re.search(r"(1[6-9][0-9]{2}|20[0-2][0-9])", str(date_str))
+    return int(m.group(1)) if m else None
+
+
 def build(db_path: Path, csv_path: Path) -> dict:
     conn = sqlite3.connect(db_path)
-    
-    # 1. Execute summary stats query
+
+    # 1. Summary stats
     stats_sql = load_query("extract_lineage_stats.sql")
     stats_row = conn.execute(stats_sql).fetchone()
     corpus_totals = {
@@ -47,7 +55,7 @@ def build(db_path: Path, csv_path: Path) -> dict:
         "max_stage": stats_row[6],
     }
 
-    # 2. Execute multi-stage method families query
+    # 2. Multi-stage method families query
     families_sql = load_query("extract_method_families.sql")
     methods_df = pd.read_sql_query(families_sql, conn)
     conn.close()
@@ -72,13 +80,15 @@ def build(db_path: Path, csv_path: Path) -> dict:
             "ev": row["evidence"],
         })
 
-    # 5. Build family records
+    # 5. Build family records with performance chronology
     families_dict = {}
     longest_chains = []
+    timeline_epochs = collections.defaultdict(lambda: collections.Counter())
 
     for name, group in methods_df.groupby("name"):
         methods_list = []
         for _, m in group.iterrows():
+            y = extract_year(m["first_perf_date"])
             methods_list.append({
                 "id": m["method_id"],
                 "title": m["title"],
@@ -90,7 +100,14 @@ def build(db_path: Path, csv_path: Path) -> dict:
                 "lhc": m["lead_head_code"] or "",
                 "lol": int(m["length_of_lead"]) if pd.notna(m["length_of_lead"]) else 0,
                 "ec": m["extension_construction"] or "",
+                "year": y,
+                "date": m["first_perf_date"] if pd.notna(m["first_perf_date"]) else None,
+                "town": m["first_perf_town"] if pd.notna(m["first_perf_town"]) else None,
+                "bld": m["first_perf_building"] if pd.notna(m["first_perf_building"]) else None,
             })
+            if y and 1650 <= y <= 2026:
+                epoch = (y // 25) * 25
+                timeline_epochs[epoch][m["classification"]] += 1
 
         cands = family_candidates.get(name, [])
         ext_count = sum(1 for c in cands if c["rel"] == "extension")
@@ -99,6 +116,11 @@ def build(db_path: Path, csv_path: Path) -> dict:
 
         stages = sorted(group["stage"].unique().tolist())
         primary_class = group["classification"].mode()[0] if not group["classification"].empty else "Principle"
+
+        # Determine min and max year
+        years = [m["year"] for m in methods_list if m["year"]]
+        min_year = min(years) if years else None
+        max_year = max(years) if years else None
 
         family_obj = {
             "name": name,
@@ -111,6 +133,8 @@ def build(db_path: Path, csv_path: Path) -> dict:
             "ext_count": ext_count,
             "var_count": var_count,
             "name_only_count": name_only_count,
+            "min_year": min_year,
+            "max_year": max_year,
         }
         families_dict[name] = family_obj
 
@@ -121,17 +145,27 @@ def build(db_path: Path, csv_path: Path) -> dict:
                 "count": len(methods_list),
                 "ext_count": ext_count,
                 "primary_class": primary_class,
+                "min_year": min_year,
+                "max_year": max_year,
             })
 
     # Sort longest chains
     longest_chains.sort(key=lambda x: (len(x["stages"]), x["ext_count"], x["count"]), reverse=True)
 
-    # 6. Overall stats
     rel_counts = cand_df["relationship"].value_counts().to_dict()
     conf_counts = cand_df["confidence"].value_counts().to_dict()
-
-    # 7. Stage progression counts
     stage_counts = methods_df["stage"].value_counts().sort_index().to_dict()
+
+    # Timeline of Speciation (epochs)
+    timeline_data = []
+    classes_list = ["Surprise", "Delight", "Treble Bob", "Bob", "Alliance", "Treble Place", "Place", "Principle"]
+    for epoch in sorted(timeline_epochs.keys()):
+        cnts = timeline_epochs[epoch]
+        timeline_data.append({
+            "epoch": epoch,
+            "counts": [cnts[c] for c in classes_list],
+            "total": sum(cnts.values())
+        })
 
     data_payload = {
         "corpus_totals": corpus_totals,
@@ -156,6 +190,8 @@ def build(db_path: Path, csv_path: Path) -> dict:
             "f1": 88.61,
             "accuracy": 82.71,
         },
+        "classes_list": classes_list,
+        "timeline_data": timeline_data,
         "stage_distribution": {int(k): int(v) for k, v in stage_counts.items()},
         "longest_chains": longest_chains[:25],
         "top_featured_names": [
@@ -190,7 +226,6 @@ def main():
     if "/*__DATA__*/" not in html:
         sys.exit(f"ERROR: {TEMPLATE} has no /*__DATA__*/ placeholder")
 
-    # Serialize JSON data efficiently
     json_str = json.dumps(data, separators=(",", ":"))
     html = html.replace("/*__DATA__*/", json_str)
 
