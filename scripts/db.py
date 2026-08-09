@@ -35,10 +35,31 @@ import sys
 
 try:
     import libsql
+
+    HAVE_LIBSQL = True
 except ImportError:
+    # Fallback so the scripts still run where libsql is not installed. It comes
+    # at a real cost, so it announces itself rather than degrading quietly:
+    # stdlib sqlite3 accepts SQL that libSQL rejects, which is the whole reason
+    # local mode uses libsql. Under this fallback a local run is a weaker check
+    # than the module docstring above promises.
     import sqlite3 as libsql
 
+    HAVE_LIBSQL = False
+
 ALLOW_ENV = "CHANGE_RINGING_ALLOW_PRODUCTION"
+
+
+def _warn_fallback():
+    if not HAVE_LIBSQL:
+        print(
+            "WARNING: libsql is not installed; falling back to stdlib sqlite3.\n"
+            "  Local runs will NOT catch libSQL dialect errors -- notably a\n"
+            "  double-quoted string literal, which sqlite3 accepts and libSQL\n"
+            "  rejects. That exact bug reached production once already.\n"
+            "  Install it for a real check:  pip install -r requirements.txt",
+            file=sys.stderr,
+        )
 
 
 def add_db_args(parser):
@@ -57,6 +78,7 @@ def connect(args):
     local = getattr(args, "local_db", None)
     if local:
         print(f"Using local database: {local}")
+        _warn_fallback()
         return libsql.connect(local)
 
     url = os.environ.get("TURSO_DATABASE_URL")
@@ -80,6 +102,16 @@ def connect(args):
             file=sys.stderr,
         )
         raise SystemExit(2)
+
+    if not HAVE_LIBSQL:
+        # sqlite3.connect has no auth_token parameter, so without libsql this
+        # would fail with an opaque TypeError. Say why instead.
+        print(
+            "ERROR: libsql is required to reach Turso and is not installed.\n"
+            "  pip install -r requirements.txt",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
 
     print(f"Connecting to production Turso database ({ALLOW_ENV}=1 set).")
     return libsql.connect(database=url, auth_token=token)

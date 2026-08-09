@@ -27,6 +27,11 @@ The replica uses an embedded libSQL connection rather than the stdlib sqlite3
 module, deliberately. sqlite3 accepts SQL that libSQL rejects -- see the
 module docstring in scripts/db.py -- so testing against sqlite3 gives false
 confidence. This build is intended to be a real check.
+
+If libsql is not installed the build still runs, on stdlib sqlite3, and warns.
+The replica it produces is correct; what is lost is the dialect checking, so
+a page or loader validated that way has been checked less strictly than one
+validated with libsql present.
 """
 import argparse
 import csv
@@ -36,8 +41,12 @@ from pathlib import Path
 
 try:
     import libsql
+
+    HAVE_LIBSQL = True
 except ImportError:
     import sqlite3 as libsql
+
+    HAVE_LIBSQL = False
 
 ROOT = Path(__file__).parent.parent
 SCRIPTS = ROOT / "scripts"
@@ -67,6 +76,14 @@ def main() -> int:
     ap.add_argument("--skip-adjudication", action="store_true",
                     help="Leave method_performances.dove_tower_id unpopulated")
     args = ap.parse_args()
+
+    if not HAVE_LIBSQL:
+        print(
+            "WARNING: libsql not installed; building with stdlib sqlite3.\n"
+            "  The replica will be correct, but will not reject libSQL dialect\n"
+            "  errors the way production does. pip install -r requirements.txt",
+            file=sys.stderr,
+        )
 
     out = Path(args.out)
     cache = Path(args.cache)
