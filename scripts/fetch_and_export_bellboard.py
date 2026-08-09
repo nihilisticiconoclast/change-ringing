@@ -77,13 +77,17 @@ def fetch_year_data(year: int):
         window_count = 0
 
         while True:
-            try:
-                elems = fetch_performances(date_from=start_d, date_to=end_d, page=page, pagesize=1000)
-            except Exception as e:
-                print(f"    [Error] Window {start_d}..{end_d} page {page}: {e}", flush=True)
-                break
+            elems = None
+            for attempt in range(5):
+                try:
+                    elems = fetch_performances(date_from=start_d, date_to=end_d, page=page, pagesize=1000)
+                    break
+                except Exception as e:
+                    wait_sec = (attempt + 1) * 10
+                    print(f"    [Retry {attempt+1}/5] Fetch error for {start_d}..{end_d} page {page}: {e}. Waiting {wait_sec}s...", flush=True)
+                    time.sleep(wait_sec)
 
-            if not elems:
+            if elems is None or not elems:
                 break
 
             for el in elems:
