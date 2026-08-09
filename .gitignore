@@ -1,10 +1,9 @@
 __pycache__/
 *.pyc
 *.db
-# ...except the committed snapshot. Working copies stay ignored; this one file
-# is deliberately tracked -- read data/LICENCE-DATA.md before updating it, and
-# note that every re-commit adds another ~40 MB to history permanently.
-!data/change-ringing.db
+# NOTE: data/change-ringing.db was previously tracked but exceeded GitHub's
+# 100 MB file size limit. It is now ignored. Use Git LFS if you need to
+# track large database files, or keep it as a local-only file.
 dove-csvs/
 methods-cache/
 *.xml
