@@ -8,7 +8,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | --- | --- | --- |
 | 1 | Method extension lineage from place notation | **Done** — PR #3, merged |
 | 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
-| 3 | Ringer identity resolution | Blocked — needs the BellBoard backfill run |
+| 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
 
 ---
 
