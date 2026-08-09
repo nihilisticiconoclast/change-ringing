@@ -20,21 +20,27 @@ DB_PATH = ROOT / "data" / "change-ringing.db"
 CANDIDATES_CSV = ROOT / "data" / "ringer_identity_candidates.csv"
 OUT_HTML = ROOT / "docs" / "ringers.html"
 
-# Association Color Palette (Harmonious & Meaningful)
+# Association Color Palette (Harmonious, Meaningful & Rich)
 ASSOC_PALETTE = {
-    "Ancient Society of College Youths": "#EAB308",         # Imperial Gold
-    "Society of Royal Cumberland Youths": "#10B981",        # Emerald
-    "Oxford Diocesan Guild": "#3B82F6",                     # Royal Blue
-    "Winchester & Portsmouth Diocesan Guild": "#8B5CF6",     # Amethyst Purple
-    "Yorkshire Association": "#F97316",                     # Coral Orange
-    "Guild of Devonshire Ringers": "#06B6D4",               # Turquoise
-    "Sussex County Association": "#EC4899",                 # Rose
-    "St Martin's Guild for the Diocese of Birmingham": "#14B8A6", # Teal
-    "Gloucester & Bristol Diocesan Association": "#F43F5E", # Crimson
-    "Suffolk Guild": "#84CC16",                             # Lime
-    "Ely Diocesan Association": "#6366F1",                  # Indigo
-    "Non-Association": "#71717A",                           # Slate Grey
-    "Other": "#A1A1AA"                                      # Neutral Grey
+    "Bath & Wells": "#0284C7",                              # Sky Blue
+    "Hertford": "#8B5CF6",                                  # Purple / Violet
+    "Kent": "#0D9488",                                      # Teal
+    "Suffolk": "#84CC16",                                   # Lime Green
+    "Oxford Diocesan": "#2563EB",                           # Royal Blue
+    "Devonshire": "#06B6D4",                                # Turquoise
+    "College Youths": "#EAB308",                            # Imperial Gold
+    "Chester": "#F59E0B",                                   # Amber
+    "Gloucester & Bristol": "#F43F5E",                      # Crimson Rose
+    "Norwich": "#10B981",                                   # Emerald
+    "Lincoln": "#D97706",                                   # Ochre
+    "Hereford": "#6366F1",                                  # Indigo
+    "Winchester & Portsmouth": "#A855F7",                   # Amethyst
+    "Peterborough": "#14B8A6",                              # Cyan Teal
+    "Royal Cumberland": "#059669",                          # Forest Green
+    "Yorkshire": "#F97316",                                 # Coral Orange
+    "Sussex": "#EC4899",                                    # Pink Rose
+    "St Martin": "#0ea5e9",                                 # Ocean Blue
+    "Other Regional / Independent": "#94A3B8"               # Slate Grey (Other Societies)
 }
 
 
@@ -125,7 +131,7 @@ def build_page():
         primary_assoc = ass_counter.most_common(1)[0][0] if ass_counter else "Other"
         
         # Map to standard color category
-        color_cat = "Other"
+        color_cat = "Other Regional / Independent"
         for k in ASSOC_PALETTE:
             if k in primary_assoc or primary_assoc in k:
                 color_cat = k
@@ -155,7 +161,7 @@ def build_page():
             "peals": peals,
             "assoc": primary_assoc,
             "color_cat": color_cat,
-            "color": ASSOC_PALETTE.get(color_cat, ASSOC_PALETTE["Other"]),
+            "color": ASSOC_PALETTE.get(color_cat, ASSOC_PALETTE["Other Regional / Independent"]),
             "active_years": r["active_years"],
             "towers": top_towers_list,
             "partners": top_partners_list,
@@ -462,15 +468,23 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
             <!-- Guild Filter -->
             <select class="graph-select" id="guildFilter" title="Filter by Ringing Guild">
               <option value="ALL">All Guilds & Associations</option>
-              <option value="Ancient Society of College Youths">College Youths</option>
-              <option value="Society of Royal Cumberland Youths">Royal Cumberland Youths</option>
-              <option value="Oxford Diocesan Guild">Oxford Diocesan</option>
-              <option value="Winchester & Portsmouth Diocesan Guild">Winchester & Portsmouth</option>
-              <option value="Yorkshire Association">Yorkshire</option>
-              <option value="Guild of Devonshire Ringers">Devonshire Ringers</option>
-              <option value="Sussex County Association">Sussex County</option>
-              <option value="Gloucester & Bristol Diocesan Association">Gloucester & Bristol</option>
-              <option value="St Martin's Guild for the Diocese of Birmingham">St Martin's Guild</option>
+              <option value="Bath & Wells">Bath & Wells</option>
+              <option value="Hertford">Hertford County</option>
+              <option value="Kent">Kent County</option>
+              <option value="Suffolk">Suffolk Guild</option>
+              <option value="Oxford Diocesan">Oxford Diocesan</option>
+              <option value="Devonshire">Devonshire Ringers</option>
+              <option value="College Youths">College Youths (ASCY)</option>
+              <option value="Royal Cumberland">Royal Cumberland (SRCY)</option>
+              <option value="Chester">Chester Diocesan</option>
+              <option value="Gloucester & Bristol">Gloucester & Bristol</option>
+              <option value="Norwich">Norwich Diocesan</option>
+              <option value="Lincoln">Lincoln Diocesan</option>
+              <option value="Hereford">Hereford Diocesan</option>
+              <option value="Winchester & Portsmouth">Winchester & Portsmouth</option>
+              <option value="Peterborough">Peterborough Diocesan</option>
+              <option value="Yorkshire">Yorkshire Association</option>
+              <option value="Sussex">Sussex County</option>
             </select>
           </div>
         </div>
@@ -484,14 +498,23 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
         </div>
 
         <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#EAB308"></div> College Youths</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div> Royal Cumberland Youths</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#3B82F6"></div> Oxford Diocesan</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div> Winchester & Portsmouth</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#F97316"></div> Yorkshire</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0284C7"></div> Bath &amp; Wells</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div> Hertford</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0D9488"></div> Kent</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#84CC16"></div> Suffolk</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#2563EB"></div> Oxford Diocesan</div>
           <div class="legend-item"><div class="legend-dot" style="background:#06B6D4"></div> Devonshire</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#EAB308"></div> College Youths</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#059669"></div> Royal Cumberland</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div> Chester</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F43F5E"></div> Gloucester &amp; Bristol</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div> Norwich</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#D97706"></div> Lincoln</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#6366F1"></div> Hereford</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#A855F7"></div> Winchester &amp; Portsmouth</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F97316"></div> Yorkshire</div>
           <div class="legend-item"><div class="legend-dot" style="background:#EC4899"></div> Sussex</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#F43F5E"></div> Gloucester & Bristol</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#94A3B8"></div> Other Regional / Independent</div>
         </div>
       </div>
 
