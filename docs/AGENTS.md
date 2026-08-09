@@ -70,16 +70,46 @@ known traps in this codebase. Write a new one before dispatching rather than
 briefing an agent ad hoc -- the boundaries section is what stops two agents
 editing the same files.
 
-- `mistral-vibe-bellboard-backfill.md` -- resumable historical backfill runner
-- `gemini-method-extension-lineage.md` -- derive extension lineage from notation
+Each agent has a **roadmap** rather than a single brief, so work continues
+without waiting for a new one to be written each time:
 
-Completed and removed: the CCCBR Methods Library loader and the
-first-performance location resolution, both landed in PR #1.
+- `mistral-vibe-roadmap.md` -- CompLib ingestion, then an integrity checker
+- `gemini-roadmap.md` -- extension lineage, then a name lexicon
 
-One process note from that PR: a single agent did both briefs in one branch.
-The work was sound, but it defeated the split -- the boundaries sections exist
-so two agents can run concurrently without editing the same files. Both current
-briefs say explicitly not to take on the other's task.
+Each holds a numbered queue: one task fully specified and active, the rest
+sketched. The sketches are deliberately thin, because what a later task should
+ask depends on what the earlier one finds -- three times now a task has been
+rewritten or dropped after the source turned out to answer it already. Expand
+the next task when the current one lands, and keep the standing-constraints
+section at the top of each file, since that is the part agents actually reread.
+
+One task per pull request, in order. A single agent once did both briefs in one
+branch: the work was sound, but it defeated the split, so both roadmaps now say
+explicitly not to take on the other's.
+
+## Claude Code's own queue
+
+Adjudication and merges, as below, plus the work that is neither a bounded
+coding task nor a large-context sweep -- schema semantics, and any decision
+where being wrong is worse than being slow.
+
+1. **Ring-level join semantics** *(next)*. `dove.TowerID` is not unique: 13
+   towers hold more than one ring, so joining on it fans out and silently
+   inflates counts -- `v_first_tower_peals` gains 11 rows this way. Deciding
+   whether each view means a tower or a ring is a semantics call, not a bug
+   fix, which is why it has not been delegated. Vibe's Task 4 implements it
+   once the spec exists.
+2. **Consolidate the data-quality caveats.** They are currently spread across
+   `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, the schema
+   headers and several commit messages. Anyone querying the corpus needs them
+   in one place.
+3. **Run the BellBoard backfill.** The runner exists and is merged, but the
+   corpus still holds a single recent window. This is the largest remaining
+   data gap and it unblocks Gemini's Task 3. Waits for the freeze to lift on
+   2026-09-01.
+
+Completed: the CCCBR Methods Library loader and location resolution (PR #1),
+the location adjudication, the read-cost fixes, and the Founder Atlas.
 
 ## In practice
 

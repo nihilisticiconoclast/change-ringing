@@ -38,7 +38,6 @@ can be checked instead of taken on trust.
       (owner-managed, see `docs/CONNECTING.md`)
 - [x] BellBoard schema, ingestion script and incremental sync (see
       `schema/002_init_bellboard.sql`); first window loaded
-- [x] BellBoard historical backfill runner (see below)
 - [x] Tower -> Dove ID linkage -- largely a non-problem: BellBoard publishes
       `dove-tower-id` on each performance, so this is an integer join, not a
       name match. ~94% of performances carry it and 99.5% of those resolve.
@@ -52,6 +51,10 @@ can be checked instead of taken on trust.
       `method_performances.dove_tower_id` -- 22,111 of 30,734 first-performance
       records (71.9%) linked to a Dove tower; decisions recorded in
       `data/method_location_adjudication.csv`
+- [x] BellBoard historical backfill runner -- resumable and checkpointed
+      (PR #2, usage below). `export.php` honours `from`/`to`, not
+      `date_from`/`date_to`, and returns results newest-first. **Not yet run**:
+      the corpus still holds a single recent window of 1,401 performances.
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
@@ -66,8 +69,9 @@ can be checked instead of taken on trust.
       or `towers`; ring-level questions should use `RingID`, which BellBoard
       supplies as `dove_ring_id` but the Methods Library does not.
 - [ ] CompLib linkage
-- [ ] First analytical output (method/performance atlas, ringer-lineage tool,
-      or method-genealogy tool -- see `docs/RATIONALE.md`)
+- [x] First analytical output -- the Founder Atlas (see above)
+- [ ] CompLib ingestion
+- [ ] Ringer identity resolution (needs the backfill run first)
 
 ## Repository layout
 
