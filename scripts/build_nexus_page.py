@@ -259,6 +259,7 @@ def generate_html(graph_data):
     </style>
     <!-- Use 3d-force-graph via CDN -->
     <script src="https://unpkg.com/3d-force-graph"></script>
+    <script src="https://unpkg.com/d3-force-3d"></script>
     <script src="https://unpkg.com/three"></script>
 </head>
 <body>
@@ -279,9 +280,9 @@ def generate_html(graph_data):
         <p>The dense center represents the most interconnected hub of 2024. The outer edges represent isolated or unique events.</p>
         <p><em>Click any node to fly to it and view its narrative.</em></p>
         <div class="legend">
-            <div class="legend-item"><div class="dot tower"></div> Towers</div>
-            <div class="legend-item"><div class="dot method"></div> Methods</div>
-            <div class="legend-item"><div class="dot ringer"></div> Ringers</div>
+            <div class="legend-item"><div class="dot tower"></div> Towers (size reflects activity)</div>
+            <div class="legend-item"><div class="dot method"></div> Methods (size reflects frequency)</div>
+            <div class="legend-item"><div class="dot ringer"></div> Ringers (size reflects activity)</div>
             <div class="legend-item"><div class="dot perf"></div> Performances</div>
         </div>
     </div>
@@ -305,7 +306,6 @@ def generate_html(graph_data):
         const graphData = {{GRAPH_DATA}};
         
         // Setup Date processing for timeline
-        // Find min and max dates
         const dates = graphData.nodes
             .filter(n => n.group === 'performance' && n.date)
             .map(n => new Date(n.date).getTime());
@@ -322,12 +322,9 @@ def generate_html(graph_data):
         const dateDisplay = document.getElementById('date-display');
         const sidePanel = document.getElementById('side-panel');
         
-        // Time window in milliseconds (e.g. 14 days)
         const timeWindow = 14 * 24 * 60 * 60 * 1000; 
-        
         let currentTime = maxTime;
         
-        // Initialize graph
         const elem = document.getElementById('3d-graph');
         const Graph = ForceGraph3D()(elem)
             .graphData(graphData)
@@ -342,7 +339,7 @@ def generate_html(graph_data):
                 }
             })
             .nodeRelSize(4)
-            .nodeVal(node => node.group === 'performance' ? 1 : Math.sqrt(node.val) * 2)
+            .nodeVal(node => node.group === 'performance' ? 0.5 : node.val)
             .nodeResolution(16)
             .linkWidth(link => 0.5)
             .linkColor(link => {
@@ -427,7 +424,12 @@ def generate_html(graph_data):
             })
             .onBackgroundClick(() => {
                 sidePanel.classList.remove('visible');
-            });
+            })
+            .d3Force('collide', d3.forceCollide(node => Math.cbrt(node.group === 'performance' ? 0.5 : node.val) * 4 + 2));
+            
+        // Expand camera far plane so the giant astrolabe rings don't clip
+        Graph.camera().far = 100000;
+        Graph.camera().updateProjectionMatrix();
             
         // Add Astrolabe / Celestial Spheres for visual reference
         const scene = Graph.scene();
