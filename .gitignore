@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 *.db
 dove-csvs/
+methods-cache/
+*.xml
+*.zip
