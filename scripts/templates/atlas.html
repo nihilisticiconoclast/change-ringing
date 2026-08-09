@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Founder Atlas — Seven Centuries of English Bellfounding</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948; --s9:#8B8880;
+  --dim:#C9C6BC;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#7A766E;
+    --dim:#33322F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#7A766E;
+  --dim:#33322F;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--serif); font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.narrow{max-width:64ch}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--bronze); margin:0 0 14px;
+}
+header{padding:88px 0 40px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.03;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:22px;font-size:1.2rem;color:var(--ink-2);max-width:60ch}
+.figures{display:flex;flex-wrap:wrap;gap:38px;margin-top:38px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.85rem;color:var(--ink);letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+section{padding:64px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;letter-spacing:-.01em}
+.lede{color:var(--ink-2);margin-top:14px;max-width:62ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:30px 0 18px}
+.chip{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;
+  padding:7px 13px;border:1px solid var(--rule);background:var(--surface);
+  color:var(--ink-2);cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:8px;
+}
+.chip:hover{border-color:var(--bronze-soft);color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
+.chip[aria-pressed="true"]{border-color:currentColor;color:var(--ink);background:var(--surface-2)}
+.chip .sw{width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+.mapwrap{position:relative;max-width:600px;margin:0 auto;background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+canvas{display:block;width:100%;height:auto}
+#tip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--ground);border:1px solid var(--rule);border-radius:2px;
+  padding:8px 11px;font-family:var(--mono);font-size:11.5px;line-height:1.5;
+  color:var(--ink);box-shadow:0 4px 18px rgba(0,0,0,.28);z-index:5;max-width:240px;
+}
+.slider{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.slider label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+input[type=range]{flex:1;min-width:220px;accent-color:var(--bronze)}
+.yearout{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.1rem;color:var(--ink);min-width:9ch}
+figure{margin:0}
+figcaption{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:12px;line-height:1.6}
+.scroller{overflow-x:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px}
+.legend span{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--ink-2);letter-spacing:.04em}
+.legend i{width:9px;height:9px;border-radius:2px;flex:none}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.bar{height:9px;border-radius:0 2px 2px 0;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:30px}
+.card{background:var(--surface);padding:18px 20px}
+.card h3{font-size:1.12rem;font-weight:400;display:flex;align-items:center;gap:9px}
+.card h3 .sw{width:10px;height:10px;border-radius:50%;flex:none}
+.card dl{margin:12px 0 0;font-family:var(--mono);font-size:11.5px;color:var(--ink-2);display:grid;grid-template-columns:auto 1fr;gap:3px 12px}
+.card dt{color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;font-size:10px;align-self:center}
+.card dd{margin:0;font-variant-numeric:tabular-nums}
+footer{padding:56px 0 84px;color:var(--ink-3);font-size:14px}
+footer a{color:var(--bronze)}
+.note{border-left:2px solid var(--bronze-soft);padding-left:16px;margin-top:26px;color:var(--ink-2);font-size:15px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · First analytical output</p>
+  <h1>Who cast the bells,<br>and <em>where</em></h1>
+  <p class="standfirst">Seven centuries of English bellfounding, mapped from 51,451 surviving bells whose founder is known — then joined to the methods first rung on them. Three separately maintained corpora, linked for the first time.</p>
+  <div class="figures">
+    <div class="fig"><div class="n" id="f-bells">51,451</div><div class="l">bells attributed</div></div>
+    <div class="fig"><div class="n" id="f-towers">12,635</div><div class="l">towers</div></div>
+    <div class="fig"><div class="n">1290–2026</div><div class="l">casting years</div></div>
+    <div class="fig"><div class="n" id="f-linked">22,111</div><div class="l">peals tower-linked</div></div>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">I · Territory</p>
+  <h2>Foundries had catchment areas, and you can see them</h2>
+  <p class="lede">Each dot is a tower, placed by its own coordinates and coloured by the foundry tradition that cast most of its bells. All 12,428 towers are shown in one colour to begin with, because eight hues scattered across a map is unreadable — <strong>select a tradition</strong> and it lights up against the rest. Then drag the slider back through the centuries.</p>
+
+  <div class="controls" id="chips" role="group" aria-label="Select a foundry tradition"></div>
+
+  <div class="mapwrap">
+    <canvas id="map" width="1600" height="1500" role="img" aria-label="Map of English, Welsh, Scottish and Irish towers coloured by the bellfoundry tradition that cast most of their bells"></canvas>
+    <div id="tip" role="status"></div>
+  </div>
+
+  <div class="slider" style="max-width:600px;margin-left:auto;margin-right:auto">
+    <label for="year">Earliest attributed bell cast by</label>
+    <input type="range" id="year" min="1400" max="2026" value="2026" step="5">
+    <output class="yearout" id="yearout">2026</output>
+  </div>
+  <figcaption id="mapcap" style="max-width:600px;margin-left:auto;margin-right:auto"></figcaption>
+
+  <div class="note">
+    <strong>Rudhall of Gloucester</strong> is the clearest case: a dense cluster through Gloucestershire, Herefordshire and the Welsh marches, and almost nothing beyond it. The firm cast 2,745 surviving bells between 1679 and 1835 without ever becoming national. Loughborough and Whitechapel, by contrast, are everywhere — the railways let them be.
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">II · Succession</p>
+  <h2>Two foundries outlived everyone else</h2>
+  <p class="lede">Surviving bells by quarter-century and tradition. This counts bells still hanging, not bells cast — losses, recastings and wartime scrap fall out of the record, so the deep past is thinner than it truly was.</p>
+  <figure>
+    <div class="scroller"><div id="timeline"></div></div>
+    <div class="legend" id="legend" aria-label="Foundry traditions"></div>
+    <figcaption>Bells surviving today, by quarter-century of casting. Hover any segment for its tradition, period and count.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <p class="eyebrow">III · The cross-corpus join</p>
+  <h2>Where new methods get rung first</h2>
+  <p class="lede">This is the question that needs all three sources at once: Dove's founder records, joined to bells, joined to towers, joined to the CCCBR Methods Library's first-performance history. It asks whose bells ringers chose when trying something that had never been rung before.</p>
+  <figure>
+    <div class="scroller"><table id="peals"></table></div>
+    <figcaption>Distinct methods whose first tower-bell peal was rung on a ring containing bells by that tradition. A ring often mixes founders, so a peal can count for more than one.</figcaption>
+  </figure>
+  <div class="note">Loughborough's 8,306 is partly its own doing: <strong>John Taylor &amp; Co's Bell Foundry Tower</strong> in Loughborough is itself the single most-used tower for method first-peals, at 507. A foundry that keeps a ring on site gets to host the experiments.</div>
+</section>
+
+<section>
+  <p class="eyebrow">IV · The traditions</p>
+  <h2>Eight houses</h2>
+  <p class="lede">Dove groups individual firms into foundry traditions, which is what makes this legible: “Loughborough” absorbs thirteen successive businesses, from John Taylor's arrival in 1786 to the present day.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<footer>
+  <p class="eyebrow">Provenance</p>
+  <p>Built from <strong>Dove's Guide for Church Bell Ringers</strong> (<a href="https://dove.cccbr.org.uk">dove.cccbr.org.uk</a>, CC BY-SA 4.0) and the <strong>CCCBR Methods Library</strong> (<a href="https://methods.cccbr.org.uk">methods.cccbr.org.uk</a>). Snapshot 9 August 2026. Changes made: column names normalised, the sources loaded into a relational schema, and first-performance locations linked to Dove tower IDs by adjudicated name matching.</p>
+  <p>Attribution and share-alike apply to anything derived from this data. 8,623 of 30,734 first-performance records are deliberately unlinked — mostly handbell peals rung in private houses, which have no tower to link to.</p>
+</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const $ = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SERIES = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8','--s9'];
+const fmt = n => n.toLocaleString('en-GB');
+const G = DATA.groups;
+let selected = null, maxYear = 2026;
+
+/* ---------- chips ---------- */
+const chips = $('#chips');
+G.forEach((g,i)=>{
+  const b=document.createElement('button');
+  b.className='chip'; b.type='button'; b.setAttribute('aria-pressed','false');
+  b.style.color = `var(${SERIES[i]})`;
+  b.innerHTML = `<span class="sw"></span><span style="color:var(--ink-2)">${g}</span>`;
+  b.onclick = ()=>{ selected = (selected===i? null : i); syncChips(); draw(); };
+  chips.appendChild(b);
+});
+const allBtn=document.createElement('button');
+allBtn.className='chip'; allBtn.type='button';
+allBtn.innerHTML='<span style="color:var(--ink-2)">Show all</span>';
+allBtn.onclick=()=>{selected=null;syncChips();draw();};
+chips.appendChild(allBtn);
+function syncChips(){
+  [...chips.children].forEach((c,i)=>{
+    if(i<G.length) c.setAttribute('aria-pressed', String(selected===i));
+  });
+}
+
+/* ---------- map ---------- */
+const cv=$('#map'), ctx=cv.getContext('2d');
+const BB={n:59.0,s:49.8,w:-8.3,e:1.9};
+const inBB=p=>p[0]<=BB.n&&p[0]>=BB.s&&p[1]>=BB.w&&p[1]<=BB.e;
+const PTS=DATA.points.filter(inBB);
+const OUT=DATA.points.length-PTS.length;
+// Equirectangular with a cos(lat) correction so Britain isn't stretched.
+const midLat=(BB.n+BB.s)/2*Math.PI/180, kx=Math.cos(midLat);
+function proj(lat,lng,w,h){
+  const x=(lng-BB.w)/((BB.e-BB.w))*w;
+  const y=(BB.n-lat)/((BB.n-BB.s))*h;
+  return [x,y];
+}
+function layout(){
+  const w=cv.clientWidth*devicePixelRatio;
+  // True equirectangular aspect with the cos(lat) correction, so Britain is
+  // not stretched. No fudge factor -- the map is portrait, so the container
+  // is capped in width rather than the geometry being squashed to fit.
+  const aspect=(BB.n-BB.s)/((BB.e-BB.w)*kx);
+  cv.width=w; cv.height=Math.round(w*aspect);
+  cv.style.height=(cv.height/devicePixelRatio)+'px';
+}
+function draw(){
+  const w=cv.width,h=cv.height,r=devicePixelRatio;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=css('--surface'); ctx.fillRect(0,0,w,h);
+  const dim=css('--dim');
+  // pass 1: unselected, recessive
+  if(selected!==null){
+    ctx.fillStyle=dim;
+    for(const p of PTS){ if(p[2]===selected||p[4]>maxYear) continue;
+      const [x,y]=proj(p[0],p[1],w,h);
+      ctx.beginPath(); ctx.arc(x,y,1.5*r,0,6.283); ctx.fill(); }
+  }
+  // pass 2: the ones that count
+  let n=0;
+  const flat=css('--bronze-soft');
+  for(const p of PTS){
+    if(selected!==null && p[2]!==selected) continue;
+    if(p[4]>maxYear) continue;
+    const [x,y]=proj(p[0],p[1],w,h);
+    ctx.fillStyle = selected===null ? flat : css(SERIES[p[2]]);
+    const rad=(1.4+Math.min(Math.sqrt(p[3])*0.55,3.2))*r;
+    ctx.globalAlpha=selected===null?0.5:0.92;
+    ctx.beginPath(); ctx.arc(x,y,rad,0,6.283); ctx.fill();
+    ctx.globalAlpha=1; n++;
+  }
+  $('#mapcap').textContent =
+    `${fmt(n)} towers shown${selected!==null?' · '+G[selected]:''}`
+    + ` · ${fmt(OUT)} overseas towers omitted from this view`
+    + (maxYear<2026?` · earliest attributed bell cast by ${maxYear}`:'')
+    + ` · dot size follows the number of attributed bells in the tower.`;
+}
+/* hover */
+cv.addEventListener('mousemove',e=>{
+  const rect=cv.getBoundingClientRect();
+  const mx=(e.clientX-rect.left)/rect.width*cv.width;
+  const my=(e.clientY-rect.top)/rect.height*cv.height;
+  let best=null,bd=14*devicePixelRatio;
+  for(const p of PTS){
+    if(selected!==null && p[2]!==selected) continue;
+    if(p[4]>maxYear) continue;
+    const [x,y]=proj(p[0],p[1],cv.width,cv.height);
+    const d=Math.hypot(x-mx,y-my);
+    if(d<bd){bd=d;best=p;}
+  }
+  const tip=$('#tip');
+  if(best){
+    tip.style.opacity=1;
+    tip.style.left=Math.min(e.clientX-rect.left+14,rect.width-250)+'px';
+    tip.style.top=(e.clientY-rect.top+14)+'px';
+    tip.innerHTML=`<strong>${G[best[2]]}</strong><br>${best[3]} attributed bell${best[3]===1?'':'s'}<br>${best[0].toFixed(3)}, ${best[1].toFixed(3)}`;
+  } else tip.style.opacity=0;
+});
+cv.addEventListener('mouseleave',()=>{$('#tip').style.opacity=0});
+
+/* year slider filters the underlying bells, so re-derive per-tower dominance */
+const yearEl=$('#year'), yearOut=$('#yearout');
+yearEl.addEventListener('input',()=>{ yearOut.value=yearEl.value; maxYear=+yearEl.value; draw(); });
+
+/* ---------- timeline (stacked columns) ---------- */
+function timeline(){
+  const T=DATA.timeline, W=980,H=300,PL=46,PB=34,PT=10;
+  const max=Math.max(...T.map(b=>b.v.reduce((a,c)=>a+c,0)));
+  const bw=(W-PL-8)/T.length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:660px" role="img" aria-label="Stacked columns of surviving bells by quarter-century and foundry tradition">`;
+  [0,.25,.5,.75,1].forEach(t=>{
+    const y=PT+(H-PT-PB)*(1-t);
+    s+=`<line x1="${PL}" x2="${W-4}" y1="${y}" y2="${y}" stroke="${css('--rule')}" stroke-width="1"/>`;
+    s+=`<text x="${PL-8}" y="${y+4}" text-anchor="end" fill="${css('--ink-3')}" font-family="${css('--mono')}" font-size="10">${fmt(Math.round(max*t))}</text>`;
+  });
+  T.forEach((b,i)=>{
+    let yBase=H-PB;
+    const tot=b.v.reduce((a,c)=>a+c,0);
+    b.v.forEach((v,gi)=>{
+      if(!v) return;
+      const hh=(H-PT-PB)*(v/max);
+      yBase-=hh;
+      s+=`<rect x="${PL+i*bw+1}" y="${yBase}" width="${bw-3}" height="${Math.max(hh-2,0.5)}" fill="${css(SERIES[gi])}"><title>${b.y}–${b.y+24} · ${G[gi]} · ${fmt(v)} bells</title></rect>`;
+    });
+    if(b.y%100===0){
+      s+=`<text x="${PL+i*bw+bw/2}" y="${H-PB+16}" text-anchor="middle" fill="${css('--ink-3')}" font-family="${css('--mono')}" font-size="10">${b.y}</text>`;
+    }
+  });
+  s+=`</svg>`;
+  $('#timeline').innerHTML=s;
+}
+
+/* ---------- first peals table ---------- */
+function peals(){
+  const rows=DATA.firstPeals.slice(0,10);
+  const max=rows[0][1];
+  const idx=g=>{const i=G.indexOf(g);return i>=0?i:8;};
+  let s=`<thead><tr><th>Foundry tradition</th><th style="text-align:right">Methods</th><th style="width:44%">&nbsp;</th></tr></thead><tbody>`;
+  rows.forEach(([g,n])=>{
+    s+=`<tr><td>${g}</td><td class="n">${fmt(n)}</td>
+      <td><span class="bar" style="width:${(n/max*100).toFixed(1)}%;background:${css(SERIES[idx(g)])}" title="${g}: ${fmt(n)} methods"></span></td></tr>`;
+  });
+  $('#peals').innerHTML=s+`</tbody>`;
+}
+
+/* ---------- cards ---------- */
+function cards(){
+  $('#cards').innerHTML=DATA.meta.map((m,i)=>`
+    <div class="card">
+      <h3><span class="sw" style="background:${css(SERIES[i])}"></span>${m.name}</h3>
+      <dl>
+        <dt>Home</dt><dd>${m.home||'—'}</dd>
+        <dt>Active</dt><dd>${m.from?Math.round(m.from):'—'}–${m.to?Math.round(m.to):'—'}</dd>
+        <dt>Firms</dt><dd>${m.firms}</dd>
+        <dt>Bells</dt><dd>${fmt(m.bells||0)}</dd>
+      </dl>
+    </div>`).join('');
+}
+
+function legend(){
+  $('#legend').innerHTML=G.map((g,i)=>
+    `<span><i style="background:${css(SERIES[i])}"></i>${g}</span>`).join('');
+}
+function renderAll(){ layout(); draw(); timeline(); legend(); peals(); cards(); }
+renderAll();
+addEventListener('resize',()=>{layout();draw()});
+new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',renderAll);
+</script>
+
+</body>
+</html>

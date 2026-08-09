@@ -11,6 +11,18 @@ and no ground truth to validate against -- the value here is custodial and
 interpretive: a corpus a ringer, a tower captain, or a researcher could
 actually use.
 
+## The Founder Atlas
+
+The project's first analytical output: 51,451 attributed bells across 12,635
+towers, mapped by the foundry tradition that cast them, then joined to the
+methods first rung on them.
+
+**https://nihilisticiconoclast.github.io/change-ringing/**
+
+Rebuild it with `python scripts/build_atlas.py`, which reads a local database
+(never Turso) and writes `docs/index.html` — one self-contained file, no
+external requests. The page is served by GitHub Pages from `main` / `docs`.
+
 ## Status
 
 - [x] Dove's Guide bulk CSVs (towers, bells, frames, founders, dove, changes,
