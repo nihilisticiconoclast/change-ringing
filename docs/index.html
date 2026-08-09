@@ -99,10 +99,25 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
 footer{padding:56px 0 84px;color:var(--ink-3);font-size:14px}
 footer a{color:var(--bronze)}
 .note{border-left:2px solid var(--bronze-soft);padding-left:16px;margin-top:26px;color:var(--ink-2);font-size:15px}
+.nav-bar{
+  background:var(--surface); border-bottom:1px solid var(--rule);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+}
+.nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
+.nav-links a:hover{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
+
+<div class="nav-bar">
+  <div class="nav-links">
+    <a href="index.html" class="active">Founder Atlas</a>
+    <a href="lineage.html">Method Lineage Atlas</a>
+  </div>
+</div>
 
 <div class="wrap">
 <header>
