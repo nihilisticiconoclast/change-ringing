@@ -31,8 +31,10 @@ actually use.
       loaded to Turso -- 25,055 methods, 30,734 first-performance events
 - [x] CCCBR Methods first-performance location resolution candidates and analysis
       (see `data/method_location_candidates.csv` and `docs/method_location_resolution.md`)
-- [ ] Adjudicate `data/method_location_candidates.csv` and write the accepted
-      matches into `method_performances.dove_tower_id` (Claude Code)
+- [x] Adjudicated `data/method_location_candidates.csv` into
+      `method_performances.dove_tower_id` -- 22,111 of 30,734 first-performance
+      records (71.9%) linked to a Dove tower; decisions recorded in
+      `data/method_location_adjudication.csv`
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no

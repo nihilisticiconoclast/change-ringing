@@ -23,6 +23,47 @@ No `low` band was emitted; everything the pipeline could not place with at
 least medium justification was classified `none`. Read `medium` as "needs
 review" and `none` as "no tower, or none findable", not as a four-point scale.
 
+## Adjudication (Claude Code)
+
+`scripts/apply_location_adjudication.py` decides which candidates the database
+asserts, and writes the accepted ones into `method_performances.dove_tower_id`.
+Every decision is recorded in `data/method_location_adjudication.csv`.
+
+**Accepted 4,536 triples covering 22,111 performance events -- 71.9% of the
+30,734 first-performance records.** Rejected 1,192 triples covering 8,621.
+
+The bar is deliberately higher than the candidate file's own confidence,
+because a wrong TowerID is worse than a NULL. A NULL is visibly unresolved and
+invites another pass; a plausible-but-wrong ID silently corrupts every
+downstream query and is very hard to notice later. Rejected rows keep their
+candidates and alternatives in the candidate file, so nothing is discarded --
+"rejected" means "not asserted".
+
+| Rejected | Reason |
+| ---: | :--- |
+| 876 | resolver found no tower (correct -- private houses, virtual platforms) |
+| 240 | multi-tower town with no building evidence |
+| 35 | building is a house name, not a church |
+| 22 | named private ring or non-church venue |
+| 13 | named church is not in Dove for that town |
+| 5 | names a saint the sole tower is not dedicated to |
+| 1 | composite two-tower event |
+
+The 240 largest rejections are the substantive disagreement with the resolver.
+Those rows carry `Partial dedication match for '' among N towers in town` --
+an empty building field in a multi-tower town, so there is nothing to match
+on and the chosen tower is a guess. They are worth revisiting only if the
+building field can be recovered from another source.
+
+Two smaller classes are systematic and worth naming. A sole ringing tower in a
+village plus a building the tower is not dedicated to is usually a handbell
+peal in a private house, not the parish church -- 35 such rows, including
+`Windover` at Much Birch and `Anchorsholme` at Whiteparish. And where a
+building names a specific church absent from Dove for that town, the
+resolver's nearest-parish fallback asserted somewhere the peal was not rung:
+`St Mary, Whitechapel` (St Mary Matfelon, destroyed in 1940) had been matched
+to Whitechapel S Paul.
+
 ## Review corrections (Claude Code, on merge)
 
 Checked before merging: every cited TowerID exists, occurrences sum to the
