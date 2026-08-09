@@ -215,6 +215,14 @@ def main() -> int:
         default=0,
         help="Stop after N pages (0 = no limit). Useful for a bounded first run.",
     )
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=3.0,
+        help="Seconds to wait between page fetches (default 3). BellBoard "
+        "throttles sustained querying -- it starts returning short pages "
+        "rather than an error status, so do not lower this for a backfill.",
+    )
     args = parser.parse_args()
 
     url = os.environ.get("TURSO_DATABASE_URL")
@@ -255,6 +263,13 @@ def main() -> int:
         print("ERROR: pass --changed-since YYYY-MM-DD or --since-last.", file=sys.stderr)
         return 1
 
+    def load_page(n):
+        raw = fetch_page(changed_since, n)
+        try:
+            return ET.fromstring(raw).findall(f"{NS}performance")
+        except ET.ParseError as exc:
+            raise RuntimeError(f"could not parse page {n}: {exc}") from exc
+
     total = 0
     page = 1
     while True:
@@ -262,17 +277,38 @@ def main() -> int:
             print(f"Reached --max-pages {args.max_pages}; stopping.")
             break
         print(f"Fetching page {page} (changed_since={changed_since}) ...")
-        raw = fetch_page(changed_since, page)
         try:
-            root = ET.fromstring(raw)
-        except ET.ParseError as exc:
-            print(f"ERROR: could not parse page {page}: {exc}", file=sys.stderr)
+            perfs = load_page(page)
+        except RuntimeError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
             return 1
 
-        perfs = root.findall(f"{NS}performance")
         if not perfs:
             print("  empty page; done.")
             break
+
+        # A short page normally means the last page -- but BellBoard answers
+        # sustained querying by truncating pages rather than returning an error
+        # status, and a throttled page is also short. Taking it at face value
+        # would end a backfill early and silently. Back off and re-fetch once:
+        # if more rows come back, it was throttling, not the end.
+        if len(perfs) < PAGE_SIZE:
+            cooloff = max(args.delay * 5, 15)
+            print(
+                f"  short page ({len(perfs)} < {PAGE_SIZE}) -- could be the last page "
+                f"or throttling; waiting {cooloff:.0f}s and re-checking"
+            )
+            time.sleep(cooloff)
+            try:
+                retry = load_page(page)
+            except RuntimeError as exc:
+                print(f"ERROR: {exc}", file=sys.stderr)
+                return 1
+            if len(retry) > len(perfs):
+                print(f"  re-fetch returned {len(retry)}; was throttled, continuing")
+                perfs = retry
+            else:
+                print(f"  re-fetch returned {len(retry)}; treating as the last page")
 
         perf_rows, ringers, footnotes, flags = [], [], [], []
         for p in perfs:
@@ -308,6 +344,7 @@ def main() -> int:
         if len(perfs) < PAGE_SIZE:
             break
         page += 1
+        time.sleep(args.delay)
 
     print(f"\nIngested {total} performances.")
     for tbl in ("performances", "performance_ringers", "performance_footnotes",
