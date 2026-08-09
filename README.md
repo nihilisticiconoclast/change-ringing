@@ -76,6 +76,13 @@ can be checked instead of taken on trust.
 - [ ] CompLib ingestion
 - [ ] Ringer identity resolution (needs the backfill run first)
 
+## Lessons learnt
+
+`docs/LESSONS.md` — what this project taught, written for the next one rather
+than this one. Choosing work where verification is cheap, giving agents an
+instrument rather than a warning, and why a fix that went from 18 minutes to 19
+seconds saved no money at all.
+
 ## Repository layout
 
 ```
