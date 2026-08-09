@@ -3,13 +3,11 @@
 Generate the Interactive Ringer Constellation & Identity Atlas (docs/ringers.html).
 
 Builds:
-- Force-directed interactive network graph of top ringing bands & partnerships
-- Live Canonical Ringer Search & Alias Cluster Inspector across 35,090 ringer variations
+- High-definition force-directed band network graph
+- Ringer Name Picker in the top toolbar + Quick Chips for top ringers
+- Live Canonical Ringer Search & Alias Cluster Inspector
 - Guild & Association community clustering with harmonic palette
 - Standalone zero-dependency HTML bundle in docs/ringers.html
-
-Usage:
-    python scripts/build_ringers_page.py
 """
 import collections
 import json
@@ -24,19 +22,19 @@ OUT_HTML = ROOT / "docs" / "ringers.html"
 
 # Association Color Palette (Harmonious & Meaningful)
 ASSOC_PALETTE = {
-    "Ancient Society of College Youths": "#eab308",         # Imperial Gold
-    "Society of Royal Cumberland Youths": "#10b981",        # Emerald
-    "Oxford Diocesan Guild": "#3b82f6",                     # Royal Blue
-    "Winchester & Portsmouth Diocesan Guild": "#8b5cf6",     # Amethyst Purple
-    "Yorkshire Association": "#f97316",                     # Coral Orange
-    "Guild of Devonshire Ringers": "#06b6d4",               # Turquoise
-    "Sussex County Association": "#ec4899",                 # Rose
-    "St Martin's Guild for the Diocese of Birmingham": "#14b8a6", # Teal
-    "Gloucester & Bristol Diocesan Association": "#f43f5e", # Crimson
-    "Suffolk Guild": "#84cc16",                             # Lime
-    "Ely Diocesan Association": "#6366f1",                  # Indigo
-    "Non-Association": "#71717a",                           # Slate Grey
-    "Other": "#a1a1aa"                                      # Neutral Grey
+    "Ancient Society of College Youths": "#EAB308",         # Imperial Gold
+    "Society of Royal Cumberland Youths": "#10B981",        # Emerald
+    "Oxford Diocesan Guild": "#3B82F6",                     # Royal Blue
+    "Winchester & Portsmouth Diocesan Guild": "#8B5CF6",     # Amethyst Purple
+    "Yorkshire Association": "#F97316",                     # Coral Orange
+    "Guild of Devonshire Ringers": "#06B6D4",               # Turquoise
+    "Sussex County Association": "#EC4899",                 # Rose
+    "St Martin's Guild for the Diocese of Birmingham": "#14B8A6", # Teal
+    "Gloucester & Bristol Diocesan Association": "#F43F5E", # Crimson
+    "Suffolk Guild": "#84CC16",                             # Lime
+    "Ely Diocesan Association": "#6366F1",                  # Indigo
+    "Non-Association": "#71717A",                           # Slate Grey
+    "Other": "#A1A1AA"                                      # Neutral Grey
 }
 
 
@@ -164,7 +162,7 @@ def build_page():
             "aliases": aliases
         })
 
-    # Format edges (keep edges with at least 5 shared peals to keep graph responsive and clean)
+    # Format edges (keep edges with at least 5 shared peals)
     edges = []
     for (r1, r2), count in co_counts.items():
         if count >= 5:
@@ -176,20 +174,8 @@ def build_page():
 
     print(f"Network graph constructed with {len(nodes)} nodes and {len(edges)} edges.", flush=True)
 
-    # Format top partnerships leaderboard
-    leaderboard = []
-    for (r1, r2), cnt in co_counts.most_common(30):
-        n1 = canon_ringers.loc[canon_ringers["canonical_ringer_id"] == r1, "canonical_name"].values[0]
-        n2 = canon_ringers.loc[canon_ringers["canonical_ringer_id"] == r2, "canonical_name"].values[0]
-        leaderboard.append({
-            "r1": r1, "name1": n1,
-            "r2": r2, "name2": n2,
-            "peals": cnt
-        })
-
-    # Prepare compact search index for the top 1,500 canonical ringers
+    # Top search dataset
     top_search_ringers = canon_ringers.sort_values(by="cluster_total_peals", ascending=False).head(1500)
-    search_ids = set(top_search_ringers["canonical_ringer_id"])
     search_data = []
     for _, r in top_search_ringers.iterrows():
         c_id = r["canonical_ringer_id"]
@@ -205,18 +191,16 @@ def build_page():
         })
 
     # Write HTML page
-    html_content = generate_html(nodes, edges, leaderboard, search_data, ASSOC_PALETTE)
+    html_content = generate_html(nodes, edges, search_data)
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUT_HTML.write_text(html_content, encoding="utf-8")
     print(f"\nWrote {OUT_HTML} ({OUT_HTML.stat().st_size / 1024:.1f} KB)", flush=True)
 
 
-def generate_html(nodes, edges, leaderboard, search_data, palette):
+def generate_html(nodes, edges, search_data):
     nodes_json = json.dumps(nodes)
     edges_json = json.dumps(edges)
-    leaderboard_json = json.dumps(leaderboard)
     search_json = json.dumps(search_data)
-    palette_json = json.dumps(palette)
 
     return f"""<!doctype html>
 <html lang="en">
@@ -262,7 +246,7 @@ body{{
   background:none;border:1px solid var(--rule);color:var(--ink-2);padding:4px 10px;
   font-family:var(--mono);font-size:11px;cursor:pointer;border-radius:2px;
 }}
-.wrap{{max-width:1160px;margin:0 auto;padding:0 24px}}
+.wrap{{max-width:1180px;margin:0 auto;padding:0 24px}}
 header{{padding:60px 0 40px;border-bottom:1px solid var(--rule)}}
 .eyebrow{{
   font-family:var(--mono); font-size:11px; letter-spacing:.18em;
@@ -275,13 +259,24 @@ h1 em{{font-style:italic;color:var(--bronze)}}
 .fig .n{{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.75rem;color:var(--ink);letter-spacing:-.02em}}
 .fig .l{{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}}
 
-section{{padding:54px 0;border-bottom:1px solid var(--rule)}}
+section{{padding:50px 0;border-bottom:1px solid var(--rule)}}
 h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;margin:0}}
-.lede{{color:var(--ink-2);margin-top:12px;max-width:64ch}}
+.lede{{color:var(--ink-2);margin-top:12px;max-width:68ch}}
+
+/* Quick Ringer Chips */
+.chips-bar{{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 16px; align-items:center}}
+.chips-label{{font-family:var(--mono); font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.08em; margin-right:4px}}
+.chip-btn{{
+  font-family:var(--mono); font-size:11.5px; padding:5px 11px; border-radius:3px;
+  background:var(--surface); border:1px solid var(--rule); color:var(--ink-2); cursor:pointer;
+  transition:all .15s;
+}}
+.chip-btn:hover{{border-color:var(--bronze); color:var(--ink)}}
+.chip-btn.active{{background:var(--surface-2); border-color:var(--bronze); color:var(--bronze); font-weight:600}}
 
 /* Explorer Layout */
 .explorer-grid{{
-  display:grid; grid-template-columns:1fr 340px; gap:24px; margin-top:28px;
+  display:grid; grid-template-columns:1fr 350px; gap:24px; margin-top:20px;
 }}
 @media (max-width:920px){{
   .explorer-grid{{grid-template-columns:1fr}}
@@ -290,25 +285,30 @@ h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;m
 /* Graph Container */
 .graph-card{{
   background:var(--surface); border:1px solid var(--rule); border-radius:4px;
-  position:relative; overflow:hidden; min-height:620px; display:flex; flex-direction:column;
+  position:relative; overflow:hidden; display:flex; flex-direction:column;
 }}
 .graph-toolbar{{
-  padding:10px 16px; border-bottom:1px solid var(--rule); display:flex;
-  justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  padding:12px 16px; border-bottom:1px solid var(--rule); display:flex;
+  justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
   background:var(--surface-2);
 }}
 .graph-title{{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2)}}
-.graph-filters{{display:flex; gap:8px; align-items:center; flex-wrap:wrap}}
+.graph-controls-group{{display:flex; gap:10px; align-items:center; flex-wrap:wrap}}
 .graph-select{{
   background:var(--surface); border:1px solid var(--rule); color:var(--ink);
-  padding:4px 8px; font-family:var(--mono); font-size:11px; border-radius:2px;
+  padding:6px 10px; font-family:var(--mono); font-size:12px; border-radius:3px; outline:none;
+  cursor:pointer;
 }}
-#constellationCanvas{{width:100%; height:570px; display:block; cursor:grab}}
+.graph-select:focus{{border-color:var(--bronze)}}
+
+#constellationCanvas{{
+  width:100%; height:580px; display:block; cursor:grab; background:var(--surface);
+}}
 #constellationCanvas:active{{cursor:grabbing}}
 
-/* Floating Graph Controls */
+/* Floating Graph Actions */
 .graph-actions{{
-  position:absolute; bottom:16px; right:16px; display:flex; flex-direction:column; gap:6px; z-index:10;
+  position:absolute; bottom:52px; right:16px; display:flex; flex-direction:column; gap:6px; z-index:10;
 }}
 .action-btn{{
   width:32px; height:32px; background:var(--surface); border:1px solid var(--rule);
@@ -319,26 +319,26 @@ h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;m
 
 /* Legend */
 .legend{{
-  padding:8px 14px; border-top:1px solid var(--rule); display:flex; flex-wrap:wrap; gap:12px;
-  font-family:var(--mono); font-size:10.5px; background:var(--surface);
+  padding:10px 16px; border-top:1px solid var(--rule); display:flex; flex-wrap:wrap; gap:14px;
+  font-family:var(--mono); font-size:11px; background:var(--surface);
 }}
-.legend-item{{display:inline-flex; align-items:center; gap:5px}}
-.legend-dot{{width:8px; height:8px; border-radius:50%}}
+.legend-item{{display:inline-flex; align-items:center; gap:6px}}
+.legend-dot{{width:9px; height:9px; border-radius:50%}}
 
 /* Side Dossier Panel */
 .dossier-card{{
   background:var(--surface); border:1px solid var(--rule); border-radius:4px;
-  padding:20px; display:flex; flex-direction:column; gap:18px;
+  padding:22px; display:flex; flex-direction:column; gap:18px;
 }}
 .dossier-header .d-id{{font-family:var(--mono); font-size:11px; color:var(--bronze); letter-spacing:.1em; text-transform:uppercase}}
-.dossier-header h3{{font-size:1.4rem; font-weight:400; margin:4px 0 0}}
+.dossier-header h3{{font-size:1.45rem; font-weight:400; margin:4px 0 0}}
 .d-badge{{
-  display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:.06em;
-  padding:2px 8px; border-radius:2px; background:var(--surface-2); border:1px solid var(--rule);
-  color:var(--ink-2); text-transform:uppercase; margin-top:6px;
+  display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+  padding:3px 9px; border-radius:2px; background:var(--surface-2); border:1px solid var(--rule);
+  color:var(--ink-2); text-transform:uppercase; margin-top:8px;
 }}
-.d-stats{{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}}
-.d-stat .val{{font-family:var(--mono); font-size:1.3rem; font-weight:600}}
+.d-stats{{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px}}
+.d-stat .val{{font-family:var(--mono); font-size:1.35rem; font-weight:600}}
 .d-stat .lbl{{font-family:var(--mono); font-size:10px; color:var(--ink-3); text-transform:uppercase}}
 
 .d-section h4{{
@@ -347,7 +347,7 @@ h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;m
 }}
 .alias-list, .partner-list, .tower-list{{list-style:none; padding:0; margin:0; font-size:13px}}
 .alias-list li{{
-  padding:4px 0; font-family:var(--mono); font-size:11.5px; display:flex; justify-content:space-between;
+  padding:4px 0; font-family:var(--mono); font-size:12px; display:flex; justify-content:space-between;
   border-bottom:1px dashed var(--surface-2);
 }}
 .alias-list .is-p{{color:var(--bronze); font-weight:600}}
@@ -359,7 +359,7 @@ h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;m
 /* Search & Candidates Explorer */
 .search-bar-wrap{{margin:24px 0 16px}}
 .search-input{{
-  width:100%; max-width:480px; padding:10px 14px; font-family:var(--mono); font-size:13px;
+  width:100%; max-width:500px; padding:10px 14px; font-family:var(--mono); font-size:13px;
   background:var(--surface); border:1px solid var(--rule); color:var(--ink); border-radius:3px;
 }}
 .search-input:focus{{outline:none; border-color:var(--bronze); box-shadow:0 0 0 2px rgba(184,135,63,.2)}}
@@ -383,7 +383,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
 
 <div class="nav-bar">
   <div class="nav-links">
-    <a href="index.html">Corpus Atlas</a>
+    <a href="index.html">Founder Atlas</a>
     <a href="lineage.html">Method Lineage</a>
     <a href="ringers.html" class="active">Ringer Constellation</a>
   </div>
@@ -410,7 +410,20 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <h2>Interactive Band Co-occurrence Network</h2>
     <div class="lede">
       Nodes represent the top 200 canonical ringers sized by historical peal volume, connected by shared peals in the same band. 
-      Colors denote primary territorial guild / association membership. Click any ringer node to inspect their dossier, alias cluster, and regular partners.
+      Select any ringer below or click directly on the graph to inspect their dossier, resolved alias cluster, top towers, and frequent partners.
+    </div>
+
+    <!-- Quick Ringer Chips -->
+    <div class="chips-bar">
+      <span class="chips-label">Featured Ringers:</span>
+      <button class="chip-btn active" data-id="RINGER_000001">Susan Sawyer</button>
+      <button class="chip-btn" data-id="RINGER_000002">Claire Nicholson</button>
+      <button class="chip-btn" data-id="RINGER_000003">Reg Hitchings</button>
+      <button class="chip-btn" data-id="RINGER_000005">Simon Rudd</button>
+      <button class="chip-btn" data-id="RINGER_000006">Peter Randall</button>
+      <button class="chip-btn" data-id="RINGER_000009">Alan Pink</button>
+      <button class="chip-btn" data-id="RINGER_000017">Alan Regin</button>
+      <button class="chip-btn" data-id="RINGER_000013">Jack Page</button>
     </div>
 
     <div class="explorer-grid">
@@ -418,23 +431,30 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
       <div class="graph-card">
         <div class="graph-toolbar">
           <div class="graph-title">Top 200 Ringers &middot; Mutual Peal Network</div>
-          <div class="graph-filters">
-            <select class="graph-select" id="guildFilter">
-              <option value="ALL">All Ringing Guilds / Associations</option>
-              <option value="Ancient Society of College Youths">Ancient Society of College Youths</option>
-              <option value="Society of Royal Cumberland Youths">Society of Royal Cumberland Youths</option>
-              <option value="Oxford Diocesan Guild">Oxford Diocesan Guild</option>
+          
+          <div class="graph-controls-group">
+            <!-- Ringer Quick Selector -->
+            <select class="graph-select" id="ringerPicker" title="Pick a canonical ringer">
+              <option value="">-- Jump to Ringer --</option>
+            </select>
+
+            <!-- Guild Filter -->
+            <select class="graph-select" id="guildFilter" title="Filter by Ringing Guild">
+              <option value="ALL">All Guilds & Associations</option>
+              <option value="Ancient Society of College Youths">College Youths</option>
+              <option value="Society of Royal Cumberland Youths">Royal Cumberland Youths</option>
+              <option value="Oxford Diocesan Guild">Oxford Diocesan</option>
               <option value="Winchester & Portsmouth Diocesan Guild">Winchester & Portsmouth</option>
-              <option value="Yorkshire Association">Yorkshire Association</option>
+              <option value="Yorkshire Association">Yorkshire</option>
               <option value="Guild of Devonshire Ringers">Devonshire Ringers</option>
-              <option value="Sussex County Association">Sussex County Association</option>
+              <option value="Sussex County Association">Sussex County</option>
               <option value="Gloucester & Bristol Diocesan Association">Gloucester & Bristol</option>
               <option value="St Martin's Guild for the Diocese of Birmingham">St Martin's Guild</option>
             </select>
           </div>
         </div>
 
-        <canvas id="constellationCanvas"></canvas>
+        <canvas id="constellationCanvas" width="1600" height="1160"></canvas>
 
         <div class="graph-actions">
           <button class="action-btn" id="btnZoomIn" title="Zoom In">+</button>
@@ -443,14 +463,14 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
         </div>
 
         <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div> College Youths</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> Royal Cumberland Youths</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Oxford Diocesan</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Winchester & Portsmouth</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Yorkshire</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#06b6d4"></div> Devonshire</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div> Sussex</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#f43f5e"></div> Gloucester & Bristol</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#EAB308"></div> College Youths</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div> Royal Cumberland Youths</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3B82F6"></div> Oxford Diocesan</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div> Winchester & Portsmouth</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F97316"></div> Yorkshire</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#06B6D4"></div> Devonshire</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#EC4899"></div> Sussex</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F43F5E"></div> Gloucester & Bristol</div>
         </div>
       </div>
 
@@ -468,13 +488,8 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
         </div>
 
         <div class="d-section">
-          <h4>Unified Name Variations (4 Aliases)</h4>
-          <ul class="alias-list" id="dAliases">
-            <li><span class="is-p">Susan M Sawyer</span> <span class="cnt">571 peals</span></li>
-            <li><span>Sue Sawyer</span> <span class="cnt">330 peals</span></li>
-            <li><span>Susan Sawyer</span> <span class="cnt">5 peals</span></li>
-            <li><span>Sue M Sawyer</span> <span class="cnt">1 peal</span></li>
-          </ul>
+          <h4>Unified Name Variations (<span id="dAliasCount">4</span> Aliases)</h4>
+          <ul class="alias-list" id="dAliases"></ul>
         </div>
 
         <div class="d-section">
@@ -493,7 +508,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
   <section>
     <h2>Canonical Entity & Alias Cluster Explorer</h2>
     <div class="lede">
-      Search any ringer name, initials, or diminutive to explore resolved canonical entities and their constituent aliases.
+      Search any ringer name, initials, or diminutive across 1,500 canonical ringers to explore resolved entities and their constituent aliases. Click any row to focus on that ringer in the constellation above.
     </div>
 
     <div class="search-bar-wrap">
@@ -521,37 +536,42 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
 const NODES = {nodes_json};
 const EDGES = {edges_json};
 const SEARCH_DATA = {search_json};
-const PALETTE = {palette_json};
 
-// Setup Canvas & Simulation
+// Canvas Setup
 const canvas = document.getElementById('constellationCanvas');
 const ctx = canvas.getContext('2d');
-let width, height;
+const WIDTH = 1600;
+const HEIGHT = 1160;
+
 let zoom = 1.0, panX = 0, panY = 0;
 let isDragging = false, dragStart = {{x:0, y:0}};
 let selectedNode = NODES[0];
 let hoveredNode = null;
 let activeGuildFilter = "ALL";
 
-function resizeCanvas() {{
-  const rect = canvas.getBoundingClientRect();
-  width = rect.width;
-  height = rect.height;
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-}}
+// Populate Ringer Picker Dropdown
+const ringerPicker = document.getElementById('ringerPicker');
+NODES.forEach(n => {{
+  const opt = document.createElement('option');
+  opt.value = n.id;
+  opt.textContent = `${{n.name}} (${{n.peals}} peals)`;
+  ringerPicker.appendChild(opt);
+}});
 
-// Initialize Node Coordinates with Circle Layout + Force Jitter
+ringerPicker.addEventListener('change', e => {{
+  if (e.target.value) {{
+    selectRingerById(e.target.value);
+  }}
+}});
+
+// Initialize Node Coordinates with Circle Layout + Force Simulation
 const nodeMap = new Map();
 NODES.forEach((n, idx) => {{
   const angle = (idx / NODES.length) * Math.PI * 2;
-  const radius = 180 + (idx % 4) * 60;
+  const radius = 280 + (idx % 5) * 80;
   n.x = Math.cos(angle) * radius;
   n.y = Math.sin(angle) * radius;
-  n.vx = 0;
-  n.vy = 0;
-  n.radius = Math.max(4.5, Math.min(18, Math.sqrt(n.peals) * 0.48));
+  n.radius = Math.max(8, Math.min(32, Math.sqrt(n.peals) * 0.95));
   nodeMap.set(n.id, n);
 }});
 
@@ -562,26 +582,26 @@ const edgeObjs = EDGES.map(e => ({{
   weight: e.weight
 }})).filter(e => e.source && e.target);
 
-// Simple Force Simulation (50 ticks)
-for (let iter = 0; iter < 45; iter++) {{
+// 60 simulation iterations
+for (let iter = 0; iter < 60; iter++) {{
   // Repulsion
   for (let i = 0; i < NODES.length; i++) {{
     for (let j = i + 1; j < NODES.length; j++) {{
       const n1 = NODES[i], n2 = NODES[j];
       const dx = n2.x - n1.x, dy = n2.y - n1.y;
       const dist = Math.hypot(dx, dy) || 1;
-      if (dist < 220) {{
-        const force = (220 - dist) / dist * 0.08;
+      if (dist < 340) {{
+        const force = (340 - dist) / dist * 0.12;
         n1.x -= dx * force; n1.y -= dy * force;
         n2.x += dx * force; n2.y += dy * force;
       }}
     }}
   }}
-  // Edge Spring Attraction
+  // Edge Springs
   edgeObjs.forEach(e => {{
     const dx = e.target.x - e.source.x, dy = e.target.y - e.source.y;
     const dist = Math.hypot(dx, dy) || 1;
-    const force = (dist - 90) * 0.003 * Math.min(e.weight, 50) / 15;
+    const force = (dist - 140) * 0.004 * Math.min(e.weight, 50) / 12;
     e.source.x += dx * force; e.source.y += dy * force;
     e.target.x -= dx * force; e.target.y -= dy * force;
   }});
@@ -589,9 +609,9 @@ for (let iter = 0; iter < 45; iter++) {{
 
 function render() {{
   ctx.save();
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-  ctx.translate(width / 2 + panX, height / 2 + panY);
+  ctx.translate(WIDTH / 2 + panX, HEIGHT / 2 + panY);
   ctx.scale(zoom, zoom);
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || 
@@ -610,8 +630,8 @@ function render() {{
   // Draw Edges
   edgeObjs.forEach(e => {{
     const isConn = activeFocusNode && (e.source.id === activeFocusNode.id || e.target.id === activeFocusNode.id);
-    const alpha = activeFocusNode ? (isConn ? 0.8 : 0.04) : Math.min(0.35, e.weight / 60);
-    const width = isConn ? Math.max(1.8, Math.min(5, e.weight / 40)) : Math.max(0.6, Math.min(2.5, e.weight / 80));
+    const alpha = activeFocusNode ? (isConn ? 0.85 : 0.06) : Math.min(0.35, e.weight / 60);
+    const width = isConn ? Math.max(2.5, Math.min(8, e.weight / 25)) : Math.max(1.0, Math.min(4, e.weight / 50));
 
     ctx.beginPath();
     ctx.moveTo(e.source.x, e.source.y);
@@ -628,7 +648,7 @@ function render() {{
     const isSel = (selectedNode && selectedNode.id === n.id);
     const isHov = (hoveredNode && hoveredNode.id === n.id);
 
-    const baseAlpha = matchesFilter ? (isConn ? 1.0 : 0.2) : 0.1;
+    const baseAlpha = matchesFilter ? (isConn ? 1.0 : 0.25) : 0.12;
 
     ctx.beginPath();
     ctx.arc(n.x, n.y, n.radius * (isSel || isHov ? 1.25 : 1.0), 0, Math.PI * 2);
@@ -637,21 +657,21 @@ function render() {{
     ctx.fill();
 
     if (isSel || isHov) {{
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = isDark ? '#ffffff' : '#1C1E1C';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = isDark ? '#FFFFFF' : '#1C1E1C';
       ctx.stroke();
     }} else {{
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)';
       ctx.stroke();
     }}
 
-    // Labels for high-peal or connected nodes
+    // Labels
     if ((n.peals >= 450 || isConn || isSel || isHov) && matchesFilter) {{
-      ctx.font = (isSel || isHov ? 'bold 12px' : '10.5px') + ' var(--mono)';
+      ctx.font = (isSel || isHov ? 'bold 18px' : '15px') + ' var(--mono)';
       ctx.fillStyle = isDark ? '#F0EDE6' : '#1C1E1C';
-      ctx.globalAlpha = isConn ? 1.0 : 0.3;
-      ctx.fillText(n.name, n.x + n.radius + 5, n.y + 3.5);
+      ctx.globalAlpha = isConn ? 1.0 : 0.35;
+      ctx.fillText(n.name, n.x + n.radius + 8, n.y + 5);
     }}
   }});
 
@@ -659,25 +679,28 @@ function render() {{
 }}
 
 // Interactions
-function getNodeAt(x, y) {{
-  const worldX = (x - (width / 2 + panX)) / zoom;
-  const worldY = (y - (height / 2 + panY)) / zoom;
+function getNodeAt(screenX, screenY) {{
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = WIDTH / rect.width;
+  const scaleY = HEIGHT / rect.height;
+  const canvasX = (screenX - rect.left) * scaleX;
+  const canvasY = (screenY - rect.top) * scaleY;
+
+  const worldX = (canvasX - (WIDTH / 2 + panX)) / zoom;
+  const worldY = (canvasY - (HEIGHT / 2 + panY)) / zoom;
+
   for (let i = NODES.length - 1; i >= 0; i--) {{
     const n = NODES[i];
     const dist = Math.hypot(n.x - worldX, n.y - worldY);
-    if (dist <= n.radius + 6) return n;
+    if (dist <= n.radius + 10) return n;
   }}
   return null;
 }}
 
 canvas.addEventListener('mousedown', e => {{
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left, y = e.clientY - rect.top;
-  const hit = getNodeAt(x, y);
+  const hit = getNodeAt(e.clientX, e.clientY);
   if (hit) {{
-    selectedNode = hit;
-    updateDossier(hit);
-    render();
+    selectRingerNode(hit);
   }} else {{
     isDragging = true;
     dragStart = {{x: e.clientX - panX, y: e.clientY - panY}};
@@ -685,21 +708,22 @@ canvas.addEventListener('mousedown', e => {{
 }});
 
 window.addEventListener('mousemove', e => {{
-  const rect = canvas.getBoundingClientRect();
   if (isDragging) {{
-    panX = e.clientX - dragStart.x;
-    panY = e.clientY - dragStart.y;
+    panX = (e.clientX - dragStart.x) * (WIDTH / canvas.getBoundingClientRect().width);
+    panY = (e.clientY - dragStart.y) * (HEIGHT / canvas.getBoundingClientRect().height);
     render();
-  }} else if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {{
-    const x = e.clientX - rect.left, y = e.clientY - rect.top;
-    const hit = getNodeAt(x, y);
-    if (hit !== hoveredNode) {{
-      hoveredNode = hit;
+  }} else {{
+    const rect = canvas.getBoundingClientRect();
+    if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {{
+      const hit = getNodeAt(e.clientX, e.clientY);
+      if (hit !== hoveredNode) {{
+        hoveredNode = hit;
+        render();
+      }}
+    }} else if (hoveredNode) {{
+      hoveredNode = null;
       render();
     }}
-  }} else if (hoveredNode) {{
-    hoveredNode = null;
-    render();
   }}
 }});
 
@@ -707,14 +731,8 @@ window.addEventListener('mouseup', () => {{ isDragging = false; }});
 
 canvas.addEventListener('wheel', e => {{
   e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left - (width / 2 + panX);
-  const mouseY = e.clientY - rect.top - (height / 2 + panY);
   const delta = e.deltaY < 0 ? 1.15 : 0.87;
-  const newZoom = Math.min(3.5, Math.max(0.4, zoom * delta));
-  panX -= mouseX * (newZoom / zoom - 1);
-  panY -= mouseY * (newZoom / zoom - 1);
-  zoom = newZoom;
+  zoom = Math.min(3.5, Math.max(0.4, zoom * delta));
   render();
 }}, {{passive: false}});
 
@@ -729,6 +747,39 @@ document.getElementById('guildFilter').addEventListener('change', e => {{
   render();
 }});
 
+// Select Ringer Action
+function selectRingerNode(node) {{
+  selectedNode = node;
+  updateDossier(node);
+  ringerPicker.value = node.id;
+  updateChipButtons(node.id);
+  render();
+}}
+
+function selectRingerById(ringerId) {{
+  const n = nodeMap.get(ringerId);
+  if (n) {{
+    selectRingerNode(n);
+    panX = -n.x * zoom;
+    panY = -n.y * zoom;
+    render();
+  }}
+}}
+
+// Chip buttons click
+document.querySelectorAll('.chip-btn').forEach(btn => {{
+  btn.addEventListener('click', () => {{
+    const rId = btn.getAttribute('data-id');
+    selectRingerById(rId);
+  }});
+}});
+
+function updateChipButtons(activeId) {{
+  document.querySelectorAll('.chip-btn').forEach(btn => {{
+    btn.classList.toggle('active', btn.getAttribute('data-id') === activeId);
+  }});
+}}
+
 // Update Dossier Card
 function updateDossier(node) {{
   document.getElementById('dId').textContent = node.id;
@@ -736,6 +787,7 @@ function updateDossier(node) {{
   document.getElementById('dAssoc').textContent = node.assoc;
   document.getElementById('dPeals').textContent = node.peals.toLocaleString();
   document.getElementById('dYears').textContent = node.active_years || '2023–2024';
+  document.getElementById('dAliasCount').textContent = node.aliases.length;
 
   // Aliases
   const aliasUl = document.getElementById('dAliases');
@@ -754,6 +806,8 @@ function updateDossier(node) {{
     node.partners.forEach(p => {{
       const li = document.createElement('li');
       li.innerHTML = `<span>${{p.name}}</span><span class="cnt">${{p.peals}} mutual peals</span>`;
+      li.style.cursor = 'pointer';
+      li.onclick = () => selectRingerById(p.id);
       partUl.appendChild(li);
     }});
   }} else {{
@@ -795,15 +849,8 @@ function renderTable(filterText = '') {{
       <td>${{aliasHtml}}</td>
     `;
     tr.onclick = () => {{
-      const n = nodeMap.get(r.id);
-      if (n) {{
-        selectedNode = n;
-        updateDossier(n);
-        panX = -n.x * zoom;
-        panY = -n.y * zoom;
-        render();
-        window.scrollTo({{top: 400, behavior: 'smooth'}});
-      }}
+      selectRingerById(r.id);
+      window.scrollTo({{top: 380, behavior: 'smooth'}});
     }};
     tr.style.cursor = 'pointer';
     tbody.appendChild(tr);
@@ -825,8 +872,6 @@ themeToggle.addEventListener('click', () => {{
   render();
 }});
 
-window.addEventListener('resize', () => {{ resizeCanvas(); render(); }});
-resizeCanvas();
 updateDossier(selectedNode);
 renderTable();
 render();
