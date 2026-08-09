@@ -43,149 +43,17 @@ from pathlib import Path
 
 import db
 
-NS = "{http://bb.ringingworld.co.uk/NS/performances#}"
-EXPORT_URL = "https://bb.ringingworld.co.uk/export.php"
-PAGE_SIZE = 1000  # BellBoard rejects >10000 with HTTP 413; 1000 keeps pages small
-PARAM_BUDGET = 16000
-USER_AGENT = (
-    "change-ringing-corpus/0.1 (+https://github.com/nihilisticiconoclast/change-ringing)"
+from bellboard_common import (
+    NS,
+    EXPORT_URL,
+    PAGE_SIZE,
+    USER_AGENT,
+    text_of,
+    fetch_page,
+    parse_performance,
+    insert_many,
+    PERF_COLS,
 )
-
-
-def text_of(elem):
-    """Flattened text of an element, or None. Footnotes and details contain
-    markup in places, so itertext() rather than .text."""
-    if elem is None:
-        return None
-    s = "".join(elem.itertext()).strip()
-    return s or None
-
-
-def fetch_page(changed_since: str, page: int, retries: int = 4) -> bytes:
-    url = (
-        f"{EXPORT_URL}?changed_since={changed_since}"
-        f"&pagesize={PAGE_SIZE}&page={page}&fmt=xml"
-    )
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    delay = 2
-    for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                return resp.read()
-        except (urllib.error.URLError, TimeoutError) as exc:
-            if attempt == retries - 1:
-                raise
-            print(f"  fetch failed ({exc}); retrying in {delay}s", file=sys.stderr)
-            time.sleep(delay)
-            delay *= 2
-    raise RuntimeError("unreachable")
-
-
-def parse_performance(p):
-    """Flatten one <performance> into (perf_row, ringers, footnotes, flags)."""
-    bb_id = p.get("id") or ""
-    perf_id = int(bb_id.lstrip("P")) if bb_id.lstrip("P").isdigit() else None
-    if perf_id is None:
-        return None
-
-    place = p.find(f"{NS}place")
-    names = {}
-    towerbase = dove_tower = dove_ring = ring_type = tenor = portable = dumb = None
-    if place is not None:
-        towerbase = place.get("towerbase-id")
-        dove_tower = place.get("dove-tower-id")
-        for n in place.findall(f"{NS}place-name"):
-            names[n.get("type")] = text_of(n)
-        ring = place.find(f"{NS}ring")
-        if ring is not None:
-            ring_type = ring.get("type")
-            tenor = ring.get("tenor")
-            dove_ring = ring.get("dove-ring-id")
-            portable = ring.get("portable")
-            dumb = ring.get("dumb-bells")
-
-    title_el = p.find(f"{NS}title")
-    changes = method = None
-    if title_el is not None:
-        changes = text_of(title_el.find(f"{NS}changes"))
-        method = text_of(title_el.find(f"{NS}method"))
-
-    as_int = lambda v: int(v) if v is not None and str(v).isdigit() else None
-
-    perf_row = [
-        perf_id,
-        bb_id,
-        text_of(p.find(f"{NS}association")),
-        names.get("place"),
-        names.get("dedication"),
-        names.get("county"),
-        as_int(towerbase),
-        as_int(dove_tower),
-        as_int(dove_ring),
-        ring_type,
-        tenor,
-        portable,
-        dumb,
-        text_of(p.find(f"{NS}date")),
-        text_of(p.find(f"{NS}duration")),
-        as_int(changes),
-        method,
-        text_of(title_el),
-        text_of(p.find(f"{NS}details")),
-        text_of(p.find(f"{NS}composer")),
-        text_of(p.find(f"{NS}composition")),
-        text_of(p.find(f"{NS}timestamp")),
-        datetime.now(timezone.utc).isoformat(timespec="seconds"),
-    ]
-
-    ringers = []
-    holder = p.find(f"{NS}ringers")
-    if holder is not None:
-        for i, r in enumerate(holder.findall(f"{NS}ringer")):
-            ringers.append(
-                [
-                    perf_id,
-                    i,
-                    r.get("bell"),
-                    text_of(r),
-                    1 if r.get("conductor") == "true" else 0,
-                ]
-            )
-
-    footnotes = [
-        [perf_id, i, text_of(f)] for i, f in enumerate(p.findall(f"{NS}footnote"))
-    ]
-    flags = [
-        [perf_id, i, f.get("type"), f.get("bell"), text_of(f)]
-        for i, f in enumerate(p.findall(f"{NS}flag"))
-    ]
-    return perf_row, ringers, footnotes, flags
-
-
-def insert_many(conn, table, cols, rows):
-    """Multi-row INSERT OR REPLACE. The client's executemany() costs a round
-    trip per row against a remote primary -- see the comment in
-    migrate_csv_to_turso.py."""
-    if not rows:
-        return
-    col_list = ", ".join(f'"{c}"' for c in cols)
-    tup = "(" + ", ".join("?" for _ in cols) + ")"
-    batch_size = max(1, min(500, PARAM_BUDGET // len(cols)))
-    for i in range(0, len(rows), batch_size):
-        batch = rows[i : i + batch_size]
-        sql = (
-            f'INSERT OR REPLACE INTO "{table}" ({col_list}) VALUES '
-            + ", ".join([tup] * len(batch))
-        )
-        conn.execute(sql, [v for row in batch for v in row])
-
-
-PERF_COLS = [
-    "perf_id", "bb_id", "association", "place", "dedication", "county",
-    "towerbase-id", "dove_tower_id", "dove_ring_id", "ring_type", "tenor",
-    "portable", "dumb_bells", "perf_date", "duration", "changes", "method",
-    "title", "details", "composer", "composition", "bb_timestamp", "ingested_at",
-]
 
 
 def main() -> int:
@@ -256,7 +124,10 @@ def main() -> int:
         return 1
 
     def load_page(n):
-        raw = fetch_page(changed_since, n)
+        raw = fetch_page(
+            f"{EXPORT_URL}?changed_since={changed_since}&pagesize={PAGE_SIZE}&page={n}&fmt=xml",
+            4
+        )
         try:
             return ET.fromstring(raw).findall(f"{NS}performance")
         except ET.ParseError as exc:
@@ -321,6 +192,11 @@ def main() -> int:
             id_list = ",".join(chunk)
             for tbl in ("performance_ringers", "performance_footnotes", "performance_flags"):
                 conn.execute(f'DELETE FROM "{tbl}" WHERE "perf_id" IN ({id_list})')
+
+        # Add ingested_at timestamp to each performance row
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        for row in perf_rows:
+            row[-1] = now  # ingested_at is the last column
 
         insert_many(conn, "performances", PERF_COLS, perf_rows)
         insert_many(conn, "performance_ringers",
