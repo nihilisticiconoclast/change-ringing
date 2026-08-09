@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Method Lineage Atlas — Structural Genealogy of Change Ringing</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --ext:#0e9f6e; --ext-bg:#def7ec; --ext-border:#31c48d;
+  --var:#d97706; --var-bg:#fef3c7; --var-border:#f59e0b;
+  --name:#6b7280; --name-bg:#f3f4f6; --name-border:#9ca3af;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948; --s9:#8B8880;
+  --dim:#C9C6BC;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --ext:#31c48d; --ext-bg:#042f2e; --ext-border:#0e9f6e;
+    --var:#fbbf24; --var-bg:#451a03; --var-border:#d97706;
+    --name:#9ca3af; --name-bg:#1f2937; --name-border:#4b5563;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#7A766E;
+    --dim:#33322F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --ext:#31c48d; --ext-bg:#042f2e; --ext-border:#0e9f6e;
+  --var:#fbbf24; --var-bg:#451a03; --var-border:#d97706;
+  --name:#9ca3af; --name-bg:#1f2937; --name-border:#4b5563;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s9:#7A766E;
+  --dim:#33322F;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--serif); font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.nav-bar{
+  background:var(--surface); border-bottom:1px solid var(--rule);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+}
+.nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
+.nav-links a:hover{color:var(--ink)}
+.theme-btn{
+  background:none;border:1px solid var(--rule);color:var(--ink-2);padding:4px 10px;
+  font-family:var(--mono);font-size:11px;cursor:pointer;border-radius:2px;
+}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+header{padding:60px 0 40px;border-bottom:1px solid var(--rule)}
+.eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--bronze); margin:0 0 14px;
+}
+h1{font-size:clamp(2.3rem,5.5vw,3.8rem);line-height:1.06;font-weight:400;letter-spacing:-.015em;margin:0}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:18px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:32px;margin-top:34px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.75rem;color:var(--ink);letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;margin:0}
+.lede{color:var(--ink-2);margin-top:12px;max-width:64ch}
+
+/* Search and Quick Filters */
+.explorer-controls{display:flex;flex-wrap:wrap;gap:14px;margin:28px 0 20px;align-items:center}
+.search-box{
+  flex:1;min-width:260px;background:var(--surface);border:1px solid var(--rule);
+  color:var(--ink);padding:10px 14px;font-family:var(--mono);font-size:13px;
+  border-radius:3px;outline:none;
+}
+.search-box:focus{border-color:var(--bronze);box-shadow:0 0 0 2px rgba(184,135,63,.2)}
+.quick-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.chip{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
+  padding:6px 12px;border:1px solid var(--rule);background:var(--surface);
+  color:var(--ink-2);cursor:pointer;border-radius:2px;display:inline-flex;align-items:center;gap:6px;
+  transition:all .15s;
+}
+.chip:hover{border-color:var(--bronze);color:var(--ink)}
+.chip.active{background:var(--surface-2);border-color:var(--bronze);color:var(--bronze);font-weight:600}
+
+/* Genealogy Graph Canvas */
+.tree-container{
+  background:var(--surface);border:1px solid var(--rule);border-radius:4px;
+  padding:24px;overflow-x:auto;position:relative;min-height:360px;
+}
+.tree-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid var(--rule);padding-bottom:12px}
+.tree-title{font-size:1.3rem;font-weight:400;color:var(--ink)}
+.tree-badges{display:flex;gap:8px}
+.badge{
+  font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:2px;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.badge-ext{background:var(--ext-bg);color:var(--ext);border:1px solid var(--ext-border)}
+.badge-var{background:var(--var-bg);color:var(--var);border:1px solid var(--var-border)}
+.badge-name{background:var(--name-bg);color:var(--name);border:1px solid var(--name-border)}
+
+/* Method Cards Grid */
+.nodes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.node-card{
+  background:var(--ground);border:1px solid var(--rule);border-radius:3px;padding:14px;
+  cursor:pointer;transition:transform .12s, border-color .12s;position:relative;
+}
+.node-card:hover{border-color:var(--bronze-soft);transform:translateY(-1px)}
+.node-card.selected{border-color:var(--bronze);box-shadow:0 0 0 2px var(--bronze)}
+.node-card .stg{
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--bronze);
+  letter-spacing:.1em;display:flex;justify-content:space-between;margin-bottom:6px;
+}
+.node-card h4{margin:0;font-size:1.05rem;font-weight:400;color:var(--ink)}
+.node-card .meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:6px}
+
+/* Lineage Links Table */
+.links-table{width:100%;border-collapse:collapse;margin-top:20px;font-size:13.5px;font-family:var(--mono)}
+.links-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);color:var(--ink-3);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em}
+.links-table td{padding:10px;border-bottom:1px solid var(--rule);color:var(--ink-2);vertical-align:middle}
+.links-table tr:hover td{background:var(--surface-2)}
+.links-table .rel-tag{padding:2px 6px;border-radius:2px;font-size:10.5px;text-transform:uppercase}
+
+/* Notation Inspector */
+.notation-box{
+  background:var(--ground);border:1px solid var(--rule);border-radius:3px;padding:16px;margin-top:16px;
+  font-family:var(--mono);font-size:12.5px;overflow-x:auto;
+}
+.notation-lead{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.ch-pill{
+  background:var(--surface);border:1px solid var(--rule);padding:3px 6px;border-radius:2px;
+  font-size:11.5px;color:var(--ink);
+}
+
+/* Statistics Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:24px}
+.stat-card{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:20px}
+.stat-card h3{font-size:1.15rem;font-weight:400;margin:0 0 12px;color:var(--ink)}
+.rank-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:12px}
+.rank-row:last-child{border-bottom:none}
+
+/* Confusion Matrix */
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mat-cell{background:var(--ground);border:1px solid var(--rule);padding:10px;text-align:center;border-radius:2px}
+.mat-val{font-family:var(--mono);font-size:1.35rem;font-weight:600;color:var(--ink)}
+.mat-lbl{font-family:var(--mono);font-size:10px;color:var(--ink-3);text-transform:uppercase;margin-top:2px}
+
+footer{padding:48px 0;color:var(--ink-3);font-size:14px;border-top:1px solid var(--rule)}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <div class="nav-links">
+    <a href="index.html">Founder Atlas</a>
+    <a href="lineage.html" class="active">Method Lineage Atlas</a>
+  </div>
+  <button class="theme-btn" id="theme-toggle" type="button">Theme</button>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CCCBR Methods Library Analysis</div>
+    <h1>The Method <em>Lineage</em> Atlas</h1>
+    <p class="standfirst">
+      Structural genealogy and parent-child extensions across 25,055 change-ringing methods,
+      resolved from place notation and calibrated with 98.9% precision.
+    </p>
+
+    <div class="figures" id="top-figures">
+      <!-- Injected figures -->
+    </div>
+  </header>
+
+  <!-- Interactive Family Explorer -->
+  <section id="explorer">
+    <div class="eyebrow">Interactive Tree Visualizer</div>
+    <h2>Explore Method Families & Extensions</h2>
+    <p class="lede">
+      Select or search any of the 2,786 multi-stage naming families to inspect its stage progression,
+      parent-child lineage classifications, and place notation geometry.
+    </p>
+
+    <div class="explorer-controls">
+      <input type="text" id="search-input" class="search-box" placeholder="Search method family (e.g. Cambridge, Bristol, Stedman)...">
+    </div>
+
+    <div class="quick-chips" id="quick-chips">
+      <!-- Quick chips populated here -->
+    </div>
+
+    <div class="tree-container" id="tree-container">
+      <div class="tree-header">
+        <div>
+          <div class="tree-title" id="family-title">Cambridge</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:4px" id="family-subtitle">
+            6 methods across Stages 6–16 · Surprise Family
+          </div>
+        </div>
+        <div class="tree-badges" id="family-badges"></div>
+      </div>
+
+      <div class="nodes-grid" id="methods-grid">
+        <!-- Method cards populated dynamically -->
+      </div>
+
+      <div id="links-section" style="margin-top:24px">
+        <h4 style="margin:0 0 10px;font-size:1rem;font-weight:400;color:var(--ink-2)">Parent-Child Lineage Relationships:</h4>
+        <div style="overflow-x:auto">
+          <table class="links-table">
+            <thead>
+              <tr>
+                <th>Parent (Lower Stage)</th>
+                <th>Child (Higher Stage)</th>
+                <th>Relationship</th>
+                <th>Confidence</th>
+                <th>Notation Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="links-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="notation-inspector" style="margin-top:24px;display:none">
+        <h4 style="margin:0 0 6px;font-size:1rem;font-weight:400;color:var(--ink-2)" id="inspect-title">Place Notation Details</h4>
+        <div class="notation-box" id="inspect-content"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deepest Lineages & Ground Truth Calibration -->
+  <section>
+    <div class="eyebrow">Macro-Level Architecture</div>
+    <h2>Deepest Lineages & Calibration</h2>
+    <p class="lede">
+      Ranking the most extensive continuous chains across stages, calibrated against the 1,851 methods carrying official ground-truth tags.
+    </p>
+
+    <div class="stats-grid">
+      <!-- Longest Chains Card -->
+      <div class="stat-card">
+        <h3>Deepest Extension Chains</h3>
+        <div id="longest-chains-list"></div>
+      </div>
+
+      <!-- Ground Truth Precision Card -->
+      <div class="stat-card">
+        <h3>Calibration against Ground Truth</h3>
+        <div style="display:flex;gap:20px;margin-bottom:14px">
+          <div>
+            <div style="font-family:var(--mono);font-size:1.6rem;color:var(--ext);font-weight:600">98.9%</div>
+            <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-transform:uppercase">Precision</div>
+          </div>
+          <div>
+            <div style="font-family:var(--mono);font-size:1.6rem;color:var(--ink);font-weight:600">80.2%</div>
+            <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-transform:uppercase">Recall</div>
+          </div>
+          <div>
+            <div style="font-family:var(--mono);font-size:1.6rem;color:var(--bronze);font-weight:600">88.6%</div>
+            <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-transform:uppercase">F1 Score</div>
+          </div>
+        </div>
+        <p style="font-size:13.5px;color:var(--ink-2);margin:0">
+          Tested blindly against 2,076 candidate pairs possessing official CCCBR <code>extension_construction</code> tags (e.g. <code>EP3-1</code>, <code>EP1-2</code>).
+        </p>
+
+        <div class="matrix-grid">
+          <div class="mat-cell"><div class="mat-val" style="color:var(--ext)">1,397</div><div class="mat-lbl">True Positives</div></div>
+          <div class="mat-cell"><div class="mat-val" style="color:var(--var)">15</div><div class="mat-lbl">False Positives</div></div>
+          <div class="mat-cell"><div class="mat-val" style="color:var(--ink-3)">344</div><div class="mat-lbl">False Negatives</div></div>
+          <div class="mat-cell"><div class="mat-val" style="color:var(--ink)">320</div><div class="mat-lbl">True Negatives</div></div>
+        </div>
+      </div>
+
+      <!-- Stage Distribution Card -->
+      <div class="stat-card">
+        <h3>Multi-Stage Distribution</h3>
+        <p style="font-size:13px;color:var(--ink-2);margin:0 0 12px">
+          Methods in multi-stage families by stage size:
+        </p>
+        <div id="stage-dist-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px">
+      <div>The Change Ringing Project · Method Lineage & Genealogy Atlas</div>
+      <div>Source: CCCBR Methods Library (25,055 methods) · Fully Offline Queryable</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const $ = s => document.querySelector(s);
+const fmt = n => (n||0).toLocaleString('en-GB');
+
+// Top figures
+const F = DATA.lineage_totals;
+const C = DATA.corpus_totals;
+$('#top-figures').innerHTML = `
+  <div class="fig"><div class="n">${fmt(C.total_methods)}</div><div class="l">Total Methods</div></div>
+  <div class="fig"><div class="n">${fmt(F.families_count)}</div><div class="l">Multi-Stage Families</div></div>
+  <div class="fig"><div class="n">${fmt(F.extensions)}</div><div class="l">True Extensions</div></div>
+  <div class="fig"><div class="n">${fmt(F.variants)}</div><div class="l">Structural Variants</div></div>
+  <div class="fig"><div class="n">${fmt(F.name_only)}</div><div class="l">Name Collisions</div></div>
+`;
+
+// Theme Toggle
+const themeBtn = $('#theme-toggle');
+themeBtn.onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+};
+
+// Quick chips
+const quickContainer = $('#quick-chips');
+DATA.top_featured_names.forEach(name => {
+  if (DATA.families[name]) {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = name;
+    btn.onclick = () => selectFamily(name);
+    quickContainer.appendChild(btn);
+  }
+});
+
+let currentFamily = 'Cambridge';
+
+function selectFamily(name) {
+  const fam = DATA.families[name];
+  if (!fam) return;
+  currentFamily = name;
+
+  // Update active chip
+  [...quickContainer.children].forEach(b => {
+    b.classList.toggle('active', b.textContent === name);
+  });
+
+  $('#family-title').textContent = fam.name;
+  $('#family-subtitle').textContent = 
+    `${fam.method_count} method${fam.method_count===1?'':'s'} across Stages ${fam.stage_span} · ${fam.primary_class} Family`;
+
+  $('#family-badges').innerHTML = `
+    <span class="badge badge-ext">${fam.ext_count} Extensions</span>
+    ${fam.var_count ? `<span class="badge badge-var">${fam.var_count} Variants</span>` : ''}
+    ${fam.name_only_count ? `<span class="badge badge-name">${fam.name_only_count} Name Only</span>` : ''}
+  `;
+
+  // Render method cards
+  const grid = $('#methods-grid');
+  grid.innerHTML = fam.methods.map(m => `
+    <div class="node-card" onclick="inspectMethod('${m.id}')">
+      <div class="stg">
+        <span>Stage ${m.stage}</span>
+        <span>${m.id}</span>
+      </div>
+      <h4>${m.title}</h4>
+      <div class="meta">
+        ${m.class} · Lead: ${m.lol} changes ${m.ec ? `· EC: ${m.ec}` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  // Render links
+  const tbody = $('#links-tbody');
+  if (!fam.links.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--ink-3);padding:16px">No multi-stage pair links</td></tr>`;
+  } else {
+    tbody.innerHTML = fam.links.map(l => {
+      let badgeClass = l.rel === 'extension' ? 'badge-ext' : (l.rel === 'variant' ? 'badge-var' : 'badge-name');
+      let confColor = l.conf === 'high' ? 'var(--ext)' : (l.conf === 'medium' ? 'var(--var)' : 'var(--ink-3)');
+      return `
+        <tr>
+          <td><strong>${l.p_title}</strong> (Stage ${l.p_stage})</td>
+          <td><strong>${l.c_title}</strong> (Stage ${l.c_stage})</td>
+          <td><span class="badge ${badgeClass}">${l.rel}</span></td>
+          <td><span style="color:${confColor};font-weight:600">${l.conf}</span></td>
+          <td style="font-size:12px">${l.ev}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  $('#notation-inspector').style.display = 'none';
+}
+
+function inspectMethod(mid) {
+  const fam = DATA.families[currentFamily];
+  if (!fam) return;
+  const m = fam.methods.find(x => x.id === mid);
+  if (!m) return;
+
+  $('#inspect-title').textContent = `${m.title} (${m.id})`;
+  const insp = $('#notation-inspector');
+  insp.style.display = 'block';
+
+  $('#inspect-content').innerHTML = `
+    <div style="margin-bottom:8px">
+      <strong>Classification:</strong> ${m.class} | 
+      <strong>Stage:</strong> ${m.stage} | 
+      <strong>Lead Length:</strong> ${m.lol} | 
+      <strong>Symmetry:</strong> ${m.sym || 'None'} |
+      <strong>Lead Head:</strong> ${m.lh || 'None'} ${m.lhc ? `(${m.lhc})` : ''}
+      ${m.ec ? `| <strong>CCCBR EC:</strong> <code>${m.ec}</code>` : ''}
+    </div>
+    <div style="word-break:break-all;color:var(--bronze)">
+      <strong>Place Notation:</strong> ${m.not}
+    </div>
+  `;
+}
+
+// Search box input
+const searchInput = $('#search-input');
+searchInput.addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) return;
+  const match = Object.keys(DATA.families).find(k => k.toLowerCase().startsWith(q) || k.toLowerCase().includes(q));
+  if (match) selectFamily(match);
+});
+
+// Render Longest Chains
+const chainsList = $('#longest-chains-list');
+chainsList.innerHTML = DATA.longest_chains.slice(0, 10).map((c, i) => `
+  <div class="rank-row">
+    <div>
+      <span style="color:var(--bronze);width:18px;display:inline-block">${i+1}.</span>
+      <a href="javascript:selectFamily('${c.name}')" style="color:var(--ink);text-decoration:none;font-weight:600">${c.name}</a>
+      <span style="color:var(--ink-3);font-size:11px">(${c.primary_class})</span>
+    </div>
+    <div style="color:var(--ink-2)">
+      ${c.stages.length} stages (${c.stages[0]}–${c.stages[c.stages.length-1]})
+    </div>
+  </div>
+`).join('');
+
+// Render Stage Distribution
+const stageDist = $('#stage-dist-list');
+stageDist.innerHTML = Object.entries(DATA.stage_distribution).map(([stg, cnt]) => `
+  <div class="rank-row">
+    <span>Stage ${stg}</span>
+    <span>${fmt(cnt)} methods</span>
+  </div>
+`).join('');
+
+// Initial selection
+selectFamily('Cambridge');
+</script>
+
+</body>
+</html>
