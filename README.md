@@ -23,6 +23,11 @@ Rebuild it with `python scripts/build_atlas.py`, which reads a local database
 (never Turso) and writes `docs/index.html` — one self-contained file, no
 external requests. The page is served by GitHub Pages from `main` / `docs`.
 
+The SQL behind it lives in `queries/` — and `build_atlas.py` reads those files
+rather than holding its own copies, so what is recorded is what actually ran.
+`queries/findings/` holds one query per claim made on the page, so each figure
+can be checked instead of taken on trust.
+
 ## Status
 
 - [x] Dove's Guide bulk CSVs (towers, bells, frames, founders, dove, changes,

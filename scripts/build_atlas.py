@@ -39,8 +39,33 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "scripts" / "templates" / "atlas.html"
+QUERIES = ROOT / "queries" / "atlas"
 OUT = ROOT / "docs" / "index.html"
 TOP_N = 8
+
+
+def sql(name, index=0):
+    """Load a statement from queries/atlas/.
+
+    The SQL lives in files rather than in string literals here so that the
+    recorded queries and the ones that actually build the page cannot drift
+    apart -- a queries/ folder that is a copy of the real thing is worse than
+    none, because it looks authoritative while going stale.
+
+    Files may hold more than one statement, separated by ';'.
+
+    Comments are stripped BEFORE splitting, not after. Splitting first breaks
+    on any ';' inside a '--' comment and leaves the tail of a sentence sitting
+    where SQL should be. That is the same mistake that broke the very first
+    loader in this project (schema/001 has a semicolon inside a comment), and
+    it reappeared here the moment these queries grew prose worth reading.
+    """
+    text = (QUERIES / name).read_text(encoding="utf-8")
+    body = "\n".join(
+        line for line in text.splitlines() if not line.strip().startswith("--")
+    )
+    statements = [s.strip() for s in body.split(";") if s.strip()]
+    return statements[index]
 
 year_of = lambda s: (lambda m: int(m.group()) if m else None)(
     re.search(r"(1[0-9]{3}|20[0-9]{2})", str(s or ""))
@@ -51,11 +76,7 @@ def build(db_path: Path) -> dict:
     conn = sqlite3.connect(db_path)
     q = lambda s, p=(): conn.execute(s, p).fetchall()
 
-    bells = q(
-        'SELECT b.Tower_ID, b.Latitude, b.Longitude, f."Group", b.Cast_Date '
-        "FROM bells b JOIN founders f ON f.Name = b.Founder "
-        'WHERE f."Group" IS NOT NULL AND b.Latitude IS NOT NULL'
-    )
+    bells = q(sql("01_bells_by_founder_group.sql"))
     if not bells:
         sys.exit(f"ERROR: no attributed bells found in {db_path}")
 
@@ -83,24 +104,15 @@ def build(db_path: Path) -> dict:
         for t in towers.values()
     ]
 
-    first_peals = q(
-        'SELECT f."Group", COUNT(DISTINCT mp.method_id) FROM method_performances mp '
-        "JOIN dove d ON d.TowerID = mp.dove_tower_id "
-        "JOIN bells b ON b.Tower_ID = d.TowerID "
-        "JOIN founders f ON f.Name = b.Founder "
-        "WHERE mp.event_type = 'firstTowerbellPeal' AND f.\"Group\" IS NOT NULL "
-        'GROUP BY f."Group" ORDER BY 2 DESC'
-    )
+    first_peals = q(sql("02_first_peals_by_foundry.sql"))
 
     meta = []
     for g in top:
         a, b_, n, tot = q(
-            'SELECT MIN("From"), MAX("To"), COUNT(*), SUM(Bells) '
-            'FROM founders WHERE "Group" = ?', (g,)
+            sql("03_foundry_group_metadata.sql", 0).replace(":group_name", "?"), (g,)
         )[0]
         home = q(
-            'SELECT Location FROM founders WHERE "Group" = ? AND Location IS NOT NULL '
-            "GROUP BY Location ORDER BY COUNT(*) DESC LIMIT 1", (g,)
+            sql("03_foundry_group_metadata.sql", 1).replace(":group_name", "?"), (g,)
         )
         meta.append({"name": g, "from": a, "to": b_, "firms": n, "bells": tot,
                      "home": home[0][0] if home else None})
@@ -117,11 +129,9 @@ def build(db_path: Path) -> dict:
         "totals": {
             "bells": len(bells),
             "towers": len(points),
-            "methods": q("SELECT COUNT(*) FROM methods")[0][0],
-            "linked": q(
-                "SELECT COUNT(*) FROM method_performances "
-                "WHERE dove_tower_id IS NOT NULL"
-            )[0][0],
+            "methods": q(sql("04_corpus_totals.sql", 0))[0][0],
+            "linked": q(sql("04_corpus_totals.sql", 1))[0][0],
+            "unlinked": q(sql("04_corpus_totals.sql", 2))[0][0],
         },
     }
 
