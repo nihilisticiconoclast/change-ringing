@@ -4,8 +4,8 @@ Ingest BellBoard performances into the Turso database.
 
 Prerequisites:
     pip install libsql
-    export TURSO_DATABASE_URL="libsql://<your-db>.turso.io"
-    export TURSO_AUTH_TOKEN="<your-token>"
+    # For production: export TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, and CHANGE_RINGING_ALLOW_PRODUCTION=1
+    # For local: use --local-db PATH
     # apply schema/002_init_bellboard.sql first (see --init)
 
 Usage:
@@ -17,6 +17,9 @@ Usage:
 
     # incremental: pick up where the last run left off
     python scripts/ingest_bellboard.py --since-last
+
+    # local database
+    python scripts/ingest_bellboard.py --local-db local_corpus.db --changed-since 2026-01-01
 
 Source: BellBoard, https://bb.ringingworld.co.uk -- API docs at
 https://bb.ringingworld.co.uk/help/api.php
@@ -32,11 +35,8 @@ API docs), so a performance removed upstream will linger here until a full
 reload. Treat this corpus as complete-plus rather than exactly-equal.
 """
 import argparse
-import os
 import sys
 import time
-import urllib.error
-import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,9 +47,7 @@ from bellboard_common import (
     NS,
     EXPORT_URL,
     PAGE_SIZE,
-    USER_AGENT,
-    text_of,
-    fetch_page,
+    fetch_performances,
     parse_performance,
     insert_many,
     PERF_COLS,
@@ -124,14 +122,7 @@ def main() -> int:
         return 1
 
     def load_page(n):
-        raw = fetch_page(
-            f"{EXPORT_URL}?changed_since={changed_since}&pagesize={PAGE_SIZE}&page={n}&fmt=xml",
-            4
-        )
-        try:
-            return ET.fromstring(raw).findall(f"{NS}performance")
-        except ET.ParseError as exc:
-            raise RuntimeError(f"could not parse page {n}: {exc}") from exc
+        return fetch_performances(changed_since=changed_since, page=n, pagesize=PAGE_SIZE)
 
     total = 0
     page = 1
@@ -192,11 +183,6 @@ def main() -> int:
             id_list = ",".join(chunk)
             for tbl in ("performance_ringers", "performance_footnotes", "performance_flags"):
                 conn.execute(f'DELETE FROM "{tbl}" WHERE "perf_id" IN ({id_list})')
-
-        # Add ingested_at timestamp to each performance row
-        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        for row in perf_rows:
-            row[-1] = now  # ingested_at is the last column
 
         insert_many(conn, "performances", PERF_COLS, perf_rows)
         insert_many(conn, "performance_ringers",
