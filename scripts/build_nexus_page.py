@@ -259,7 +259,6 @@ def generate_html(graph_data):
     </style>
     <!-- Use 3d-force-graph via CDN -->
     <script src="https://unpkg.com/3d-force-graph"></script>
-    <script src="https://unpkg.com/d3-force-3d"></script>
     <script src="https://unpkg.com/three"></script>
 </head>
 <body>
@@ -424,8 +423,7 @@ def generate_html(graph_data):
             })
             .onBackgroundClick(() => {
                 sidePanel.classList.remove('visible');
-            })
-            .d3Force('collide', d3.forceCollide(node => Math.cbrt(node.group === 'performance' ? 0.5 : node.val) * 4 + 2));
+            });
             
         // Expand camera far plane so the giant astrolabe rings don't clip
         Graph.camera().far = 100000;
