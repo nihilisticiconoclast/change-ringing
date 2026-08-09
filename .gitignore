@@ -15,3 +15,4 @@ local_corpus.db
 *.db-wal
 .local-build-cache/
 data/change-ringing.db
+*checkpoint*.json

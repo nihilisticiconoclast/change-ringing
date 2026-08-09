@@ -104,9 +104,61 @@ def main() -> int:
 
     run([SCRIPTS / "ingest_methods.py", "--init", "--local-db", out])
 
+    # BellBoard data ingestion
+    bb_dir = ROOT / "data" / "bellboard"
+    bb_perf_csvs = sorted(list(bb_dir.glob("performances_*.csv"))) if bb_dir.exists() else []
+
     if args.bellboard_since:
         run([SCRIPTS / "ingest_bellboard.py", "--init", "--local-db", out,
              "--changed-since", args.bellboard_since])
+    elif bb_perf_csvs:
+        print(f"\nIngesting committed BellBoard corpus from {bb_dir} ({len(bb_perf_csvs)} yearly files)...")
+        conn = libsql.connect(str(out))
+        conn.executescript((SCHEMA_DIR / "002_init_bellboard.sql").read_text())
+        
+        total_p, total_r = 0, 0
+        for p_csv in bb_perf_csvs:
+            yr = p_csv.stem.split("_")[-1]
+            r_csv = bb_dir / f"ringers_{yr}.csv"
+            fn_csv = bb_dir / f"footnotes_{yr}.csv"
+
+            # Load performances
+            with open(p_csv, encoding="utf-8") as f:
+                p_rows = list(csv.DictReader(f))
+                if p_rows:
+                    flds = list(p_rows[0].keys())
+                    conn.executemany(
+                        f"INSERT OR REPLACE INTO performances ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
+                        [[r.get(k) for k in flds] for r in p_rows]
+                    )
+                    total_p += len(p_rows)
+
+            # Load ringers
+            if r_csv.exists():
+                with open(r_csv, encoding="utf-8") as f:
+                    r_rows = list(csv.DictReader(f))
+                    if r_rows:
+                        flds = list(r_rows[0].keys())
+                        conn.executemany(
+                            f"INSERT INTO performance_ringers ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
+                            [[r.get(k) for k in flds] for r in r_rows]
+                        )
+                        total_r += len(r_rows)
+
+            # Load footnotes
+            if fn_csv.exists():
+                with open(fn_csv, encoding="utf-8") as f:
+                    fn_rows = list(csv.DictReader(f))
+                    if fn_rows:
+                        flds = list(fn_rows[0].keys())
+                        conn.executemany(
+                            f"INSERT INTO performance_footnotes ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
+                            [[r.get(k) for k in flds] for r in fn_rows]
+                        )
+
+        conn.commit()
+        conn.close()
+        print(f"  Ingested {total_p:,} performances and {total_r:,} ringers from {len(bb_perf_csvs)} years.")
     else:
         # Create the tables even when not populating them, so queries and
         # schema checks against the replica behave the same as production.
