@@ -224,7 +224,12 @@
                 }
             })
             .nodeRelSize(4)
-            .nodeVal(node => node.group === 'performance' ? 0.5 : node.val)
+            .nodeVal(node => {
+                if (node.group === 'performance') return 0.5;
+                // Since 3d-force-graph uses cbrt(val) for radius, we cube the value
+                // so that the radius scales exactly linearly with activity!
+                return Math.pow(node.val, 3) / 5;
+            })
             .nodeResolution(16)
             .linkWidth(link => 0.5)
             .linkColor(link => {
@@ -311,27 +316,22 @@
                 sidePanel.classList.remove('visible');
             });
             
-        // Expand camera far plane so the giant astrolabe rings don't clip
+        // Expand camera far plane
         Graph.camera().far = 100000;
         Graph.camera().updateProjectionMatrix();
             
-        // Add Astrolabe / Celestial Spheres for visual reference
+        // Add highly visible Axes and Grids instead of faint Torus geometry
         const scene = Graph.scene();
-        const createRing = (radius, color, axis) => {
-            const geometry = new THREE.TorusGeometry(radius, 15, 12, 120);
-            const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.35 });
-            const ring = new THREE.Mesh(geometry, material);
-            if (axis === 'x') ring.rotation.y = Math.PI / 2;
-            if (axis === 'y') ring.rotation.x = Math.PI / 2;
-            scene.add(ring);
-        };
         
-        // Massive scale for the 5000+ nodes
-        [1000, 2000, 3000, 4000, 5000].forEach(r => {
-            createRing(r, 0x38bdf8, 'x'); // Blue rings
-            createRing(r, 0xfbbf24, 'y'); // Gold rings
-            createRing(r, 0xf472b6, 'z'); // Pink rings
-        });
+        // Massive coordinate axes (Red=X, Green=Y, Blue=Z)
+        const axesHelper = new THREE.AxesHelper(5000);
+        scene.add(axesHelper);
+        
+        // A highly visible flat equatorial grid plane to provide depth (opacity 0.6)
+        const gridHelper = new THREE.GridHelper(6000, 40, 0x38bdf8, 0x111122);
+        gridHelper.material.opacity = 0.6;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
             
         // Setup slider interaction
         slider.addEventListener('input', (e) => {
