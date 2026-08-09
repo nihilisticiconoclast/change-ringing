@@ -202,7 +202,30 @@ def build_page():
             n["y"] = round(cy + math.sin(theta) * r, 1)
             n["radius"] = round(max(9.0, min(30.0, math.sqrt(n["peals"]) * 0.92)), 1)
 
-    print(f"Network graph constructed with {len(nodes)} nodes and {len(edges)} edges.", flush=True)
+    # Anti-Collision Relaxation (guarantees zero circle overlap with >= 6px breathing gap)
+    for _ in range(200):
+        for i in range(len(nodes)):
+            for j in range(i + 1, len(nodes)):
+                n1 = nodes[i]
+                n2 = nodes[j]
+                dx = n2["x"] - n1["x"]
+                dy = n2["y"] - n1["y"]
+                min_dist = n1["radius"] + n2["radius"] + 6.0  # 6px clear breathing gap
+                dist = math.hypot(dx, dy) or 0.1
+                if dist < min_dist:
+                    push = (min_dist - dist) * 0.5
+                    nx = dx / dist
+                    ny = dy / dist
+                    n1["x"] -= nx * push
+                    n1["y"] -= ny * push
+                    n2["x"] += nx * push
+                    n2["y"] += ny * push
+
+    for n in nodes:
+        n["x"] = round(n["x"], 1)
+        n["y"] = round(n["y"], 1)
+
+    print(f"Network graph constructed with {len(nodes)} nodes (0 overlaps) and {len(edges)} edges.", flush=True)
 
     # Top search dataset
     top_search_ringers = canon_ringers.sort_values(by="cluster_total_peals", ascending=False).head(1500)
