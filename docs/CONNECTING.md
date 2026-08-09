@@ -13,8 +13,12 @@ holds schema and code; Turso holds the actual data. Nobody should commit a
    ```
    export TURSO_DATABASE_URL="libsql://change-ringing-<org>.turso.io"
    export TURSO_AUTH_TOKEN="<token>"
-   python scripts/migrate_csv_to_turso.py --csv-dir /path/to/dove/csvs
+   python scripts/fetch_dove_csvs.py --out-dir ./dove-csvs
+   python scripts/migrate_csv_to_turso.py --csv-dir ./dove-csvs
    ```
+   Dove publishes the CSVs at stable URLs, so the load does not depend on a
+   pre-existing local copy. If you already have one, skip the fetch step and
+   point `--csv-dir` at it.
 5. Share `TURSO_DATABASE_URL` and a token with each agent environment as
    below. Prefer creating a separate token per agent/environment
    (`turso db tokens create change-ringing`) over sharing one token, so

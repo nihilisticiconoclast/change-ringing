@@ -74,10 +74,9 @@ def main() -> int:
     print(f"Applying schema from {args.schema} ...")
     with open(args.schema) as f:
         schema_sql = f.read()
-    for statement in schema_sql.split(";"):
-        statement = statement.strip()
-        if statement:
-            conn.execute(statement)
+    # executescript handles statement splitting itself. Splitting on ";" by hand
+    # breaks on semicolons inside the schema's own -- comments.
+    conn.executescript(schema_sql)
     conn.commit()
 
     for name in FILES:
@@ -92,10 +91,10 @@ def main() -> int:
         print(f"Loading {name}.csv -> {len(df)} rows ...")
         # Convert NaN to None so libsql binds NULL rather than the literal string "nan"
         records = df.where(pd.notna(df), None).values.tolist()
+        # executemany batches the round trip. Inserting row-by-row against a
+        # remote Turso primary means ~123k separate HTTP calls for a full load.
         for i in range(0, len(records), 500):
-            batch = records[i : i + 500]
-            for row in batch:
-                conn.execute(insert_sql, row)
+            conn.executemany(insert_sql, records[i : i + 500])
             conn.commit()
         print(f"  done: {name}")
 
