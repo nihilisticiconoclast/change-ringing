@@ -34,9 +34,15 @@ attribution is owed if any output of this project is published.
 
 ## CCCBR Methods Library
 
-- URL: http://methods.cccbr.org.uk
-- Format: plain text, MicroSiril, and XML (Method XML 1.0 spec)
-- Not yet ingested
+- URL: https://methods.cccbr.org.uk
+- XML export: `https://methods.cccbr.org.uk/xml/CCCBR_methods.xml.zip`
+- Format: XML (Method XML 1.0 specification, namespace `http://www.cccbr.org.uk/methods/schemas/2007/05/methods`)
+- Ingested via `scripts/ingest_methods.py` into the tables defined in
+  `schema/003_init_methods.sql` (`methods`, `method_performances`, and view `v_first_tower_peals`)
+- Coverage: 25,055 methods and 30,734 first-performance event records across 15 event types
+- Location linkage: Unlike BellBoard, first-performance `<location>` records are free text
+  (`<building>`, `<town>`, `<county>`) without Dove IDs. The `dove_tower_id` column is a
+  soft reference resolved via the cross-referencing task in `docs/tasks/gemini-location-resolution.md`.
 
 ## CompLib (Composition Library)
 
