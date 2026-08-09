@@ -10,6 +10,13 @@ Paste from the horizontal rule onward.
 
 ---
 
+> **DATABASE FREEZE IN EFFECT (2026-08-09).** The Turso database breached its
+> daily row-read limit. Until the owner lifts this freeze, **do not run
+> anything against the live database** -- no loads, no exploratory queries, no
+> verification runs. Write the code and say in the PR that it is unverified
+> against production for this reason. That is an accepted answer right now; a
+> PR that quietly ran against production is not.
+
 You are working on `nihilisticiconoclast/change-ringing`. The database holds
 three corpora already: Dove's Guide (7,262 ringing towers, 63,894 bells),
 the CCCBR Methods Library (25,055 methods, 30,734 first-performance events),

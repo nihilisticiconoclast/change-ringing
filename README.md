@@ -62,6 +62,22 @@ data/       -- NOT the raw CSVs (see data/SOURCES.md) -- provenance and licensin
 .github/    -- scheduled refresh: Dove weekly, BellBoard daily
 ```
 
+## Database freeze (2026-08-09)
+
+The Turso database breached its daily row-read limit at 591 million reads.
+**Nothing now touches it unattended:** both scheduled workflows have had their
+`schedule:` triggers removed and run only on manual dispatch, and both agent
+task briefs carry a freeze notice telling them not to query production.
+
+The cause is understood and fixed -- two unindexed joins, see the read-cost
+section of `docs/CONNECTING.md` and `schema/004_read_cost_indexes.sql`. The
+freeze is about not spending anything further while the budget is reviewed,
+not about an unresolved fault.
+
+To lift it: restore the `schedule:` blocks in `.github/workflows/` (the
+original cron lines are preserved in comments there) and remove the notices
+from `docs/tasks/`.
+
 ## Keeping the data current
 
 Two GitHub Actions workflows keep the database fresh without anyone running
