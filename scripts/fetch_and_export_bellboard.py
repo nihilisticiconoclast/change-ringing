@@ -159,7 +159,7 @@ def export_and_save_year(year: int, out_dir: Path, db_path: Path = None):
                 pass  # Tables already exist
 
         if perfs:
-            insert_many(conn, "performances", PERF_COLS, perfs, replace=True)
+            insert_many(conn, "performances", PERF_COLS, perfs)
             perf_ids = [p[0] for p in perfs]
             for i in range(0, len(perf_ids), 900):
                 chunk = perf_ids[i:i+900]
