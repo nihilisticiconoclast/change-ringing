@@ -381,8 +381,11 @@ def main() -> int:
     print(f"Total first performances in database: {n_perfs:,}\n")
 
     print("Methods by Classification:")
+    # Single quotes for the string literal. Double quotes make it an identifier;
+    # local SQLite falls back to treating an unresolvable one as a string, but
+    # libSQL does not and rejects the query outright.
     cls_counts = conn.execute(
-        'SELECT COALESCE(classification, "(None / Principle)"), COUNT(*) '
+        "SELECT COALESCE(classification, '(None / Principle)'), COUNT(*) "
         'FROM "methods" '
         'GROUP BY classification '
         'ORDER BY COUNT(*) DESC'
