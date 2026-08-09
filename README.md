@@ -102,21 +102,32 @@ To lift it: restore the `schedule:` blocks in `.github/workflows/` (the
 original cron lines are preserved in comments there) and remove the notices
 from `docs/tasks/`.
 
-### Just query it — no build, no credentials
+### Just query it — one command, no credentials
 
-`data/change-ringing.db` is a committed snapshot of the whole corpus. Clone the
-repo and open it in any SQLite tool — DB Browser for SQLite, DBeaver, TablePlus,
-or a VS Code extension such as SQLite Viewer or SQLTools. It is a standard
-SQLite file; nothing Turso-specific is needed to read it.
+The corpus is **not** committed. `data/change-ringing.db` was tracked briefly
+and removed: at ~40 MB it was heading for GitHub's 100 MB file limit, and a
+binary that changes wholesale on every rebuild sits in git history forever.
+Build your own instead — it takes about 90 seconds and needs nothing but
+Python:
+
+```
+pip install -r requirements.txt
+python scripts/build_local_db.py --out data/change-ringing.db
+```
+
+Then open it in any SQLite tool — DB Browser for SQLite, DBeaver, TablePlus, or
+a VS Code extension such as SQLite Viewer or SQLTools. It is a standard SQLite
+file; nothing Turso-specific is needed to read it.
 
 > **It is not MIT-licensed.** The code in this repository is; the data is
 > CC BY-SA 4.0, inherited from Dove's Guide, and that carries attribution and
 > share-alike obligations. Read `data/LICENCE-DATA.md` before republishing
 > anything derived from it.
 
-The snapshot is dated. Dove is a live source, so rebuild with
-`scripts/build_local_db.py` when currency matters, and don't re-commit the
-snapshot casually — each version adds ~40 MB to git history permanently.
+Because it is built rather than downloaded, it is always current — Dove is a
+live source and drifts. If a large binary ever does need sharing, attach it to
+a GitHub Release rather than committing it: downloadable from the repository
+page, absent from git history.
 
 ### Work offline instead
 
