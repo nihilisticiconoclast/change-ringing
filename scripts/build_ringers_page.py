@@ -565,7 +565,9 @@ const WIDTH = 1600;
 const HEIGHT = 1160;
 
 let zoom = 1.0, panX = 0, panY = 0;
-let isDragging = false, dragStart = {{x:0, y:0}};
+let isDragging = false;
+let startMouseX = 0, startMouseY = 0;
+let startPanX = 0, startPanY = 0;
 let selectedNode = NODES[0];
 let hoveredNode = null;
 let activeGuildFilter = "ALL";
@@ -693,14 +695,22 @@ canvas.addEventListener('mousedown', e => {{
     selectRingerNode(hit);
   }} else {{
     isDragging = true;
-    dragStart = {{x: e.clientX - panX, y: e.clientY - panY}};
+    startMouseX = e.clientX;
+    startMouseY = e.clientY;
+    startPanX = panX;
+    startPanY = panY;
   }}
 }});
 
 window.addEventListener('mousemove', e => {{
   if (isDragging) {{
-    panX = (e.clientX - dragStart.x) * (WIDTH / canvas.getBoundingClientRect().width);
-    panY = (e.clientY - dragStart.y) * (HEIGHT / canvas.getBoundingClientRect().height);
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = WIDTH / rect.width;
+    const scaleY = HEIGHT / rect.height;
+    const dx = (e.clientX - startMouseX) * scaleX;
+    const dy = (e.clientY - startMouseY) * scaleY;
+    panX = startPanX + dx;
+    panY = startPanY + dy;
     render();
   }} else {{
     const rect = canvas.getBoundingClientRect();
@@ -721,8 +731,20 @@ window.addEventListener('mouseup', () => {{ isDragging = false; }});
 
 canvas.addEventListener('wheel', e => {{
   e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = WIDTH / rect.width;
+  const scaleY = HEIGHT / rect.height;
+  const canvasX = (e.clientX - rect.left) * scaleX;
+  const canvasY = (e.clientY - rect.top) * scaleY;
+
+  const mouseX = canvasX - (WIDTH / 2 + panX);
+  const mouseY = canvasY - (HEIGHT / 2 + panY);
+
   const delta = e.deltaY < 0 ? 1.15 : 0.87;
-  zoom = Math.min(3.5, Math.max(0.4, zoom * delta));
+  const newZoom = Math.min(3.5, Math.max(0.4, zoom * delta));
+  panX -= mouseX * (newZoom / zoom - 1);
+  panY -= mouseY * (newZoom / zoom - 1);
+  zoom = newZoom;
   render();
 }}, {{passive: false}});
 
