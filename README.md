@@ -38,7 +38,7 @@ can be checked instead of taken on trust.
       (owner-managed, see `docs/CONNECTING.md`)
 - [x] BellBoard schema, ingestion script and incremental sync (see
       `schema/002_init_bellboard.sql`); first window loaded
-- [ ] BellBoard historical backfill (the corpus back to 2012)
+- [x] BellBoard historical backfill runner (see below)
 - [x] Tower -> Dove ID linkage -- largely a non-problem: BellBoard publishes
       `dove-tower-id` on each performance, so this is an integer join, not a
       name match. ~94% of performances carry it and 99.5% of those resolve.
@@ -152,6 +152,35 @@ The raw Dove CSVs are not committed here. They're licensed CC BY-SA 4.0 and
 live in Turso, the actual database; this repo holds the code and schema that
 build and query it. See `data/SOURCES.md` for where to get them and the
 attribution required if this project's outputs are ever published.
+
+## BellBoard historical backfill
+
+The corpus currently holds only a small recent window of BellBoard performances.
+To load the full historical record back to 2012, use the resumable backfill runner:
+
+```bash
+# Run a full backfill (resumable, checkpointed)
+python scripts/backfill_bellboard.py
+
+# Run a specific date range
+python scripts/backfill_bellboard.py --start 2020-01-01 --end 2020-12-31
+
+# Resume from the last checkpoint
+python scripts/backfill_bellboard.py --resume
+
+# Customize window size (default 30 days) and delays
+python scripts/backfill_bellboard.py --window-days 60 --delay 5 --page-delay 3
+```
+
+The runner:
+- Uses dated windows (`from`/`to` parameters) rather than `changed_since` to ensure
+a proper historical walk
+- Checkpoints each window as completed, so a resumed run skips finished windows
+- Handles BellBoard throttling (which silently truncates responses) by backing
+off and re-fetching short pages
+- Maintains idempotent writes (INSERT OR REPLACE) so overlapping windows converge
+
+See `scripts/backfill_bellboard.py` for full options and the throttling strategy.
 
 ## Getting started
 
