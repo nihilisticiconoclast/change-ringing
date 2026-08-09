@@ -469,61 +469,61 @@ function renderTree() {
   let maxPerStage = 1;
   Object.values(stageGroups).forEach(g => { maxPerStage = Math.max(maxPerStage, g.length); });
 
-  const badgeW = 135;
-  const badgeH = 26;
-  const colSpacing = 220;
-  const rowSpacing = 68;
-
-  let W, H;
+  const W = 1000;
+  let H;
   const pos = {};
 
   if (viewMode === 'tree') {
-    W = Math.max(860, (stages.length - 1) * colSpacing + badgeW + 160);
-    H = Math.max(340, maxPerStage * rowSpacing + 70);
+    // Deep vertical height for expansive, graceful cladogram branches
+    H = Math.max(480, maxPerStage * 115 + 90);
+    const colWidth = (W - 100) / Math.max(1, stages.length - 1);
+    const badgeW = Math.min(116, Math.max(82, colWidth * 0.58));
+    const badgeH = 24;
 
     stages.forEach((stg, cIdx) => {
-      const x = 70 + cIdx * colSpacing;
+      const x = 45 + cIdx * colWidth;
       const grp = stageGroups[stg] || [];
-      const totalColHeight = grp.length * rowSpacing;
-      const startY = (H - totalColHeight) / 2 + rowSpacing / 2;
+      const yStep = (H - 80) / (grp.length + 1);
 
       grp.forEach((m, rIdx) => {
-        const y = startY + rIdx * rowSpacing;
-        pos[m.id] = { x, y, m };
+        const y = 45 + (rIdx + 1) * yStep;
+        pos[m.id] = { x, y, badgeW, badgeH, m };
       });
     });
   } else {
     // Chronological Timeline layout
     const minYear = 1690, maxYear = 2026;
-    W = Math.max(1050, (maxYear - minYear) * 3.0 + 200);
-    H = Math.max(360, (maxStage - minStage + 1) * 38 + 90);
+    H = Math.max(460, (maxStage - minStage + 1) * 44 + 90);
+    const badgeW = 105, badgeH = 24;
 
     methods.forEach((m, idx) => {
-      const yr = m.year || (1960 + (m.stage - minStage) * 6);
-      const x = 70 + ((yr - minYear) / (maxYear - minYear)) * (W - badgeW - 140);
+      const yr = m.year || (1950 + (m.stage - minStage) * 6);
+      const x = 45 + ((yr - minYear) / (maxYear - minYear)) * (W - badgeW - 80);
       const yRatio = (m.stage - minStage) / Math.max(1, maxStage - minStage);
       const y = 50 + yRatio * (H - 90);
-      pos[m.id] = { x, y, m };
+      pos[m.id] = { x, y, badgeW, badgeH, m };
     });
   }
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.style.width = `${W}px`;
-  svg.style.height = `${H}px`;
-  svg.style.minWidth = `${W}px`;
+  svg.style.width = '100%';
+  svg.style.height = 'auto';
+  svg.style.minWidth = '0';
 
   let s = '';
 
   // Background grid columns / axis lines
   if (viewMode === 'tree') {
+    const colWidth = (W - 100) / Math.max(1, stages.length - 1);
     stages.forEach((stg, cIdx) => {
-      const x = 70 + cIdx * colSpacing;
-      s += `<line x1="${x + badgeW/2}" y1="26" x2="${x + badgeW/2}" y2="${H-18}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>`;
-      s += `<text x="${x + badgeW/2}" y="20" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--bronze)">Stage ${stg}</text>`;
+      const x = 45 + cIdx * colWidth;
+      const midX = x + pos[Object.keys(pos)[0]].badgeW / 2;
+      s += `<line x1="${midX}" y1="26" x2="${midX}" y2="${H-18}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>`;
+      s += `<text x="${midX}" y="20" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--bronze)">Stage ${stg}</text>`;
     });
   } else {
     [1700, 1750, 1800, 1850, 1900, 1950, 2000].forEach(yr => {
-      const x = 70 + ((yr - 1690) / (2026 - 1690)) * (W - badgeW - 140);
+      const x = 45 + ((yr - 1690) / (2026 - 1690)) * (W - 105 - 80);
       s += `<line x1="${x}" y1="26" x2="${x}" y2="${H-18}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>`;
       s += `<text x="${x}" y="20" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--bronze)">${yr}</text>`;
     });
@@ -535,7 +535,7 @@ function renderTree() {
     const c = pos[link.c_id];
     if (!p || !c) return;
 
-    const startX = p.x + badgeW;
+    const startX = p.x + p.badgeW;
     const startY = p.y;
     const endX = c.x;
     const endY = c.y;
@@ -550,7 +550,7 @@ function renderTree() {
     s += `<path id="link-${lIdx}" data-p="${link.p_id}" data-c="${link.c_id}" d="M ${startX} ${startY} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endX} ${endY}" class="tree-link ${cls}"><title>${link.p_title} -> ${link.c_title} (${link.rel}): ${link.ev}</title></path>`;
   });
 
-  // Draw Nodes (neat horizontal badge with dot and text)
+  // Draw Nodes (compact horizontal badge with dot and text)
   Object.values(pos).forEach(p => {
     const m = p.m;
     const isSel = selectedMethod && selectedMethod.id === m.id;
@@ -560,15 +560,15 @@ function renderTree() {
     const subText = m.year ? `${m.year}` : `Lead ${m.lol}`;
 
     s += `
-      <g class="tree-node" data-id="${m.id}" onclick="onNodeClick('${m.id}')" onmouseenter="highlightNodeBranches('${m.id}')" onmouseleave="resetBranches()" transform="translate(${p.x}, ${p.y - badgeH/2})">
+      <g class="tree-node" data-id="${m.id}" onclick="onNodeClick('${m.id}')" onmouseenter="highlightNodeBranches('${m.id}')" onmouseleave="resetBranches()" transform="translate(${p.x}, ${p.y - p.badgeH/2})">
         <!-- Compact pill badge -->
-        <rect x="0" y="0" width="${badgeW}" height="${badgeH}" rx="3" fill="var(--surface)" stroke="${isSel?'var(--bronze)':'var(--rule)'}" stroke-width="${isSel?'1.8':'1'}"/>
+        <rect x="0" y="0" width="${p.badgeW}" height="${p.badgeH}" rx="3" fill="var(--surface)" stroke="${isSel?'var(--bronze)':'var(--rule)'}" stroke-width="${isSel?'1.8':'1'}"/>
         <!-- Indicator dot -->
-        <circle cx="10" cy="${badgeH/2}" r="4" fill="${fill}"/>
+        <circle cx="8" cy="${p.badgeH/2}" r="3.5" fill="${fill}"/>
         <!-- Method title -->
-        <text x="20" y="${badgeH/2 + 3.5}" font-weight="${isSel?'600':'500'}" font-size="10.5" fill="var(--ink)">${labelText}</text>
+        <text x="16" y="${p.badgeH/2 + 3.5}" font-weight="${isSel?'600':'500'}" font-size="9.5" fill="var(--ink)">${labelText}</text>
         <!-- Year / Lead badge tag on right -->
-        <text x="${badgeW - 6}" y="${badgeH/2 + 3.5}" text-anchor="end" font-size="9" fill="var(--ink-3)">${subText}</text>
+        <text x="${p.badgeW - 5}" y="${p.badgeH/2 + 3.5}" text-anchor="end" font-size="8.5" fill="var(--ink-3)">${subText}</text>
       </g>
     `;
   });
