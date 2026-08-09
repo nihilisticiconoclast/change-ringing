@@ -29,6 +29,9 @@ import libsql
 
 FILES = ["bells", "changes", "dove", "founders", "frames", "regions", "towers"]
 
+# Bind-parameter budget per INSERT statement, kept well under SQLite's 32766.
+PARAM_BUDGET = 16000
+
 
 def clean_cols(df: pd.DataFrame) -> pd.DataFrame:
     """Match the sanitisation used when the schema in schema/001_init_dove_bells.sql
@@ -84,18 +87,30 @@ def main() -> int:
         df = pd.read_csv(path, encoding="utf-8-sig", low_memory=False)
         df = clean_cols(df)
         cols = list(df.columns)
-        placeholders = ", ".join("?" for _ in cols)
+        row_tuple = "(" + ", ".join("?" for _ in cols) + ")"
         col_list = ", ".join(f'"{c}"' for c in cols)
-        insert_sql = f'INSERT INTO "{name}" ({col_list}) VALUES ({placeholders})'
+        insert_prefix = f'INSERT INTO "{name}" ({col_list}) VALUES '
+
+        # Keep each statement under SQLite's variable ceiling (32766 for
+        # 3.32+); PARAM_BUDGET leaves generous headroom.
+        batch_size = max(1, min(500, PARAM_BUDGET // len(cols)))
 
         print(f"Loading {name}.csv -> {len(df)} rows ...")
-        # Convert NaN to None so libsql binds NULL rather than the literal string "nan"
-        records = df.where(pd.notna(df), None).values.tolist()
-        # executemany batches the round trip. Inserting row-by-row against a
-        # remote Turso primary means ~123k separate HTTP calls for a full load.
-        for i in range(0, len(records), 500):
-            conn.executemany(insert_sql, records[i : i + 500])
-            conn.commit()
+        # Convert NaN to None so libsql binds NULL. The astype(object) is load
+        # bearing: .where(..., None) on a float64 column coerces None straight
+        # back to NaN, leaving NaN in the params. Local SQLite hides this by
+        # storing NaN as NULL, but Turso serialises it to JSON null and rejects
+        # it against the column's f64 type.
+        records = df.astype(object).where(pd.notna(df), None).values.tolist()
+        # One multi-row INSERT per batch, committed once per table. The client's
+        # executemany() issues a round trip per row against a remote primary
+        # (measured at ~4 rows/s, and it stalls outright on long runs); folding
+        # the rows into a single VALUES list runs at ~1300 rows/s.
+        for i in range(0, len(records), batch_size):
+            batch = records[i : i + batch_size]
+            sql = insert_prefix + ", ".join([row_tuple] * len(batch))
+            conn.execute(sql, [v for row in batch for v in row])
+        conn.commit()
         print(f"  done: {name}")
 
     print("Migration complete. Verifying row counts ...")
