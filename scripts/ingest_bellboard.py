@@ -41,7 +41,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-import libsql
+import db
 
 NS = "{http://bb.ringingworld.co.uk/NS/performances#}"
 EXPORT_URL = "https://bb.ringingworld.co.uk/export.php"
@@ -223,18 +223,10 @@ def main() -> int:
         "throttles sustained querying -- it starts returning short pages "
         "rather than an error status, so do not lower this for a backfill.",
     )
+    db.add_db_args(parser)
     args = parser.parse_args()
 
-    url = os.environ.get("TURSO_DATABASE_URL")
-    token = os.environ.get("TURSO_AUTH_TOKEN")
-    if not url or not token:
-        print(
-            "ERROR: set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in the environment.",
-            file=sys.stderr,
-        )
-        return 1
-
-    conn = libsql.connect(database=url, auth_token=token)
+    conn = db.connect(args)
 
     if args.init:
         print(f"Applying schema from {args.schema} ...")

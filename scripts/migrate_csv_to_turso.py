@@ -25,7 +25,8 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-import libsql
+
+import db
 
 FILES = ["bells", "changes", "dove", "founders", "frames", "regions", "towers"]
 
@@ -62,16 +63,8 @@ def main() -> int:
         "Required to re-run against a populated database: Dove's export is a "
         "full snapshot, so a refresh is a drop-and-reload, not an append.",
     )
+    db.add_db_args(parser)
     args = parser.parse_args()
-
-    url = os.environ.get("TURSO_DATABASE_URL")
-    token = os.environ.get("TURSO_AUTH_TOKEN")
-    if not url or not token:
-        print(
-            "ERROR: set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in the environment.",
-            file=sys.stderr,
-        )
-        return 1
 
     csv_dir = Path(args.csv_dir)
     missing = [f for f in FILES if not (csv_dir / f"{f}.csv").exists()]
@@ -79,7 +72,7 @@ def main() -> int:
         print(f"ERROR: missing CSVs in {csv_dir}: {missing}", file=sys.stderr)
         return 1
 
-    conn = libsql.connect(database=url, auth_token=token)
+    conn = db.connect(args)
 
     with open(args.schema) as f:
         schema_sql = f.read()

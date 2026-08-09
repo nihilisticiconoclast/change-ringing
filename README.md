@@ -78,6 +78,32 @@ To lift it: restore the `schedule:` blocks in `.github/workflows/` (the
 original cron lines are preserved in comments there) and remove the notices
 from `docs/tasks/`.
 
+### Work offline instead
+
+The freeze costs almost nothing, because the whole corpus rebuilds locally
+from public sources plus files committed here:
+
+```
+pip install -r requirements.txt
+python scripts/build_local_db.py --out local_corpus.db
+```
+
+About 90 seconds, and every script then takes `--local-db local_corpus.db`.
+The replica matches production: 7,262 towers, 63,894 bells, 25,055 methods,
+30,734 first-performance events, and the same 22,111 adjudicated tower links.
+BellBoard is left empty unless you pass `--bellboard-since YYYY-MM-DD`, since
+it is the one source that throttles rather than publishing a bulk file.
+
+Two things make this a real check rather than an approximation. The replica
+uses an embedded libSQL connection rather than stdlib `sqlite3`, which accepts
+SQL that libSQL rejects -- that difference is how a double-quoted string
+literal reached production. And `EXPLAIN QUERY PLAN` works against it, so
+query cost can be assessed before anything runs for real.
+
+Reaching production now requires `CHANGE_RINGING_ALLOW_PRODUCTION=1`. Without
+it the scripts refuse to connect, so an accidental production run is no longer
+possible.
+
 ## Keeping the data current
 
 Two GitHub Actions workflows keep the database fresh without anyone running
