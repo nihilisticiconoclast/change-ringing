@@ -6,7 +6,12 @@ This module provides importable functions for parsing BellBoard XML and
 inserting data into the database, used by both ingest_bellboard.py and
 backfill_bellboard.py.
 """
+import urllib.error
+import urllib.request
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+import sys
+import time
 
 NS = "{http://bb.ringingworld.co.uk/NS/performances#}"
 EXPORT_URL = "https://bb.ringingworld.co.uk/export.php"
@@ -26,12 +31,74 @@ def text_of(elem):
     return s or None
 
 
+def fetch_page(url, retries: int = 4) -> bytes:
+    """Fetch a URL with retries and basic error handling.
+    
+    Args:
+        url: URL to fetch
+        retries: number of retry attempts
+        
+    Returns:
+        bytes: response body
+        
+    Raises:
+        RuntimeError: if all retries fail
+    """
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    delay = 2
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return resp.read()
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            if attempt == retries - 1:
+                raise RuntimeError(f"Failed to fetch {url} after {retries} attempts: {exc}") from exc
+            print(f"  fetch failed ({exc}); retrying in {delay}s", file=sys.stderr)
+            time.sleep(delay)
+            delay *= 2
+    raise RuntimeError("unreachable")
+
+
+def fetch_performances(changed_since=None, date_from=None, date_to=None, page=1, pagesize=PAGE_SIZE, retries=4):
+    """Fetch a page of performances from BellBoard API.
+    
+    Args:
+        changed_since: fetch performances modified on or after this date (YYYY-MM-DD)
+        date_from: start date for date range (YYYY-MM-DD)
+        date_to: end date for date range (YYYY-MM-DD)
+        page: page number (1-indexed)
+        pagesize: number of performances per page
+        retries: number of retry attempts
+        
+    Returns:
+        list: list of performance XML elements
+        
+    Raises:
+        RuntimeError: if fetch or parse fails
+    """
+    # Build URL based on parameters
+    if changed_since:
+        url = f"{EXPORT_URL}?changed_since={changed_since}&pagesize={pagesize}&page={page}&fmt=xml"
+    elif date_from and date_to:
+        url = f"{EXPORT_URL}?from={date_from}&to={date_to}&pagesize={pagesize}&page={page}&fmt=xml"
+    else:
+        raise ValueError("Either changed_since or date_from/date_to must be provided")
+    
+    raw = fetch_page(url, retries)
+    try:
+        return ET.fromstring(raw).findall(f"{NS}performance")
+    except ET.ParseError as exc:
+        raise RuntimeError(f"could not parse page: {exc}") from exc
+
+
 def parse_performance(p):
     """Flatten one <performance> into (perf_row, ringers, footnotes, flags).
     
     Returns:
         tuple: (perf_row, ringers, footnotes, flags) where each is a list of
         column values, or None if the performance cannot be parsed.
+        
+        perf_row has 23 elements matching PERF_COLS, including ingested_at timestamp.
     """
     bb_id = p.get("id") or ""
     perf_id = int(bb_id.lstrip("P")) if bb_id.lstrip("P").isdigit() else None
@@ -62,6 +129,9 @@ def parse_performance(p):
 
     as_int = lambda v: int(v) if v is not None and str(v).isdigit() else None
 
+    # Include ingested_at timestamp (column 23) in the perf_row
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    
     perf_row = [
         perf_id,
         bb_id,
@@ -85,6 +155,7 @@ def parse_performance(p):
         text_of(p.find(f"{NS}composer")),
         text_of(p.find(f"{NS}composition")),
         text_of(p.find(f"{NS}timestamp")),
+        now,  # ingested_at - column 23
     ]
 
     ringers = []
@@ -142,60 +213,3 @@ def insert_many(conn, table, cols, rows):
             + ", ".join([tup] * len(batch))
         )
         conn.execute(sql, [v for row in batch for v in row])
-
-
-def fetch_page(url, retries: int = 4) -> bytes:
-    """Fetch a URL with retries and basic error handling.
-    
-    Args:
-        url: URL to fetch
-        retries: number of retry attempts
-        
-    Returns:
-        bytes: response body
-        
-    Raises:
-        RuntimeError: if all retries fail
-    """
-    import urllib.error
-    import urllib.request
-    import time
-    import sys
-    
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    delay = 2
-    for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                return resp.read()
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            if attempt == retries - 1:
-                raise RuntimeError(f"Failed to fetch {url} after {retries} attempts: {exc}") from exc
-            print(f"  fetch failed ({exc}); retrying in {delay}s", file=sys.stderr)
-            time.sleep(delay)
-            delay *= 2
-    raise RuntimeError("unreachable")
-
-
-def fetch_performances(date_from, date_to, page, pagesize=PAGE_SIZE, retries=4):
-    """Fetch a page of performances for a date range.
-    
-    Args:
-        date_from: start date (YYYY-MM-DD)
-        date_to: end date (YYYY-MM-DD)
-        page: page number (1-indexed)
-        pagesize: number of performances per page
-        retries: number of retry attempts
-        
-    Returns:
-        list: list of performance XML elements
-    """
-    url = (
-        f"{EXPORT_URL}?from={date_from}&to={date_to}"
-        f"&pagesize={pagesize}&page={page}&fmt=xml"
-    )
-    raw = fetch_page(url, retries)
-    try:
-        return ET.fromstring(raw).findall(f"{NS}performance")
-    except ET.ParseError as exc:
-        raise RuntimeError(f"could not parse page for {date_from} to {date_to}: {exc}") from exc

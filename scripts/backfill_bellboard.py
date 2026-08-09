@@ -7,13 +7,16 @@ corpus back through time and loads it using the existing ingestion logic.
 
 Prerequisites:
     pip install libsql
-    export TURSO_DATABASE_URL="libsql://<your-db>.turso.io"
-    export TURSO_AUTH_TOKEN="<your-token>"
+    # For production: export TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, and CHANGE_RINGING_ALLOW_PRODUCTION=1
+    # For local: use --local-db PATH
     # apply schema/002_init_bellboard.sql first
 
 Usage:
-    # Run a full backfill from 2012 to today (resumable)
+    # Run a full backfill (resumable, checkpointed)
     python scripts/backfill_bellboard.py
+
+    # Run with local database
+    python scripts/backfill_bellboard.py --local-db local_corpus.db
 
     # Run a specific date range
     python scripts/backfill_bellboard.py --start 2020-01-01 --end 2020-12-31
@@ -58,15 +61,13 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-import libsql
+import db
 
 from bellboard_common import (
     NS,
     EXPORT_URL,
     PAGE_SIZE,
-    USER_AGENT,
-    text_of,
-    fetch_page,
+    fetch_performances,
     parse_performance,
     insert_many,
     PERF_COLS,
@@ -135,31 +136,6 @@ def window_key(window_start, window_end):
     return f"{format_date(window_start)}_{format_date(window_end)}"
 
 
-def fetch_window_performances(date_from, date_to, page, pagesize=PAGE_SIZE, retries=4):
-    """Fetch a page of performances for a date range.
-    
-    Args:
-        date_from: start date (YYYY-MM-DD)
-        date_to: end date (YYYY-MM-DD)
-        page: page number (1-indexed)
-        pagesize: number of performances per page
-        retries: number of retry attempts
-        
-    Returns:
-        list: list of performance XML elements
-    """
-    url = (
-        f"{EXPORT_URL}?from={date_from}&to={date_to}"
-        f"&pagesize={pagesize}&page={page}&fmt=xml"
-    )
-    raw = fetch_page(url, retries)
-    try:
-        import xml.etree.ElementTree as ET
-        return ET.fromstring(raw).findall(f"{NS}performance")
-    except ET.ParseError as exc:
-        raise RuntimeError(f"could not parse page for {date_from} to {date_to}: {exc}") from exc
-
-
 def process_window(conn, date_from, date_to, delay, max_pages=0):
     """Process a single date window, fetching all pages.
     
@@ -173,8 +149,6 @@ def process_window(conn, date_from, date_to, delay, max_pages=0):
     Returns:
         tuple: (total_performances, throttle_events, pages_fetched)
     """
-    import xml.etree.ElementTree as ET
-    
     total = 0
     page = 1
     throttle_events = 0
@@ -188,7 +162,7 @@ def process_window(conn, date_from, date_to, delay, max_pages=0):
         print(f"  Fetching page {page} for {date_from} to {date_to}...")
         
         try:
-            perfs = fetch_window_performances(date_from, date_to, page, PAGE_SIZE)
+            perfs = fetch_performances(date_from=date_from, date_to=date_to, page=page, pagesize=PAGE_SIZE)
         except RuntimeError as exc:
             print(f"  ERROR: {exc}", file=sys.stderr)
             return total, throttle_events, pages_fetched
@@ -211,7 +185,7 @@ def process_window(conn, date_from, date_to, delay, max_pages=0):
             throttle_events += 1
             
             try:
-                retry = fetch_window_performances(date_from, date_to, page, PAGE_SIZE)
+                retry = fetch_performances(date_from=date_from, date_to=date_to, page=page, pagesize=PAGE_SIZE)
             except RuntimeError as exc:
                 print(f"  ERROR on retry: {exc}", file=sys.stderr)
                 return total, throttle_events, pages_fetched
@@ -242,12 +216,7 @@ def process_window(conn, date_from, date_to, delay, max_pages=0):
                 for tbl in ("performance_ringers", "performance_footnotes", "performance_flags"):
                     conn.execute(f'DELETE FROM "{tbl}" WHERE "perf_id" IN ({id_list})')
         
-        # Add ingested_at timestamp
-        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        for row in perf_rows:
-            row[-1] = now
-        
-        # Insert data
+        # Insert data (ingested_at is already included in perf_row from parse_performance)
         insert_many(conn, "performances", PERF_COLS, perf_rows)
         insert_many(conn, "performance_ringers",
                     ["perf_id", "position", "bell", "name", "conductor"], ringers)
@@ -323,6 +292,7 @@ def main() -> int:
         default=0,
         help="Maximum pages per window (0 = no limit, useful for testing)",
     )
+    db.add_db_args(parser)
     args = parser.parse_args()
 
     # Parse dates
@@ -337,17 +307,7 @@ def main() -> int:
         print(f"ERROR: Start date {args.start} is after end date {args.end}", file=sys.stderr)
         return 1
 
-    # Check environment
-    url = os.environ.get("TURSO_DATABASE_URL")
-    token = os.environ.get("TURSO_AUTH_TOKEN")
-    if not url or not token:
-        print(
-            "ERROR: set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in the environment.",
-            file=sys.stderr,
-        )
-        return 1
-
-    conn = libsql.connect(database=url, auth_token=token)
+    conn = db.connect(args)
 
     # Load checkpoint
     checkpoint_path = args.checkpoint
