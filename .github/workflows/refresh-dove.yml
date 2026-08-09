@@ -1,0 +1,45 @@
+name: Refresh Dove data
+
+# Dove publishes a full snapshot, not a changelog, so refreshing it is a
+# drop-and-reload of the seven tables (--reset). The database is briefly
+# incomplete mid-run; at this project's scale that is an acceptable trade
+# against the complexity of loading to shadow tables and swapping.
+#
+# Requires two repository secrets: TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.
+# Settings -> Secrets and variables -> Actions -> New repository secret.
+
+on:
+  schedule:
+    # 04:17 UTC on Mondays. Off-peak, and deliberately not on the hour --
+    # scheduled runs cluster at :00 and get queued.
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  # Never let a manual run and a scheduled run reload the same tables at once.
+  group: turso-write
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch the latest Dove CSVs
+        run: python scripts/fetch_dove_csvs.py --out-dir ./dove-csvs
+
+      - name: Load into Turso
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: python scripts/migrate_csv_to_turso.py --csv-dir ./dove-csvs --reset
