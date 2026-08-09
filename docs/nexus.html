@@ -109,6 +109,8 @@
     </style>
     <!-- Use 3d-force-graph via CDN -->
     <script src="https://unpkg.com/3d-force-graph"></script>
+    <script src="https://unpkg.com/d3"></script>
+    <script src="https://unpkg.com/three"></script>
 </head>
 <body>
     <div class="nav-bar">
@@ -169,6 +171,16 @@
         
         let currentTime = maxTime;
         
+        // Assign fixed Y coordinates to create vertical layers
+        graphData.nodes.forEach(node => {
+            switch(node.group) {
+                case 'tower': node.fy = 300; break;
+                case 'method': node.fy = 100; break;
+                case 'performance': node.fy = -50; break;
+                case 'ringer': node.fy = -200; break;
+            }
+        });
+        
         // Initialize graph
         const elem = document.getElementById('3d-graph');
         const Graph = ForceGraph3D()(elem)
@@ -225,7 +237,22 @@
                     return nodeTime <= currentTime;
                 }
                 return true; 
-            });
+            })
+            .d3Force('charge', d3.forceManyBody().strength(-20)); // Reduce node repulsion slightly for planar layout
+            
+        // Add layer grid planes
+        const scene = Graph.scene();
+        const drawLayer = (y, color) => {
+            const grid = new THREE.GridHelper(2000, 40, color, color);
+            grid.position.y = y;
+            grid.material.opacity = 0.15;
+            grid.material.transparent = true;
+            scene.add(grid);
+        };
+        drawLayer(300, 0xfbbf24); // Towers
+        drawLayer(100, 0xf472b6); // Methods
+        drawLayer(-50, 0x444444); // Performances
+        drawLayer(-200, 0x38bdf8); // Ringers
             
         // Setup slider interaction
         slider.addEventListener('input', (e) => {
