@@ -11,7 +11,7 @@ ones find.
 | 1 | BellBoard historical backfill runner | **Done** — PR #2, merged |
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
-| 4 | Ring-level join semantics | Blocked — waits on a decision from Claude Code |
+| 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
 
@@ -109,9 +109,15 @@ views, so a plan regression is caught before it costs a read budget again.
 
 Exit non-zero on failure so it can gate CI later. Full brief when Task 2 lands.
 
-## Task 4 — Ring-level join semantics *(blocked)*
+## Task 4 — Ring-level join semantics *(unblocked)*
 
-`dove.TowerID` is not unique, so tower-level joins inflate counts. The fix
-needs a semantics decision first — whether a "tower" or a "ring" is the unit
-for each existing view — and that decision is Claude Code's. Implementation
-follows. Do not start this one; it will be unblocked with a spec.
+Spec: `docs/decisions/001-ring-vs-tower-joins.md`. Implement to it.
+
+Two findings there will save a wrong turn. Neither `dove` nor `towers` is a
+tower register — both repeat `TowerID`, `towers` far worse — so "join `towers`
+instead" inflates by 1,439 rows rather than fixing 19. And the current join
+silently *drops* 160 records as well as duplicating 19.
+
+Acceptance test: `method_performances` joined to the new `v_towers_unique` must
+return exactly **22,111**, the number of rows carrying a `dove_tower_id`. A join
+cannot create or destroy a linked record, so anything else is wrong.
