@@ -10,9 +10,18 @@ name: Sync BellBoard performances
 #
 # Requires the same two secrets as refresh-dove.yml.
 
+# SCHEDULE DISABLED 2026-08-09 after the database billed 591 million row reads
+# in a day. Nothing here fires on its own any more; the workflow runs only when
+# someone starts it from the Actions tab.
+#
+# To re-enable, restore:
+#   schedule:
+#     - cron: "42 3 * * *"
+# Do that only once the read budget is understood -- see the read-cost section
+# of docs/CONNECTING.md. This sync is cheap (small incremental pages, all
+# index-served) and was not the cause, but it is disabled anyway so that
+# "nothing touches the database unattended" is true without qualification.
 on:
-  schedule:
-    - cron: "42 3 * * *"
   workflow_dispatch:
     inputs:
       changed_since:
