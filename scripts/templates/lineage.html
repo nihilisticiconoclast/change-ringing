@@ -231,14 +231,56 @@ footer{padding:48px 0;color:var(--ink-3);font-size:14px;border-top:1px solid var
 
         <div class="lead-diagram-panel" id="lead-panel">
           <div class="lead-canvas-wrap">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--bronze);margin-bottom:6px">SELECTED METHOD</div>
-            <canvas id="canvas-single" width="260" height="340"></canvas>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--bronze);margin-bottom:8px">LEAD DIAGRAM MATRIX</div>
+            <canvas id="canvas-single" width="300" height="420"></canvas>
             <div class="lead-meta" id="lead-single-meta"></div>
           </div>
-          <div class="lead-canvas-wrap" id="lead-compare-wrap" style="display:none">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--ext);margin-bottom:6px">PARENT / HIGHER STAGE COMPARISON</div>
-            <canvas id="canvas-compare" width="260" height="340"></canvas>
-            <div class="lead-meta" id="lead-compare-meta"></div>
+
+          <!-- Educational Visual Guide Card -->
+          <div class="lead-guide-wrap" style="background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:18px">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--bronze);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">HOW TO READ THIS DIAGRAM</div>
+            
+            <div style="display:flex;flex-direction:column;gap:14px;font-size:13.5px;line-height:1.5">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:14px;height:14px;background:var(--treble-line);border-radius:2px;flex:none;margin-top:3px"></div>
+                <div>
+                  <strong style="color:var(--ink)">Red Line — The Treble (Hunt Bell 1):</strong>
+                  <div style="color:var(--ink-2);font-size:12.5px;margin-top:2px">
+                    The Treble weaves steadily between <strong>Column 1 (Lead / front)</strong> and <strong>Column N (Lie / back)</strong> and back to Lead, creating the structural rhythm of the method.
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:14px;height:14px;background:var(--blue-line);border-radius:2px;flex:none;margin-top:3px"></div>
+                <div>
+                  <strong style="color:var(--ink)">Blue Line — Working Bell (Bell 2):</strong>
+                  <div style="color:var(--ink-2);font-size:12.5px;margin-top:2px">
+                    The famous "Blue Line" memorized by bellringers. It traces how an inside working bell dodges, makes places, and navigates changes throughout the lead.
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:14px;height:14px;background:var(--surface-2);border:1px dashed var(--ink-3);border-radius:2px;flex:none;margin-top:3px"></div>
+                <div>
+                  <strong style="color:var(--ink)">Columns 1 to N — Rope Striking Positions:</strong>
+                  <div style="color:var(--ink-2);font-size:12.5px;margin-top:2px">
+                    Each vertical column is a striking position in the row, numbered <strong>1 (Lead / first to strike)</strong> to <strong>N (Lie / last to strike)</strong>.
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:14px;height:14px;background:var(--ext-bg);border:1px solid var(--ext-border);border-radius:2px;flex:none;margin-top:3px"></div>
+                <div>
+                  <strong style="color:var(--ext)">Hereditary Extension Principle:</strong>
+                  <div style="color:var(--ink-2);font-size:12.5px;margin-top:2px">
+                    When a method is extended to higher stages, the <strong>Front Work (positions 1–4)</strong> remains identical, while additional dodging cycles expand into the new back bell positions.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -481,17 +523,17 @@ function renderTree() {
   if (viewMode === 'tree') {
     // Dynamic scalable viewBox width ensuring every column has ample breathing room
     W = Math.max(920, numCols * colWidth + padX * 2);
-    // Deep vertical height for expansive, graceful cladogram branches
-    H = Math.max(480, maxPerStage * 115 + 90);
+    // +50% vertical depth for expansive, graceful cladogram branches
+    H = Math.max(720, maxPerStage * 170 + 130);
 
     stages.forEach((stg, cIdx) => {
       const colCenterX = padX + cIdx * colWidth + colWidth / 2;
       const x = colCenterX - badgeW / 2;
       const grp = stageGroups[stg] || [];
-      const yStep = (H - 80) / (grp.length + 1);
+      const yStep = (H - 90) / (grp.length + 1);
 
       grp.forEach((m, rIdx) => {
-        const y = 45 + (rIdx + 1) * yStep;
+        const y = 50 + (rIdx + 1) * yStep;
         pos[m.id] = { x, y, badgeW, badgeH, colCenterX, m };
       });
     });
@@ -499,13 +541,13 @@ function renderTree() {
     // Chronological Timeline layout
     const minYear = 1690, maxYear = 2026;
     W = 1100;
-    H = Math.max(480, (maxStage - minStage + 1) * 44 + 90);
+    H = Math.max(680, (maxStage - minStage + 1) * 65 + 130);
 
     methods.forEach((m, idx) => {
       const yr = m.year || (1950 + (m.stage - minStage) * 6);
       const x = padX + ((yr - minYear) / (maxYear - minYear)) * (W - badgeW - padX * 2);
       const yRatio = (m.stage - minStage) / Math.max(1, maxStage - minStage);
-      const y = 50 + yRatio * (H - 90);
+      const y = 60 + yRatio * (H - 120);
       pos[m.id] = { x, y, badgeW, badgeH, m };
     });
   }
@@ -621,7 +663,6 @@ function drawLeadDiagram(m) {
   const notation = m.not || '';
   const isPal = m.sym && m.sym.toLowerCase().includes('palindromic');
   
-  // Draw place notation changes
   const rows = generateLeadRows(notation, stage, isPal);
   if (!rows || rows.length === 0) {
     ctx.fillStyle = 'var(--ink-3)';
@@ -631,54 +672,94 @@ function drawLeadDiagram(m) {
   }
 
   const rowCount = rows.length;
-  const padX = 24, padY = 20;
-  const colW = (W - padX * 2) / (stage - 1);
-  const rowH = Math.min(18, (H - padY * 2) / (rowCount - 1));
+  const padX = 36;
+  const padYTop = 38;
+  const padYBottom = 22;
+  const colW = (W - padX * 2) / Math.max(1, stage - 1);
+  const rowH = Math.min(14, (H - padYTop - padYBottom) / Math.max(1, rowCount - 1));
 
-  // Draw subtle grid dots
+  // 1. Draw Column Number Headers (1 to N)
+  ctx.font = '10px var(--mono)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  for (let c = 0; c < stage; c++) {
+    const x = padX + c * colW;
+    ctx.fillStyle = 'var(--ink-2)';
+    ctx.fillText(c + 1, x, 14);
+
+    // Subtle Lead/Lie labels under first and last column
+    if (c === 0) {
+      ctx.fillStyle = 'var(--bronze)';
+      ctx.font = '7.5px var(--mono)';
+      ctx.fillText('LEAD', x, 25);
+      ctx.font = '10px var(--mono)';
+    } else if (c === stage - 1) {
+      ctx.fillStyle = 'var(--bronze)';
+      ctx.font = '7.5px var(--mono)';
+      ctx.fillText('LIE', x, 25);
+      ctx.font = '10px var(--mono)';
+    }
+  }
+
+  // Header separator line
+  ctx.strokeStyle = 'var(--rule)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padX - 10, 30);
+  ctx.lineTo(W - padX + 10, 30);
+  ctx.stroke();
+
+  // 2. Draw subtle grid dots for each striking change
   ctx.fillStyle = 'var(--rule)';
   for (let r = 0; r < rowCount; r++) {
     for (let c = 0; c < stage; c++) {
       const x = padX + c * colW;
-      const y = padY + r * rowH;
+      const y = padYTop + r * rowH;
       ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
     }
   }
 
-  // Draw Bell 2 (Working Bell Blue Line)
+  // 3. Draw Working Bell 2 (The Blue Line)
   ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--blue-line').trim() || '#2563eb';
-  ctx.lineWidth = 2.2;
+  ctx.lineWidth = 2.4;
   ctx.beginPath();
   for (let r = 0; r < rowCount; r++) {
     const colIdx = rows[r].indexOf(2);
     if (colIdx >= 0) {
       const x = padX + colIdx * colW;
-      const y = padY + r * rowH;
+      const y = padYTop + r * rowH;
       if (r === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
   }
   ctx.stroke();
 
-  // Draw Treble (Hunt Bell Red Line)
+  // 4. Draw Treble 1 (Hunt Bell Red Line)
   ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--treble-line').trim() || '#dc2626';
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 2.6;
   ctx.beginPath();
   for (let r = 0; r < rowCount; r++) {
     const colIdx = rows[r].indexOf(1);
     if (colIdx >= 0) {
       const x = padX + colIdx * colW;
-      const y = padY + r * rowH;
+      const y = padYTop + r * rowH;
       if (r === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
   }
   ctx.stroke();
 
+  // 5. Row annotations (Rounds at top, Lead Head at bottom)
+  ctx.font = '8px var(--mono)';
+  ctx.fillStyle = 'var(--ink-3)';
+  ctx.textAlign = 'left';
+  ctx.fillText('Rounds', 6, padYTop + 3);
+  ctx.fillText('Lead Head', 6, padYTop + (rowCount - 1) * rowH + 3);
+
   $('#lead-single-meta').innerHTML = `
-    <strong>Stage ${m.stage}</strong> · ${rowCount} changes<br>
-    <span style="color:var(--treble-line)">■ Treble Hunt Path</span> · <span style="color:var(--blue-line)">■ Bell 2 Blue Line</span><br>
-    Place Notation: <code>${m.not}</code>
+    <strong>Stage ${m.stage}</strong> · ${rowCount} changes per lead<br>
+    Place Notation: <code>${m.not}</code> ${m.ec ? `· EC: <code>${m.ec}</code>` : ''}
   `;
 }
 
