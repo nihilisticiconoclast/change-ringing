@@ -17,7 +17,8 @@ actually use.
       regions) audited and schema-mapped
 - [x] Working SQLite build, joins and a first query verified
 - [x] Schema exported and migration script written
-- [ ] Database provisioned on Turso (owner-managed, see `docs/CONNECTING.md`)
+- [x] Database provisioned on Turso and loaded with all seven Dove tables
+      (owner-managed, see `docs/CONNECTING.md`)
 - [ ] BellBoard performance data ingested
 - [ ] Tower name -> TowerID entity resolution (BellBoard's free-text tower
       names against Dove's canonical IDs)
