@@ -298,7 +298,7 @@ St Mary,Rushden,Northamptonshire,16,10504,high,23118,Resolved dedication 'S Mary
 St Peter,Wellesbourne,Warwickshire,16,11177,high,,Unique tower in Wellesbourne; dedication 'S Peter' matches 'St Peter'
 St Nicholas,Mavesyn Ridware,Staffordshire,16,15216,high,,Unique tower in Mavesyn Ridware; dedication 'S Nicholas' matches 'St Nicholas'
 St Peter,Nottingham,,16,16058,high,16412;10637;25524;22500;22501;22502;22503,Resolved dedication 'S Peter' (Nottingham) among 8 towers in town
-"Harrison Building, Exeter University",Exeter,Devon,16,20010,high,13963;14687;16135;15779;16959;14227;20007;20008;25133;20009,Resolved dedication 'S Matthew' (Newtown) among 16 towers in town
+"Harrison Building, Exeter University",Exeter,Devon,16,,none,,University building mini-ring; no corresponding Dove tower
 Bellfoundry Tower,Loughborough,Leicestershire,16,10191,high,16752;21820;21821;21822;17781,Resolved dedication 'Bell Foundry Tower' (Loughborough) among 6 towers in town
 Bishop Ryder,Birmingham,,16,,none,16786;13032;15513;14891;12955;25526;25540;25808,Unresolved: 'Bishop Ryder' did not match any of the 8 towers in Birmingham
 Holy Cross,Daventry,Northamptonshire,16,14260,high,,Unique tower in Daventry; dedication 'Holy Cross' matches 'Holy Cross'
@@ -730,7 +730,7 @@ Royal Masonic Junior School,Bushey,Herts,6,,none,13627;18871,Unresolved: 'Royal 
 ,Putney,,6,12162,medium,22893;22894,Partial dedication match for 'S Mary' among 3 towers in town
 Abbey Church of St Peter and St Paul,Dorchester,Oxfordshire,6,10217,high,,Unique tower in Dorchester; dedication 'Abbey Ch of S Peter & S Paul' matches 'Abbey Church of St Peter and St Paul'
 "297 Main Street, Tawa",Wellington,New Zealand,6,,none,,Private residence address (handbell ring)
-Minster Church of St Mary,Cheltenham,Gloucestershire,6,15388,high,15204;15682;12704;25201;19100;19101;19102;19103;25110;19104,Resolved dedication 'S Mary' (Charlton Kings) among 15 towers in town
+Minster Church of St Mary,Cheltenham,Gloucestershire,6,12704,high,,Exact match: Cheltenham 'Minster Ch of S Mary' (corrected from Charlton Kings 15388)
 St Philip,Sydney,,6,11518,high,16969;15468;13849;14777;13677;10621;12983;13900;11755;16839,Resolved dedication 'S Philip' (Sydney) among 20 towers in town
 SS Mary the Virgin and Edward K and M,Barrow Gurney,Somerset,6,13023,high,,Unique tower in Barrow Gurney; dedication 'Blessed Virgin Mary & S Edward K&M' matches 'SS Mary the Virgin and Edward K and M'
 ,Cambridge,,6,12645,medium,15139;16664;14964;17550;13803;13748;10395;18933;18934;25479,Partial dedication match for 'Our Lady & Eng Martyrs' among 28 towers in town
@@ -1194,7 +1194,7 @@ Woodstock,Brandon Parva,Norfolk,4,18613,medium,,"Sole ringing tower in Brandon P
 St Mary,Cheltenham,Gloucestershire,4,12704,high,15204;15682;25201;19100;19101;19102;19103;25110;19104;19105,Resolved dedication 'Minster Ch of S Mary' (Cheltenham) among 15 towers in town
 106 Beaumont Road,Barrow Upon Soar,Leicestershire,4,,none,,Private residence address (handbell ring)
 ,Midsomer Norton,,4,15593,high,,Unique tower in Midsomer Norton (Somerset); building unspecified in source
-The Campanile,Horsted Keynes,West Sussex,3,25670,high,17642,Resolved dedication 'nan' (Horsted Keynes) among 2 towers in town
+The Campanile,Horsted Keynes,West Sussex,3,25670,high,17642,Resolved no dedication recorded in Dove (Horsted Keynes) among 2 towers in town
 St Peter,Lilley,Hertfordshire,3,16499,high,,Unique tower in Lilley; dedication 'S Peter' matches 'St Peter'
 ,Bluebells Cottage,Gloucestershire,3,,none,,No matching tower found for 'Bluebells Cottage' in Dove register
 "St. Mary The Virgin, Churchyard",Hayes,Kent,3,,none,,No matching tower found for 'Hayes' in Dove register
@@ -1466,7 +1466,7 @@ St David,Moreton in Marsh,Gloucestershire,3,14752,high,,Unique tower in Moreton 
 Cathedral Church of St Anne (RC),Leeds,West Yorkshire,3,11425,high,15978;13165;21524;21525;21526;21527;21531;25533;10218;14977,Resolved dedication 'Cath Ch of S Anne' (Leeds) among 27 towers in town
 "St Stephen, Barbourne",Worcester,Worcestershire,3,12050,high,11299;11249;13277;10704;12921;12643;24996;24997;24998;24999,Resolved dedication 'S Stephen' (Worcester) among 14 towers in town
 ,Ripponden,,3,16188,high,,Unique tower in Ripponden (West Yorkshire); building unspecified in source
-Marches Teaching Belfry,Hopton Heath,Shropshire,3,13820,medium,,"Sole ringing tower in Hopton Heath, but dedication 'nan' differs from source 'Marches Teaching Belfry'"
+Marches Teaching Belfry,Hopton Heath,Shropshire,3,13820,medium,,"Sole ringing tower in Hopton Heath, but no dedication recorded in Dove differs from source 'Marches Teaching Belfry'"
 St Lawrence,Alton,Hampshire,3,11925,high,11730,Resolved dedication 'S Lawrence' (Alton) among 2 towers in town
 St Mary,Radcliffe,Greater Manchester,3,13493,high,22911;22912,Resolved dedication 'S Mary' (Radcliffe) among 3 towers in town
 ,Gressenhall,,3,10047,high,,Unique tower in Gressenhall (Norfolk); building unspecified in source
@@ -1766,7 +1766,7 @@ St Mary,Clifton upon Dunsmore,Warwickshire,2,12288,high,,Unique tower in Clifton
 All Saints',Staplehurst,Kent,2,13740,high,,Unique tower in Staplehurst; dedication 'All Saints' matches 'All Saints''
 Holy Trinity,Newton St Loe,Somerset,2,14236,high,,Unique tower in Newton St Loe; dedication 'Holy Trinity' matches 'Holy Trinity'
 St Giles,Imber,Wiltshire,2,15797,high,,Unique tower in Imber; dedication 'S Giles' matches 'St Giles'
-University of Washington,Seattle,Washington,2,16423,high,,Unique tower in Seattle; dedication 'nan' matches 'University of Washington'
+University of Washington,Seattle,Washington,2,16423,high,,Unique tower in Seattle; no dedication recorded in Dove matches 'University of Washington'
 ,Lamberhurst,Kent,2,10661,high,,Unique tower in Lamberhurst (Kent); building unspecified in source
 St Margaret,Stratton Strawless,Norfolk,2,11310,high,,Unique tower in Stratton Strawless; dedication 'S Margaret' matches 'St Margaret'
 All Saints,Shipdham,Norfolk,2,14784,high,,Unique tower in Shipdham; dedication 'All Saints' matches 'All Saints'
@@ -2216,7 +2216,7 @@ St James,Marietta,"Georgia, United States of America",2,14694,high,,Unique tower
 ,Withycombe Raleigh,,2,16183,medium,24899;21079,Partial dedication match for 'S John Ev' among 3 towers in town
 St Laurence,Chorley,Lancashire,2,12122,high,14921;19173;19174;19175,Resolved dedication 'S Laurence' (Chorley) among 5 towers in town
 ,Oxenhope,,2,11937,high,,Unique tower in Oxenhope (West Yorkshire); building unspecified in source
-,New Alresford,,2,25153,medium,15518,Partial dedication match for 'nan' among 2 towers in town
+,New Alresford,,2,25153,medium,15518,Partial dedication match for no recorded dedication among 2 towers in town
 St James,Thrapston,Northamptonshire,2,12688,high,,Unique tower in Thrapston; dedication 'S James' matches 'St James'
 ,Cubitt Town,,2,,none,,No matching tower found for 'Cubitt Town' in Dove register
 St Beuno,Berriew,Powys,2,12215,high,,Unique tower in Berriew; dedication 'S Beuno' matches 'St Beuno'
@@ -4275,7 +4275,7 @@ St Mary the Virgin,Twickenham,Greater London,1,13698,high,12600;25941;24266;2426
 ,Salehurst,,1,10938,high,,Unique tower in Salehurst (East Sussex); building unspecified in source
 Campanile Dyngalyng,Lyng,Norfolk,1,13379,medium,,"Sole ringing tower in Lyng, but dedication 'S Margaret' differs from source 'Campanile Dyngalyng'"
 ,Pinchbeck,,1,13689,high,,Unique tower in Pinchbeck (Lincolnshire); building unspecified in source
-,Twerton-on-Avon,,1,25825,medium,12082,Partial dedication match for 'nan' among 2 towers in town
+,Twerton-on-Avon,,1,25825,medium,12082,Partial dedication match for no recorded dedication among 2 towers in town
 "Vernet-les-Bains, Hitchin, Reach & Great Hockham",Ringing Room,UK & France,1,,none,,Virtual ringing platform or dispersed locations
 Christchurch,Liversedge,West Yorkshire,1,15896,high,,Unique tower in Liversedge; dedication 'Christ Church' matches 'Christchurch'
 Holy Cross,Woodchurch,Merseyside,1,16512,high,,Unique tower in Woodchurch; dedication 'Holy Cross' matches 'Holy Cross'
@@ -5345,7 +5345,7 @@ Our Lady and the English Martyrs,Cambridge,Cambridgeshire,1,12645,medium,15139;1
 St Michael and all Angels,Mottram-in-Longdendale,Cheshire,1,12605,high,,Unique tower in Mottram in Longdendale; dedication 'S Michael' matches 'St Michael and all Angels'
 60 Liverpool Street,Southampton,Hampshire,1,,none,,Private residence address (handbell ring)
 "Cheltenham, Napierville (IL), Oldham, Vernet-les-Bains",Ringing Room,"UK, USA & France",1,,none,,Virtual ringing platform or dispersed locations
-MTB,Hopton Heath,Shropshire,1,13820,medium,,"Sole ringing tower in Hopton Heath, but dedication 'nan' differs from source 'MTB'"
+MTB,Hopton Heath,Shropshire,1,13820,medium,,"Sole ringing tower in Hopton Heath, but no dedication recorded in Dove differs from source 'MTB'"
 Christ Church,North Shields,Northumberland,1,,none,,No matching tower found for 'North Shields' in Dove register
 ,Great Hampton,Worcs,1,12445,high,,Unique tower in Great Hampton (Worcestershire); building unspecified in source
 St Bartholomew,Haslemere,Surrey,1,13219,high,20687,Resolved dedication 'S Bartholomew' (Haslemere) among 2 towers in town

@@ -14,10 +14,36 @@ The resolved candidate file is generated at `data/method_location_candidates.csv
 
 | Confidence Level | Distinct Triples | % Triples | Performance Events | % Events | Description |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **`HIGH`** | **4,455** | **77.8%** | **21,966** | **71.5%** | Exact or unambiguous match. Uncontested single-tower town or strong dedication/parish match in a multi-tower town. |
+| **`HIGH`** | **4,454** | **77.8%** | **21,965** | **71.5%** | Exact or unambiguous match. Uncontested single-tower town or strong dedication/parish match in a multi-tower town. |
 | **`MEDIUM`** | **398** | **6.9%** | **2,074** | **6.7%** | Plausible match requiring downstream review. Partial dedication match in multi-tower town, dual-tower ring, or single tower with alternative/former dedication. |
-| **`NONE`** | **875** | **15.3%** | **6,692** | **21.8%** | Valid non-tower entity (private residence handbell ring, virtual platform, narrowboat, unlisted domestic mini-ring) or unresolvable town. |
+| **`NONE`** | **876** | **15.3%** | **6,693** | **21.8%** | Valid non-tower entity (private residence handbell ring, virtual platform, narrowboat, unlisted domestic mini-ring) or unresolvable town. |
 | **Total** | **5,728** | **100.0%** | **30,732** | **100.0%** | |
+
+No `low` band was emitted; everything the pipeline could not place with at
+least medium justification was classified `none`. Read `medium` as "needs
+review" and `none` as "no tower, or none findable", not as a four-point scale.
+
+## Review corrections (Claude Code, on merge)
+
+Checked before merging: every cited TowerID exists, occurrences sum to the
+30,732 location records in the source, and a random sample of high-confidence
+rows was verified against Dove. Three classes of defect were found and fixed
+in the merge follow-up; the figures above are post-correction.
+
+- `Cheltenham / Minster Church of St Mary` resolved to Charlton Kings
+  (`15388`) when Dove holds an exact match at `12704`. Corrected.
+- `Harrison Building, Exeter University` was matched `high` to Newtown
+  S Matthew (`20010`), a nearby parish rather than the building. No Dove
+  entry exists for it; reclassified `none`.
+- Six rows rendered a null Dove dedication as the literal string `nan` in
+  their reasoning. Text corrected; the underlying matches were sound
+  (`University of Washington` -> `16423` is Kane Hall / Gerberding Hall on
+  the UW campus, and is right).
+
+The two TowerIDs cited in "Overseas / Non-UK Rings" below were also wrong in
+the original write-up (`1563` does not exist; `10769` is Burnham on Crouch,
+Essex). The CSV rows were correct throughout -- the error was confined to the
+prose. Corrected here.
 
 ---
 
@@ -60,7 +86,7 @@ The following ambiguity classes in `data/method_location_candidates.csv` are hig
 - **Candidate Output**: Ranked candidate with all 11 towers listed in `alternatives` and flagged `confidence: medium/low`.
 
 ### 3. Overseas / Non-UK Rings
-- **Example**: `town="Claremont"`, `county="Western Australia"` (Christ Church, `TowerID 1563`); `town="Lismore"`, `county="New South Wales"` (St Andrew, `TowerID 10769`).
+- **Example**: `town="Claremont"`, `county="Western Australia"` (Christ Church, `TowerID 11687`); `town="Lismore"`, `county="New South Wales"` (St Andrew, `TowerID 13969`).
 - **Context**: Dove includes 300+ overseas towers in Australia, New Zealand, USA, Canada, and South Africa. Non-UK entries have been matched, but unlisted foreign towers remain in `confidence: none`.
 
 ### 4. Domestic Mini-Rings and Mobile Installations
