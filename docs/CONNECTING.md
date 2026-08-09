@@ -51,6 +51,43 @@ rows = conn.execute("SELECT * FROM v_ringing_towers LIMIT 5").fetchall()
 turso db shell change-ringing "SELECT COUNT(*) FROM dove"
 ```
 
+## A note on read cost
+
+Turso meters **rows read**, and that number is not proportional to how long a
+query takes. This database holds roughly 130,000 rows and billed 591 million
+reads in a single day. Two statements caused nearly all of it:
+
+- `SELECT COUNT(*) FROM v_first_tower_peals` -- the planner drove the join off
+  `event_type` rather than `method_id`, walking 15,813 rows once per method:
+  396 million reads for one count. Fixed by the composite index in
+  `schema/004_read_cost_indexes.sql`.
+- The location adjudication matched on three columns wrapped in `COALESCE`,
+  which no index can serve: 139 million reads per run, and it was run twice.
+
+The trap worth internalising: **batching a slow loop into one statement fixes
+wall-clock time and can leave read cost completely unchanged.** The 18-minute
+and 19-second versions of that adjudication write read exactly the same 139
+million rows. Latency and read cost are separate problems and only one of them
+announces itself.
+
+Before running anything that touches a whole table, check the plan:
+
+```sql
+EXPLAIN QUERY PLAN <your statement>;
+```
+
+`SCAN` inside a correlated subquery, or `SEARCH ... USING INDEX` on a column
+whose range is large, means you are paying rows-read proportional to the
+product of two tables. Join on a single indexed key, and avoid wrapping join
+columns in functions -- `COALESCE(a,'') = COALESCE(b,'')` defeats every index.
+
+## A note on join fan-out
+
+`dove.TowerID` is not unique: 7,262 rows carry 7,249 distinct TowerIDs,
+because 13 towers hold more than one ring. Joining on `TowerID` alone
+duplicates rows for those towers. Use `RingID` where the question is about a
+specific ring, and deduplicate where it is about a tower.
+
 ## A note on concurrent writes
 
 libSQL's replication is read-optimised (embedded replicas sync from a

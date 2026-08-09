@@ -40,6 +40,10 @@ import libsql
 CANDIDATES = Path(__file__).parent.parent / "data" / "method_location_candidates.csv"
 PARAM_BUDGET = 16000
 
+# The join key. Must match the SQL expression in the UPDATE exactly, including
+# how a missing value is rendered, or rows silently fail to match.
+LOC_KEY = lambda b, t, c: f"{b or ''}|{t or ''}|{c or ''}"
+
 # Ecclesiastical markers. A sole-tower town plus an ecclesiastical building name
 # is a safe inference; a sole-tower town plus a house name is not -- handbell
 # peals are rung in private houses in villages that happen to have one church,
@@ -223,35 +227,41 @@ def main() -> int:
     # for the join and a handful for the batched inserts.
     conn.executescript(
         'DROP TABLE IF EXISTS "_loc_map";'
-        'CREATE TABLE "_loc_map" ('
-        '  "building" TEXT, "town" TEXT, "county" TEXT, "tower_id" INTEGER);'
+        'CREATE TABLE "_loc_map" ("k" TEXT PRIMARY KEY, "tower_id" INTEGER);'
     )
     conn.commit()
 
-    staged = [
-        [d["building"] or None, d["town"] or None, d["county"] or None,
-         int(d["candidate_tower_id"])]
-        for d in acc
-    ]
-    batch_size = max(1, PARAM_BUDGET // 4)
-    tup = "(?, ?, ?, ?)"
+    staged = [[LOC_KEY(d["building"], d["town"], d["county"]),
+               int(d["candidate_tower_id"])] for d in acc]
+    batch_size = max(1, PARAM_BUDGET // 2)
     for i in range(0, len(staged), batch_size):
         chunk = staged[i : i + batch_size]
         conn.execute(
-            'INSERT INTO "_loc_map" ("building","town","county","tower_id") VALUES '
-            + ", ".join([tup] * len(chunk)),
+            'INSERT OR REPLACE INTO "_loc_map" ("k","tower_id") VALUES '
+            + ", ".join(["(?, ?)"] * len(chunk)),
             [v for row in chunk for v in row],
         )
     conn.commit()
 
-    # COALESCE both sides so a NULL building matches a blank CSV cell.
+    # One indexed seek per row, not a scan of the staged set per row.
+    #
+    # This matters far more than it looks. Matching on three separate columns
+    # with COALESCE on both sides cannot use an index, so the subquery scanned
+    # all 4,536 staged rows for each of 30,734 target rows: 139 million rows
+    # read from a database holding about 130,000. Collapsing the three columns
+    # into one key column with a PRIMARY KEY turns each of those scans into a
+    # seek and brings the statement to roughly 60,000 reads.
+    #
+    # Note that the slow and fast versions of the *previous* implementation
+    # read exactly the same number of rows -- batching fixed wall-clock time
+    # and did nothing for read cost. On a metered database those are separate
+    # problems and only one of them shows up as a script that feels slow.
     conn.execute(
         'UPDATE "method_performances" SET "dove_tower_id" = ('
-        '  SELECT m."tower_id" FROM "_loc_map" m'
-        '   WHERE COALESCE(m."building",\'\') = COALESCE("method_performances"."building",\'\')'
-        '     AND COALESCE(m."town",\'\')     = COALESCE("method_performances"."town",\'\')'
-        '     AND COALESCE(m."county",\'\')   = COALESCE("method_performances"."county",\'\')'
-        '   LIMIT 1)'
+        '  SELECT m."tower_id" FROM "_loc_map" m WHERE m."k" = '
+        "    COALESCE(\"method_performances\".\"building\",'') || '|' ||"
+        "    COALESCE(\"method_performances\".\"town\",'')     || '|' ||"
+        "    COALESCE(\"method_performances\".\"county\",''))"
     )
     conn.commit()
     conn.executescript('DROP TABLE IF EXISTS "_loc_map";')

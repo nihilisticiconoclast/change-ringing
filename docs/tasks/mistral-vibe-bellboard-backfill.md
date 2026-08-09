@@ -103,6 +103,20 @@ These are not hypothetical; each cost real debugging time here.
   child rows cleared before reinsert. Overlapping windows must converge, not
   duplicate -- this is what makes resumption safe.
 
+- **Watch rows read, not just wall-clock time.** Turso meters rows read. This
+  database holds ~130,000 rows and billed 591 million reads in one day, from
+  two statements that both looked ordinary: a view whose join the planner drove
+  off a low-selectivity column (396 million reads for a single `COUNT(*)`), and
+  an update matching on three `COALESCE`-wrapped columns, which no index can
+  serve (139 million per run). Run `EXPLAIN QUERY PLAN` on anything that
+  touches a whole table. A `SCAN` inside a correlated subquery means you are
+  paying the product of two tables.
+- **Batching fixes latency, not read cost.** The two versions of that update
+  took 18 minutes and 19 seconds and read exactly the same 139 million rows.
+  Do not assume a fast script is a cheap one.
+- **`dove.TowerID` is not unique** -- 13 towers hold more than one ring -- so
+  joining on it alone fans out and inflates counts. See `docs/CONNECTING.md`.
+
 ## Explicitly out of scope
 
 - Do not run the full backfill and commit the results. Demonstrate the runner
