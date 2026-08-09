@@ -3,14 +3,14 @@
 Generate the Interactive Ringer Constellation & Identity Atlas (docs/ringers.html).
 
 Builds:
-- High-definition force-directed band network graph
+- Pre-computed deterministic golden-spiral guild cluster constellation layout
 - Ringer Name Picker in the top toolbar + Quick Chips for top ringers
 - Live Canonical Ringer Search & Alias Cluster Inspector
-- Guild & Association community clustering with harmonic palette
 - Standalone zero-dependency HTML bundle in docs/ringers.html
 """
 import collections
 import json
+import math
 import sqlite3
 import pandas as pd
 from pathlib import Path
@@ -171,6 +171,27 @@ def build_page():
                 "target": r2,
                 "weight": count
             })
+
+    # Calculate deterministic coordinates via Golden Spiral Guild Clustering
+    assoc_groups = collections.defaultdict(list)
+    for n in nodes:
+        assoc_groups[n["color_cat"]].append(n)
+
+    assoc_list = sorted(assoc_groups.keys(), key=lambda k: -len(assoc_groups[k]))
+    num_assocs = len(assoc_list)
+
+    for a_idx, assoc in enumerate(assoc_list):
+        group = assoc_groups[assoc]
+        center_theta = (a_idx / num_assocs) * 2 * math.pi
+        cx = math.cos(center_theta) * 440
+        cy = math.sin(center_theta) * 300
+
+        for g_idx, n in enumerate(group):
+            theta = g_idx * 2.39996  # Golden ratio angle
+            r = 20.0 + math.sqrt(g_idx) * 34.0
+            n["x"] = round(cx + math.cos(theta) * r, 1)
+            n["y"] = round(cy + math.sin(theta) * r, 1)
+            n["radius"] = round(max(9.0, min(30.0, math.sqrt(n["peals"]) * 0.92)), 1)
 
     print(f"Network graph constructed with {len(nodes)} nodes and {len(edges)} edges.", flush=True)
 
@@ -564,14 +585,8 @@ ringerPicker.addEventListener('change', e => {{
   }}
 }});
 
-// Initialize Node Coordinates with Circle Layout + Force Simulation
 const nodeMap = new Map();
-NODES.forEach((n, idx) => {{
-  const angle = (idx / NODES.length) * Math.PI * 2;
-  const radius = 280 + (idx % 5) * 80;
-  n.x = Math.cos(angle) * radius;
-  n.y = Math.sin(angle) * radius;
-  n.radius = Math.max(8, Math.min(32, Math.sqrt(n.peals) * 0.95));
+NODES.forEach(n => {{
   nodeMap.set(n.id, n);
 }});
 
@@ -581,31 +596,6 @@ const edgeObjs = EDGES.map(e => ({{
   target: nodeMap.get(e.target),
   weight: e.weight
 }})).filter(e => e.source && e.target);
-
-// 60 simulation iterations
-for (let iter = 0; iter < 60; iter++) {{
-  // Repulsion
-  for (let i = 0; i < NODES.length; i++) {{
-    for (let j = i + 1; j < NODES.length; j++) {{
-      const n1 = NODES[i], n2 = NODES[j];
-      const dx = n2.x - n1.x, dy = n2.y - n1.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      if (dist < 340) {{
-        const force = (340 - dist) / dist * 0.12;
-        n1.x -= dx * force; n1.y -= dy * force;
-        n2.x += dx * force; n2.y += dy * force;
-      }}
-    }}
-  }}
-  // Edge Springs
-  edgeObjs.forEach(e => {{
-    const dx = e.target.x - e.source.x, dy = e.target.y - e.source.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const force = (dist - 140) * 0.004 * Math.min(e.weight, 50) / 12;
-    e.source.x += dx * force; e.source.y += dy * force;
-    e.target.x -= dx * force; e.target.y -= dy * force;
-  }});
-}}
 
 function render() {{
   ctx.save();
@@ -630,8 +620,8 @@ function render() {{
   // Draw Edges
   edgeObjs.forEach(e => {{
     const isConn = activeFocusNode && (e.source.id === activeFocusNode.id || e.target.id === activeFocusNode.id);
-    const alpha = activeFocusNode ? (isConn ? 0.85 : 0.06) : Math.min(0.35, e.weight / 60);
-    const width = isConn ? Math.max(2.5, Math.min(8, e.weight / 25)) : Math.max(1.0, Math.min(4, e.weight / 50));
+    const alpha = activeFocusNode ? (isConn ? 0.85 : 0.05) : Math.min(0.35, e.weight / 60);
+    const width = isConn ? Math.max(3.0, Math.min(9, e.weight / 20)) : Math.max(1.0, Math.min(4, e.weight / 50));
 
     ctx.beginPath();
     ctx.moveTo(e.source.x, e.source.y);
@@ -648,7 +638,7 @@ function render() {{
     const isSel = (selectedNode && selectedNode.id === n.id);
     const isHov = (hoveredNode && hoveredNode.id === n.id);
 
-    const baseAlpha = matchesFilter ? (isConn ? 1.0 : 0.25) : 0.12;
+    const baseAlpha = matchesFilter ? (isConn ? 1.0 : 0.25) : 0.10;
 
     ctx.beginPath();
     ctx.arc(n.x, n.y, n.radius * (isSel || isHov ? 1.25 : 1.0), 0, Math.PI * 2);
@@ -670,7 +660,7 @@ function render() {{
     if ((n.peals >= 450 || isConn || isSel || isHov) && matchesFilter) {{
       ctx.font = (isSel || isHov ? 'bold 18px' : '15px') + ' var(--mono)';
       ctx.fillStyle = isDark ? '#F0EDE6' : '#1C1E1C';
-      ctx.globalAlpha = isConn ? 1.0 : 0.35;
+      ctx.globalAlpha = isConn ? 1.0 : 0.4;
       ctx.fillText(n.name, n.x + n.radius + 8, n.y + 5);
     }}
   }});
@@ -692,7 +682,7 @@ function getNodeAt(screenX, screenY) {{
   for (let i = NODES.length - 1; i >= 0; i--) {{
     const n = NODES[i];
     const dist = Math.hypot(n.x - worldX, n.y - worldY);
-    if (dist <= n.radius + 10) return n;
+    if (dist <= n.radius + 12) return n;
   }}
   return null;
 }}
