@@ -27,9 +27,14 @@ actually use.
       name match. ~94% of performances carry it and 99.5% of those resolve.
       See the header of `schema/002_init_bellboard.sql`.
 - [x] CCCBR Methods Library schema, ingestion script, and verification
-      (see `schema/003_init_methods.sql` and `scripts/ingest_methods.py`)
+      (see `schema/003_init_methods.sql` and `scripts/ingest_methods.py`);
+      loaded to Turso -- 25,055 methods, 30,734 first-performance events
 - [x] CCCBR Methods first-performance location resolution candidates and analysis
       (see `data/method_location_candidates.csv` and `docs/method_location_resolution.md`)
+- [ ] Adjudicate `data/method_location_candidates.csv` and write the accepted
+      matches into `method_performances.dove_tower_id` (Claude Code)
+- [ ] Method extension lineage from place notation -- `extension_construction`
+      is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
       `dove-tower-id` (the handbell-in-a-private-house records are not
       resolvable in principle and are out of scope)
