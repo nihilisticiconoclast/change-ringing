@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
 *.db
+# ...except the committed snapshot. Working copies stay ignored; this one file
+# is deliberately tracked -- read data/LICENCE-DATA.md before updating it, and
+# note that every re-commit adds another ~40 MB to history permanently.
+!data/change-ringing.db
 dove-csvs/
 methods-cache/
 *.xml

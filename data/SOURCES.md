@@ -1,5 +1,10 @@
 # Data sources
 
+> **Licensing:** this repository is dual-licensed. The root `LICENSE` (MIT)
+> covers code only. `change-ringing.db` and the derived CSVs in this directory
+> are CC BY-SA 4.0, inherited from Dove's Guide. See `LICENCE-DATA.md` --
+> putting the data in an MIT repository does not relicense it.
+
 Raw CSVs are not committed to this repository -- they live in Turso (see
 `docs/CONNECTING.md`). This file documents where they came from and what
 attribution is owed if any output of this project is published.

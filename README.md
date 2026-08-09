@@ -78,6 +78,22 @@ To lift it: restore the `schedule:` blocks in `.github/workflows/` (the
 original cron lines are preserved in comments there) and remove the notices
 from `docs/tasks/`.
 
+### Just query it — no build, no credentials
+
+`data/change-ringing.db` is a committed snapshot of the whole corpus. Clone the
+repo and open it in any SQLite tool — DB Browser for SQLite, DBeaver, TablePlus,
+or a VS Code extension such as SQLite Viewer or SQLTools. It is a standard
+SQLite file; nothing Turso-specific is needed to read it.
+
+> **It is not MIT-licensed.** The code in this repository is; the data is
+> CC BY-SA 4.0, inherited from Dove's Guide, and that carries attribution and
+> share-alike obligations. Read `data/LICENCE-DATA.md` before republishing
+> anything derived from it.
+
+The snapshot is dated. Dove is a live source, so rebuild with
+`scripts/build_local_db.py` when currency matters, and don't re-commit the
+snapshot casually — each version adds ~40 MB to git history permanently.
+
 ### Work offline instead
 
 The freeze costs almost nothing, because the whole corpus rebuilds locally
