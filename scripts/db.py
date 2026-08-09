@@ -33,7 +33,10 @@ path is local and reaching production is a deliberate act.
 import os
 import sys
 
-import libsql
+try:
+    import libsql
+except ImportError:
+    import sqlite3 as libsql
 
 ALLOW_ENV = "CHANGE_RINGING_ALLOW_PRODUCTION"
 

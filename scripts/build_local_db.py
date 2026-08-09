@@ -34,7 +34,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-import libsql
+try:
+    import libsql
+except ImportError:
+    import sqlite3 as libsql
 
 ROOT = Path(__file__).parent.parent
 SCRIPTS = ROOT / "scripts"
