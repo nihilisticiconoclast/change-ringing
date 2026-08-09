@@ -35,7 +35,7 @@ import re
 import sys
 from pathlib import Path
 
-import libsql
+import db
 
 CANDIDATES = Path(__file__).parent.parent / "data" / "method_location_candidates.csv"
 PARAM_BUDGET = 16000
@@ -162,17 +162,12 @@ def decide(row):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="Decide and report, write nothing")
+    db.add_db_args(ap)
     ap.add_argument("--audit", default="data/method_location_adjudication.csv",
                     help="Where to write the per-row decision record")
     args = ap.parse_args()
 
-    url = os.environ.get("TURSO_DATABASE_URL")
-    token = os.environ.get("TURSO_AUTH_TOKEN")
-    if not url or not token:
-        print("ERROR: set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.", file=sys.stderr)
-        return 1
-
-    conn = libsql.connect(database=url, auth_token=token)
+    conn = db.connect(args)
     dedications = {
         r[0]: r[1]
         for r in conn.execute('SELECT "TowerID", "Dedicn" FROM "towers"').fetchall()

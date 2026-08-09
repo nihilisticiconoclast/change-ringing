@@ -31,7 +31,7 @@ import argparse
 import io
 import os
 import re
-import sqlite3
+import db
 import sys
 import time
 import urllib.error
@@ -300,29 +300,10 @@ def main() -> int:
         default=DEFAULT_XML_URL,
         help="URL to fetch the CCCBR methods XML zip archive",
     )
-    parser.add_argument(
-        "--local-db",
-        help="Target a local SQLite database file instead of remote Turso",
-    )
+    db.add_db_args(parser)
     args = parser.parse_args()
 
-    # Connection management
-    if args.local_db:
-        print(f"Connecting to local SQLite database: {args.local_db}")
-        conn = sqlite3.connect(args.local_db)
-    else:
-        url = os.environ.get("TURSO_DATABASE_URL")
-        token = os.environ.get("TURSO_AUTH_TOKEN")
-        if not url or not token:
-            print(
-                "ERROR: set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in the environment, "
-                "or pass --local-db for local SQLite operations.",
-                file=sys.stderr,
-            )
-            return 1
-        import libsql
-
-        conn = libsql.connect(database=url, auth_token=token)
+    conn = db.connect(args)
 
     with open(args.schema, "r", encoding="utf-8") as f:
         schema_sql = f.read()

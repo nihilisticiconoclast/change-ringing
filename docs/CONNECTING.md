@@ -51,6 +51,29 @@ rows = conn.execute("SELECT * FROM v_ringing_towers LIMIT 5").fetchall()
 turso db shell change-ringing "SELECT COUNT(*) FROM dove"
 ```
 
+## Work offline by default
+
+Production is metered on rows read and is currently frozen. The scripts refuse
+to open a remote connection unless `CHANGE_RINGING_ALLOW_PRODUCTION=1` is set;
+the intended path is a local replica:
+
+```
+python scripts/build_local_db.py --out local_corpus.db
+python scripts/ingest_methods.py --local-db local_corpus.db
+```
+
+`build_local_db.py` reconstructs the corpus from Dove's public CSVs, the CCCBR
+methods XML, the schema files, and the adjudication record in `data/` -- all
+public or committed, none of it read from Turso. BellBoard is the exception
+and stays empty unless you ask for a window with `--bellboard-since`.
+
+The replica opens with an embedded libSQL connection rather than stdlib
+`sqlite3`. That is deliberate: `sqlite3` accepts SQL that libSQL rejects, and
+a double-quoted string literal reached production precisely because local
+testing under `sqlite3` had passed. One gap remains -- NaN parameter binding
+is accepted by both, because the rejection happens in the Hrana JSON layer
+that only a remote connection uses.
+
 ## A note on read cost
 
 Turso meters **rows read**, and that number is not proportional to how long a

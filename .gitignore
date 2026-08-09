@@ -5,3 +5,9 @@ dove-csvs/
 methods-cache/
 *.xml
 *.zip
+
+# offline replica and its build cache
+local_corpus.db
+*.db-shm
+*.db-wal
+.local-build-cache/

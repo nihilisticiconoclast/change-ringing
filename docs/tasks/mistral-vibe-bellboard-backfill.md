@@ -10,12 +10,34 @@ Paste from the horizontal rule onward.
 
 ---
 
-> **DATABASE FREEZE IN EFFECT (2026-08-09).** The Turso database breached its
-> daily row-read limit. Until the owner lifts this freeze, **do not run
-> anything against the live database** -- no loads, no exploratory queries, no
-> verification runs. Write the code and say in the PR that it is unverified
-> against production for this reason. That is an accepted answer right now; a
-> PR that quietly ran against production is not.
+> **WORK OFFLINE. THE LIVE DATABASE IS FROZEN (2026-08-09).** Turso breached
+> its daily row-read limit, so production is off limits: no loads, no
+> exploratory queries, no verification runs. The scripts enforce this -- they
+> refuse to open a remote connection unless `CHANGE_RINGING_ALLOW_PRODUCTION=1`
+> is set, and you should not set it.
+>
+> You lose nothing. Build a full local replica in about 90 seconds:
+>
+> ```
+> pip install -r requirements.txt
+> python scripts/build_local_db.py --out local_corpus.db
+> ```
+>
+> That reconstructs the corpus from public sources and files committed here --
+> Dove's 7,262 towers and 63,894 bells, all 25,055 methods and 30,734
+> first-performance events, and the 22,111 adjudicated tower links. Every
+> script takes `--local-db local_corpus.db`. BellBoard is left empty unless you
+> pass `--bellboard-since YYYY-MM-DD`, because it is the one source that
+> throttles.
+>
+> The replica uses an embedded libSQL connection, not stdlib `sqlite3`, and
+> that difference matters: `sqlite3` accepts SQL that libSQL rejects, which is
+> how a double-quoted string literal reached production earlier today. Testing
+> against this replica is a real check. `EXPLAIN QUERY PLAN` works on it too,
+> so read cost can be assessed offline before anything runs for real.
+>
+> Verify against the replica and say so in the PR. Do not run against
+> production.
 
 You are working on `nihilisticiconoclast/change-ringing`. The database holds
 three corpora already: Dove's Guide (7,262 ringing towers, 63,894 bells),
