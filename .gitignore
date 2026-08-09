@@ -14,3 +14,4 @@ local_corpus.db
 *.db-shm
 *.db-wal
 .local-build-cache/
+data/change-ringing.db
