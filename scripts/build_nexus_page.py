@@ -188,7 +188,7 @@ def generate_html(graph_data):
         h1 { margin: 0 0 10px 0; font-size: 1.5rem; font-weight: 600; background: linear-gradient(90deg, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         p { margin: 0 0 15px 0; font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }
         
-        .legend { display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-top: 20px; }
+        .legend { display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-top: 20px; pointer-events: auto; }
         .legend-item { display: flex; align-items: center; gap: 10px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
         .dot.tower { background-color: #fbbf24; }
