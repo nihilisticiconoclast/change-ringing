@@ -76,6 +76,23 @@ can be checked instead of taken on trust.
 - [ ] CompLib ingestion
 - [ ] Ringer identity resolution (needs the backfill run first)
 
+## Roadmap
+
+`docs/ROADMAP.md` — one ordered list across all three agents. Correctness work
+comes before analysis, because an analysis built on a corpus with a silent gap
+has to be redone.
+
+## The Blue Line Atlas
+
+Every method drawn as the path a bell traces through it — 20,679 of them, from
+place notation verified against the library's own published lead heads.
+
+**https://nihilisticiconoclast.github.io/change-ringing/methods.html**
+
+Built by `scripts/build_method_atlas.py` on top of `scripts/notation.py`, a
+place-notation parser that agrees with the CCCBR library on 97.4% of all 25,066
+methods and over 99.7% at Minor and Major.
+
 ## Ideas
 
 `docs/IDEAS.md` — five visualisation options and a set of insight seams, each
