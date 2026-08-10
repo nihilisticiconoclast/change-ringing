@@ -16,6 +16,7 @@ gap was found.
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
 | 3 | Footnote occasion classification (option D) | Gemini | **Active** |
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Next** |
+| 8a | Method **invention** timeline (option C, first half) | Claude Code | Ready — full history already held |
 | 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
 | 6 | CompLib ingestion | Vibe | Queued |
 | 7 | Corpus integrity checker | Vibe | Queued |
@@ -24,7 +25,7 @@ gap was found.
 
 | # | Item | Owner | Why it waits |
 | --- | --- | --- | --- |
-| 8 | Invention and Survival (option C) | Claude Code | A survival claim on four years is not honest |
+| 8b | Method **survival** — adoption over time (option C, second half) | Claude Code | Needs adoption history; see below |
 | 9 | Ringer identity across decades | Gemini | Present resolution covers 2021–24 only |
 | 10 | Run the backfill to completion | Claude Code | Needs the gate, and the freeze lifts 2026-09-01 |
 
@@ -54,10 +55,24 @@ window. Neither claim depends on the backfill. The footnote work is the same —
 **Correctness work in parallel (5, 6, 7).** Independent of the analyses and
 safe to run alongside.
 
-**Survival claims last (8, 9).** Both need history. A method rung once in
-2021–24 may be a century-old standard having a quiet spell, and ringer identity
-matching is far more powerful across decades than within four years. Doing
-these early would produce plausible, publishable, wrong answers.
+**Option C splits, and only half of it waits.** Checked rather than assumed:
+
+- **Invention (8a) is ready now.** `method_performances` spans **1684–2026**
+  with 30,746 first-performance records — 16,442 of them since 2000, 8,961 in
+  1975–99. When methods were invented, by whom and where, is complete history.
+  No backfill required.
+- **Survival (8b) is not.** "Rung once, therefore a dead end" cannot be
+  supported on 2021–24: a method rung once in that window may have been rung
+  fifty times in 2015. That needs adoption history, which is what the backfill
+  supplies.
+
+**Ringer identity across decades (9) also waits**, for the same reason —
+matching is far more powerful across thirty years than within four.
+
+**Where the backfill actually stands.** Not finished. The corpus holds
+2021–2024 = **96,067 performances**, which is **29%** of the 336,654 BellBoard
+reports for 2012 onward; all of 2012–2020 is missing, 240,587 performances.
+Genuine progress from the original single window of 1,401, but not the archive.
 
 ---
 
@@ -72,10 +87,16 @@ From `docs/IDEAS.md`, with what actually happened:
 - **B · Rhythm of Ringing** — next, and the cheapest. Sunday 23,648 /
   Saturday 19,378 / Wednesday 8,377; September the busiest month at 12,067 with
   no explanation yet; and the pandemic recovery visible as 16,729 → 28,212.
-- **C · Invention and Survival** — deferred behind the backfill, on honesty
-  grounds rather than difficulty.
-- **D · Why People Ring** — with Gemini, with an explicit constraint that the
-  output is aggregate: 7,345 of those footnotes are memorials for real people.
+- **C · Invention and Survival** — splits. Invention is ready now on complete
+  1684–2026 first-performance history; survival waits for adoption history from
+  the backfill. Deferring the whole of C would have been wrong.
+- **D · Why People Ring** — with Gemini now. "With care" is a scoping
+  constraint, not a delay: 7,345 footnotes are memorials and 3,975 mention
+  funerals, written as tributes by people who did not anticipate republication,
+  and birthday footnotes name living individuals and imply their ages (1,843
+  mention "80th"). Aggregate classifications are the deliverable; no named
+  individuals in the output, and no named person's memorial quoted as an
+  illustration. The analysis itself is unaffected.
 - **E · Acoustic Landscape** — held pending review by someone who rings.
 
 ## Standing note on the parser
