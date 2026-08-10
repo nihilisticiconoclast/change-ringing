@@ -9,6 +9,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | 1 | Method extension lineage from place notation | **Done** — PR #3, merged |
 | 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
 | 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
+| 4 | Footnote occasion classification | **Active** — brief below |
 
 ---
 
@@ -120,3 +121,43 @@ Blocked deliberately: `performance_ringers` holds ~10,000 rows from a single
 recent window, which is far too thin for the pairwise sweep to beat a simple
 `GROUP BY name`. It needs the BellBoard historical backfill to have actually
 been run. Do not start it until this row says otherwise.
+
+---
+
+## Task 4 — Footnote occasion classification *(active)*
+
+113,895 free-text footnotes record *why* a performance happened. Nothing in the
+corpus captures occasion, and no published dataset does either — this is a real
+gap, checked before being assigned.
+
+Measured keyword counts, as a floor rather than a target: birthday 7,877,
+"memory" 7,345, funeral 3,975, wedding 2,254, "first peal" 2,221. Keyword
+matching alone will miss most of it and misread plenty ("in memory of the
+bells", "first peal as conductor"), which is why this needs reading rather than
+grepping.
+
+**Deliverable:** `data/footnote_occasions.csv` — one row per footnote, with
+`perf_id`, `position`, `occasion` (a small closed vocabulary you propose and
+justify — memorial, birthday, wedding, funeral, anniversary, first-performance,
+civic, seasonal, practice, none), `subject_type` (person / building / bells /
+institution / none), `confidence`, `evidence`. Plus a write-up.
+
+**Build your own oracle first, before classifying anything.** There is no
+labelled set, so make one: hand-label a random 300 footnotes, hold them out,
+run blind, and report precision and recall per occasion class. State the score
+before the full run. If a class scores badly, say so rather than quietly
+dropping it.
+
+**Two constraints specific to this task.**
+
+1. **These are real people, many recently dead.** 7,345 footnotes are
+   memorials. Produce aggregate classifications; do **not** produce a
+   searchable index of named individuals, and do not put a named person's
+   memorial into a write-up as an illustration. Aggregate patterns are the
+   deliverable.
+2. **`subject_type` matters more than it looks.** "In memory of" a person and
+   "in memory of the old bells" are different things, and conflating them would
+   make any downstream count of memorial ringing wrong.
+
+Out of scope: visualising it, and touching any file under `schema/` or
+`scripts/`.

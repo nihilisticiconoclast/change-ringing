@@ -76,6 +76,14 @@ can be checked instead of taken on trust.
 - [ ] CompLib ingestion
 - [ ] Ringer identity resolution (needs the backfill run first)
 
+## Ideas
+
+`docs/IDEAS.md` — five visualisation options and a set of insight seams, each
+with measured feasibility. Highlights: September is the busiest ringing month
+(12,067 performances) and nobody knows why; 70% of the 9,169 methods rung in
+four years were rung exactly once; and the ten busiest towers account for only
+3.4% of activity, which is far less concentrated than expected.
+
 ## Lessons learnt
 
 `docs/LESSONS.md` — what this project taught, written for the next one rather

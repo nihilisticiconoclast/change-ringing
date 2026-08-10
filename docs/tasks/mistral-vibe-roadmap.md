@@ -12,6 +12,7 @@ ones find.
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
 | 5 | Backfill completeness gate | **Urgent** — brief below |
+| 6 | Place-notation parser | **Queued** — see `docs/IDEAS.md` option A |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
@@ -170,3 +171,35 @@ loading a row count that matches 25,267, and a demonstration that an
 artificially truncated window causes a non-zero exit rather than a checkpoint.
 Do not attempt the full backfill in the PR; it is a long job and the freeze
 means it cannot reach production until 2026-09-01 regardless.
+
+---
+
+## Task 6 — Place-notation parser *(queued)*
+
+`scripts/notation.py`: turn a method's place notation into the sequence of rows
+it produces. Needed for the Blue Line Atlas (`docs/IDEAS.md`, option A) and
+reusable well beyond it.
+
+**This task has a perfect oracle, which is why it is safe to hand over.**
+`methods.notation` and `methods.lead_head` are both populated for **all 25,066
+methods**. Parse the notation, apply it from rounds, and the row you arrive at
+must equal `lead_head` exactly. No labelling, no judgement, no sampling:
+
+| stage | notation | lead_head |
+| --- | --- | --- |
+| 6 | `-36-14-12-36-14-56,12` | `156342` |
+| 8 | `-38-14-1258-36-14-58-16-78,12` | `15738264` |
+| 10 | `-30-14-1250-36-1470-58-16-70-18-90,12` | `1573920486` |
+
+**Definition of done:** a report of how many of the 25,066 methods your parser
+reproduces the published `lead_head` for, and a list of the ones it does not,
+grouped by why. **Do not chase 100%** — the interesting deliverable is an honest
+score plus a characterisation of the failures. A parser that handles 24,000 and
+tells you precisely which 1,066 it cannot is more useful than one claiming
+everything.
+
+Notation to expect: `-` or `x` for a cross, place digits, `0` for 10, `E`/`T`
+for 11/12, `,` separating a half-lead palindrome, `.` separating changes.
+Confirm each against the data rather than trusting this list.
+
+Out of scope: drawing anything. This is the parser only.

@@ -116,6 +116,13 @@ def main() -> int:
         conn = libsql.connect(str(out))
         conn.executescript((SCHEMA_DIR / "002_init_bellboard.sql").read_text())
         
+        # csv.DictReader returns '' for an empty cell. Storing that instead of
+        # NULL silently breaks every IS NULL check downstream: after the first
+        # committed-corpus load, "dove_tower_id IS NULL" matched zero rows while
+        # 15,939 performances genuinely had no tower, so coverage read 100%
+        # against a true 83%. Empty means unknown here, so it becomes NULL.
+        nz = lambda v: None if v == "" else v
+
         total_p, total_r = 0, 0
         for p_csv in bb_perf_csvs:
             yr = p_csv.stem.split("_")[-1]
@@ -127,9 +134,10 @@ def main() -> int:
                 p_rows = list(csv.DictReader(f))
                 if p_rows:
                     flds = list(p_rows[0].keys())
+                    cols = ', '.join('"' + c + '"' for c in flds)
                     conn.executemany(
-                        f"INSERT OR REPLACE INTO performances ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
-                        [[r.get(k) for k in flds] for r in p_rows]
+                        f"INSERT OR REPLACE INTO performances ({cols}) VALUES ({', '.join(['?']*len(flds))})",
+                        [[nz(r.get(k)) for k in flds] for r in p_rows]
                     )
                     total_p += len(p_rows)
 
@@ -139,9 +147,10 @@ def main() -> int:
                     r_rows = list(csv.DictReader(f))
                     if r_rows:
                         flds = list(r_rows[0].keys())
+                        cols = ', '.join('"' + c + '"' for c in flds)
                         conn.executemany(
-                            f"INSERT INTO performance_ringers ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
-                            [[r.get(k) for k in flds] for r in r_rows]
+                            f"INSERT INTO performance_ringers ({cols}) VALUES ({', '.join(['?']*len(flds))})",
+                            [[nz(r.get(k)) for k in flds] for r in r_rows]
                         )
                         total_r += len(r_rows)
 
@@ -151,9 +160,10 @@ def main() -> int:
                     fn_rows = list(csv.DictReader(f))
                     if fn_rows:
                         flds = list(fn_rows[0].keys())
+                        cols = ', '.join('"' + c + '"' for c in flds)
                         conn.executemany(
-                            f"INSERT INTO performance_footnotes ({', '.join(flds)}) VALUES ({', '.join(['?']*len(flds))})",
-                            [[r.get(k) for k in flds] for r in fn_rows]
+                            f"INSERT INTO performance_footnotes ({cols}) VALUES ({', '.join(['?']*len(flds))})",
+                            [[nz(r.get(k)) for k in flds] for r in fn_rows]
                         )
 
         conn.commit()
