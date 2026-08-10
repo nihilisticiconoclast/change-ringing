@@ -285,6 +285,7 @@ def generate_html(graph_data):
         <a href="lineage.html">Method Lineage</a>
         <a href="ringers.html">Ringer Constellation</a>
         <a href="nexus.html" class="active">The Temporal Nexus</a>
+        <a href="geometry.html">Sacred Geometry</a>
       </div>
     </div>
     
