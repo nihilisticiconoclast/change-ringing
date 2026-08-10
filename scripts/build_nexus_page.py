@@ -305,6 +305,7 @@ def generate_html(graph_data):
         <a href="ringers.html">Ringer Constellation</a>
         <a href="nexus.html" class="active">The Temporal Nexus</a>
         <a href="geometry.html">Sacred Geometry</a>
+        <a href="occasions.html">The Occasions Archive</a>
       </div>
     </div>
     

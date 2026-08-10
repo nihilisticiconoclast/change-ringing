@@ -449,6 +449,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <a href="ringers.html" class="active">Ringer Constellation</a>
     <a href="nexus.html">The Temporal Nexus</a>
     <a href="geometry.html">Sacred Geometry</a>
+    <a href="occasions.html">The Occasions Archive</a>
   </div>
   <button class="theme-btn" id="themeToggle">Dark Mode</button>
 </div>
