@@ -232,33 +232,28 @@
                 highlightedGroup = group;
                 if (group === 'tower') {
                     isMapMode = true;
-                    let lats = graphData.nodes.filter(n => n.group === 'tower' && n.lat != null).map(n => n.lat);
-                    let longs = graphData.nodes.filter(n => n.group === 'tower' && n.long != null).map(n => n.long);
+                    let minLat = 49.0, maxLat = 61.0;
+                    let minLong = -8.0, maxLong = 2.0;
                     
-                    if (lats.length > 0) {
-                        let minLat = Math.min(...lats); let maxLat = Math.max(...lats);
-                        let minLong = Math.min(...longs); let maxLong = Math.max(...longs);
-                        
-                        // Map onto X and Y plane (Y is latitude so we don't invert it here if we just want it to lay flat, 
-                        // though normally north is positive Y. We'll set long to X and lat to Y.
-                        graphData.nodes.forEach(n => {
-                            if (n.group === 'tower') {
-                                if (n.lat != null && n.long != null) {
-                                    // Scale to a nice 3D spread
-                                    n.fx = ((n.long - minLong) / (maxLong - minLong) - 0.5) * 4000;
-                                    n.fy = ((n.lat - minLat) / (maxLat - minLat) - 0.5) * 4000;
-                                    n.fz = 0;
-                                } else {
-                                    n.fz = 0; // Drop missing to the plane
-                                }
+                    graphData.nodes.forEach(n => {
+                        if (n.group === 'tower') {
+                            if (n.lat != null && n.long != null && n.lat >= minLat && n.lat <= maxLat && n.long >= minLong && n.long <= maxLong) {
+                                // Scale to a nice 3D spread, mimicking UK proportions
+                                n.fx = ((n.long - minLong) / (maxLong - minLong) - 0.5) * 4000;
+                                n.fy = ((n.lat - minLat) / (maxLat - minLat) - 0.5) * 4800;
+                                n.fz = 0;
+                            } else {
+                                n.fx = 0;
+                                n.fy = 0;
+                                n.fz = -10000; // Hide outliers far away
                             }
-                        });
-                        
-                        Graph.d3AlphaTarget(0.3).restart();
-                        
-                        // Move camera to look down at the map (Z-axis)
-                        Graph.cameraPosition({ x: 0, y: 0, z: 4500 }, { x: 0, y: 0, z: 0 }, 2000);
-                    }
+                        }
+                    });
+                    
+                    Graph.d3AlphaTarget(0.3).restart();
+                    
+                    // Move camera to look down at the map (Z-axis)
+                    Graph.cameraPosition({ x: 0, y: 0, z: 5000 }, { x: 0, y: 0, z: 0 }, 2000);
                 } else if (group === 'method') {
                     isMapMode = true;
                     // Group methods by stage in concentric circles
@@ -305,8 +300,8 @@
                 }
             }
             
-            Graph.nodeColor(Graph.nodeColor());
-            Graph.linkColor(Graph.linkColor());
+            Graph.nodeVisibility(Graph.nodeVisibility());
+            Graph.linkVisibility(Graph.linkVisibility());
         }
         
         const elem = document.getElementById('3d-graph');
@@ -314,13 +309,12 @@
             .graphData(graphData)
             .nodeLabel('name')
             .nodeColor(node => {
-                let opacity = (highlightedGroup && node.group !== highlightedGroup) ? 0.15 : 1.0;
                 switch(node.group) {
-                    case 'tower': return `rgba(251, 191, 36, ${opacity})`;
-                    case 'method': return `rgba(244, 114, 182, ${opacity})`;
-                    case 'ringer': return `rgba(56, 189, 248, ${opacity})`;
-                    case 'performance': return `rgba(255, 255, 255, ${opacity})`;
-                    default: return `rgba(204, 204, 204, ${opacity})`;
+                    case 'tower': return '#fbbf24';
+                    case 'method': return '#f472b6';
+                    case 'ringer': return '#38bdf8';
+                    case 'performance': return '#ffffff';
+                    default: return '#cccccc';
                 }
             })
             .nodeRelSize(4)
@@ -333,11 +327,9 @@
             .nodeResolution(16)
             .linkWidth(link => 0.5)
             .linkColor(link => {
-                let baseOpacity = (highlightedGroup) ? 0.05 : 0.3;
-                let ringerOpacity = (highlightedGroup) ? 0.05 : 0.2;
-                if (link.type === 'perf_tower') return `rgba(251, 191, 36, ${baseOpacity})`;
-                if (link.type === 'perf_method') return `rgba(244, 114, 182, ${baseOpacity})`;
-                return `rgba(56, 189, 248, ${ringerOpacity})`;
+                if (link.type === 'perf_tower') return 'rgba(251, 191, 36, 0.3)';
+                if (link.type === 'perf_method') return 'rgba(244, 114, 182, 0.3)';
+                return 'rgba(56, 189, 248, 0.2)';
             })
             .linkDirectionalParticles(link => {
                 if (!link.date) return 0;
@@ -360,12 +352,14 @@
                 return '#38bdf8';
             })
             .linkVisibility(link => {
+                if (highlightedGroup) return false;
                 if (slider.value === slider.max) return true;
                 if (!link.date) return true;
                 const linkTime = new Date(link.date).getTime();
                 return linkTime <= currentTime;
             })
             .nodeVisibility(node => {
+                if (highlightedGroup && node.group !== highlightedGroup) return false;
                 if (slider.value === slider.max) return true;
                 if (node.group === 'performance' && node.date) {
                     const nodeTime = new Date(node.date).getTime();
