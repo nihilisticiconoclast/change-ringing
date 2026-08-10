@@ -99,80 +99,80 @@ def generate_html(stats):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Occasions Archive</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #030308; font-family: 'Inter', sans-serif; color: #fff; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948; --s9:#8B8880;
+  --dim:#C9C6BC;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --dim:#33322F;
+  }
+}
+        body { margin: 0; padding: 0; background: var(--ground); color: var(--ink); font-family: var(--serif); line-height: 1.62; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing:antialiased;}
         
-        .nav-bar {
-            width: 100%;
-            background: rgba(5, 8, 20, 0.9);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            display: flex;
-            justify-content: flex-start;
-            z-index: 10;
-            backdrop-filter: blur(12px);
-            box-sizing: border-box;
+        .nav-bar{
+          background:var(--surface); border-bottom:1px solid var(--rule);
+          padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
         }
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: 12px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-        .nav-links a {
-            color: #cbd5e1;
-            text-decoration: none;
-            padding: 4px 0;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .nav-links a.active {
-            color: #ec4899;
-            border-bottom-color: #ec4899;
-            font-weight: 600;
-        }
-        .nav-links a:hover { color: #fff; }
+        .nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+        .nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+        .nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
+        .nav-links a:hover{color:var(--ink)}
         
         .container {
-            max-width: 1200px;
+            max-width: 1120px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px 24px;
             display: flex;
             flex-direction: column;
             gap: 40px;
         }
         
         .header {
-            text-align: center;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
+            padding: 48px 0 20px;
         }
         
-        h1 { margin: 0 0 15px 0; font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { margin: 0 0 15px 0; font-size: 1.1rem; color: #94a3b8; line-height: 1.6; }
+        .eyebrow{
+          font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--bronze); margin:0 0 14px;
+        }
+        h1{margin:0; font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.03;font-weight:400;letter-spacing:-.015em}
+        h1 em{font-style:italic;color:var(--bronze)}
+        .standfirst{margin-top:22px;font-size:1.2rem;color:var(--ink-2);max-width:60ch; line-height:1.6;}
         
         .visualizations {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
             gap: 30px;
+            margin-top: 20px;
         }
         
         .card {
-            background: rgba(15, 20, 40, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-radius: 3px;
             padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
         .card h2 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            color: #f8fafc;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin: 0 0 20px 0;
+            font-size: clamp(1.6rem,3.2vw,2.3rem);
+            font-weight: 400;
+            letter-spacing: -.01em;
+            color: var(--ink);
+            border-bottom: 1px solid var(--rule);
             padding-bottom: 15px;
-            margin-bottom: 20px;
         }
         
         #bubble-chart-container {
@@ -192,15 +192,16 @@ def generate_html(stats):
             text-align: center;
             padding: 8px 12px;
             font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            background: rgba(0, 0, 0, 0.85);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+            font-family: var(--mono);
+            background: var(--surface);
+            color: var(--ink);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
             z-index: 10;
+            box-shadow: 0 4px 18px rgba(0,0,0,.28);
         }
         
         .stats-grid {
@@ -210,14 +211,14 @@ def generate_html(stats):
             margin-top: 20px;
         }
         .stat-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--surface-2);
+            border: 1px solid var(--rule);
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 2px;
             text-align: center;
         }
-        .stat-val { font-size: 1.8rem; font-weight: 700; color: #ec4899; }
-        .stat-lbl { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+        .stat-val { font-size: 1.85rem; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing:-.02em; }
+        .stat-lbl { font-size: 10.5px; font-family: var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .13em; margin-top: 4px; }
         
         @media (max-width: 1024px) {
             .visualizations { grid-template-columns: 1fr; }
@@ -230,19 +231,20 @@ def generate_html(stats):
 <body>
     <div class="nav-bar">
       <div class="nav-links">
-        <a href="index.html">Founder Atlas</a>
-        <a href="lineage.html">Method Lineage</a>
-        <a href="ringers.html">Ringer Constellation</a>
-        <a href="nexus.html">The Temporal Nexus</a>
-        <a href="geometry.html">Sacred Geometry</a>
-        <a href="occasions.html" class="active">The Occasions Archive</a>
+            <a href="index.html">Founder Atlas</a>
+            <a href="lineage.html">Method Lineage</a>
+            <a href="ringers.html">Ringer Constellation</a>
+            <a href="occasions.html" class="active">The Occasions Archive</a>
+            <a href="nexus.html">The Temporal Nexus</a>
+            <a href="geometry.html">Sacred Geometry</a>
       </div>
     </div>
     
     <div class="container">
         <div class="header">
-            <h1>Why People Ring</h1>
-            <p>Every performance is woven with human intent. By classifying hundreds of thousands of footnotes, we can map the overarching reasons why bells are rung—from profound memorials to jubilant celebrations—all while strictly preserving individual privacy.</p>
+            <p class="eyebrow">Change Ringing Corpus · Second analytical output</p>
+            <h1>Why people <em>ring</em></h1>
+            <p class="standfirst">Every performance is woven with human intent. By classifying hundreds of thousands of footnotes, we can map the overarching reasons why bells are rung—from profound memorials to jubilant celebrations—all while strictly preserving individual privacy.</p>
         </div>
         
         <div class="visualizations">
@@ -333,7 +335,7 @@ def generate_html(stats):
         node.append("text")
             .attr("text-anchor", "middle")
             .attr("dy", "-0.2em")
-            .style("fill", "#fff")
+            .style("fill", "var(--ink)")
             .style("font-size", d => Math.min(d.r / 3, 14) + "px")
             .style("font-weight", "600")
             .style("pointer-events", "none")
@@ -342,7 +344,7 @@ def generate_html(stats):
         node.append("text")
             .attr("text-anchor", "middle")
             .attr("dy", "1.2em")
-            .style("fill", "rgba(255,255,255,0.7)")
+            .style("fill", "var(--ink-2)")
             .style("font-size", d => Math.min(d.r / 4, 12) + "px")
             .style("pointer-events", "none")
             .text(d => d.r > 35 ? d.data.value.toLocaleString() : "");
@@ -350,8 +352,9 @@ def generate_html(stats):
         // --- LINE CHART (Chart.js) ---
         const ctx = document.getElementById('seasonalityChart').getContext('2d');
         
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.font.family = "'Inter', sans-serif";
+        const rootStyles = getComputedStyle(document.documentElement);
+        Chart.defaults.color = rootStyles.getPropertyValue('--ink-3').trim();
+        Chart.defaults.font.family = rootStyles.getPropertyValue('--mono').trim();
         
         new Chart(ctx, {
             type: 'line',
@@ -372,20 +375,20 @@ def generate_html(stats):
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#cbd5e1',
-                        borderColor: 'rgba(255,255,255,0.1)',
+                        backgroundColor: rootStyles.getPropertyValue('--surface-2').trim(),
+                        titleColor: rootStyles.getPropertyValue('--ink').trim(),
+                        bodyColor: rootStyles.getPropertyValue('--ink-2').trim(),
+                        borderColor: rootStyles.getPropertyValue('--rule').trim(),
                         borderWidth: 1,
                         padding: 12
                     }
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(255,255,255,0.05)' }
+                        grid: { color: rootStyles.getPropertyValue('--rule').trim() }
                     },
                     y: {
-                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        grid: { color: rootStyles.getPropertyValue('--rule').trim() },
                         beginAtZero: true
                     }
                 }
