@@ -273,6 +273,25 @@ def generate_html(graph_data):
             z-index: 5;
             pointer-events: none;
         }
+        
+        #recenter-btn {
+            margin-top: 20px;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+        
+        #recenter-btn:hover {
+            background: rgba(56, 189, 248, 0.4);
+            color: #fff;
+        }
     </style>
     <!-- Use 3d-force-graph via CDN -->
     <script src="https://unpkg.com/3d-force-graph"></script>
@@ -294,15 +313,16 @@ def generate_html(graph_data):
     <div class="overlay">
         <h1>The Temporal Nexus</h1>
         <p>A multi-dimensional view of change ringing. <strong>Nodes cluster mathematically based on shared history.</strong></p>
-        <p>The dense center represents the most interconnected hub of 2024. The outer edges represent isolated or unique events.</p>
+        <p>The base layer forms a geographical map of the UK. Methods, ringers, and performances naturally gravitate toward the locations where they are most active.</p>
         <p><em>Click any node to fly to it and view its narrative.</em></p>
-        <p style="margin-top: 15px; font-size: 0.85rem; color: #38bdf8;"><em>✨ Click any legend item below to isolate its nodes and reveal special spatial layouts!</em></p>
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #38bdf8;"><em>✨ Click any legend item below to isolate its nodes!</em></p>
         <div class="legend">
-            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('tower')" title="Click to highlight and view map mode"><div class="dot tower"></div> Towers (size reflects activity)</div>
-            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('method')" title="Click to highlight"><div class="dot method"></div> Methods (size reflects frequency)</div>
-            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('ringer')" title="Click to highlight"><div class="dot ringer"></div> Ringers (size reflects activity)</div>
-            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('performance')" title="Click to highlight"><div class="dot perf"></div> Performances</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('tower')" title="Click to isolate"><div class="dot tower"></div> Towers (size reflects activity)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('method')" title="Click to isolate"><div class="dot method"></div> Methods (size reflects frequency)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('ringer')" title="Click to isolate"><div class="dot ringer"></div> Ringers (size reflects activity)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('performance')" title="Click to isolate"><div class="dot perf"></div> Performances</div>
         </div>
+        <button id="recenter-btn" onclick="recenterMap()">Re-centre Map</button>
     </div>
     
     <div id="side-panel">
@@ -344,96 +364,40 @@ def generate_html(graph_data):
         let currentTime = maxTime;
         
         let highlightedGroup = null;
-        let isMapMode = false;
+        
+        // Initialize geographical coordinates for towers
+        let minLat = 49.0, maxLat = 61.0;
+        let minLong = -8.0, maxLong = 2.0;
+        
+        graphData.nodes.forEach(n => {
+            if (n.group === 'tower') {
+                if (n.lat != null && n.long != null && n.lat >= minLat && n.lat <= maxLat && n.long >= minLong && n.long <= maxLong) {
+                    n.fx = ((n.long - minLong) / (maxLong - minLong) - 0.5) * 4000;
+                    n.fy = ((n.lat - minLat) / (maxLat - minLat) - 0.5) * 4800;
+                    // Allow Z to be somewhat fluid but push it towards 0, or just fix it at 0 to define the ground plane
+                    n.fz = 0;
+                } else {
+                    // Outliers stay far away
+                    n.fx = 0;
+                    n.fy = 0;
+                    n.fz = -10000; 
+                }
+            }
+        });
         
         function highlightGroup(group) {
             if (highlightedGroup === group) {
                 highlightedGroup = null;
-                if (isMapMode) {
-                    isMapMode = false;
-                    graphData.nodes.forEach(n => {
-                        n.fx = undefined;
-                        n.fy = undefined;
-                        n.fz = undefined;
-                    });
-                    Graph.d3Force('charge').strength(-30);
-                    Graph.d3AlphaTarget(0.3).restart();
-                    setTimeout(() => { Graph.d3AlphaTarget(0); }, 3000);
-                }
             } else {
                 highlightedGroup = group;
-                if (group === 'tower') {
-                    isMapMode = true;
-                    let minLat = 49.0, maxLat = 61.0;
-                    let minLong = -8.0, maxLong = 2.0;
-                    
-                    graphData.nodes.forEach(n => {
-                        if (n.group === 'tower') {
-                            if (n.lat != null && n.long != null && n.lat >= minLat && n.lat <= maxLat && n.long >= minLong && n.long <= maxLong) {
-                                // Scale to a nice 3D spread, mimicking UK proportions
-                                n.fx = ((n.long - minLong) / (maxLong - minLong) - 0.5) * 4000;
-                                n.fy = ((n.lat - minLat) / (maxLat - minLat) - 0.5) * 4800;
-                                n.fz = 0;
-                            } else {
-                                n.fx = 0;
-                                n.fy = 0;
-                                n.fz = -10000; // Hide outliers far away
-                            }
-                        }
-                    });
-                    
-                    Graph.d3AlphaTarget(0.3).restart();
-                    
-                    // Move camera to look down at the map (Z-axis)
-                    Graph.cameraPosition({ x: 0, y: 0, z: 5000 }, { x: 0, y: 0, z: 0 }, 2000);
-                } else if (group === 'method') {
-                    isMapMode = true;
-                    // Group methods by stage in concentric circles
-                    let methods = graphData.nodes.filter(n => n.group === 'method');
-                    let stages = [...new Set(methods.map(n => n.stage).filter(s => s != null))].sort((a,b) => a-b);
-                    
-                    let stageRadii = {};
-                    stages.forEach((s, i) => {
-                        stageRadii[s] = 400 + (i * 300); // 400, 700, 1000...
-                    });
-                    
-                    let methodCounts = {};
-                    methods.forEach(n => {
-                        let s = n.stage || 'unknown';
-                        if (!methodCounts[s]) methodCounts[s] = 0;
-                        methodCounts[s]++;
-                    });
-                    
-                    let methodIndices = {};
-                    
-                    graphData.nodes.forEach(n => {
-                        if (n.group === 'method') {
-                            let s = n.stage || 'unknown';
-                            if (!methodIndices[s]) methodIndices[s] = 0;
-                            let idx = methodIndices[s]++;
-                            let count = methodCounts[s];
-                            let r = stageRadii[n.stage] || 2500; // unknown stage gets outer ring
-                            let angle = (idx / count) * Math.PI * 2;
-                            
-                            n.fx = Math.cos(angle) * r;
-                            n.fy = Math.sin(angle) * r;
-                            n.fz = 0;
-                        }
-                    });
-                    
-                    Graph.d3AlphaTarget(0.3).restart();
-                    Graph.cameraPosition({ x: 0, y: -2000, z: 3000 }, { x: 0, y: 0, z: 0 }, 2000);
-                } else {
-                    if (isMapMode) {
-                        isMapMode = false;
-                        graphData.nodes.forEach(n => { n.fx = undefined; n.fy = undefined; n.fz = undefined; });
-                        Graph.d3AlphaTarget(0.3).restart();
-                    }
-                }
             }
             
             Graph.nodeVisibility(Graph.nodeVisibility());
             Graph.linkVisibility(Graph.linkVisibility());
+        }
+        
+        function recenterMap() {
+            Graph.cameraPosition({ x: 0, y: 0, z: 4500 }, { x: 0, y: 0, z: 0 }, 2000);
         }
         
         const elem = document.getElementById('3d-graph');
@@ -556,10 +520,16 @@ def generate_html(graph_data):
         scene.add(axesHelper);
         
         // A highly visible flat equatorial grid plane to provide depth (opacity 0.6)
+        // Positioned slightly below Z=0 so it sits just beneath the towers
         const gridHelper = new THREE.GridHelper(6000, 40, 0x38bdf8, 0x111122);
-        gridHelper.material.opacity = 0.6;
+        gridHelper.material.opacity = 0.4;
         gridHelper.material.transparent = true;
+        gridHelper.rotation.x = Math.PI / 2; // Rotate grid to lie on the X/Y plane (since towers are on X/Y)
+        gridHelper.position.z = -50;
         scene.add(gridHelper);
+            
+        // Initial camera position
+        setTimeout(() => { recenterMap(); }, 500);
             
         // Setup slider interaction
         slider.addEventListener('input', (e) => {
