@@ -12,11 +12,13 @@ def fetch_nexus_data():
     
     # Get a sample of performances from 2024
     perfs_query = """
-        SELECT perf_id, bb_id, place, method, perf_date
-        FROM performances 
-        WHERE perf_date LIKE '2024%' 
-        AND method IS NOT NULL
-        AND method != ''
+        SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
+        FROM performances p
+        LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
+        LEFT JOIN methods m ON p.method = m.title
+        WHERE p.perf_date LIKE '2024%' 
+        AND p.method IS NOT NULL
+        AND p.method != ''
         LIMIT 1000
     """
     perfs = pd.read_sql(perfs_query, conn)
@@ -25,11 +27,13 @@ def fetch_nexus_data():
     if not perf_ids:
         print("No 2024 performances found. Taking 1000 most recent.")
         perfs_query = """
-            SELECT perf_id, bb_id, place, method, perf_date
-            FROM performances 
-            WHERE method IS NOT NULL
-            AND method != ''
-            ORDER BY perf_date DESC
+            SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
+            FROM performances p
+            LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
+            LEFT JOIN methods m ON p.method = m.title
+            WHERE p.method IS NOT NULL
+            AND p.method != ''
+            ORDER BY p.perf_date DESC
             LIMIT 1000
         """
         perfs = pd.read_sql(perfs_query, conn)
@@ -70,12 +74,25 @@ def fetch_nexus_data():
         
         # Add Tower Node
         if tower_id not in nodes:
-            nodes[tower_id] = {"id": tower_id, "group": "tower", "name": str(row['place']), "val": 3}
+            nodes[tower_id] = {
+                "id": tower_id, 
+                "group": "tower", 
+                "name": str(row['place']), 
+                "val": 3,
+                "lat": row['Lat'] if pd.notnull(row['Lat']) else None,
+                "long": row['Long'] if pd.notnull(row['Long']) else None
+            }
         nodes[tower_id]["val"] += 0.5
         
         # Add Method Node
         if method_id not in nodes:
-            nodes[method_id] = {"id": method_id, "group": "method", "name": str(row['method']), "val": 3}
+            nodes[method_id] = {
+                "id": method_id, 
+                "group": "method", 
+                "name": str(row['method']), 
+                "val": 3,
+                "stage": row['stage'] if pd.notnull(row['stage']) else None
+            }
         nodes[method_id]["val"] += 0.5
         
         # Create links from Performance to Tower and Method
@@ -278,11 +295,12 @@ def generate_html(graph_data):
         <p>A multi-dimensional view of change ringing. <strong>Nodes cluster mathematically based on shared history.</strong></p>
         <p>The dense center represents the most interconnected hub of 2024. The outer edges represent isolated or unique events.</p>
         <p><em>Click any node to fly to it and view its narrative.</em></p>
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #38bdf8;"><em>✨ Click any legend item below to isolate its nodes and reveal special spatial layouts!</em></p>
         <div class="legend">
-            <div class="legend-item"><div class="dot tower"></div> Towers (size reflects activity)</div>
-            <div class="legend-item"><div class="dot method"></div> Methods (size reflects frequency)</div>
-            <div class="legend-item"><div class="dot ringer"></div> Ringers (size reflects activity)</div>
-            <div class="legend-item"><div class="dot perf"></div> Performances</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('tower')" title="Click to highlight and view map mode"><div class="dot tower"></div> Towers (size reflects activity)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('method')" title="Click to highlight"><div class="dot method"></div> Methods (size reflects frequency)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('ringer')" title="Click to highlight"><div class="dot ringer"></div> Ringers (size reflects activity)</div>
+            <div class="legend-item" style="cursor:pointer;" onclick="highlightGroup('performance')" title="Click to highlight"><div class="dot perf"></div> Performances</div>
         </div>
     </div>
     
@@ -324,17 +342,116 @@ def generate_html(graph_data):
         const timeWindow = 14 * 24 * 60 * 60 * 1000; 
         let currentTime = maxTime;
         
+        let highlightedGroup = null;
+        let isMapMode = false;
+        
+        function highlightGroup(group) {
+            if (highlightedGroup === group) {
+                highlightedGroup = null;
+                if (isMapMode) {
+                    isMapMode = false;
+                    graphData.nodes.forEach(n => {
+                        n.fx = undefined;
+                        n.fy = undefined;
+                        n.fz = undefined;
+                    });
+                    Graph.d3Force('charge').strength(-30);
+                    Graph.d3AlphaTarget(0.3).restart();
+                    setTimeout(() => { Graph.d3AlphaTarget(0); }, 3000);
+                }
+            } else {
+                highlightedGroup = group;
+                if (group === 'tower') {
+                    isMapMode = true;
+                    let lats = graphData.nodes.filter(n => n.group === 'tower' && n.lat != null).map(n => n.lat);
+                    let longs = graphData.nodes.filter(n => n.group === 'tower' && n.long != null).map(n => n.long);
+                    
+                    if (lats.length > 0) {
+                        let minLat = Math.min(...lats); let maxLat = Math.max(...lats);
+                        let minLong = Math.min(...longs); let maxLong = Math.max(...longs);
+                        
+                        // Map onto X and Y plane (Y is latitude so we don't invert it here if we just want it to lay flat, 
+                        // though normally north is positive Y. We'll set long to X and lat to Y.
+                        graphData.nodes.forEach(n => {
+                            if (n.group === 'tower') {
+                                if (n.lat != null && n.long != null) {
+                                    // Scale to a nice 3D spread
+                                    n.fx = ((n.long - minLong) / (maxLong - minLong) - 0.5) * 4000;
+                                    n.fy = ((n.lat - minLat) / (maxLat - minLat) - 0.5) * 4000;
+                                    n.fz = 0;
+                                } else {
+                                    n.fz = 0; // Drop missing to the plane
+                                }
+                            }
+                        });
+                        
+                        Graph.d3AlphaTarget(0.3).restart();
+                        
+                        // Move camera to look down at the map (Z-axis)
+                        Graph.cameraPosition({ x: 0, y: 0, z: 4500 }, { x: 0, y: 0, z: 0 }, 2000);
+                    }
+                } else if (group === 'method') {
+                    isMapMode = true;
+                    // Group methods by stage in concentric circles
+                    let methods = graphData.nodes.filter(n => n.group === 'method');
+                    let stages = [...new Set(methods.map(n => n.stage).filter(s => s != null))].sort((a,b) => a-b);
+                    
+                    let stageRadii = {};
+                    stages.forEach((s, i) => {
+                        stageRadii[s] = 400 + (i * 300); // 400, 700, 1000...
+                    });
+                    
+                    let methodCounts = {};
+                    methods.forEach(n => {
+                        let s = n.stage || 'unknown';
+                        if (!methodCounts[s]) methodCounts[s] = 0;
+                        methodCounts[s]++;
+                    });
+                    
+                    let methodIndices = {};
+                    
+                    graphData.nodes.forEach(n => {
+                        if (n.group === 'method') {
+                            let s = n.stage || 'unknown';
+                            if (!methodIndices[s]) methodIndices[s] = 0;
+                            let idx = methodIndices[s]++;
+                            let count = methodCounts[s];
+                            let r = stageRadii[n.stage] || 2500; // unknown stage gets outer ring
+                            let angle = (idx / count) * Math.PI * 2;
+                            
+                            n.fx = Math.cos(angle) * r;
+                            n.fy = Math.sin(angle) * r;
+                            n.fz = 0;
+                        }
+                    });
+                    
+                    Graph.d3AlphaTarget(0.3).restart();
+                    Graph.cameraPosition({ x: 0, y: -2000, z: 3000 }, { x: 0, y: 0, z: 0 }, 2000);
+                } else {
+                    if (isMapMode) {
+                        isMapMode = false;
+                        graphData.nodes.forEach(n => { n.fx = undefined; n.fy = undefined; n.fz = undefined; });
+                        Graph.d3AlphaTarget(0.3).restart();
+                    }
+                }
+            }
+            
+            Graph.nodeColor(Graph.nodeColor());
+            Graph.linkColor(Graph.linkColor());
+        }
+        
         const elem = document.getElementById('3d-graph');
         const Graph = ForceGraph3D()(elem)
             .graphData(graphData)
             .nodeLabel('name')
             .nodeColor(node => {
+                let opacity = (highlightedGroup && node.group !== highlightedGroup) ? 0.15 : 1.0;
                 switch(node.group) {
-                    case 'tower': return '#fbbf24';
-                    case 'method': return '#f472b6';
-                    case 'ringer': return '#38bdf8';
-                    case 'performance': return '#ffffff';
-                    default: return '#cccccc';
+                    case 'tower': return `rgba(251, 191, 36, ${opacity})`;
+                    case 'method': return `rgba(244, 114, 182, ${opacity})`;
+                    case 'ringer': return `rgba(56, 189, 248, ${opacity})`;
+                    case 'performance': return `rgba(255, 255, 255, ${opacity})`;
+                    default: return `rgba(204, 204, 204, ${opacity})`;
                 }
             })
             .nodeRelSize(4)
@@ -347,9 +464,11 @@ def generate_html(graph_data):
             .nodeResolution(16)
             .linkWidth(link => 0.5)
             .linkColor(link => {
-                if (link.type === 'perf_tower') return 'rgba(251, 191, 36, 0.3)';
-                if (link.type === 'perf_method') return 'rgba(244, 114, 182, 0.3)';
-                return 'rgba(56, 189, 248, 0.2)';
+                let baseOpacity = (highlightedGroup) ? 0.05 : 0.3;
+                let ringerOpacity = (highlightedGroup) ? 0.05 : 0.2;
+                if (link.type === 'perf_tower') return `rgba(251, 191, 36, ${baseOpacity})`;
+                if (link.type === 'perf_method') return `rgba(244, 114, 182, ${baseOpacity})`;
+                return `rgba(56, 189, 248, ${ringerOpacity})`;
             })
             .linkDirectionalParticles(link => {
                 if (!link.date) return 0;
