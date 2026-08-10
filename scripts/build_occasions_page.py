@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import json
 import re
+import random
 from datetime import datetime
 
 DB_PATH = "data/change-ringing.db"
@@ -23,22 +24,21 @@ def fetch_and_classify():
     conn = sqlite3.connect(DB_PATH)
     
     query = """
-        SELECT p.perf_date, f.footnote 
+        SELECT p.perf_date, p.changes, f.footnote 
         FROM performance_footnotes f 
         JOIN performances p ON f.perf_id = p.perf_id 
         WHERE f.footnote IS NOT NULL AND f.footnote != ''
     """
-    # Fetch all footnotes
     df = pd.read_sql(query, conn)
     conn.close()
     
     # Initialize stats dictionary
-    stats = {cat: {"total": 0, "by_month": {m: 0 for m in range(1, 13)}} for cat in CATEGORIES}
-    stats["Unclassified"] = {"total": 0, "by_month": {m: 0 for m in range(1, 13)}}
+    stats = {cat: {"total": 0, "by_month": {m: 0 for m in range(1, 13)}, "changes": []} for cat in CATEGORIES}
     
     for _, row in df.iterrows():
         footnote = row['footnote']
         perf_date_str = row['perf_date']
+        changes = row['changes']
         
         # Extract month
         month = 1
@@ -49,48 +49,60 @@ def fetch_and_classify():
             except Exception:
                 pass
                 
-        matched = False
+        # Validate changes
+        valid_changes = None
+        if pd.notna(changes):
+            try:
+                c = int(changes)
+                if 100 <= c <= 15000:
+                    valid_changes = c
+            except:
+                pass
+                
         for cat, pattern in CATEGORIES.items():
             if pattern.search(footnote):
                 stats[cat]["total"] += 1
                 stats[cat]["by_month"][month] += 1
-                matched = True
-        
-        if not matched:
-            stats["Unclassified"]["total"] += 1
-            stats["Unclassified"]["by_month"][month] += 1
-            
+                if valid_changes is not None:
+                    stats[cat]["changes"].append(valid_changes)
+                
     return stats
 
 def generate_html(stats):
-    # Format data for Bubble Chart (D3 Pack)
-    children = []
-    for cat, data in stats.items():
-        if cat != "Unclassified" and data["total"] > 0:
-            children.append({"name": cat, "value": data["total"]})
-            
-    bubble_data = {"name": "Occasions", "children": children}
+    # Format data for Violin plot
+    violin_data = []
     
-    # Format data for Seasonality Line Chart (Chart.js)
+    # Filter out categories with too little data
+    valid_cats = [c for c in CATEGORIES if stats[c]["total"] > 100]
+    
+    # Sort categories by total count descending
+    valid_cats.sort(key=lambda c: stats[c]["total"], reverse=True)
+    
+    for cat in valid_cats:
+        c_data = stats[cat]["changes"]
+        if not c_data: continue
+        # Downsample for JS passing to keep JSON small
+        sampled = random.sample(c_data, min(len(c_data), 2000))
+        violin_data.append({"name": cat, "values": sampled})
+        
+    # Format data for Seasonality Line Chart
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    datasets = []
-    colors = [
-        '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#14b8a6', '#64748b'
-    ]
+    line_datasets = []
     
-    i = 0
-    for cat, data in stats.items():
-        if cat != "Unclassified" and data["total"] > 0:
-            month_counts = [data["by_month"][m] for m in range(1, 13)]
-            datasets.append({
-                "label": cat,
-                "data": month_counts,
-                "borderColor": colors[i % len(colors)],
-                "backgroundColor": colors[i % len(colors)] + '40',
-                "fill": False,
-                "tension": 0.4
-            })
-            i += 1
+    colors = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#14b8a6', '#64748b']
+    
+    for i, cat in enumerate(valid_cats):
+        month_counts = [stats[cat]["by_month"][m] for m in range(1, 13)]
+        line_datasets.append({
+            "label": cat,
+            "data": month_counts,
+            "borderColor": colors[i % len(colors)],
+            "backgroundColor": colors[i % len(colors)] + '40',
+            "fill": False,
+            "tension": 0.4
+        })
+        
+    leaderboard_data = [{"name": cat, "count": stats[cat]["total"], "color": colors[i % len(colors)]} for i, cat in enumerate(valid_cats)]
             
     html_template = """<!DOCTYPE html>
 <html lang="en">
@@ -103,8 +115,6 @@ def generate_html(stats):
   --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
   --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
   --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
-  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
-  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948; --s9:#8B8880;
   --dim:#C9C6BC;
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
@@ -123,7 +133,7 @@ def generate_html(stats):
           background:var(--surface); border-bottom:1px solid var(--rule);
           padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
         }
-        .nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+        .nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex-wrap:wrap;}
         .nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
         .nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
         .nav-links a:hover{color:var(--ink)}
@@ -153,9 +163,15 @@ def generate_html(stats):
         
         .visualizations {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
+            grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 20px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
         
         .card {
@@ -166,25 +182,76 @@ def generate_html(stats):
         }
         
         .card h2 {
-            margin: 0 0 20px 0;
-            font-size: clamp(1.6rem,3.2vw,2.3rem);
+            margin: 0 0 5px 0;
+            font-size: clamp(1.4rem,2vw,1.8rem);
             font-weight: 400;
             letter-spacing: -.01em;
             color: var(--ink);
+        }
+        
+        .card p.desc {
+            font-family: var(--serif);
+            color: var(--ink-2);
+            font-size: 0.95rem;
+            margin: 0 0 20px 0;
             border-bottom: 1px solid var(--rule);
             padding-bottom: 15px;
         }
         
-        #bubble-chart-container {
+        #violin-chart-container {
             width: 100%;
-            height: 500px;
+            height: 600px;
             position: relative;
+            overflow-x: auto;
         }
         
         #line-chart-container {
             width: 100%;
-            height: 500px;
+            height: 400px;
             position: relative;
+        }
+        
+        /* Leaderboard styling */
+        .leaderboard {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .lb-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 60px;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .lb-name {
+            font-family: var(--mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ink);
+            text-align: right;
+        }
+        
+        .lb-bar-container {
+            width: 100%;
+            background: var(--surface-2);
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .lb-bar {
+            height: 100%;
+            border-radius: 6px;
+        }
+        
+        .lb-count {
+            font-family: var(--mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 12px;
+            color: var(--ink-3);
         }
         
         .tooltip {
@@ -204,25 +271,8 @@ def generate_html(stats):
             box-shadow: 0 4px 18px rgba(0,0,0,.28);
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .stat-box {
-            background: var(--surface-2);
-            border: 1px solid var(--rule);
-            padding: 15px;
-            border-radius: 2px;
-            text-align: center;
-        }
-        .stat-val { font-size: 1.85rem; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing:-.02em; }
-        .stat-lbl { font-size: 10.5px; font-family: var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .13em; margin-top: 4px; }
-        
         @media (max-width: 1024px) {
-            .visualizations { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
         }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -244,180 +294,289 @@ def generate_html(stats):
         <div class="header">
             <p class="eyebrow">Change Ringing Corpus · Second analytical output</p>
             <h1>Why people <em>ring</em></h1>
-            <p class="standfirst">Every performance is woven with human intent. By classifying hundreds of thousands of footnotes, we can map the overarching reasons why bells are rung—from profound memorials to jubilant celebrations—all while strictly preserving individual privacy.</p>
+            <p class="standfirst">Every performance is woven with human intent. By classifying hundreds of thousands of footnotes, we can map the overarching reasons why bells are rung—and the physical endurance those occasions demand—all while strictly preserving individual privacy.</p>
         </div>
         
         <div class="visualizations">
             <div class="card">
-                <h2>The Occasions Constellation</h2>
-                <div id="bubble-chart-container"></div>
-                <div class="tooltip" id="bubble-tooltip"></div>
+                <h2>Endurance of Intent</h2>
+                <p class="desc">The distribution of changes rung (length of performance) across different occasion types. Notice the dense peaks around 1,260 (Quarter Peals) and 5,040 (Full Peals).</p>
+                <div id="violin-chart-container"></div>
+                <div class="tooltip" id="violin-tooltip"></div>
             </div>
             
-            <div class="card">
-                <h2>Seasonality of Intent</h2>
-                <div id="line-chart-container">
-                    <canvas id="seasonalityChart"></canvas>
+            <div class="grid-2">
+                <div class="card">
+                    <h2>Seasonality</h2>
+                    <p class="desc">The cadence of ringing occasions throughout the calendar year.</p>
+                    <div id="line-chart-container">
+                        <canvas id="seasonalityChart"></canvas>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <div class="card" style="margin-bottom: 40px;">
-            <h2>Aggregate Insights</h2>
-            <div class="stats-grid" id="stats-container">
-                <!-- Injected via JS -->
+                
+                <div class="card">
+                    <h2>The Occasions Ledger</h2>
+                    <p class="desc">Total performances categorised by underlying motivation.</p>
+                    <div class="leaderboard" id="leaderboard-container">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const bubbleData = {{BUBBLE_DATA}};
+        const violinData = {{VIOLIN_DATA}};
         const lineData = {{LINE_DATA}};
-        
-        // --- BUBBLE CHART (D3.js) ---
-        const container = document.getElementById('bubble-chart-container');
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        
-        const svg = d3.select("#bubble-chart-container")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", [0, 0, width, height])
-            .attr("style", "max-width: 100%; height: auto;");
-            
-        const pack = d3.pack()
-            .size([width - 10, height - 10])
-            .padding(8);
-            
-        const root = pack(d3.hierarchy(bubbleData).sum(d => d.value).sort((a, b) => b.value - a.value));
+        const lbData = {{LB_DATA}};
         
         // Custom color palette matching the line chart
         const colorPalette = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#14b8a6', '#64748b'];
-        const colorScale = d3.scaleOrdinal().range(colorPalette);
-        
-        const tooltip = d3.select("#bubble-tooltip");
-        
-        const node = svg.selectAll("g")
-            .data(root.leaves())
-            .join("g")
-            .attr("transform", d => `translate(${d.x},${d.y})`);
-            
-        node.append("circle")
-            .attr("r", d => d.r)
-            .attr("fill", (d, i) => {
-                // Find matching color from chart data for consistency
-                const ds = lineData.datasets.find(ds => ds.label === d.data.name);
-                return ds ? ds.borderColor : colorScale(i);
-            })
-            .attr("fill-opacity", 0.7)
-            .attr("stroke", (d, i) => {
-                const ds = lineData.datasets.find(ds => ds.label === d.data.name);
-                return ds ? ds.borderColor : colorScale(i);
-            })
-            .attr("stroke-width", 2)
-            .style("cursor", "pointer")
-            .on("mouseover", function(event, d) {
-                d3.select(this).attr("fill-opacity", 1);
-                tooltip.style("opacity", 1)
-                       .html(`<strong>${d.data.name}</strong><br/>${d.data.value.toLocaleString()} performances`);
-            })
-            .on("mousemove", function(event) {
-                const containerRect = document.getElementById('bubble-chart-container').getBoundingClientRect();
-                tooltip.style("left", (event.clientX - containerRect.left + 15) + "px")
-                       .style("top", (event.clientY - containerRect.top - 15) + "px");
-            })
-            .on("mouseout", function() {
-                d3.select(this).attr("fill-opacity", 0.7);
-                tooltip.style("opacity", 0);
-            });
-            
-        node.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "-0.2em")
-            .style("fill", "var(--ink)")
-            .style("font-size", d => Math.min(d.r / 3, 14) + "px")
-            .style("font-weight", "600")
-            .style("pointer-events", "none")
-            .text(d => d.r > 25 ? d.data.name : "");
-            
-        node.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "1.2em")
-            .style("fill", "var(--ink-2)")
-            .style("font-size", d => Math.min(d.r / 4, 12) + "px")
-            .style("pointer-events", "none")
-            .text(d => d.r > 35 ? d.data.value.toLocaleString() : "");
-            
-        // --- LINE CHART (Chart.js) ---
-        const ctx = document.getElementById('seasonalityChart').getContext('2d');
+        const colorScale = d3.scaleOrdinal().range(colorPalette).domain(violinData.map(d => d.name));
         
         const rootStyles = getComputedStyle(document.documentElement);
-        Chart.defaults.color = rootStyles.getPropertyValue('--ink-3').trim();
-        Chart.defaults.font.family = rootStyles.getPropertyValue('--mono').trim();
+        const inkColor = rootStyles.getPropertyValue('--ink').trim();
+        const ink2Color = rootStyles.getPropertyValue('--ink-2').trim();
+        const ruleColor = rootStyles.getPropertyValue('--rule').trim();
+        const monoFont = rootStyles.getPropertyValue('--mono').trim();
         
-        new Chart(ctx, {
-            type: 'line',
-            data: lineData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20
+        // --- VIOLIN PLOT (D3.js) ---
+        function renderViolin() {
+            const container = document.getElementById('violin-chart-container');
+            container.innerHTML = '';
+            
+            const margin = {top: 20, right: 30, bottom: 40, left: 160},
+                  width = Math.max(container.clientWidth, 800) - margin.left - margin.right,
+                  height = container.clientHeight - margin.top - margin.bottom;
+
+            const svg = d3.select("#violin-chart-container")
+              .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Y axis
+            const y = d3.scaleBand()
+                .range([ 0, height ])
+                .domain(violinData.map(d => d.name))
+                .padding(0.1);
+            
+            svg.append("g")
+                .call(d3.axisLeft(y).tickSize(0))
+                .select(".domain").remove();
+                
+            svg.selectAll(".tick text")
+                .attr("fill", inkColor)
+                .attr("font-family", monoFont)
+                .attr("font-size", "11px")
+                .style("text-transform", "uppercase");
+
+            // X axis
+            const x = d3.scaleLinear()
+                .domain([0, 6000]) // Cap at 6000 to focus on Quarter/Peal clusters.
+                .range([ 0, width ]);
+                
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(6))
+                .attr("color", ruleColor)
+                .selectAll("text")
+                    .attr("fill", inkColor)
+                    .attr("font-family", monoFont)
+                    .attr("font-size", "11px");
+                    
+            // Gridlines
+            svg.append("g")
+                .attr("class", "grid")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(6).tickSize(-height).tickFormat(""))
+                .attr("color", ruleColor)
+                .attr("stroke-opacity", 0.2)
+                .select(".domain").remove();
+
+            // Features of the density estimate
+            const kde = kernelDensityEstimator(kernelEpanechnikov(200), x.ticks(100));
+
+            // Compute density for each group
+            let allDensity = [];
+            for (let i = 0; i < violinData.length; i++) {
+                const key = violinData[i].name;
+                const vals = violinData[i].values.filter(v => v <= 6000);
+                const density = kde(vals);
+                allDensity.push({key: key, density: density});
+            }
+
+            // Find max density to scale vertically
+            const maxNum = d3.max(allDensity, d => d3.max(d.density, v => v[1]));
+
+            // Y scale for density
+            const yName = d3.scaleLinear()
+              .range([0, y.bandwidth()])
+              .domain([-maxNum, maxNum]);
+
+            // Add the areas
+            svg.selectAll("myViolin")
+              .data(allDensity)
+              .enter()
+              .append("g")
+                .attr("transform", d => `translate(0,${y(d.key)})`)
+              .append("path")
+                  .datum(d => d.density)
+                  .style("stroke", "none")
+                  .style("fill", (d, i) => colorScale(allDensity[i].key))
+                  .style("opacity", 0.6)
+                  .attr("d", d3.area()
+                      .x0(d => x(d[0]))
+                      .x1(d => x(d[0]))
+                      .y0(d => yName(-d[1]))
+                      .y1(d => yName(d[1]))
+                      .curve(d3.curveCatmullRom)
+                  );
+                  
+            // Overlap scatter dots (beeswarm lite)
+            const tooltip = d3.select("#violin-tooltip");
+            
+            svg.selectAll("myDots")
+              .data(violinData)
+              .enter()
+              .append("g")
+              .attr("transform", d => `translate(0,${y(d.name) + y.bandwidth()/2})`)
+              .selectAll("circle")
+              .data(d => d.values.filter(v => v <= 6000).slice(0, 300)) // Max 300 dots per category for perf
+              .enter()
+              .append("circle")
+                .attr("cx", d => x(d))
+                .attr("cy", d => (Math.random() - 0.5) * y.bandwidth() * 0.4) // Random jitter
+                .attr("r", 2)
+                .style("fill", rootStyles.getPropertyValue('--ground').trim())
+                .style("stroke", "rgba(0,0,0,0.2)")
+                .style("opacity", 0.6)
+                .on("mouseover", function(event, d) {
+                    d3.select(this).attr("r", 5).style("opacity", 1);
+                    tooltip.style("opacity", 1)
+                           .html(`<strong>${d}</strong> changes`);
+                })
+                .on("mousemove", function(event) {
+                    tooltip.style("left", (event.pageX + 15) + "px")
+                           .style("top", (event.pageY - 15) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this).attr("r", 2).style("opacity", 0.6);
+                    tooltip.style("opacity", 0);
+                });
+                
+            // Annotations for Peal/Quarter
+            svg.append("line")
+               .attr("x1", x(1260)).attr("x2", x(1260))
+               .attr("y1", 0).attr("y2", height)
+               .attr("stroke", ink2Color)
+               .attr("stroke-dasharray", "4,4")
+               .style("opacity", 0.5);
+               
+            svg.append("text")
+               .attr("x", x(1260)).attr("y", -5)
+               .attr("text-anchor", "middle")
+               .attr("fill", ink2Color)
+               .attr("font-family", monoFont)
+               .attr("font-size", "10px")
+               .text("QTR (~1260)");
+               
+            svg.append("line")
+               .attr("x1", x(5040)).attr("x2", x(5040))
+               .attr("y1", 0).attr("y2", height)
+               .attr("stroke", ink2Color)
+               .attr("stroke-dasharray", "4,4")
+               .style("opacity", 0.5);
+               
+            svg.append("text")
+               .attr("x", x(5040)).attr("y", -5)
+               .attr("text-anchor", "middle")
+               .attr("fill", ink2Color)
+               .attr("font-family", monoFont)
+               .attr("font-size", "10px")
+               .text("PEAL (~5040)");
+        }
+        
+        // Kernel Density Estimation Functions
+        function kernelDensityEstimator(kernel, X) {
+            return function(V) {
+                return X.map(function(x) {
+                    return [x, d3.mean(V, function(v) { return kernel(x - v); })];
+                });
+            };
+        }
+        function kernelEpanechnikov(k) {
+            return function(v) {
+                return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+            };
+        }
+        
+        // Render leaderboard
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboard-container');
+            const maxCount = Math.max(...lbData.map(d => d.count));
+            
+            let html = '';
+            lbData.forEach(d => {
+                const widthPct = (d.count / maxCount) * 100;
+                html += `
+                    <div class="lb-row">
+                        <div class="lb-name">${d.name}</div>
+                        <div class="lb-bar-container">
+                            <div class="lb-bar" style="width: ${widthPct}%; background: ${d.color}"></div>
+                        </div>
+                        <div class="lb-count">${d.count.toLocaleString()}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- LINE CHART (Chart.js) ---
+        function renderLineChart() {
+            const ctx = document.getElementById('seasonalityChart').getContext('2d');
+            
+            Chart.defaults.color = rootStyles.getPropertyValue('--ink-3').trim();
+            Chart.defaults.font.family = rootStyles.getPropertyValue('--mono').trim();
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: lineData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: {
+                            backgroundColor: rootStyles.getPropertyValue('--surface-2').trim(),
+                            titleColor: rootStyles.getPropertyValue('--ink').trim(),
+                            bodyColor: rootStyles.getPropertyValue('--ink-2').trim(),
+                            borderColor: rootStyles.getPropertyValue('--rule').trim(),
+                            borderWidth: 1, padding: 12
                         }
                     },
-                    tooltip: {
-                        backgroundColor: rootStyles.getPropertyValue('--surface-2').trim(),
-                        titleColor: rootStyles.getPropertyValue('--ink').trim(),
-                        bodyColor: rootStyles.getPropertyValue('--ink-2').trim(),
-                        borderColor: rootStyles.getPropertyValue('--rule').trim(),
-                        borderWidth: 1,
-                        padding: 12
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: rootStyles.getPropertyValue('--rule').trim() }
-                    },
-                    y: {
-                        grid: { color: rootStyles.getPropertyValue('--rule').trim() },
-                        beginAtZero: true
+                    scales: {
+                        x: { grid: { color: rootStyles.getPropertyValue('--rule').trim() } },
+                        y: { grid: { color: rootStyles.getPropertyValue('--rule').trim() }, beginAtZero: true }
                     }
                 }
-            }
-        });
+            });
+        }
         
-        // --- STATS CARDS ---
-        const statsContainer = document.getElementById('stats-container');
+        renderViolin();
+        renderLeaderboard();
+        renderLineChart();
         
-        // Sort by value
-        const topStats = bubbleData.children.slice(0, 4);
-        
-        let html = '';
-        topStats.forEach(stat => {
-            html += `
-                <div class="stat-box">
-                    <div class="stat-val">${stat.value.toLocaleString()}</div>
-                    <div class="stat-lbl">${stat.name}</div>
-                </div>
-            `;
-        });
-        statsContainer.innerHTML = html;
-        
+        window.addEventListener('resize', renderViolin);
     </script>
 </body>
 </html>"""
     
-    html_content = html_template.replace("{{BUBBLE_DATA}}", json.dumps(bubble_data))
-    html_content = html_content.replace("{{LINE_DATA}}", json.dumps({"labels": months, "datasets": datasets}))
+    html_content = html_template.replace("{{VIOLIN_DATA}}", json.dumps(violin_data))
+    html_content = html_content.replace("{{LINE_DATA}}", json.dumps({"labels": months, "datasets": line_datasets}))
+    html_content = html_content.replace("{{LB_DATA}}", json.dumps(leaderboard_data))
     
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         f.write(html_content)
