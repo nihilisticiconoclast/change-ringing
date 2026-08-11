@@ -52,8 +52,10 @@ attribution is owed if any output of this project is published.
 ## CompLib (Composition Library)
 
 - URL: https://complib.org
-- API: documented, includes an auto-proving engine
-- Not yet ingested
+- API: https://api.complib.org
+- Ingested via `scripts/ingest_complib.py` into the tables defined in `schema/005_init_complib.sql` (`compositions`, `composition_composers`, `composition_methods`).
+- Coverage: Full search index (approx 85,000+ compositions).
+- Location/Method linkage: Methods are supplied via free-text titles without CCCBR identifiers. The `method_id` column in `composition_methods` is a soft nullable reference designed for future resolution against the `methods` corpus.
 
 ## regions.csv scope note
 

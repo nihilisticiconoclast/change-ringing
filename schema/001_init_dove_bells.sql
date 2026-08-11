@@ -234,3 +234,23 @@ SELECT
     d.Practice,
     d.WebPage
 FROM dove d;
+
+-- Deduplicated tower projection from towers (superset, includes non-ringing)
+CREATE VIEW v_towers_unique AS
+SELECT "TowerID",
+       MAX("Place")   AS "Place",
+       MAX("Dedicn")  AS "Dedicn",
+       MAX("County")  AS "County",
+       MAX("Country") AS "Country",
+       COUNT(*)       AS "installations"
+FROM "towers" GROUP BY "TowerID";
+
+-- Deduplicated tower projection from dove (ringing subset only)
+CREATE VIEW v_dove_towers AS
+SELECT "TowerID",
+       MIN("RingID") AS "primary_ring_id",
+       COUNT(*)      AS "rings",
+       MAX("Place")  AS "Place",
+       MAX("Dedicn") AS "Dedicn",
+       MAX("County") AS "County"
+FROM "dove" GROUP BY "TowerID";

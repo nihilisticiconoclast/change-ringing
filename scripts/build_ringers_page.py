@@ -460,7 +460,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <h1>The Ringer <em>Constellation</em></h1>
     <div class="standfirst">
       Interactive band co-occurrence networks and canonical entity resolution across
-      <strong>{stats['total_ringers']:,} ringer instances</strong> and <strong>{stats['total_peals']:,} historical peals</strong> (2021–2024).
+      <strong>{stats['total_ringers']:,} ringer instances</strong> and <strong>{stats['total_peals']:,} historical peals</strong> (2012–2024).
     </div>
     <div class="figures">
       <div class="fig"><div class="n">{stats['total_ringers']:,}</div><div class="l">Ringer Peal Records</div></div>

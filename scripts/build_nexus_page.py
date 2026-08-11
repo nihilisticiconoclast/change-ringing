@@ -10,34 +10,19 @@ OUTPUT_PATH = "docs/nexus.html"
 def fetch_nexus_data():
     conn = sqlite3.connect(DB_PATH)
     
-    # Get a sample of performances from 2024
+    # Get a random sample of 1500 performances across all time
     perfs_query = """
         SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
         FROM performances p
         LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
         LEFT JOIN methods m ON p.method = m.title
-        WHERE p.perf_date LIKE '2024%' 
-        AND p.method IS NOT NULL
+        WHERE p.method IS NOT NULL
         AND p.method != ''
-        LIMIT 1000
+        ORDER BY RANDOM()
+        LIMIT 1500
     """
     perfs = pd.read_sql(perfs_query, conn)
     perf_ids = perfs['perf_id'].tolist()
-    
-    if not perf_ids:
-        print("No 2024 performances found. Taking 1000 most recent.")
-        perfs_query = """
-            SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
-            FROM performances p
-            LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
-            LEFT JOIN methods m ON p.method = m.title
-            WHERE p.method IS NOT NULL
-            AND p.method != ''
-            ORDER BY p.perf_date DESC
-            LIMIT 1000
-        """
-        perfs = pd.read_sql(perfs_query, conn)
-        perf_ids = perfs['perf_id'].tolist()
 
     placeholders = ','.join('?' for _ in perf_ids)
     

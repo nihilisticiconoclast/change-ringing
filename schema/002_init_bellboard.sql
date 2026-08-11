@@ -105,7 +105,6 @@ SELECT
   d."TowerID"   AS "dove_tower_id",
   d."Place"     AS "dove_place",
   d."Dedicn"    AS "dove_dedication",
-  d."County"    AS "dove_county",
-  d."RingType"  AS "dove_ring_type"
+  d."County"    AS "dove_county"
 FROM "performances" p
-JOIN "dove" d ON d."TowerID" = p."dove_tower_id";
+JOIN "v_towers_unique" d ON d."TowerID" = p."dove_tower_id";

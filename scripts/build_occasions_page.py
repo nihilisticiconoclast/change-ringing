@@ -162,8 +162,8 @@ def generate_html(stats):
         .standfirst{margin-top:22px;font-size:1.2rem;color:var(--ink-2);max-width:60ch; line-height:1.6;}
         
         .visualizations {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 30px;
             margin-top: 20px;
         }
@@ -200,9 +200,8 @@ def generate_html(stats):
         
         #violin-chart-container {
             width: 100%;
-            height: 600px;
+            height: 480px;
             position: relative;
-            overflow-x: auto;
         }
         
         #line-chart-container {
@@ -298,17 +297,10 @@ def generate_html(stats):
         </div>
         
         <div class="visualizations">
-            <div class="card">
-                <h2>Endurance of Intent</h2>
-                <p class="desc">The distribution of changes rung (length of performance) across different occasion types. Notice the dense peaks around 1,260 (Quarter Peals) and 5,040 (Full Peals).</p>
-                <div id="violin-chart-container"></div>
-                <div class="tooltip" id="violin-tooltip"></div>
-            </div>
-            
             <div class="grid-2">
                 <div class="card">
                     <h2>Seasonality</h2>
-                    <p class="desc">The cadence of ringing occasions throughout the calendar year.</p>
+                    <p class="desc">The cadence of ringing occasions throughout the calendar year. Notice the huge spikes for Christmas and New Year, compared to the stable year-round cadence of Birthday performances.</p>
                     <div id="line-chart-container">
                         <canvas id="seasonalityChart"></canvas>
                     </div>
@@ -316,11 +308,22 @@ def generate_html(stats):
                 
                 <div class="card">
                     <h2>The Occasions Ledger</h2>
-                    <p class="desc">Total performances categorised by underlying motivation.</p>
+                    <p class="desc">Total performances categorised by underlying motivation. The overwhelming majority of dedicated ringing is to celebrate personal achievements and milestones.</p>
                     <div class="leaderboard" id="leaderboard-container">
                         <!-- Injected via JS -->
                     </div>
                 </div>
+            </div>
+
+            <div class="card">
+                <h2>Endurance of Intent</h2>
+                <p class="desc">The distribution of changes rung (length of performance) across different occasion types. By plotting every performance, we can see the physical endurance demanded by different motivations.</p>
+                <div style="font-size: 15px; color: var(--ink-2); max-width: 800px; margin-bottom: 25px; line-height: 1.6;">
+                    <p>There are two distinct peaks in change ringing: the <strong>Quarter Peal</strong> (typically ~1,260 changes, taking 45 minutes) and the grueling <strong>Full Peal</strong> (typically ~5,040 changes, taking 3 hours of non-stop concentration). </p>
+                    <p>When we split these performances by their occasion, stark patterns emerge. <strong>Memorials</strong> and <strong>Church Festivals</strong> are predominantly commemorated with shorter Quarter Peals. However, <strong>Royal events</strong> and <strong>Firsts/Milestones</strong> show a significantly higher proportion of 3-hour Full Peals, reflecting the immense physical effort ringers put into celebrating national events and personal achievements.</p>
+                </div>
+                <div id="violin-chart-container"></div>
+                <div class="tooltip" id="violin-tooltip"></div>
             </div>
         </div>
     </div>

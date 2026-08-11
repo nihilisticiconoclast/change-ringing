@@ -13,7 +13,7 @@ SELECT
   d.Dedicn,
   COUNT(*) AS first_peals
 FROM method_performances mp
-JOIN dove d ON d.TowerID = mp.dove_tower_id
+JOIN v_towers_unique d ON d.TowerID = mp.dove_tower_id
 WHERE mp.event_type = 'firstTowerbellPeal'
 GROUP BY d.TowerID
 ORDER BY first_peals DESC

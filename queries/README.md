@@ -51,7 +51,10 @@ each can be checked rather than taken on trust.
 **`dove.TowerID` is not unique.** 7,262 rows carry 7,249 distinct IDs, because
 13 towers hold more than one ring — Farnham S Andrew has a full-circle and a
 lightweight ring under `TowerID 11301`. Joining on it alone fans out and
-inflates counts. Use `RingID` where the question is about a specific ring.
+inflates counts, while silently dropping 160 towers that are present in `towers`
+but not in `dove`. **Use `v_towers_unique` as the default join target for towers.** 
+Use `v_dove_towers` when you explicitly need Dove's narrower ringing subset. 
+Use `RingID` only where the question is strictly about a specific ring.
 
 **Founder counts overlap and must not be summed.** A ring usually mixes
 founders, so a first-peal can count towards more than one tradition. The

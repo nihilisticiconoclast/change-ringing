@@ -94,5 +94,5 @@ FROM "methods" m
 LEFT JOIN "method_performances" mp
   ON mp."method_id" = m."method_id"
   AND mp."event_type" = 'firstTowerbellPeal'
-LEFT JOIN "dove" d
+LEFT JOIN "v_towers_unique" d
   ON d."TowerID" = mp."dove_tower_id";
