@@ -178,11 +178,68 @@ Also: the docs are often wrong about themselves. BellBoard's `export.php`
 honours `from`/`to`; the plausible-looking `date_from`/`date_to` silently return
 zero rather than erroring.
 
+### 14. An aggregate is a hypothesis, and the ranking is the weakest part of it
+
+`docs/IDEAS.md` recorded, as a finding: *"September is the busiest ringing month
+(12,067 performances) and nobody knows why."* The count was correct. Everything
+else about the sentence was wrong.
+
+**49% of September's performances fall in eleven days of 2022**, between the
+death of Elizabeth II and her state funeral. Across the four-year corpus, **24
+days carry 21.0% of all ringing**. Remove them and September goes from 1st of
+twelve months to 7th; the weekly trough moves from Wednesday to Monday, because
+four of the 24 fell on a Monday.
+
+Three transferable points, in increasing order of usefulness:
+
+1. **A total is robust; an ordering is not.** 12,067 was right. "Busiest" was a
+   claim about twelve numbers whose gaps were smaller than the contamination.
+   Before publishing a rank, check what happens to it when the top few
+   contributing days, rows or customers are removed. If the rank changes, report
+   the magnitude and not the position.
+2. **"Nobody knows why" is a statement about the analysis.** The answer was
+   already in the corpus, as free text, in a column nobody had grouped by: the
+   most repeated footnote on 9 September 2022 is "In memoriam HM Queen Elizabeth
+   II", written independently by hundreds of bands. One `GROUP BY` found it.
+   Treat an unexplained pattern as an unfinished query, not as a finding.
+3. **Detect outliers by rule, then let the data name them.** The 24 days were
+   found by comparing each day with the median of the *same weekday* within six
+   weeks either side — same weekday because Sunday is 2.5x Monday, so a plain
+   rolling mean flags every Sunday, and median because the thing being detected
+   would otherwise inflate its own baseline. Nothing about which days count as
+   events was hand-entered; the labels came from the footnotes. That separation
+   is what makes the list arguable instead of anecdotal, and the build prints the
+   days that fell just below the threshold so the boundary can be inspected.
+
+### 15. The under-normalised column is often the one carrying the information
+
+Two free-text fields did all the work on the Rhythm page, and neither would exist
+in a well-designed schema.
+
+**The method field.** "99 Tolling" is ninety-nine strokes of one bell — one per
+year of the life being marked. 99 peaks the day after a 99-year-old died, 96 the
+day after a 96-year-old, 365 exactly one year after the first lockdown. **No
+table in any of the four corpora has an age or date-of-birth column.** A schema
+with a `method` foreign key would have rejected "99 Tolling" at load, and the
+only place a person's age exists in this data would have been validated away.
+
+**The footnote.** Whether the bells were half-muffled is not a column either. It
+is a phrase ringers happen to write. It gives a rate of 73%, 74%, 72%, 74% on
+four consecutive Remembrance Sundays against a 5.7% baseline — nobody
+coordinates this, there is no return to file, and the practice is reproducible to
+within two points. It also distinguishes a funeral from a celebration from a
+remembrance without any labelling.
+
+Before normalising a messy text field into codes, check what the mess encodes.
+Prefer keeping the raw column alongside a derived one. The corollary for
+ingestion work: a loader that rejects rows failing a foreign key is discarding
+exactly the records that carry information the schema did not anticipate.
+
 ---
 
 ## Keeping the work
 
-### 14. Commit the recipe, not the output
+### 16. Commit the recipe, not the output
 
 What belongs in the repository is whatever cannot be regenerated: schema,
 loaders, and every adjudication decision with its reasoning. Raw sources are
@@ -194,20 +251,20 @@ one was frozen. It was removed a few hours later — it was heading for GitHub's
 100 MB limit, and a binary that changes wholesale on each rebuild stays in git
 history forever. Use a Release asset if a large file genuinely needs sharing.
 
-### 15. Recorded SQL must be the SQL that runs
+### 17. Recorded SQL must be the SQL that runs
 
 A `queries/` folder that duplicates the real queries is worse than none: it
 looks authoritative while going stale. The build script here reads those files
 at build time, so the recorded query and the executed query cannot diverge.
 
-### 16. Write decisions down with the numbers in them
+### 18. Write decisions down with the numbers in them
 
 Short decision records — the problem, what was measured, what was chosen, what
 the acceptance test is — did more good than any amount of code comments. They
 also make delegation possible: a spec with an exact expected row count can be
 handed to an agent and verified on return.
 
-### 17. Dual-license data and code separately, explicitly
+### 19. Dual-license data and code separately, explicitly
 
 The code here is MIT; the data is CC BY-SA 4.0, inherited from Dove's Guide.
 Putting data into an MIT repository does not relicense it, and share-alike
@@ -220,8 +277,9 @@ including the attribution and the note that changes were made.
 
 None of this made the work error-free. There were three production-only bugs, a
 591-million-read day, a failed backfill, a decision spec that had to be
-corrected before anyone implemented it, and two rounds of rework on the agent
-split.
+corrected before anyone implemented it, two rounds of rework on the agent split,
+and a published finding — the September one — that was wrong for four days before
+the analysis that was supposed to illustrate it took it apart instead.
 
 What the setup did was make every one of those **visible and recoverable within
 minutes**. That is the property worth reproducing — not the absence of mistakes,

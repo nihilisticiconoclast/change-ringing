@@ -191,6 +191,8 @@ def generate_html(graph_data):
       <div class="nav-links">
         <a href="index.html">Founder Atlas</a>
         <a href="lineage.html">Method Lineage</a>
+        <a href="methods.html">Blue Line Atlas</a>
+        <a href="rhythm.html">Rhythm of Ringing</a>
         <a href="ringers.html">Ringer Constellation</a>
         <a href="occasions.html">The Occasions Archive</a>
         <a href="nexus.html">The Temporal Nexus</a>

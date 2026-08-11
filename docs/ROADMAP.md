@@ -14,9 +14,9 @@ gap was found.
 | --- | --- | --- | --- |
 | 1 | Backfill completeness gate | Vibe | **Urgent** — the run captured 16% and reported success |
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
-| 3 | Footnote occasion classification (option D) | Gemini | **Active** |
-| 4 | Rhythm of Ringing (option B) | Claude Code | **Next** |
-| 8a | Method **invention** timeline (option C, first half) | Claude Code | Ready — full history already held |
+| 3 | Footnote occasion classification (option D) | Gemini | **Shipped** — `docs/occasions.html`; not yet reviewed against the aggregate-only constraint |
+| 4 | Rhythm of Ringing (option B) | Claude Code | **Done** — `docs/rhythm.html`; corrected two IDEAS figures |
+| 8a | Method **invention** timeline (option C, first half) | Claude Code | **Next** — full history already held |
 | 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
 | 6 | CompLib ingestion | Vibe | Queued |
 | 7 | Corpus integrity checker | Vibe | Queued |
@@ -52,6 +52,29 @@ itself: place notation for every method, and dates for every performance in the
 window. Neither claim depends on the backfill. The footnote work is the same —
 113,895 footnotes are all there is, and classifying them does not require more.
 
+**What item 4 turned up, and why it changes how the rest should be read.** The
+Rhythm page was queued as the cheap one — "the findings are already in hand".
+Two of the three were wrong. September was not the busiest ringing month for any
+reason to do with September: 49% of its performances fall in the eleven days
+between the death of Elizabeth II and her funeral, and the corpus said so itself
+in the footnote text. Wednesday was not the weekly trough either. **24 days
+carry 21.0% of four years of ringing**, and any monthly or weekday aggregate
+computed without excluding them is measuring the news.
+
+Two consequences for the work still queued:
+
+- Every aggregate over `perf_date` in this project should now say whether those
+  24 days are in or out. `queries/rhythm/01_daily_profile.sql` returns them;
+  `scripts/build_rhythm_page.py` finds them by rule at 3.5x the same-weekday
+  median. Item 7, the corpus integrity checker, is the natural place to make
+  that a standing check rather than a habit.
+- The general lesson is not "watch for outliers". It is that the explanation was
+  already in the corpus as free text and no derived table would have held it.
+  Two under-normalised columns — the method field and the footnote — carried
+  everything worth reading on that page, including a person's age, which has no
+  column anywhere in four corpora. Worth remembering before normalising
+  anything away in item 6.
+
 **Correctness work in parallel (5, 6, 7).** Independent of the analyses and
 safe to run alongside.
 
@@ -84,9 +107,12 @@ From `docs/IDEAS.md`, with what actually happened:
   Maximus, from notation verified against the library's own `lead_head`.
   Required a place-notation parser (`scripts/notation.py`), which turned out to
   be the reusable part.
-- **B · Rhythm of Ringing** — next, and the cheapest. Sunday 23,648 /
-  Saturday 19,378 / Wednesday 8,377; September the busiest month at 12,067 with
-  no explanation yet; and the pandemic recovery visible as 16,729 → 28,212.
+- **B · Rhythm of Ringing** — built, and it was not the cheapest in the end.
+  Sunday 23,648 / Saturday 19,378 hold up; the September and Wednesday figures
+  did not survive contact with the data, and the page is built around the
+  correction. The pandemic recovery, 16,729 → 28,212, stands. The result worth
+  keeping is that what was rung — tolling, half-muffled — separates national
+  occasions into celebration, remembrance and death without being told to.
 - **C · Invention and Survival** — splits. Invention is ready now on complete
   1684–2026 first-performance history; survival waits for adoption history from
   the backfill. Deferring the whole of C would have been wrong.

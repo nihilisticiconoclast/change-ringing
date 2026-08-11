@@ -43,30 +43,59 @@ them) are trivial and visually dull.
 
 ### B. The Rhythm of Ringing — the week and the year
 
+> **Built — `docs/rhythm.html`. And it corrected two of the figures below,
+> including the headline one.** What is struck through was measured correctly
+> and interpreted wrongly. It is left in place rather than quietly edited,
+> because the mistake is the most useful thing on this page.
+
 **The idea.** Ringing has a pulse, and the data shows it plainly:
 
 | Day | Performances | |
 | --- | ---: | --- |
 | Sunday | 23,648 | service ringing |
 | Saturday | 19,378 | the peal day |
-| Wednesday | 8,377 | the trough |
+| ~~Wednesday~~ | ~~8,377~~ | ~~the trough~~ |
 
-And a seasonal shape nobody expected: **September is the busiest month at
+~~And a seasonal shape nobody expected: **September is the busiest month at
 12,067**, ahead of May (10,803) and June (10,170), with January lowest at
 5,417. I do not know why September peaks. That is the point — it is a real,
-visible, unexplained pattern in a national dataset.
+visible, unexplained pattern in a national dataset.~~
 
 The four years also contain the pandemic recovery in the open: **2021: 16,729 →
-2022: 28,212**, a 69% jump, then a settling to 25,859 and 25,267.
+2022: 28,212**, a 69% jump, then a settling to 25,859 and 25,267. That one
+stands.
 
-**Why it is worth doing.** Cheapest option by far — the data needs no
-derivation. A polar year-clock with the weekly cycle layered on it, split by
-tower versus handbell, tells three stories at once.
+**What was actually wrong, and why it matters more than the finding.**
 
-**Risk.** Calendar heatmaps are a well-worn form; the novelty is entirely in
-the findings, so the design has to be unusually good to avoid looking generic.
-The September spike needs an explanation before it is published, or it should
-be presented explicitly as an open question.
+- **September is not the busiest month.** 5,937 of its 12,067 performances —
+  49% — fall in the eleven days between the death of Elizabeth II and her state
+  funeral. Removing 24 nationally anomalous days, found by rule rather than from
+  memory, takes September to 6,130 and **7th of twelve**. The busiest months are
+  November and December. `queries/findings/september_is_one_funeral.sql`.
+- **Nobody knew why because nobody had asked the data.** The explanation was
+  sitting in the corpus as free text the whole time: the most repeated footnote
+  on 9 September 2022 is “In memoriam HM Queen Elizabeth II”, written
+  independently by hundreds of bands. It took one `GROUP BY` to find. "Nobody
+  knows why" was a claim about the analysis, not about the world.
+- **Wednesday is not the trough either.** Once the same 24 days are removed,
+  Monday is lowest — four of them fell on a Monday, including the funeral. And
+  the Monday/Wednesday gap is 5.7%, so naming any single day was over-reading.
+- **24 days carry 21.0% of four years of ringing.** That is the real finding,
+  and it is a much better one than a month name.
+
+**What the page ended up being about.** Not the calendar. Two extra columns —
+whether the performance was *tolling*, and whether the footnote says the bells
+were *half-muffled* — separate those 24 days into celebration, remembrance, a
+death, and the funerals that are both. Remembrance Sunday's muffled rate is
+73%, 74%, 72%, 74% across four years against a 5.7% baseline, the steadiest
+number this project has found in any corpus. And "99 Tolling" turns out to
+record the age of the person who died, in a field reserved for method names, in
+a corpus with no age column anywhere.
+
+**Risk, as assessed beforehand.** "Calendar heatmaps are a well-worn form; the
+novelty is entirely in the findings, so the design has to be unusually good."
+That was right, and the answer turned out not to be better design: it was
+finding something other than a calendar to put on the page.
 
 ---
 
@@ -158,21 +187,35 @@ Things the data can answer that nobody has asked. Each is a query, not a project
   few people conduct disproportionately, and is conducting a career stage?
 - **Tenor weight versus method difficulty.** Are harder methods rung on lighter
   bells? Plausible and testable, joining `dove.Wt` to method classification.
-- **The September question.** Association AGMs? Harvest? The end of the holiday
-  season? Worth resolving before it is published as a finding.
+- ~~**The September question.** Association AGMs? Harvest? The end of the
+  holiday season?~~ **Resolved: a state funeral.** See option B above. The
+  guesses were all about seasonality and the answer was not seasonal at all,
+  which is worth remembering the next time a monthly total looks meaningful.
 
 ---
 
 ## What I would pick
 
+*Written before any of this was built. Left unedited; the outcomes are noted.*
+
 **B first** — cheapest, the findings are already in hand, and the pandemic
 recovery plus the September anomaly are publishable now.
+→ *Built. "The findings are already in hand" was the wrong reason: two of the
+three were wrong, and the work was in checking them rather than in drawing
+them. The cheap option was cheap to draw and not cheap to verify, and it is the
+verification that produced everything worth reading.*
 
 **A next**, because it is the one that could not be done anywhere else and the
 parser has a perfect oracle. The parser is reusable well beyond the picture.
+→ *Built — `docs/methods.html`. "Could not be done anywhere else" was
+overstated: blue lines are standard in ringing software. What is new is the
+comparative view at full scale. The parser was indeed the reusable part.*
 
 **D with care.** The most affecting material in the corpus, and the only option
 with an ethical dimension worth pausing over.
 
 **C after the backfill**, not before — the survival claim is not honest on a
 four-year window.
+→ *Split. Invention (roadmap 8a) needs no backfill —`method_performances` spans
+1684–2026 — and only survival (8b) waits. Deferring all of C would have been
+wrong.*

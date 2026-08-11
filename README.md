@@ -73,6 +73,9 @@ can be checked instead of taken on trust.
       supplies as `dove_ring_id` but the Methods Library does not.
 - [ ] CompLib linkage
 - [x] First analytical output -- the Founder Atlas (see above)
+- [x] The Rhythm of Ringing -- the week, the year, and the 24 days that carry
+      21% of it; corrected the September and Wednesday claims made in
+      `docs/IDEAS.md` and in this README
 - [ ] CompLib ingestion
 - [ ] Ringer identity resolution (needs the backfill run first)
 
@@ -93,13 +96,39 @@ Built by `scripts/build_method_atlas.py` on top of `scripts/notation.py`, a
 place-notation parser that agrees with the CCCBR library on 97.4% of all 25,066
 methods and over 99.7% at Minor and Major.
 
+## The Rhythm of Ringing
+
+Four years of the national record, day by day — and a correction. This
+repository recorded that "September is the busiest ringing month (12,067
+performances) and nobody knows why". It is not, and the corpus knew why all
+along: 49% of September's performances fall in the eleven days between the death
+of Elizabeth II and her state funeral, and the reason is written in the footnote
+text hundreds of bands filed independently.
+
+**https://nihilisticiconoclast.github.io/change-ringing/rhythm.html**
+
+24 days carry **21.0%** of four years of ringing. They are found by rule — 3.5×
+the median of the same weekday nearby — and named by the corpus's own most-
+repeated footnotes, so no list of national events is hand-entered anywhere. Two
+further columns then separate them into celebration, remembrance, a death, and
+the funerals that are both: whether the bells were *tolling*, and whether the
+footnote says *half-muffled*. Remembrance Sunday's muffled rate is 73%, 74%,
+72%, 74% across four years against a 5.7% baseline. And "99 Tolling" records the
+age of the person who died, in the field reserved for method names, in a corpus
+with no age column anywhere.
+
+Built by `scripts/build_rhythm_page.py`; SQL in `queries/rhythm/`; the claims
+are checkable in `queries/findings/`.
+
 ## Ideas
 
 `docs/IDEAS.md` — five visualisation options and a set of insight seams, each
-with measured feasibility. Highlights: September is the busiest ringing month
-(12,067 performances) and nobody knows why; 70% of the 9,169 methods rung in
-four years were rung exactly once; and the ten busiest towers account for only
-3.4% of activity, which is far less concentrated than expected.
+with measured feasibility, and each now annotated with what happened when it was
+built. Two of the three headline figures for option B were wrong, and the
+struck-through originals are left in place rather than edited away. Still
+standing: 70% of the 9,169 methods rung in four years were rung exactly once,
+and the ten busiest towers account for only 3.4% of activity, which is far less
+concentrated than expected.
 
 ## Lessons learnt
 

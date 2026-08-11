@@ -33,6 +33,23 @@ quarter-century bucketing, and casting years, which need extracting from free
 text (`Cast_Date` holds `c1897`, `(1834`, `[1902`). The SQL fetches rows; the
 script shapes them.
 
+## `rhythm/` — what builds the Rhythm page
+
+Same arrangement: `scripts/build_rhythm_page.py` reads these, it does not copy
+them.
+
+| File | Produces |
+| --- | --- |
+| `01_daily_profile.sql` | One row per calendar day — volume, tower/handbell, length class, tolling, muffled. The calendar, the weekday pulse, the seasonal shape, the anomaly detection and the register scatter are all derived from these ~1,460 rows |
+| `02_day_footnotes.sql` | The most repeated footnote per day, which is how an anomalous day gets named from the corpus rather than from the author's memory of the news |
+| `03_window_totals.sql` | Headline figures, and the 5.7% background rate of muffled ringing |
+| `04_counted_tolls.sql` | Tolling records whose method field starts with a number — "99 Tolling" is ninety-nine strokes, one per year of life |
+
+Anomaly detection is in Python, not SQL: each day is compared with the median of
+the same weekday within six weeks either side. Same weekday because Sunday is
+two and a half times Monday, so a plain rolling mean flags every Sunday; median
+because the thing being detected would otherwise inflate its own baseline.
+
 ## `findings/` — the claims in the prose
 
 One file per assertion made on the atlas page or in the commit history, so
@@ -45,6 +62,18 @@ each can be checked rather than taken on trust.
 | `founder_reach_by_methods.sql` | Why the `Group` column matters: Taylor under two names |
 | `first_peals_by_decade.sql` | Post-war growth in new methods |
 | `unlinked_performances.sql` | The 8,623 records deliberately left unlinked, and why |
+| `september_is_one_funeral.sql` | Why "September is the busiest ringing month" was wrong: 54% of the month is one fortnight of 2022 |
+| `remembrance_muffle_rate.sql` | 73% / 74% / 72% / 74% half-muffled on Remembrance Sunday, against a 5.7% baseline |
+| `counted_tolls_are_ages.sql` | "99 Tolling" peaks the day after a 99-year-old died; "96" the day after a 96-year-old; "365" one year after the first lockdown |
+
+## A third thing that will bite you
+
+**Any aggregate over `perf_date` needs to say whether the national days are in
+or out.** 24 days carry 21.0% of the four-year corpus. A monthly total that
+includes them is measuring the news: September leads the raw figures and comes
+7th once they are removed, and the weekly trough moves from Wednesday to Monday.
+`queries/rhythm/01_daily_profile.sql` gives you the per-day counts to exclude
+from; the rule that identifies them is in `scripts/build_rhythm_page.py`.
 
 ## Two things that will bite you
 

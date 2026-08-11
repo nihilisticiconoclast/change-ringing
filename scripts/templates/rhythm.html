@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Rhythm of Ringing — The Week, The Year, and Twenty-Four Days</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --cal-0:#E4E2DA; --cal-1:#D6E0CE; --cal-2:#B4CCAC; --cal-3:#8AB289;
+  --cal-4:#5C9470; --cal-5:#2F6D53; --cal-6:#123D33;
+  --joy:#1f6f8b; --remem:#7a5ba6; --death:#9c3b2e; --mixed:#b8763a; --grid:#CFCCC2;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --cal-0:#242422; --cal-1:#2C3E34; --cal-2:#3A5C46; --cal-3:#4C8060;
+    --cal-4:#63A579; --cal-5:#88C89B; --cal-6:#BFE9CB;
+    --joy:#5aa9c6; --remem:#a98bd4; --death:#d4705e; --mixed:#e0a05f; --grid:#302F2C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --cal-0:#242422; --cal-1:#2C3E34; --cal-2:#3A5C46; --cal-3:#4C8060;
+  --cal-4:#63A579; --cal-5:#88C89B; --cal-6:#BFE9CB;
+  --joy:#5aa9c6; --remem:#a98bd4; --death:#d4705e; --mixed:#e0a05f; --grid:#302F2C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.nav-bar{background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:12px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.nav-links{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze)}
+.theme-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule);
+  padding:6px 12px;border-radius:2px;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--bronze-soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+section{padding:48px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400}
+h3{font-size:1.1rem;font-weight:400;font-family:var(--mono);letter-spacing:.02em}
+.lede{color:var(--ink-2);margin-top:12px;max-width:66ch}
+p{max-width:66ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:26px 0 6px}
+.controls label{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;padding:6px 12px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink-2);cursor:pointer;border-radius:2px}
+.chip:hover{border-color:var(--bronze-soft);color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
+.chip[aria-pressed="true"]{border-color:var(--bronze);color:var(--ink);background:var(--surface-2)}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px;margin-top:22px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{font-family:var(--mono);font-size:10px;fill:var(--ink-3);letter-spacing:.06em}
+.axb{font-family:var(--mono);font-size:11px;fill:var(--ink-2)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:10.5px;fill:var(--ink-2)}
+.gl{stroke:var(--grid);stroke-width:1;opacity:.6}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);
+  font-size:11px;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none}
+.cal-wrap{overflow-x:auto;margin-top:20px;padding-bottom:6px}
+.cal-inner{min-width:900px}
+.cal rect{shape-rendering:crispEdges;cursor:pointer}
+.cal rect.sel{stroke:var(--bronze);stroke-width:1.6}
+.readout{margin-top:14px;min-height:96px;font-family:var(--mono);font-size:12px;
+  color:var(--ink-2);line-height:1.75}
+.readout .hd{color:var(--ink);font-size:13px;letter-spacing:.04em}
+.readout .q{color:var(--ink-3);font-family:var(--serif);font-size:14.5px;font-style:italic;
+  display:block;margin-top:6px;max-width:70ch}
+table{border-collapse:collapse;width:100%;margin-top:22px;font-size:14px}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;font-weight:400;padding:0 10px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+td.d,td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px;white-space:nowrap}
+td.n{text-align:right}
+td.why{color:var(--ink)}
+.rbar{height:8px;border-radius:1px;background:var(--bronze-soft);min-width:2px}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tscroll table{min-width:660px}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.tag.joy{color:var(--joy)} .tag.remem{color:var(--remem)}
+.tag.death{color:var(--death)} .tag.mixed{color:var(--mixed)}
+.note{border-left:2px solid var(--bronze-soft);padding-left:16px;margin-top:24px;
+  color:var(--ink-2);font-size:15px}
+.correction{border:1px solid var(--bronze-soft);border-left-width:3px;border-radius:2px;
+  padding:18px 20px;margin-top:26px;background:var(--surface)}
+.correction h3{color:var(--bronze);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px;margin-top:8px}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+footer{padding:48px 0 80px;color:var(--ink-3);font-size:14px}
+footer a{color:var(--bronze)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <div class="nav-links">
+    <a href="index.html">Founder Atlas</a>
+    <a href="lineage.html">Method Lineage</a>
+    <a href="methods.html">Blue Line Atlas</a>
+    <a href="rhythm.html" class="active">Rhythm of Ringing</a>
+    <a href="ringers.html">Ringer Constellation</a>
+    <a href="occasions.html">The Occasions Archive</a>
+    <a href="nexus.html">The Temporal Nexus</a>
+    <a href="geometry.html">Sacred Geometry</a>
+  </div>
+  <button class="theme-btn" id="themeToggle">Dark Mode</button>
+</div>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · The week, the year, and the days the country rang</p>
+  <h1>Ringing has a pulse.<br>It also has a <em>memory</em>.</h1>
+  <p class="standfirst">Four years of the national record, day by day. One layer is a
+  genuine rhythm — Sunday service ringing, the Saturday peal day. The other is not
+  periodic at all: a small number of days on which the whole country rang at once, and
+  which turn out to dominate the calendar so completely that they had already produced a
+  false finding in this repository.</p>
+  <div class="figures" id="figs"></div>
+</header>
+
+<section>
+  <p class="eyebrow">One · The week</p>
+  <h2>The only part that is actually a rhythm</h2>
+  <p class="lede" id="weekLede"></p>
+  <div class="controls">
+    <label>Show</label>
+    <button class="chip" data-wk="len" aria-pressed="true">By length</button>
+    <button class="chip" data-wk="place" aria-pressed="false">Tower vs handbell</button>
+  </div>
+  <div id="weekChart"></div>
+  <div class="legend" id="weekLegend"></div>
+  <h3 style="margin-top:34px;color:var(--ink-3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase">Does it hold every year?</h3>
+  <div id="weekYears"></div>
+  <p class="note" id="weekNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Two · The year</p>
+  <h2>Every day of four years</h2>
+  <p class="lede">One square per day, shaded by how many performances were rung. The
+  weekly stripe is the Sunday column. What is not subtle is the handful of near-black
+  squares — days between four and fifty-five times their own weekday's normal volume.
+  Click any square.</p>
+  <div class="cal-wrap"><div class="cal-inner"><div id="calendar"></div></div></div>
+  <div class="legend" id="calLegend"></div>
+  <div class="panel"><div class="readout" id="readout"></div></div>
+</section>
+
+<section>
+  <p class="eyebrow">Three · The days the country rang</p>
+  <h2 id="evHead">Twenty-four days, a fifth of the ringing</h2>
+  <p class="lede">Found by rule, not by recollection. Each day is compared with the
+  <strong>median of the same weekday</strong> within six weeks either side — same
+  weekday because Sunday is two and a half times the quietest weekday, so a plain rolling
+  mean would flag every Sunday; median because the thing being looked for would otherwise
+  inflate its own baseline. A day qualifies at <span id="ruleTxt"></span>.</p>
+  <p class="lede">Nothing on this list was typed in. The reason in the right-hand column
+  is the <em>most repeated footnote the bands themselves wrote that day</em> — a national
+  occasion produces hundreds of ringers independently writing near-identical text, which
+  is a signal no other kind of dataset offers.</p>
+  <div id="eventTable"></div>
+  <p class="note" id="nearMiss"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Four · The three grammars</p>
+  <h2>You can tell what happened from what was rung</h2>
+  <p class="lede">This is the part a calendar cannot show. Ringing has distinct registers
+  for distinct occasions, and on the twenty-four days they separate almost perfectly —
+  not as a matter of interpretation, but on two numbers per day.</p>
+  <div class="two">
+    <div>
+      <div id="scatter"></div>
+      <div class="legend" id="scatterLegend"></div>
+    </div>
+    <div id="grammarText"></div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Five · A number in the method field</p>
+  <h2>“99 Tolling”</h2>
+  <p class="lede">Nothing in four corpora records a person's age. There is no age column in
+  Dove's Guide, none in BellBoard's schema, none in the Methods Library. And yet the age of
+  the person who has died is sitting in the data, in the field reserved for the name of the
+  method, because a tolling bell is <em>counted</em> — one stroke per year of life.</p>
+  <div id="tolls"></div>
+  <p class="note" id="tollNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Six · The most reliable number in the corpus</p>
+  <h2>Remembrance Sunday, four years running</h2>
+  <p class="lede">The second Sunday in November. Not a volume spike — it barely registers
+  on the calendar — but the proportion of bands ringing half-muffled is the steadiest
+  figure this project has found in any of its four corpora.</p>
+  <div id="remembrance"></div>
+  <p class="note" id="remNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Seven · The correction</p>
+  <h2>September is not the busiest month</h2>
+  <div class="correction">
+    <h3>What this repository previously recorded</h3>
+    <p style="margin:0">“<em>September is the busiest ringing month (12,067 performances)
+    and nobody knows why.</em>” — <code>docs/IDEAS.md</code>, and repeated in the README.
+    The count is right. The finding is not.</p>
+  </div>
+  <p class="lede">Remove those days and the seasonal shape changes character
+  entirely. Grey is every performance; bronze is what is left once the national days are
+  set aside.</p>
+  <div class="controls">
+    <label>Years</label>
+    <button class="chip" data-yr="all" aria-pressed="true">All four</button>
+    <button class="chip" data-yr="2122" aria-pressed="false">2022–24 only</button>
+  </div>
+  <div id="seasonChart"></div>
+  <div class="legend" id="seasonLegend"></div>
+  <div id="seasonText"></div>
+</section>
+
+<footer>
+  <div class="wrap" style="padding:0">
+    <p>Built by <code>scripts/build_rhythm_page.py</code> from
+    <code>data/change-ringing.db</code>. The SQL is in <code>queries/rhythm/</code> and
+    the script reads those files rather than holding copies, so the recorded queries are
+    the ones that ran. The anomaly rule and both thresholds are command-line flags, and
+    the build prints the days that fell just below the cut.</p>
+    <p>Data derived from BellBoard and Dove’s Guide, CC BY-SA 4.0 — see
+    <code>data/LICENCE-DATA.md</code>. Footnote text is quoted only where the same words
+    were written independently by many bands on the same day; no individual is named
+    anywhere on this page.</p>
+    <p><a href="index.html">Founder Atlas</a> ·
+       <a href="methods.html">Blue Line Atlas</a> ·
+       <a href="https://github.com/nihilisticiconoclast/change-ringing">Repository</a></p>
+  </div>
+</footer>
+</div>
+
+<script>
+const D = /*__DATA__*/;
+const C = D.cols.reduce((a,k,i)=>(a[k]=i,a),{});
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('en-GB');
+const pc  = (a,b) => b ? (100*a/b) : 0;
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---- dates -------------------------------------------------------------- */
+const t0 = new Date(D.start + 'T00:00:00Z');
+const dateAt = i => new Date(t0.getTime() + i*86400000);
+const iso = d => d.toISOString().slice(0,10);
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const WK  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const FULL = {Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',
+  Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
+const pretty = s => { const d = new Date(s+'T00:00:00Z');
+  return WK[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+const byDate = {};
+D.days.forEach((row,i)=>byDate[iso(dateAt(i))] = row);
+const evByDate = {};
+D.events.forEach(e=>evByDate[e.d]=e);
+
+/* ---- theme -------------------------------------------------------------- */
+const tb = $('#themeToggle');
+const setTheme = t => { document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark' ? 'Light Mode' : 'Dark Mode';
+  try{ localStorage.setItem('cr-theme',t); }catch(e){}
+  drawAll(); };
+tb.onclick = () => setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+(()=>{ let t=null; try{ t=localStorage.getItem('cr-theme'); }catch(e){}
+  if(!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark'?'Light Mode':'Dark Mode'; })();
+
+/* ---- svg helper --------------------------------------------------------- */
+function svg(w,h){ const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('viewBox',`0 0 ${w} ${h}`); s.setAttribute('role','img'); return s; }
+function el(tag,attrs,text){ const n=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const k in attrs) n.setAttribute(k,attrs[k]);
+  if(text!=null) n.textContent=text; return n; }
+function legend(host,items){ host.innerHTML = items.map(([c,l])=>
+  `<span><i style="background:${c}"></i>${l}</span>`).join(''); }
+
+/* ---- headline figures --------------------------------------------------- */
+const T = D.totals;
+// grammar() is a hoisted function declaration, so the register count here is the
+// same classification the scatter and the table use rather than a number typed
+// into the header and left to drift.
+const nRegisters = new Set(D.events.map(e=>grammar(byDate[e.d])[0])).size;
+$('#figs').innerHTML = [
+  [fmt(T.performances),'performances'],
+  [fmt(T.calendarDays),'days, 2021–24'],
+  [T.eventDays,'days carry '+Math.round(pc(T.eventPerformances,T.performances))+'% of them'],
+  [nRegisters,'registers of ringing'],
+  [fmt(T.rings),'rings reached'],
+].map(([n,l])=>`<div class="fig"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+/* ======================= 1. THE WEEK ==================================== */
+let wkMode = 'len';
+function drawWeek(){
+  const host = $('#weekChart'); host.innerHTML='';
+  const rows = D.weekdays.slice();
+  const max = Math.max(...rows.map(r=>r.n));
+  const W=980, rowH=44, pad=64, h = rows.length*rowH + 30;
+  const s = svg(W,h);
+  const series = wkMode==='len'
+    ? [['peal','Peals (5,000+ changes)',cssv('--death')],
+       ['quarter','Quarter peals (1,250–4,999)',cssv('--bronze')],
+       ['other','Shorter touches, tolling, call changes',cssv('--cal-2')]]
+    : [['tower','Tower bells',cssv('--cal-4')],
+       ['hand','Handbells',cssv('--joy')]];
+  const scale = v => v/max*(W-pad-150);
+  rows.forEach((r,i)=>{
+    const y = i*rowH+6;
+    s.appendChild(el('text',{x:0,y:y+18,class:'axb'},r.w));
+    let x = pad;
+    series.forEach(([k,,col])=>{
+      const w = scale(r[k]);
+      if(w>0.4){ const rect=el('rect',{x,y,width:w,height:22,fill:col,rx:1});
+        rect.appendChild(el('title',{},`${r.w} · ${series.find(q=>q[0]===k)[1]}: ${fmt(r[k])}`));
+        s.appendChild(rect); }
+      x += w;
+    });
+    s.appendChild(el('text',{x:x+9,y:y+16,class:'num'},fmt(r.n)));
+    const pealPc = pc(r.peal,r.n).toFixed(1)+'% peals';
+    s.appendChild(el('text',{x:x+9,y:y+16+13,class:'num',opacity:.65},
+      wkMode==='len'?pealPc:(pc(r.hand,r.n).toFixed(1)+'% in hand')));
+  });
+  host.appendChild(s);
+  legend($('#weekLegend'), series.map(([,l,c])=>[c,l]));
+  drawWeekYears();
+  const w = Object.fromEntries(D.weekdays.map(r=>[r.w,r]));
+  const pooled = D.weekdays.slice().sort((a,b)=>b.n-a.n);
+  $('#weekLede').innerHTML = `Sunday is service ringing; Saturday is the day peals are
+    attempted; the working week is quiet. That much is solid. Which weekday is
+    <em>quietest</em> is not, and the strip below the chart is there because this is the one
+    pattern on the page that repeats on a fixed period — so it is the one that has to be
+    shown holding year by year rather than only in the pooled total.`;
+  const yrs=D.weekdayYears, ord=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const firstTwo = yrs.every(y=>{
+    const r=y.v.map((v,j)=>[v,j]).sort((a,b)=>b[0]-a[0]).map(x=>ord[x[1]]);
+    return r[0]==='Sun' && r[1]==='Sat'; });
+  const wedLast = yrs.filter(y=>{
+    const r=y.v.map((v,j)=>[v,j]).sort((a,b)=>a[0]-b[0]).map(x=>ord[x[1]]);
+    return r[0]==='Wed'; }).length;
+  $('#weekNote').innerHTML =
+   `Sunday ${fmt(w.Sun.n)}, Saturday ${fmt(w.Sat.n)}, ${FULL[pooled[6].w]} ${fmt(pooled[6].n)} — a
+    ${(w.Sun.n/pooled[6].n).toFixed(1)}× spread across an ordinary week.
+    ${firstTwo ? 'Sunday first and Saturday second holds in all four years.'
+               : 'The Sunday–Saturday ordering does <strong>not</strong> hold in every year.'}
+    The <em>bottom</em> of the week is a different story, and worth stating carefully.
+    ${(()=>{const q={};yrs.forEach(y=>{const l=y.v.map((v,j)=>[v,j]).sort((a,b)=>a[0]-b[0])[0][1];
+      q[ord[l]]=(q[ord[l]]||0)+1;});
+      const parts=Object.entries(q).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${FULL[k]} in ${v}`);
+      return `The quietest day is ${parts.join(' and ')} of the four years, and
+      ${FULL[pooled[6].w]} is lowest in the pooled count by only ${fmt(pooled[5].n-pooled[6].n)}
+      performances — ${fmt(pooled[6].n)} against ${fmt(pooled[5].n)}. There is a weekday
+      trough, but naming one day for it over-reads a
+      ${(100*(pooled[5].n-pooled[6].n)/pooled[6].n).toFixed(1)}% gap.`;})()}
+    <strong>This repository previously recorded Wednesday as the trough at 8,377</strong>,
+    which is the raw figure. Once the national days come out the order swaps, because
+    ${(()=>{const c={};D.events.forEach(e=>{const d=ord[new Date(e.d+'T00:00:00Z').getUTCDay()===0?6:new Date(e.d+'T00:00:00Z').getUTCDay()-1];c[d]=(c[d]||0)+1;});
+      return `${c['Mon']||0} of the ${D.events.length} fell on a Monday, the state funeral
+      among them`;})()}. Neither day is “the” trough; the honest statement is that the back
+    half of the working week is quiet and the front of it is quieter than the raw count
+    suggests.
+    <br><br>The more interesting figure is the ratio <em>within</em> a day. Saturday
+    carries ${fmt(w.Sat.peal)} peals, ${(w.Sat.peal/w.Wed.peal).toFixed(1)}× Wednesday's
+    ${fmt(w.Wed.peal)}, while Sunday — the busiest day overall — manages only
+    ${fmt(w.Sun.peal)}, or ${pc(w.Sun.peal,w.Sun.n).toFixed(1)}% of its performances
+    against Saturday's ${pc(w.Sat.peal,w.Sat.n).toFixed(1)}%. Sunday is volume; Saturday is
+    ambition. A peal takes about three hours and cannot be fitted around a service.
+    Handbells run against the grain too: ${pc(w.Sun.hand,w.Sun.n).toFixed(1)}% of Sunday
+    performances are in hand against ${pc(w.Wed.hand,w.Wed.n).toFixed(1)}% on Wednesday,
+    because handbells need four people and a room rather than a tower and a congregation.
+    <br><br><strong>The ${D.events.length} national days are excluded from this chart and
+    from the strip above.</strong> A state funeral on a Monday is not evidence about
+    Mondays. Leaving them in reverses 2021 — Prince Philip's funeral fell on a Saturday
+    during a period when Sunday service ringing was still restricted, so the raw figures
+    put 2021's Saturdays comfortably above its Sundays, which is an artefact of one week
+    and one pandemic rather than a fact about the week.`;
+}
+
+function drawWeekYears(){
+  const host=$('#weekYears'); host.innerHTML='';
+  const W=980, rowH=30, h=D.weekdayYears.length*rowH+26;
+  const s=svg(W,h);
+  const left=52, cellW=(W-left-268)/7;
+  const order=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  order.forEach((d,i)=>s.appendChild(el('text',
+    {x:left+i*cellW+cellW/2,y:12,class:'ax','text-anchor':'middle'},d)));
+  D.weekdayYears.forEach((yr,i)=>{
+    const y=26+i*rowH, max=Math.max(...yr.v), min=Math.min(...yr.v);
+    s.appendChild(el('text',{x:0,y:y+15,class:'axb'},yr.y));
+    const rank=yr.v.map((v,j)=>[v,j]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+    yr.v.forEach((v,j)=>{
+      const t01=(v-min)/Math.max(1,max-min);
+      const r=el('rect',{x:left+j*cellW+1,y:y,width:cellW-2,height:20,rx:1,
+        fill:cssv(CAL[Math.round(1+t01*(CAL.length-2))])});
+      r.appendChild(el('title',{},`${yr.y} ${order[j]}: ${fmt(v)}`));
+      s.appendChild(r);
+      if(rank[0]===j||rank[1]===j)
+        s.appendChild(el('text',{x:left+j*cellW+cellW/2,y:y+14,class:'ax',
+          'text-anchor':'middle','font-weight':'bold',
+          fill:cssv(t01>0.55?'--ground':'--ink')},rank[0]===j?'1st':'2nd'));
+    });
+    const busiest=order[rank[0]], quietest=order[rank[6]];
+    s.appendChild(el('text',{x:left+7*cellW+16,y:y+14,class:'num'},
+      `${busiest} top · ${quietest} bottom · ${(max/min).toFixed(1)}\u00d7`));
+  });
+  host.appendChild(s);
+}
+
+/* ======================= 2. CALENDAR ==================================== */
+const CAL = ['--cal-0','--cal-1','--cal-2','--cal-3','--cal-4','--cal-5','--cal-6'];
+// Breaks come from the build, not from taste -- see calBreaks in the builder.
+const BR = D.calBreaks;
+function bucket(n){ let b=0; for(let i=0;i<BR.length;i++) if(n>BR[i]) b=i+1; return n===0?0:b; }
+function calLabels(){ const out=['none recorded'];
+  for(let i=0;i<BR.length;i++){ const lo=Math.max(BR[i],1), hi=BR[i+1];
+    out.push(hi ? (lo===hi-1?String(lo):lo+'–'+(hi-1)) : lo+'+'); }
+  return out; }
+function drawCalendar(){
+  const host=$('#calendar'); host.innerHTML='';
+  const years=[2021,2022,2023,2024], cell=12, gap=2.4, step=cell+gap;
+  const left=34, top=18, yearH=7*step+30;
+  const W=left+53*step+20, H=years.length*yearH+10;
+  const s=svg(W,H); s.setAttribute('class','cal');
+  s.appendChild(el('title',{},'Daily ringing volume, 2021 to 2024'));
+  years.forEach((yr,yi)=>{
+    const oy = yi*yearH + top;
+    s.appendChild(el('text',{x:0,y:oy-6,class:'axb'},yr));
+    [0,2,4,6].forEach(d=>s.appendChild(el('text',
+      {x:0,y:oy+d*step+cell-2,class:'ax',
+       fill:d===0?cssv('--bronze'):cssv('--ink-3')},WK[d])));
+    const jan1=new Date(Date.UTC(yr,0,1));
+    const dec31=new Date(Date.UTC(yr,11,31));
+    let seenMonth={};
+    for(let t=jan1.getTime(); t<=dec31.getTime(); t+=86400000){
+      const d=new Date(t), k=iso(d);
+      const week=Math.floor((t - (jan1.getTime() - jan1.getUTCDay()*86400000))/(7*86400000));
+      const x=left+week*step, y=oy+d.getUTCDay()*step;
+      const row=byDate[k]; const n=row?row[C.n]:0;
+      const ev=evByDate[k];
+      const r=el('rect',{x,y,width:cell,height:cell,rx:1.5,
+        fill:cssv(CAL[bucket(n)]),'data-d':k,tabindex:0,role:'button',
+        'aria-label':`${pretty(k)}: ${fmt(n)} performances`});
+      if(ev){ r.setAttribute('stroke',cssv('--bronze')); r.setAttribute('stroke-width','1.4'); }
+      r.appendChild(el('title',{},`${pretty(k)} — ${fmt(n)}${ev?'  ('+ev.ratio+'× normal)':''}`));
+      s.appendChild(r);
+      if(!seenMonth[d.getUTCMonth()] && d.getUTCDate()<=7){
+        seenMonth[d.getUTCMonth()]=1;
+        s.appendChild(el('text',{x:x,y:oy-6,class:'ax'},MON[d.getUTCMonth()]));
+      }
+    }
+  });
+  host.appendChild(s);
+  legend($('#calLegend'), calLabels().map((l,i)=>[cssv(CAL[i]),l])
+    .concat([['transparent','bronze outline = flagged as a national day']]));
+  host.addEventListener('click', e=>{ const k=e.target.getAttribute&&e.target.getAttribute('data-d'); if(k) select(k); });
+  host.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){
+    const k=e.target.getAttribute&&e.target.getAttribute('data-d'); if(k){ e.preventDefault(); select(k);} }});
+  host.addEventListener('mouseover', e=>{ const k=e.target.getAttribute&&e.target.getAttribute('data-d'); if(k) select(k,true); });
+}
+let pinned = D.events[0] ? D.events[0].d : null;
+function select(k, hover){
+  if(!hover) pinned = k;
+  const row = byDate[k]; if(!row) return;
+  const n=row[C.n], ev=evByDate[k];
+  const bits = [
+    `${fmt(n)} performances`,
+    `${fmt(row[C.towers])} rings`,
+    `${fmt(row[C.peal])} peals`,
+    `${fmt(row[C.hand])} in hand`,
+  ];
+  const marks = [];
+  if(row[C.toll]) marks.push(`${pc(row[C.toll],n).toFixed(0)}% tolling`);
+  if(row[C.muffled]) marks.push(`${pc(row[C.muffled],n).toFixed(0)}% muffled`);
+  $('#readout').innerHTML =
+    `<div class="hd">${pretty(k)}${ev?` &nbsp;·&nbsp; <span style="color:var(--bronze)">${ev.ratio}× the same-weekday median of ${ev.base}</span>`:''}</div>`
+    + bits.join(' &nbsp;·&nbsp; ')
+    + (marks.length?`<br>${marks.join(' &nbsp;·&nbsp; ')}`:'')
+    + ((ev&&ev.notes.length)?`<span class="q">“${ev.notes[0]}”</span>`:'')
+    + (!ev?`<span class="q" style="font-style:normal;color:var(--ink-3)">An ordinary day.</span>`:'');
+  document.querySelectorAll('.cal rect.sel').forEach(r=>r.classList.remove('sel'));
+  const r=document.querySelector(`.cal rect[data-d="${pinned}"]`); if(r) r.classList.add('sel');
+}
+
+/* ======================= 3. EVENT TABLE ================================= */
+// Four registers, tested in this order. The 'both' case has to be tested first:
+// a state funeral tolls AND rings half-muffled, so a rule that asks "which is
+// higher" would file the funerals under whichever measure happened to win and
+// lose the fact that they are the only days that do both.
+function grammar(row){
+  const n=row[C.n], toll=pc(row[C.toll],n), muff=pc(row[C.muffled],n);
+  if(toll>=15 && muff>=15) return ['mixed','Toll + muffle'];
+  if(Math.max(toll,muff)<10) return ['joy','Open'];
+  return muff>toll ? ['remem','Muffled'] : ['death','Tolling'];
+}
+const REGCOL = {joy:'--joy',remem:'--remem',death:'--death',mixed:'--mixed'};
+function drawEvents(){
+  $('#ruleTxt').textContent = `at least ${D.rule.minRatio}× that median and at least ${D.rule.minCount} performances`;
+  // The heading is written by the build, not typed: both thresholds are flags,
+  // so a different run gives a different count and hard-coded prose goes stale.
+  const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen',
+    'nineteen','twenty','twenty-one','twenty-two','twenty-three','twenty-four','twenty-five',
+    'twenty-six','twenty-seven','twenty-eight','twenty-nine','thirty'];
+  const nw = n => words[n] || String(n);
+  const share = pc(T.eventPerformances, T.performances);
+  const frac = share>=30?'a third':share>=22?'a quarter':share>=18?'a fifth':share>=14?'a sixth':Math.round(share)+'%';
+  $('#evHead').textContent = nw(D.events.length).replace(/^./,c=>c.toUpperCase())
+    + ` days, ${frac} of the ringing`;
+  const max=Math.max(...D.events.map(e=>e.ratio));
+  const rows = D.events.map(e=>{
+    const row=byDate[e.d], [cls,tag]=grammar(row);
+    const why = e.notes.length ? e.notes[0] : '<span style="color:var(--ink-3)">No footnote text repeated three times — the day is visible in the volume but the bands did not converge on a wording.</span>';
+    return `<tr>
+      <td class="d">${e.d}<br><span style="color:var(--ink-3)">${WK[new Date(e.d+'T00:00:00Z').getUTCDay()]}</span></td>
+      <td class="n">${fmt(e.n)}<br><span style="color:var(--ink-3)">vs ${e.base}</span></td>
+      <td style="width:150px"><div class="rbar" style="width:${(100*e.ratio/max).toFixed(1)}%"></div>
+        <span class="num">${e.ratio}×</span></td>
+      <td><span class="tag ${cls}">${tag}</span></td>
+      <td class="why">${why}</td></tr>`;
+  }).join('');
+  $('#eventTable').innerHTML = `<div class="tscroll"><table><thead><tr>
+      <th>Date</th><th style="text-align:right">Rung</th><th>Times normal</th>
+      <th>Register</th><th>What the bands wrote</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const nm = D.nearMiss.map(e=>`<strong>${e.d}</strong> (${e.ratio}×, ${fmt(e.n)}`
+    + (e.notes.length?`, “${e.notes[0].slice(0,44)}…”`:', no repeated footnote') + ')').join('; ');
+  const noisy = D.nearMiss.filter(e=>e.n < D.rule.minCount).length;
+  $('#nearMiss').innerHTML = `<strong>What sits just below the cut, and why the list is a
+    floor rather than a ceiling.</strong> Both thresholds are arguable, so here is the next
+    rung down: ${nm}. ${noisy} of those are pandemic artefacts rather than occasions — in
+    early 2021 a typical baseline was fourteen performances, so a quiet January day clears
+    3.5× on noise alone, which is what the ${D.rule.minCount}-performance floor is for. The
+    rest are real: New Year and Easter are national ringing occasions that this rule does
+    not reach, because they are absorbed into a baseline that already contains them every
+    year. A once-in-a-reign event has no precedent to be measured against; an annual one
+    does. The build script prints this list on every run so the boundary can be argued
+    with rather than taken on trust.`;
+}
+
+/* ======================= 4. SCATTER ===================================== */
+function drawScatter(){
+  const host=$('#scatter'); host.innerHTML='';
+  const W=520,H=470,m={l:52,r:22,t:16,b:52};
+  const s=svg(W,H);
+  const x=v=>m.l+(v/100)*(W-m.l-m.r), y=v=>H-m.b-(v/100)*(H-m.t-m.b);
+  for(let g=0;g<=100;g+=25){
+    s.appendChild(el('line',{x1:m.l,x2:W-m.r,y1:y(g),y2:y(g),class:'gl'}));
+    s.appendChild(el('line',{x1:x(g),x2:x(g),y1:m.t,y2:H-m.b,class:'gl'}));
+    s.appendChild(el('text',{x:m.l-8,y:y(g)+3,class:'ax','text-anchor':'end'},g+'%'));
+    s.appendChild(el('text',{x:x(g),y:H-m.b+16,class:'ax','text-anchor':'middle'},g+'%'));
+  }
+  s.appendChild(el('text',{x:(m.l+W-m.r)/2,y:H-8,class:'axb','text-anchor':'middle'},
+    'Tolling — a single bell, struck slowly'));
+  s.appendChild(el('text',{x:14,y:(m.t+H-m.b)/2,class:'axb','text-anchor':'middle',
+    transform:`rotate(-90 14 ${(m.t+H-m.b)/2})`},'Half-muffled ringing'));
+  const pts = D.events.map(e=>({e,row:byDate[e.d]}));
+  const rmax = Math.max(...pts.map(p=>p.row[C.n]));
+  pts.sort((a,b)=>b.row[C.n]-a.row[C.n]).forEach(({e,row})=>{
+    const n=row[C.n], [cls]=grammar(row);
+    const col = cssv(REGCOL[cls]);
+    const c=el('circle',{cx:x(pc(row[C.toll],n)),cy:y(pc(row[C.muffled],n)),
+      r:5+16*Math.sqrt(n/rmax),fill:col,'fill-opacity':.42,stroke:col,'stroke-width':1.2});
+    c.appendChild(el('title',{},`${pretty(e.d)} — ${fmt(n)} performances, `
+      +`${pc(row[C.toll],n).toFixed(0)}% tolling, ${pc(row[C.muffled],n).toFixed(0)}% muffled`
+      +(e.notes.length?`\n“${e.notes[0]}”`:'')));
+    s.appendChild(c);
+  });
+  // the four Remembrance Sundays, for contrast -- not spikes, but the muffled corner
+  D.remembrance.forEach(r=>{
+    const c=el('circle',{cx:x(pc(r.toll,r.n)),cy:y(pc(r.muffled,r.n)),r:5,
+      fill:'none',stroke:cssv('--remem'),'stroke-width':1.6,'stroke-dasharray':'2 2'});
+    c.appendChild(el('title',{},`Remembrance Sunday ${r.d} — ${fmt(r.n)} performances, `
+      +`${pc(r.muffled,r.n).toFixed(0)}% muffled`));
+    s.appendChild(c);
+  });
+  host.appendChild(s);
+  legend($('#scatterLegend'),[
+    [cssv('--joy'),'Open ringing — celebration'],
+    [cssv('--remem'),'Half-muffled — remembrance'],
+    [cssv('--death'),'Tolling — a marked minute'],
+    [cssv('--mixed'),'Both — a funeral'],
+    ['transparent','dashed = the four Remembrance Sundays'],
+  ]);
+  const g = {joy:[],remem:[],death:[],mixed:[]};
+  D.events.forEach(e=>g[grammar(byDate[e.d])[0]].push(e));
+  const P = e => { const r=byDate[e.d];
+    return {toll:pc(r[C.toll],r[C.n]), muff:pc(r[C.muffled],r[C.n]), n:r[C.n]}; };
+  const day = s => P(D.events.find(e=>e.d===s));
+  const joyMaxToll = Math.max(...g.joy.map(e=>P(e).toll));
+  const remValues = D.remembrance.map(r=>pc(r.muffled,r.n));
+  $('#grammarText').innerHTML = `
+    <h3>Two columns, four registers</h3>
+    <p>Each circle is one of the ${D.events.length} days, sized by how much was rung. Only
+    two things are measured: the share of the day's performances that were
+    <strong>tolling</strong> — one bell struck slowly, which BellBoard files in the method
+    field — and the share whose footnote says the bells were <strong>half-muffled</strong>,
+    a leather pad on one side of each clapper so alternate blows come back quieted.</p>
+    <p><strong>Celebration sits on the origin.</strong> ${g.joy.length} days with under 10%
+    on both measures: the Coronation, the Platinum Jubilee, the Accession anniversary,
+    D-Day 80, Commonwealth Day, the COP26 ring-out. The largest circle on the page — the
+    ${fmt(Math.max(...g.joy.map(e=>P(e).n)))} performances of Coronation day, the busiest
+    single day in the corpus — is one of them, and it is at ${joyMaxToll.toFixed(1)}%
+    tolling. A nation celebrating produces no anomaly in <em>what</em> is rung at all, only
+    in how much.</p>
+    <p><strong>A funeral does both.</strong> ${g.mixed.length} days are substantially
+    tolling <em>and</em> substantially muffled, and every one is a death or a funeral:
+    the announcement, then the service. 19 September 2022 is
+    ${day('2022-09-19').toll.toFixed(0)}% tolling and ${day('2022-09-19').muff.toFixed(0)}%
+    muffled on the same day. These are the days out in the middle of the field, and the
+    middle is where they belong — a rule that forced them into one corner would have thrown
+    away the only thing that distinguishes them.</p>
+    <p><strong>Tolling alone is a marked minute, not a funeral.</strong> ${g.death.length}
+    days: Captain Tom Moore's funeral day, the National Day of Reflection at the end of the
+    first pandemic year, and the NHS anniversary. Bells tolled at a stated time, nothing
+    else rung, no muffles. A different act from a funeral, and the data separates them
+    without being told to.</p>
+    <p><strong>Remembrance is the muffled axis on its own.</strong> Full ringing, quieted.
+    The four dashed rings are the Remembrance Sundays, at
+    ${remValues.map(v=>v.toFixed(0)+'%').join(', ')} muffled — dashed because they are
+    <em>not</em> among the ${D.events.length}. By volume they are ordinary Sundays. Without the
+    second column they would be invisible, which is the argument for the column.</p>
+    <p>The sharpest case is 11 September 2022, the one genuinely divided day in the corpus.
+    ${day('2022-09-11').muff.toFixed(0)}% of bands rang half-muffled for the late Queen
+    while others rang open for the Proclamation of the new King — the same afternoon, the
+    same country, two incompatible registers. The week either side runs
+    tolling → open → muffled → funeral in eleven days. No aggregate figure would show that;
+    two columns and a scatter plot do.</p>`;
+}
+
+/* ======================= 5. COUNTED TOLLS =============================== */
+function drawTolls(){
+  const host=$('#tolls'); host.innerHTML='';
+  const big = D.tolls.filter(r=>r.n>=3);
+  const rest = D.tolls.filter(r=>r.n<3);
+  const max = Math.max(...big.map(r=>r.n));
+  const cards = big.map(r=>{
+    const ev = evByDate[r.day];
+    // Quote the day's footnote only where the number has enough performances
+    // behind it to be about that day's occasion. "88 Tolling" is three records
+    // that happen to fall on the National Day of Reflection; attaching that
+    // day's wording to them would be inventing a link the data does not carry.
+    const why = (ev && ev.notes.length && r.n >= 5) ? ev.notes[0] : null;
+    return `<div style="border:1px solid var(--rule);background:var(--surface);
+        border-radius:3px;padding:14px 16px;display:flex;gap:16px;align-items:baseline">
+      <div style="font-family:var(--mono);font-size:2.1rem;line-height:1;
+        color:var(--bronze);font-variant-numeric:tabular-nums;min-width:3.4ch;text-align:right">${r.k}</div>
+      <div style="flex:1">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;line-height:1.5">
+          ${fmt(r.n)} performance${r.n===1?'':'s'}<br>${fmt(r.dayN)} of them on ${r.day}</div>
+        <div style="height:5px;background:var(--bronze-soft);border-radius:1px;
+          width:${Math.max(2,100*r.n/max)}%;margin:7px 0 6px"></div>
+        ${why?`<div style="font-family:var(--serif);font-size:14px;font-style:italic;
+          color:var(--ink-2)">“${why}”</div>`:
+          `<div style="font-family:var(--mono);font-size:11.5px;color:var(--ink-3)">
+          Too few records to attribute — shown as a number only.</div>`}
+      </div></div>`;
+  }).join('');
+  host.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:12px;margin-top:24px">${cards}</div>`;
+  const total = D.tolls.reduce((a,r)=>a+r.n,0);
+  $('#tollNote').innerHTML = `<strong>What the numbers are.</strong> ${D.tolls[0].k},
+    ${fmt(D.tolls[0].n)} performances, almost all on ${D.tolls[0].day}: the age of the Duke
+    of Edinburgh. ${D.tolls[1].k} on ${D.tolls[1].day}: the age of Queen Elizabeth II.
+    ${D.tolls[2].k}: Captain Tom Moore. Then the register changes — 80 falls entirely on
+    D-Day's eightieth anniversary and 70 on the Platinum Jubilee, so the count is not
+    always an age but always <em>the number of the thing being marked</em>. The one that
+    stops you is <strong>365</strong>, rung on 23 March 2021, the first anniversary of the
+    first lockdown. One stroke per day.
+    <br><br>${fmt(total)} performances carry a countable number across
+    ${D.tolls.length} distinct values. Below the national ones the counts collapse to
+    single figures — ${rest.map(r=>r.k).sort((a,b)=>a-b).join(', ')} — and those are shown
+    as bare numbers with no attribution, because a handful of records is not enough to say
+    what any of them marks. Most will be one tower counting out one life. The people are
+    not named here, and they are not named in any column of the corpus either: no table in
+    Dove's Guide, BellBoard or the Methods Library has an age or date-of-birth field at
+    all. That is the point. A number of bell strokes is the only place an age exists in
+    this data.
+    <br><br><strong>Why this survives at all.</strong> A schema designed for this data would
+    have a <code>method</code> foreign key and “99 Tolling” would have failed validation.
+    It is legible because BellBoard left the field as free text, and the same is true of
+    the muffled column two sections up. The under-normalised field is carrying information
+    the normalised one could not express.`;
+}
+
+/* ======================= 6. REMEMBRANCE ================================= */
+function drawRemembrance(){
+  const rows = D.remembrance.map(r=>{
+    const p=pc(r.muffled,r.n);
+    return `<div class="fig" style="min-width:120px">
+      <div class="n">${p.toFixed(0)}%</div>
+      <div class="l">${r.d.slice(0,4)} · ${fmt(r.n)} rung</div></div>`;
+  }).join('');
+  $('#remembrance').innerHTML = `<div class="figures">${rows}</div>`;
+  const vals = D.remembrance.map(r=>pc(r.muffled,r.n));
+  const spread=(Math.max(...vals)-Math.min(...vals)).toFixed(1);
+  $('#remNote').innerHTML = `Against a background rate of <strong>${T.muffledBase}%</strong>
+    across all ${fmt(T.performances)} performances, and a spread of ${spread} percentage
+    points over four years. Nobody coordinates this. There is no register of who muffled
+    their bells, no instruction issued, no return to file — and the practice is
+    reproducible to within two points. It is measurable only because the footnote is free
+    text that ringers fill in anyway, which is a good argument for keeping free text in a
+    corpus instead of normalising it away. The floor is not 0%: a ring has to own muffles
+    and someone has to fit twelve of them before service.`;
+}
+
+/* ======================= 7. SEASON ===================================== */
+let yrMode='all';
+function drawSeason(){
+  const host=$('#seasonChart'); host.innerHTML='';
+  // "All four" sums the window; "2022-24 only" takes the mean of the three
+  // usable years, because 2021 was pandemic-suppressed and summing it in drags
+  // every month down by an amount that varies with the month.
+  const get = (m,k)=> yrMode==='all' ? m[k]||0
+    : (['2022','2023','2024'].reduce((t,y)=>t+(m[k+'_'+y]||0),0)/3);
+  const ms = D.months;
+  const max = Math.max(...ms.map(m=>get(m,'raw')));
+  const W=980,H=330,m={l:46,r:16,t:14,b:46};
+  const s=svg(W,H);
+  const bw=(W-m.l-m.r)/12, y=v=>H-m.b-(v/max)*(H-m.t-m.b);
+  const ticks = yrMode==='all'?[0,3000,6000,9000,12000]:[0,500,1000,1500,2000];
+  ticks.forEach(t=>{ if(t>max*1.05) return;
+    s.appendChild(el('line',{x1:m.l,x2:W-m.r,y1:y(t),y2:y(t),class:'gl'}));
+    s.appendChild(el('text',{x:m.l-8,y:y(t)+3,class:'ax','text-anchor':'end'},fmt(t)));});
+  ms.forEach((mo,i)=>{
+    const x0=m.l+i*bw, raw=get(mo,'raw'), net=get(mo,'net');
+    const r1=el('rect',{x:x0+bw*.12,width:bw*.76,y:y(raw),height:Math.max(0,H-m.b-y(raw)),
+      fill:cssv('--surface-2'),stroke:cssv('--rule')});
+    r1.appendChild(el('title',{},`${MON[i]} — ${fmt(Math.round(raw))} performances, all days`));
+    s.appendChild(r1);
+    const r2=el('rect',{x:x0+bw*.12,width:bw*.76,y:y(net),height:Math.max(0,H-m.b-y(net)),
+      fill:cssv('--bronze'),'fill-opacity':.85});
+    r2.appendChild(el('title',{},`${MON[i]} — ${fmt(Math.round(net))} with the national days removed`));
+    s.appendChild(r2);
+    s.appendChild(el('text',{x:x0+bw/2,y:H-m.b+16,class:'ax','text-anchor':'middle'},MON[i]));
+    if(raw-net > max*0.08)
+      s.appendChild(el('text',{x:x0+bw/2,y:y(raw)-6,class:'num','text-anchor':'middle',
+        fill:cssv('--bronze')},'−'+fmt(Math.round(raw-net))));
+  });
+  host.appendChild(s);
+  legend($('#seasonLegend'),[[cssv('--surface-2'),'Every performance'],
+    [cssv('--bronze'),'National days removed'+(yrMode==='all'?'':' (mean of 2022–24)')]]);
+  // Every figure below is read off the same get() the bars use, so the prose
+  // follows the toggle instead of describing one mode while the chart shows the
+  // other. That has to be deliberate: the September ranking is 7th over four
+  // years and 11th over 2022-24, and hard-coding either would be wrong half the
+  // time.
+  const rank = k => ms.map(mo=>({m:mo.m, v:get(mo,k)})).sort((a,b)=>b.v-a.v);
+  const nrank = rank('net'), rrank = rank('raw');
+  const pos = (r,mm) => r.findIndex(x=>x.m===mm)+1;
+  const ord = n => n + (['th','st','nd','rd'][n%10>3||~~(n%100/10)===1?0:n%10]);
+  const name = mm => MON[parseInt(mm,10)-1];
+  const g = mm => get(ms.find(x=>x.m===mm),'raw') - get(ms.find(x=>x.m===mm),'net');
+  const sept = ms.find(mo=>mo.m==='09');
+  const sr = Math.round(get(sept,'raw')), sn = Math.round(get(sept,'net'));
+  const drops = ms.map(mo=>({m:mo.m, d:g(mo.m)})).sort((a,b)=>b.d-a.d).slice(0,4);
+  // Name each correction from the biggest event day inside that month, and only
+  // from the years the toggle is showing -- April's correction is entirely
+  // Prince Philip, who died in 2021, so a fixed list of causes goes wrong the
+  // moment the toggle drops that year.
+  const yrsShown = yrMode==='all' ? ['2021','2022','2023','2024'] : ['2022','2023','2024'];
+  const cause = mm => {
+    const cands = D.events.filter(e=>e.d.slice(5,7)===mm && yrsShown.includes(e.d.slice(0,4)))
+      .sort((a,b)=>b.n-a.n);
+    if(!cands.length) return null;
+    const note = cands[0].notes[0] || '';
+    return {d:cands[0].d, note};
+  };
+  const top3net = nrank.slice(0,3).map(x=>name(x.m));
+  const top3raw = rrank.slice(0,3).map(x=>name(x.m));
+  const sameTop3 = top3net.join()===top3raw.join();
+  const suffix = yrMode==='all' ? '' : ' (mean of 2022–24)';
+  $('#seasonText').innerHTML = `
+    <p style="margin-top:26px">September's ${fmt(sr)} becomes <strong>${fmt(sn)}</strong>${suffix}
+    — ${ord(pos(nrank,'09'))} of twelve, having been ${ord(pos(rrank,'09'))} before. The
+    ${fmt(sr-sn)} performances removed, ${Math.round(pc(sr-sn,sr))}% of the month, fall in
+    the eleven days between the death of Elizabeth II and her funeral. The other large
+    corrections, each labelled by the busiest day inside it:</p>
+    <ul style="max-width:66ch;color:var(--ink-2)">${drops.filter(d=>d.m!=='09'&&d.d>0).map(d=>{
+      const c=cause(d.m);
+      return `<li><strong>${name(d.m)} −${fmt(Math.round(d.d))}</strong>${c?` — ${c.d}${c.note?`, “${c.note}”`:''}`:''}</li>`;
+    }).join('')}</ul>
+    <p>What is left is a real but modest seasonal shape, and it points the other way from
+    the raw figures. The busiest months are <strong>${top3net[0]}, ${top3net[1]} and
+    ${top3net[2]}</strong>; the quietest is <strong>${name(nrank[11].m)}</strong>, with a
+    ${(nrank[0].v/nrank[11].v).toFixed(2)}× spread from top to bottom against
+    ${(rrank[0].v/rrank[11].v).toFixed(2)}× in the raw figures. Autumn and Advent ringing,
+    not a summer season${sameTop3?'':`, and the raw ordering put ${top3raw[0]} on top instead`}.
+    A ${(nrank[0].v/nrank[11].v).toFixed(2)}× annual swing is worth reporting; it is not
+    worth the sentence “nobody knows why”, which is what the uncorrected figure got.</p>
+    <p class="note">Two honest caveats. <strong>2021 is not a normal year</strong> —
+    pandemic restrictions suppressed ringing into the spring, which is why the early months
+    of the calendar above are so pale and why the second toggle drops the year entirely.
+    ${(()=>{ const r4=ms.map(mo=>({m:mo.m,v:mo.net||0})).sort((a,b)=>b.v-a.v);
+       const r3=ms.map(mo=>({m:mo.m,v:['2022','2023','2024'].reduce((s,y)=>s+(mo['net_'+y]||0),0)})).sort((a,b)=>b.v-a.v);
+       const p4=r4.findIndex(x=>x.m==='09')+1, p3=r3.findIndex(x=>x.m==='09')+1;
+       const t4=r4.slice(0,3).map(x=>name(x.m)).join(), t3=r3.slice(0,3).map(x=>name(x.m)).join();
+       return `The top three are ${t4===t3?'identical under both toggles':'not identical under both toggles ('+t4+' against '+t3+')'},
+         but September's rank is not — ${ord(p4)} over all four years, ${ord(p3)} over
+         2022–24 — so the honest claim is “mid-table”, not a position.`; })()} And
+    <strong>four years is a short base for a seasonal claim</strong>. The corpus holds
+    2021–24, 29% of BellBoard's record from 2012; when the backfill completes (roadmap items
+    1 and 10) this chart is the first thing that should be re-run. A monthly shape built on
+    three usable years is exactly the kind of finding a longer window overturns — which is
+    what this section has just done to the last one.</p>`;
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+function chips(sel,set){ document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(sel).forEach(o=>o.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true'); set(b); }); }
+chips('[data-wk]', b=>{ wkMode=b.dataset.wk; drawWeek(); });
+chips('[data-yr]', b=>{ yrMode=b.dataset.yr; drawSeason(); });
+
+function drawAll(){ drawWeek(); drawCalendar(); drawEvents(); drawScatter();
+  drawTolls(); drawRemembrance(); drawSeason(); if(pinned) select(pinned); }
+drawAll();
+</script>
+</body>
+</html>
