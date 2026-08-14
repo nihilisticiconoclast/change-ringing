@@ -63,6 +63,11 @@ def generate_html(graph_data):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Sphere of Symmetries</title>
     <style>
+        /* html as well as body. #side-panel is parked at right:-400px until it
+           slides in, and with overflow only on body the documentElement still
+           scrolled 400px sideways -- which also widened the containing block, so
+           .nav-bar resolved to 100% of 1328px rather than of the viewport. */
+        html { overflow: hidden; }
         body { margin: 0; overflow: hidden; background-color: #030308; font-family: 'Inter', sans-serif; color: #fff; }
         #3d-graph { width: 100vw; height: 100vh; }
         
@@ -141,6 +146,7 @@ def generate_html(graph_data):
         }
         .nav-links {
             display: flex;
+            flex-wrap: wrap;
             gap: 20px;
             font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
             font-size: 12px;
@@ -192,6 +198,7 @@ def generate_html(graph_data):
         <a href="index.html">Founder Atlas</a>
         <a href="lineage.html">Method Lineage</a>
         <a href="methods.html">Blue Line Atlas</a>
+        <a href="invention.html">First Rung</a>
         <a href="rhythm.html">Rhythm of Ringing</a>
         <a href="ringers.html">Ringer Constellation</a>
         <a href="occasions.html">The Occasions Archive</a>

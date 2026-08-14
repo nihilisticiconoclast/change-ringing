@@ -167,18 +167,28 @@ def generate_html(stats, coverage):
     --dim:#33322F;
   }
 }
+        /* This page had no box-sizing reset, so every padded element was wider
+           than its declared width -- .container at max-width:1120px plus 24px
+           padding each side really occupied 1168px. */
+        *, *::before, *::after { box-sizing: border-box; }
+        /* Long file paths in <code> are single unbreakable tokens and were the last
+           thing forcing the page 80px wider than a 390px viewport. */
+        code { font-family: var(--mono); font-size: .88em; background: var(--surface-2);
+               padding: 1px 5px; border-radius: 2px;
+               overflow-wrap: anywhere; word-break: break-word; }
         body { margin: 0; padding: 0; background: var(--ground); color: var(--ink); font-family: var(--serif); line-height: 1.62; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing:antialiased;}
         
         .nav-bar{
           background:var(--surface); border-bottom:1px solid var(--rule);
           padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
-        }
+        ;flex-wrap:wrap;gap:10px}
         .nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex-wrap:wrap;}
         .nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
         .nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
         .nav-links a:hover{color:var(--ink)}
         
         .container {
+            width: 100%;
             max-width: 1120px;
             margin: 0 auto;
             padding: 40px 24px;
@@ -206,6 +216,22 @@ def generate_html(stats, coverage):
             grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 20px;
+        }
+        /* Grid and flex children default to min-width:auto, which refuses to
+           shrink below their content and pushed the whole page to 898px wide on a
+           390px viewport. The charts get their own scroll container instead. */
+        /* .container is a flex item of body, so its default min-width:auto
+           refuses to shrink below its content -- which is how an 800px chart made
+           the whole page 519px wide in a 390px viewport. Every element on the
+           chain from body down to the chart needs min-width:0 for the scroll
+           container at the bottom to have anything to clip against. */
+        .container, .visualizations, .grid-2, .card { min-width: 0; }
+        /* max-width is what makes overflow-x work here: without a definite width
+           the container grows to fit the 800px-minimum violin SVG, pushes .card
+           wider than the viewport, and the whole page scrolls sideways instead of
+           just the chart. */
+        #violin-chart-container, #line-chart-container {
+            overflow-x: auto; min-width: 0; max-width: 100%;
         }
         
         .grid-2 {
@@ -324,6 +350,7 @@ def generate_html(stats, coverage):
             <a href="index.html">Founder Atlas</a>
             <a href="lineage.html">Method Lineage</a>
             <a href="methods.html">Blue Line Atlas</a>
+            <a href="invention.html">First Rung</a>
             <a href="rhythm.html">Rhythm of Ringing</a>
             <a href="ringers.html">Ringer Constellation</a>
             <a href="occasions.html" class="active">The Occasions Archive</a>

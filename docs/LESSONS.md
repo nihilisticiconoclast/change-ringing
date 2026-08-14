@@ -235,11 +235,63 @@ Prefer keeping the raw column alongside a derived one. The corollary for
 ingestion work: a loader that rejects rows failing a foreign key is discarding
 exactly the records that carry information the schema did not anticipate.
 
+### 16. A table with one row per event will answer a different question from the one you asked
+
+`method_performances` looks like a register of methods. It is a register of
+*first-performance events*, and a method can have up to fifteen — first tower-bell
+peal, first handbell quarter peal, first inclusion in a keyboard peal, each with its
+own date, place and band.
+
+Grouping it by place and summing the counts produced "946 methods were first rung in
+Ringing Room", which was published in a draft and is wrong by a factor of eight. The
+true figure is 115. Collapsing to one row per method — the record matching that
+method's own earliest date — also removed the venue from the top sixteen places
+entirely, and every place, society and batch figure on the page moved.
+
+Three things make this worth its own entry:
+
+1. **The wrong number was more interesting than the right one**, which is exactly
+   when a check gets skipped. "A virtual tower is the third-biggest source of new
+   methods" is a better headline than "115 methods, and mostly the platform was used
+   for a different kind of first". The second is true and, once the counting was
+   right, turned out to be the better finding anyway — the library grew four new
+   event types to describe keyboard ringing, of which 1,137 of 1,138 events postdate
+   2020. A schema change legible in the data.
+2. **The evidence was already on screen.** The event-type breakdown was in the first
+   query ever run against that table. Nothing new had to be measured; it just had to
+   be read.
+3. **The fix needs a tie-break, and the tie-break needs to be deterministic.** Two
+   event types can share a method's earliest date at different towers. Picking
+   whichever row the database returns first makes the output depend on storage order.
+
+The general form: before aggregating any table, establish what one row *is*. If the
+answer is "one row per (thing, kind-of-thing)" then every `COUNT(*)` over it is a
+count of pairs, and the wrong denominator is one join away.
+
+### 17. Publish the bound, not the estimate, when the pipeline could be the cause
+
+Of methods first rung in 1975–99, 13.0% were rung at all in 2021–24; for methods
+first rung before 1900 it is 72–82%. A real and surprising result — and one that the
+project's own method-linkage layer could have manufactured, because that layer
+resolves 72.2% of performances and the rows it refuses are disproportionately
+*spliced* peals, which is precisely where rare methods appear.
+
+Rather than caveat it in prose, both bounds were computed and both are drawn: the
+strict set the resolver was willing to assert, and a deliberately over-generous set
+that also counts every method merely *named* in a row the resolver refused. 13.0%
+becomes 16.4%; the pre-1900 figure barely moves; the shape survives.
+
+The habit: when a finding depends on a component whose error rate you know, compute
+the finding twice at the two extremes of that component's behaviour. If the
+conclusion changes, you do not have a finding. If it does not, you have a much
+stronger one than a point estimate with a footnote — and the gap between the bars is
+itself an honest picture of how much the conclusion rests on your own pipeline.
+
 ---
 
 ## Keeping the work
 
-### 16. Commit the recipe, not the output
+### 18. Commit the recipe, not the output
 
 What belongs in the repository is whatever cannot be regenerated: schema,
 loaders, and every adjudication decision with its reasoning. Raw sources are
@@ -251,20 +303,20 @@ one was frozen. It was removed a few hours later — it was heading for GitHub's
 100 MB limit, and a binary that changes wholesale on each rebuild stays in git
 history forever. Use a Release asset if a large file genuinely needs sharing.
 
-### 17. Recorded SQL must be the SQL that runs
+### 19. Recorded SQL must be the SQL that runs
 
 A `queries/` folder that duplicates the real queries is worse than none: it
 looks authoritative while going stale. The build script here reads those files
 at build time, so the recorded query and the executed query cannot diverge.
 
-### 18. Write decisions down with the numbers in them
+### 20. Write decisions down with the numbers in them
 
 Short decision records — the problem, what was measured, what was chosen, what
 the acceptance test is — did more good than any amount of code comments. They
 also make delegation possible: a spec with an exact expected row count can be
 handed to an agent and verified on return.
 
-### 19. Dual-license data and code separately, explicitly
+### 21. Dual-license data and code separately, explicitly
 
 The code here is MIT; the data is CC BY-SA 4.0, inherited from Dove's Guide.
 Putting data into an MIT repository does not relicense it, and share-alike

@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First Rung — Three Centuries of Method Invention</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --cal-0:#E4E2DA; --cal-1:#D6E0CE; --cal-2:#B4CCAC; --cal-3:#8AB289;
+  --cal-4:#5C9470; --cal-5:#2F6D53; --cal-6:#123D33;
+  --joy:#1f6f8b; --remem:#7a5ba6; --death:#9c3b2e; --mixed:#b8763a; --grid:#CFCCC2;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --cal-0:#242422; --cal-1:#2C3E34; --cal-2:#3A5C46; --cal-3:#4C8060;
+    --cal-4:#63A579; --cal-5:#88C89B; --cal-6:#BFE9CB;
+    --joy:#5aa9c6; --remem:#a98bd4; --death:#d4705e; --mixed:#e0a05f; --grid:#302F2C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --cal-0:#242422; --cal-1:#2C3E34; --cal-2:#3A5C46; --cal-3:#4C8060;
+  --cal-4:#63A579; --cal-5:#88C89B; --cal-6:#BFE9CB;
+  --joy:#5aa9c6; --remem:#a98bd4; --death:#d4705e; --mixed:#e0a05f; --grid:#302F2C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.nav-bar{background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:12px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.nav-links{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze)}
+.theme-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule);
+  padding:6px 12px;border-radius:2px;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--bronze-soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+section{padding:48px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400}
+h3{font-size:1.1rem;font-weight:400;font-family:var(--mono);letter-spacing:.02em}
+.lede{color:var(--ink-2);margin-top:12px;max-width:66ch}
+p{max-width:66ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:26px 0 6px}
+.controls label{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;padding:6px 12px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink-2);cursor:pointer;border-radius:2px}
+.chip:hover{border-color:var(--bronze-soft);color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
+.chip[aria-pressed="true"]{border-color:var(--bronze);color:var(--ink);background:var(--surface-2)}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px;margin-top:22px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{font-family:var(--mono);font-size:10px;fill:var(--ink-3);letter-spacing:.06em}
+.axb{font-family:var(--mono);font-size:11px;fill:var(--ink-2)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:10.5px;fill:var(--ink-2)}
+.gl{stroke:var(--grid);stroke-width:1;opacity:.6}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);
+  font-size:11px;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none}
+.cal-wrap{overflow-x:auto;margin-top:20px;padding-bottom:6px}
+.cal-inner{min-width:900px}
+.cal rect{shape-rendering:crispEdges;cursor:pointer}
+.cal rect.sel{stroke:var(--bronze);stroke-width:1.6}
+.readout{margin-top:14px;min-height:96px;font-family:var(--mono);font-size:12px;
+  color:var(--ink-2);line-height:1.75}
+.readout .hd{color:var(--ink);font-size:13px;letter-spacing:.04em}
+.readout .q{color:var(--ink-3);font-family:var(--serif);font-size:14.5px;font-style:italic;
+  display:block;margin-top:6px;max-width:70ch}
+table{border-collapse:collapse;width:100%;margin-top:22px;font-size:14px}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;font-weight:400;padding:0 10px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+td.d,td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px;white-space:nowrap}
+td.n{text-align:right}
+td.why{color:var(--ink)}
+.rbar{height:8px;border-radius:1px;background:var(--bronze-soft);min-width:2px}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tscroll table{min-width:660px}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.tag.joy{color:var(--joy)} .tag.remem{color:var(--remem)}
+.tag.death{color:var(--death)} .tag.mixed{color:var(--mixed)}
+.note{border-left:2px solid var(--bronze-soft);padding-left:16px;margin-top:24px;
+  color:var(--ink-2);font-size:15px}
+.correction{border:1px solid var(--bronze-soft);border-left-width:3px;border-radius:2px;
+  padding:18px 20px;margin-top:26px;background:var(--surface)}
+.correction h3{color:var(--bronze);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px;margin-top:8px}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+footer{padding:48px 0 80px;color:var(--ink-3);font-size:14px}
+footer a{color:var(--bronze)}
+.bar-list{margin-top:22px}
+.bar-row{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:14px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--rule)}
+.bar-row .lab{font-size:15px;color:var(--ink)}
+.bar-row .sub{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px}
+.bar-row .track{height:7px;background:var(--surface-2);border-radius:1px;margin-top:7px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--bronze);border-radius:1px}
+.bar-row .val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;
+  text-align:right;color:var(--ink)}
+.virt{color:var(--joy)!important}
+.bar-row .fill.virt-f{background:var(--joy)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;border:1px solid var(--joy);color:var(--joy);
+  padding:1px 5px;border-radius:2px;margin-left:8px;vertical-align:1px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <div class="nav-links">
+    <a href="index.html">Founder Atlas</a>
+    <a href="lineage.html">Method Lineage</a>
+    <a href="methods.html">Blue Line Atlas</a>
+    <a href="invention.html" class="active">First Rung</a>
+    <a href="rhythm.html">Rhythm of Ringing</a>
+    <a href="ringers.html">Ringer Constellation</a>
+    <a href="occasions.html">The Occasions Archive</a>
+    <a href="nexus.html">The Temporal Nexus</a>
+    <a href="geometry.html">Sacred Geometry</a>
+  </div>
+  <button class="theme-btn" id="themeToggle">Dark Mode</button>
+</div>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · Three centuries of method invention</p>
+  <h1>Nearly every method<br>is <em>younger than you</em>.</h1>
+  <p class="standfirst" id="standfirst"></p>
+  <div class="figures" id="figs"></div>
+</header>
+
+<section>
+  <p class="eyebrow">One · The curve</p>
+  <h2>Two hundred quiet years, then a flood</h2>
+  <p class="lede" id="curveLede"></p>
+  <div class="controls">
+    <label>Break down by</label>
+    <button class="chip" data-mode="none" aria-pressed="true">Total</button>
+    <button class="chip" data-mode="stage" aria-pressed="false">Stage</button>
+    <button class="chip" data-mode="class" aria-pressed="false">Classification</button>
+    <label style="margin-left:18px">Scale</label>
+    <button class="chip" data-scale="lin" aria-pressed="true">Linear</button>
+    <button class="chip" data-scale="log" aria-pressed="false">Log</button>
+  </div>
+  <div id="curve"></div>
+  <div class="legend" id="curveLegend"></div>
+  <p class="note" id="curveNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Two · The silence</p>
+  <h2>1940 to 1945</h2>
+  <p class="lede">The clearest thing in three hundred years of this data is an
+  absence. In 1939 seventeen new methods were rung. Then the bells stopped.</p>
+  <div id="war"></div>
+  <p class="note" id="warNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Three · The batches</p>
+  <h2>562 methods in one afternoon</h2>
+  <p class="lede" id="batchLede"></p>
+  <div id="batchTable"></div>
+  <p class="note" id="batchNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Four · The places</p>
+  <h2>Where methods come from</h2>
+  <p class="lede" id="placeLede"></p>
+  <div class="two">
+    <div>
+      <h3 style="color:var(--ink-3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase">Towns</h3>
+      <div class="bar-list" id="places"></div>
+    </div>
+    <div>
+      <h3 style="color:var(--ink-3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase">Societies</h3>
+      <div class="bar-list" id="societies"></div>
+
+    </div>
+  </div>
+  <p class="note" id="placeNote"></p>
+</section>
+
+<section>
+  <p class="eyebrow">Four and a half · A category that did not exist</p>
+  <h2>The pandemic did not produce new methods</h2>
+  <p class="lede" id="kbLede"></p>
+  <div class="two">
+    <div><div id="kbChart"></div></div>
+    <div id="kbText"></div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Five · Currency</p>
+  <h2>The oldest methods are the ones still rung</h2>
+  <p class="lede" id="currLede"></p>
+  <div id="currency"></div>
+  <div class="legend" id="currLegend"></div>
+  <div id="currText"></div>
+</section>
+
+<footer>
+  <div class="wrap" style="padding:0">
+    <p>Built by <code>scripts/build_invention_page.py</code> from
+    <code>data/change-ringing.db</code>. The SQL is in <code>queries/invention/</code>
+    and the script reads those files rather than holding copies, so the recorded
+    queries are the ones that ran.</p>
+    <p><strong>“First rung”, not “invented”.</strong> No column in any of the four
+    corpora records who devised a method. What the CCCBR library records is the
+    first performance, and a method enters the collection by being rung and named —
+    so that is the date used here. A method can be worked out on paper years before
+    a band attempts it, and that gap is invisible in this data.</p>
+    <p>Data derived from the CCCBR Methods Library, BellBoard and Dove’s Guide,
+    CC BY-SA 4.0 — see <code>data/LICENCE-DATA.md</code>. Code MIT.</p>
+    <p><a href="methods.html">Blue Line Atlas</a> ·
+       <a href="rhythm.html">Rhythm of Ringing</a> ·
+       <a href="https://github.com/nihilisticiconoclast/change-ringing">Repository</a></p>
+  </div>
+</footer>
+</div>
+<script>
+const D = /*__DATA__*/;
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('en-GB');
+const pc = (a,b) => b ? 100*a/b : 0;
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const T = D.totals;
+
+/* ---- theme ------------------------------------------------------------- */
+const tb = $('#themeToggle');
+const setTheme = t => { document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark' ? 'Light Mode' : 'Dark Mode';
+  try{ localStorage.setItem('cr-theme',t); }catch(e){} drawAll(); };
+tb.onclick = () => setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+(()=>{ let t=null; try{ t=localStorage.getItem('cr-theme'); }catch(e){}
+  if(!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark'?'Light Mode':'Dark Mode'; })();
+
+/* ---- svg helpers ------------------------------------------------------- */
+function svg(w,h){ const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('viewBox',`0 0 ${w} ${h}`); s.setAttribute('role','img'); return s; }
+function el(tag,attrs,text){ const n=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const k in attrs) n.setAttribute(k,attrs[k]);
+  if(text!=null) n.textContent=text; return n; }
+function legend(host,items){ host.innerHTML = items.map(([c,l])=>
+  `<span><i style="background:${c}"></i>${l}</span>`).join(''); }
+const PAL = ['--bronze','--joy','--death','--remem','--mixed','--cal-4','--cal-2'];
+const STAGENAME = {3:'Singles',4:'Minimus',5:'Doubles',6:'Minor',7:'Triples',8:'Major',
+  9:'Caters',10:'Royal',11:'Cinques',12:'Maximus',13:'Sextuples',14:'Fourteen',16:'Sixteen',0:'—'};
+const label = k => STAGENAME[k]!==undefined ? STAGENAME[k] : k;
+
+/* ---- header ------------------------------------------------------------ */
+$('#standfirst').innerHTML = `${fmt(T.dated)} methods in the CCCBR library have a date
+  on which they were first rung. <strong>${fmt(T.before1900)}</strong> of them were first
+  rung before 1900; <strong>${fmt(T.since2000)}</strong> since the year 2000. This is that
+  history, and the shape of it is not the steady accumulation you would expect — it has a
+  flood, a total silence, and afternoons on which hundreds of methods came into
+  existence at once.`;
+$('#figs').innerHTML = [
+  [fmt(T.dated),'methods with a first-rung date'],
+  [T.earliest.slice(0,4)+'–'+T.latest.slice(0,4),'span of the record'],
+  [fmt(T.before1900),'first rung before 1900'],
+  [fmt(D.batchTotal),'first rung on a batch day'],
+  [fmt(D.keyboard.total),'firsts in a category that did not exist in 2019'],
+].map(([n,l])=>`<div class="fig"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+/* ======================= 1. THE CURVE ================================== */
+let mode='none', scale='lin';
+function drawCurve(){
+  const host=$('#curve'); host.innerHTML='';
+  const W=980,H=380,m={l:52,r:16,t:16,b:44};
+  const s=svg(W,H);
+  const src = mode==='stage' ? D.byStage : mode==='class' ? D.byClass : null;
+  const keys = src ? src.keys : ['Total'];
+  const rows = src ? src.rows : D.perYear.map(([y,n])=>[y,n]);
+  const y0=D.years[0], y1=D.years[D.years.length-1];
+  const x = yr => m.l + (yr-y0)/(y1-y0)*(W-m.l-m.r);
+  const max = Math.max(...rows.map(r=>r.slice(1).reduce((a,b)=>a+b,0)));
+  const lo = 0.8;
+  const yv = v => scale==='log'
+    ? H-m.b-(Math.log10(Math.max(v,lo))-Math.log10(lo))/(Math.log10(max)-Math.log10(lo))*(H-m.t-m.b)
+    : H-m.b-(v/max)*(H-m.t-m.b);
+  const ticks = scale==='log' ? [1,10,100,1000] : [0,250,500,750,1000].filter(t=>t<=max*1.05);
+  ticks.forEach(t=>{
+    s.appendChild(el('line',{x1:m.l,x2:W-m.r,y1:yv(t),y2:yv(t),class:'gl'}));
+    s.appendChild(el('text',{x:m.l-8,y:yv(t)+3,class:'ax','text-anchor':'end'},fmt(t)));});
+  for(let d=1700; d<=2020; d+=50){
+    s.appendChild(el('line',{x1:x(d),x2:x(d),y1:m.t,y2:H-m.b,class:'gl'}));
+    s.appendChild(el('text',{x:x(d),y:H-m.b+16,class:'ax','text-anchor':'middle'},d));}
+  const bw = Math.max(1.6,(W-m.l-m.r)/(y1-y0)-0.6);
+  rows.forEach(r=>{
+    const yr=r[0]; let acc=0;
+    r.slice(1).forEach((v,i)=>{
+      if(v<=0) return;
+      const top=yv(acc+v), bot=yv(acc);
+      const rect=el('rect',{x:x(yr)-bw/2,width:bw,y:top,height:Math.max(0.7,bot-top),
+        fill:cssv(src?PAL[i%PAL.length]:'--bronze')});
+      rect.appendChild(el('title',{},`${yr} — ${label(keys[i])}: ${fmt(v)}`));
+      s.appendChild(rect); acc+=v;
+    });
+    if(!src){ const rect=s.lastChild; if(rect&&rect.appendChild)
+      rect.replaceChild(document.createTextNode(''),rect.firstChild); }
+  });
+  // Annotate the three things a reader would otherwise have to hunt for.
+  // Labels stagger vertically and flip to right-aligned near the plot edge, since
+  // 1993 and 2020 are close enough together to overlap at this width.
+  [[1942,'bells silenced',0],[1993,'Stow Bardolph, 562',1],[2020,'Ringing Room',2]]
+  .forEach(([yr,txt,slot])=>{
+    if(yr<y0||yr>y1) return;
+    s.appendChild(el('line',{x1:x(yr),x2:x(yr),y1:m.t,y2:H-m.b,
+      stroke:cssv('--ink-3'),'stroke-width':1,'stroke-dasharray':'2 3',opacity:.75}));
+    const nearEdge = x(yr) > W-m.r-110;
+    s.appendChild(el('text',{x:x(yr)+(nearEdge?-5:5), y:m.t+11+slot*13, class:'ax',
+      'text-anchor':nearEdge?'end':'start', fill:cssv('--ink-2')},txt));
+  });
+  host.appendChild(s);
+  if(src) legend($('#curveLegend'), keys.map((k,i)=>[cssv(PAL[i%PAL.length]),label(k)]));
+  else $('#curveLegend').innerHTML='';
+  writeCurveNote();
+}
+
+// Era shares, summed from the same rows the chart draws rather than from a second
+// query, so the prose and the picture cannot disagree.
+function shares(src, from, to){
+  const tot={};
+  src.rows.filter(r=>r[0]>=from && r[0]<=to).forEach(r=>{
+    r.slice(1).forEach((v,i)=>{ tot[src.keys[i]]=(tot[src.keys[i]]||0)+v; });
+  });
+  const n=Object.values(tot).reduce((a,b)=>a+b,0);
+  return {n, top: Object.entries(tot).sort((a,b)=>b[1]-a[1])
+    .filter(([,v])=>v>0).map(([k,v])=>[label(isNaN(+k)?k:+k), pc(v,n)])};
+}
+function writeCurveNote(){
+  const eras=[[1684,1899],[1900,1949],[1950,1974],[1975,1999],[2000,2024]];
+  const cls=eras.map(([a,b])=>[a,b,shares(D.byClass,a,b)]);
+  const stg=eras.map(([a,b])=>[a,b,shares(D.byStage,a,b)]);
+  const line=(rows)=>rows.map(([a,b,s])=>
+    `<tr><td class="d">${a}–${b}</td><td class="n">${fmt(s.n)}</td><td class="why">${
+      s.top.slice(0,3).map(([k,v])=>`${k} ${v.toFixed(0)}%`).join(' · ')}</td></tr>`).join('');
+  $('#curveNote').innerHTML = `<strong>The flood is real, and so is its shape.</strong>
+    166 methods were first rung in the 216 years to 1899 — fewer than a good afternoon now
+    produces. ${fmt(D.perYear.filter(r=>r[0]>=1975&&r[0]<=1999).reduce((a,r)=>a+r[1],0))}
+    were first rung in the twenty-five years 1975–99 alone.
+    <br><br>What ringers choose to invent has changed at least as much as how much:
+    <div class="tscroll" style="margin-top:10px"><table style="min-width:520px"><thead><tr>
+      <th>Period</th><th style="text-align:right">Methods</th>
+      <th>Most common classification</th></tr></thead><tbody>${line(cls)}</tbody></table></div>
+    <div class="tscroll" style="margin-top:4px"><table style="min-width:520px"><thead><tr>
+      <th>Period</th><th style="text-align:right">Methods</th>
+      <th>Most common stage</th></tr></thead><tbody>${line(stg)}</tbody></table></div>
+    ${(()=>{const a=cls[0][2].top, e=cls[4][2].top, sa=stg[3][2].top, se=stg[4][2].top;
+      const get=(arr,k)=>{const r=arr.find(x=>x[0]===k); return r?r[1]:0;};
+      return `Bob methods dominate the first two centuries at
+      ${get(a,'Bob').toFixed(0)}% and are down to ${get(e,'Bob').toFixed(0)}% by 2000–24.
+      Surprise takes over after 1900 and holds for most of a century — peaking at
+      ${Math.max(...cls.slice(1,4).map(c=>get(c[2].top,'Surprise'))).toFixed(0)}% — then
+      falls to ${get(e,'Surprise').toFixed(0)}% as Delight roughly doubles to
+      ${get(e,'Delight').toFixed(0)}%. The stage table moves the other way: Major peaks at
+      ${get(sa,'Major').toFixed(0)}% in 1975–99 and gives ground to Minor
+      (${get(se,'Minor').toFixed(0)}%) and to Minimus (${get(se,'Minimus').toFixed(0)}%),
+      the very small stages where handbell and keyboard ringing happens.`;})()}
+    “Other” folds together the stages outside the six largest — Triples, Caters, Cinques
+    and Singles — so it is a residual, not a category.
+    <br><br>Two spikes are not what they look like. 1993 and 1983 are single peals, and
+    that is the next section.`;
+}
+
+/* ======================= 2. THE WAR ==================================== */
+function drawWar(){
+  const host=$('#war'); host.innerHTML='';
+  const per=Object.fromEntries(D.perYear);
+  const span=[]; for(let y=1934;y<=1952;y++) span.push([y,per[y]||0]);
+  const W=980,H=210,m={l:52,r:16,t:14,b:40};
+  const s=svg(W,H);
+  const max=Math.max(...span.map(r=>r[1]));
+  const bw=(W-m.l-m.r)/span.length;
+  const yv=v=>H-m.b-(v/max)*(H-m.t-m.b);
+  span.forEach(([y,n],i)=>{
+    const x0=m.l+i*bw, war = y>=1940&&y<=1945;
+    if(n>0){
+      const r=el('rect',{x:x0+bw*.16,width:bw*.68,y:yv(n),height:Math.max(1,H-m.b-yv(n)),
+        fill:cssv(war?'--death':'--bronze')});
+      r.appendChild(el('title',{},`${y}: ${n} methods`)); s.appendChild(r);
+    } else {
+      s.appendChild(el('line',{x1:x0+bw*.16,x2:x0+bw*.84,y1:H-m.b,y2:H-m.b,
+        stroke:cssv('--death'),'stroke-width':2.5}));
+    }
+    s.appendChild(el('text',{x:x0+bw/2,y:H-m.b+15,class:'ax','text-anchor':'middle',
+      fill:cssv(war?'--death':'--ink-3')},String(y).slice(2)));
+    s.appendChild(el('text',{x:x0+bw/2,y:yv(n)-5,class:'num','text-anchor':'middle'},n));
+  });
+  host.appendChild(s);
+  const wartime=[1940,1941,1942,1943,1944,1945].map(y=>per[y]||0);
+  const before=[1935,1936,1937,1938,1939].map(y=>per[y]||0);
+  const after=[1946,1947,1948,1949,1950].map(y=>per[y]||0);
+  const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  $('#warNote').innerHTML = `Six years produced <strong>${wartime.reduce((a,b)=>a+b,0)}</strong>
+    new methods between them — ${wartime.join(', ')} — against an average of
+    ${avg(before).toFixed(1)} a year in the five years before and
+    ${avg(after).toFixed(1)} a year in the five after. Three of those years produced
+    <strong>none at all</strong>, which happens in no other year after 1889.
+    <br><br>Church bells were silenced across Britain in June 1940 and reserved as an
+    invasion warning; the restriction was lifted for Easter 1943 and fully in 1945. The
+    corpus has no field for that and nobody recorded it here. It is simply what the
+    absence of rows means, and it is worth noticing that a database of bell-ringing
+    methods contains a legible trace of an invasion scare.`;
+}
+
+/* ======================= 3. BATCHES ==================================== */
+function drawBatches(){
+  $('#batchLede').innerHTML = `A method comes into existence when a band rings it and
+    names it. That does not have to happen one at a time — a peal spliced from hundreds
+    of methods can introduce hundreds at once. <strong>${fmt(D.batchTotal)}</strong>
+    methods, ${pc(D.batchTotal,T.dated).toFixed(0)}% of the entire dated collection, were
+    first rung on a day that introduced ${D.batchMin} or more. Which means an “invention
+    rate” is close to a meaningless quantity.`;
+  const max=D.batches[0].methods;
+  const rows=D.batches.map(b=>`<tr>
+      <td class="d">${b.date}</td>
+      <td class="n">${fmt(b.methods)}</td>
+      <td style="width:170px"><div class="track" style="margin:0"><div class="fill"
+        style="width:${(100*b.methods/max).toFixed(1)}%"></div></div></td>
+      <td class="why">${[b.building,b.town,b.county].filter(Boolean).join(', ')||'—'}
+        <div class="sub" style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">${b.society||'society not recorded'}</div></td>
+    </tr>`).join('');
+  $('#batchTable').innerHTML = `<div class="tscroll"><table><thead><tr>
+    <th>Date</th><th style="text-align:right">Methods</th><th></th>
+    <th>Where, and who</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const b=D.batches[0];
+  $('#batchNote').innerHTML = `The largest is <strong>${b.date}</strong> at
+    ${[b.building,b.town,b.county].filter(Boolean).join(', ')}:
+    <strong>${fmt(b.methods)}</strong> methods first rung by the ${b.society} in a single
+    peal. Stow Bardolph is a Norfolk village. For one afternoon it produced more new
+    methods than the two centuries from 1684 to 1899 produced in total
+    (${fmt(T.before1900)}).
+    <br><br>This is also a caution about the previous chart. The 1993 and 1983 spikes are
+    not a surge of collective creativity in those years; they are two peals. Any reading
+    of the curve as a measure of activity has to account for that, which is why this
+    section exists rather than the spikes being smoothed away.`;
+}
+
+/* ======================= 4. PLACES ===================================== */
+function bars(host, rows, maxOverride){
+  const max = maxOverride || Math.max(...rows.map(r=>r.n));
+  host.innerHTML = rows.map(r=>`<div class="bar-row">
+    <div><div class="lab${r.virtual?' virt':''}">${r.lab}${r.virtual?'<span class="pill">virtual</span>':''}</div>
+      ${r.sub?`<div class="sub">${r.sub}</div>`:''}
+      <div class="track"><div class="fill${r.virtual?' virt-f':''}" style="width:${(100*r.n/max).toFixed(1)}%"></div></div></div>
+    <div class="val">${fmt(r.n)}</div></div>`).join('');
+}
+function drawPlaces(){
+  $('#placeLede').innerHTML = `Counted by first performances, not by where a method's
+    author lived — which the data does not record. The reason a small village can top
+    this list is the previous section: one peal.`;
+  bars($('#places'), D.places.map(p=>({lab:p.town, sub:p.county||'county not recorded',
+    n:p.methods, virtual:p.virtual})));
+  bars($('#societies'), D.societies.map(([s,n])=>({lab:s, n})));
+  const top=D.places[0];
+  $('#placeNote').innerHTML = `${top.town} leads at ${fmt(top.methods)}, and the top four
+    include a Norfolk village of a few hundred people and a bell foundry. Both are
+    explained by the previous section rather than by any concentration of talent.
+    <br><br><strong>Two things this chart is counting, and one it is not.</strong>
+    Each method appears <em>once</em>, at the place of its own earliest dated
+    performance — an earlier version of this page counted first-performance
+    <em>events</em> instead, and since a method can have up to fifteen of them at
+    fifteen different places, every figure here was inflated. The society column is
+    empty for ${fmt(D.noSociety)} of ${fmt(D.debutRows)} debuts
+    (${pc(D.noSociety,D.debutRows).toFixed(0)}%), so the right-hand ranking is of
+    recorded attributions, not of activity. And <code>method_performances.county</code>
+    is inconsistently null, so towns are keyed on name alone — without that, Cambridge
+    would appear twice and neither entry would reach the top of the list.`;
+}
+
+/* ================= 4.5 A CATEGORY THAT DID NOT EXIST =================== */
+function drawKeyboard(){
+  const K=D.keyboard;
+  $('#kbLede').innerHTML = `When towers closed in March 2020, ringers moved to
+    <strong>Ringing Room</strong> — a browser, one keystroke per bell, no bells at all.
+    The obvious guess is that a captive audience with time on its hands invented a lot of
+    methods. It did not. What it did instead is more interesting, and it is visible as a
+    change in the shape of the database rather than in any count of methods.`;
+  const host=$('#kbChart'); host.innerHTML='';
+  const W=520,H=300,m={l:46,r:14,t:14,b:44};
+  const s=svg(W,H);
+  const ys=K.byYear, max=Math.max(...ys.map(r=>r[1]));
+  const bw=(W-m.l-m.r)/ys.length, yv=v=>H-m.b-(v/max)*(H-m.t-m.b);
+  [0,100,200,300,400].forEach(t=>{ if(t>max*1.08) return;
+    s.appendChild(el('line',{x1:m.l,x2:W-m.r,y1:yv(t),y2:yv(t),class:'gl'}));
+    s.appendChild(el('text',{x:m.l-8,y:yv(t)+3,class:'ax','text-anchor':'end'},t)); });
+  ys.forEach(([y,n],i)=>{
+    const x0=m.l+i*bw;
+    const r=el('rect',{x:x0+bw*.16,width:bw*.68,y:yv(n),height:Math.max(1,H-m.b-yv(n)),
+      fill:cssv(y==='2014'?'--ink-3':'--joy'),'fill-opacity':y==='2014'?.5:.85});
+    r.appendChild(el('title',{},`${y}: ${fmt(n)} keyboard firsts`)); s.appendChild(r);
+    s.appendChild(el('text',{x:x0+bw/2,y:H-m.b+16,class:'ax','text-anchor':'middle'},y));
+    s.appendChild(el('text',{x:x0+bw/2,y:yv(n)-5,class:'num','text-anchor':'middle'},fmt(n)));
+  });
+  s.appendChild(el('text',{x:m.l,y:H-8,class:'ax'},'Keyboard first-performance events per year'));
+  host.appendChild(s);
+  const pre2020=K.byYear.filter(r=>r[0]<'2020').reduce((a,r)=>a+r[1],0);
+  $('#kbText').innerHTML = `
+    <h3>1,142 firsts, 115 methods</h3>
+    <p>Ringing Room carries <strong>${fmt(K.virtualEvents)}</strong> first-performance
+    events and only <strong>${fmt(K.virtualDebuts)}</strong> method debuts. Ringers used
+    it overwhelmingly to achieve a first in a method that <em>already existed</em> —
+    ${fmt(K.byType[0][1])} of them a first keyboard quarter peal — rather than to bring
+    new methods into being.</p>
+    <p>And the CCCBR library grew to hold it. Four first-performance categories now exist
+    that describe ringing on a keyboard:</p>
+    <p style="font-family:var(--mono);font-size:12px;color:var(--ink-2);line-height:1.9">
+    ${K.byType.map(([t,n])=>`${t} — ${fmt(n)}`).join('<br>')}</p>
+    <p><strong>${fmt(K.total-pre2020)} of those ${fmt(K.total)} events are 2020 or
+    later</strong>; ${pre2020===0?'none precede it':`only ${pre2020} precedes it`}. A
+    three-hundred-year-old collection acquired a new taxonomy in a single year, and it is
+    still being used four years after the towers reopened — ${fmt(K.byYear.filter(r=>r[0]>='2023').reduce((a,r)=>a+r[1],0))}
+    events since 2023. That is the durable effect: not a burst of invention, but a form of
+    ringing that did not previously exist and has not gone away.</p>`;
+}
+
+/* ======================= 5. CURRENCY =================================== */
+function drawCurrency(){
+  const host=$('#currency'); host.innerHTML='';
+  const c=D.currency;
+  $('#currLede').innerHTML = `For each vintage, the share of its methods that were rung at
+    all in 2021–24. Two bars: the darker is what the method linkage was willing to assert,
+    the lighter adds every method merely <em>named</em> in a spliced performance the
+    linkage refused. The truth is between them, and the gap is the honest measure of how
+    much this section depends on that linkage being right.`;
+  const W=980,H=340,m={l:52,r:16,t:16,b:56};
+  const s=svg(W,H);
+  const bw=(W-m.l-m.r)/c.length, yv=v=>H-m.b-(v/100)*(H-m.t-m.b);
+  [0,25,50,75,100].forEach(t=>{
+    s.appendChild(el('line',{x1:m.l,x2:W-m.r,y1:yv(t),y2:yv(t),class:'gl'}));
+    s.appendChild(el('text',{x:m.l-8,y:yv(t)+3,class:'ax','text-anchor':'end'},t+'%'));});
+  c.forEach((r,i)=>{
+    const x0=m.l+i*bw;
+    const hi=pc(r.loose,r.methods), lo=pc(r.strict,r.methods);
+    const rb=el('rect',{x:x0+bw*.18,width:bw*.64,y:yv(hi),height:Math.max(1,H-m.b-yv(hi)),
+      fill:cssv('--bronze-soft'),'fill-opacity':.42});
+    rb.appendChild(el('title',{},`${r.era}s — generous bound ${hi.toFixed(1)}% (${fmt(r.loose)} of ${fmt(r.methods)})`));
+    s.appendChild(rb);
+    const rs=el('rect',{x:x0+bw*.18,width:bw*.64,y:yv(lo),height:Math.max(1,H-m.b-yv(lo)),
+      fill:cssv('--bronze')});
+    rs.appendChild(el('title',{},`${r.era}s — asserted ${lo.toFixed(1)}% (${fmt(r.strict)} of ${fmt(r.methods)})`));
+    s.appendChild(rs);
+    s.appendChild(el('text',{x:x0+bw/2,y:H-m.b+16,class:'ax','text-anchor':'middle'},
+      r.era+'–'+(r.era+D.era-1)));
+    s.appendChild(el('text',{x:x0+bw/2,y:H-m.b+30,class:'ax','text-anchor':'middle',
+      opacity:.7},fmt(r.methods)));
+    s.appendChild(el('text',{x:x0+bw/2,y:yv(hi)-5,class:'num','text-anchor':'middle'},
+      lo.toFixed(0)+'–'+hi.toFixed(0)+'%'));
+  });
+  host.appendChild(s);
+  legend($('#currLegend'),[[cssv('--bronze'),'Asserted by the method linkage'],
+    [cssv('--bronze-soft'),'Upper bound, including refused candidates'],
+    ['transparent','number below each bar = methods first rung in that period']]);
+  const trough=c.filter(r=>r.methods>500).sort((a,b)=>pc(a.strict,a.methods)-pc(b.strict,b.methods))[0];
+  const old=c.filter(r=>r.era<1900);
+  const oldPc=pc(old.reduce((a,r)=>a+r.strict,0), old.reduce((a,r)=>a+r.methods,0));
+  $('#currText').innerHTML = `
+    <p style="margin-top:26px">The shape is a slide, not a curve. Methods first rung
+    <strong>before 1900</strong> are still current: ${oldPc.toFixed(0)}% of them were rung
+    in these four years. Methods first rung in <strong>${trough.era}–${trough.era+D.era-1}</strong>
+    — ${fmt(trough.methods)} of them, the largest cohort of the period — are the least
+    current at <strong>${pc(trough.strict,trough.methods).toFixed(1)}%</strong>, rising to
+    only ${pc(trough.loose,trough.methods).toFixed(1)}% on the generous bound. The most
+    recent cohort is low for an obvious reason and should be ignored.</p>
+    <p>The reading that fits: a method has to be <em>taken up</em>, and almost none are.
+    The pre-1900 survivors are the standard repertoire — Plain Bob, Grandsire, Kent,
+    Cambridge — rung every week in thousands of towers. The 1975–99 cohort is the peak of
+    method registration, and the great majority of it went straight into the library and
+    stayed there.</p>
+    <p class="note"><strong>Three reasons not to call this “death”.</strong>
+    <em>One:</em> four years is a short window. A method rung once a decade is invisible
+    here, and “not rung in 2021–24” is not “never rung again”.
+    <em>Two:</em> the linkage resolves 72.2% of performances, and the rows it refuses are
+    disproportionately spliced peals — which is exactly where rare methods appear. That is
+    why both bounds are drawn; the conclusion survives the generous one, but it would have
+    been indefensible to publish a single number.
+    <em>Three:</em> survivorship works on the numerator too. The pre-1900 buckets hold
+    tens of methods, not thousands, and they are the ones that were worth recording in the
+    first place.
+    <br><br>The proper version of this question — was a method taken up and then dropped,
+    or never taken up at all — needs adoption history across decades, which means the
+    BellBoard backfill (roadmap items 1 and 10). This section is the honest half that can
+    be answered now, and it is labelled currency rather than survival for that reason.</p>`;
+}
+
+/* ---- wiring ------------------------------------------------------------ */
+function chips(sel,set){ document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(sel).forEach(o=>o.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true'); set(b); }); }
+chips('[data-mode]', b=>{ mode=b.dataset.mode; drawCurve(); });
+chips('[data-scale]', b=>{ scale=b.dataset.scale; drawCurve(); });
+
+function drawAll(){ drawCurve(); drawWar(); drawBatches(); drawPlaces();
+  drawKeyboard(); drawCurrency(); }
+$('#curveLede').innerHTML = `Every year from ${D.years[0]} to ${D.years[D.years.length-1]},
+  one bar per year. Switch to a log scale to see the first two centuries at all — on a
+  linear axis they are invisible, which is itself the point.`;
+drawAll();
+</script>
+</body>
+</html>

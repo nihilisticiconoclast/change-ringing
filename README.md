@@ -106,6 +106,36 @@ Built by `scripts/build_method_atlas.py` on top of `scripts/notation.py`, a
 place-notation parser that agrees with the CCCBR library on 97.4% of all 25,066
 methods and over 99.7% at Minor and Major.
 
+## First Rung
+
+Three centuries of method invention — 23,874 methods with a date on which they were
+first rung, from 1684 to 2026.
+
+**https://nihilisticiconoclast.github.io/change-ringing/invention.html**
+
+166 methods were first rung before 1900; 12,680 since the year 2000. The shape has
+three things a steady-accumulation story would miss:
+
+- **1940 to 1945 is a hard zero.** Seventeen new methods in 1939, then 0, 3, 0, 0,
+  4, 0. Church bells were silenced across Britain and reserved as an invasion
+  warning, and the collection simply stops. Three of those years produced none at
+  all, which happens in no other year after 1889.
+- **Methods arrive in batches.** The largest single day is 17 October 1993 at Stow
+  Bardolph, Norfolk — a village — where **562 methods were first rung in one peal**,
+  more than the whole of 1684–1899 produced. 3,321 methods, 14% of the collection,
+  debuted on a day that introduced 60 or more at once, so an "invention rate" is
+  close to meaningless.
+- **The pandemic produced a new kind of first, not new methods.** Ringing Room, the
+  browser platform, carries 1,142 first-performance events and only 115 method
+  debuts. The CCCBR library grew four event types to record keyboard ringing, and
+  1,137 of those 1,138 events are 2020 or later.
+
+And one finding that needed guarding: of the 7,645 methods first rung in 1975–99,
+the peak era, only **13.0%** were rung at all in 2021–24, against 72–82% for
+methods first rung before 1900. Both bounds are published (13.0% and 16.4% on a
+deliberately over-generous count) because the method linkage's own 72.2% coverage
+could otherwise have manufactured the result.
+
 ## The Rhythm of Ringing
 
 Four years of the national record, day by day — and a correction. This

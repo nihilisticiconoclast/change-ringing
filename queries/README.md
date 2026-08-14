@@ -50,6 +50,21 @@ the same weekday within six weeks either side. Same weekday because Sunday is
 two and a half times Monday, so a plain rolling mean flags every Sunday; median
 because the thing being detected would otherwise inflate its own baseline.
 
+## `invention/` — what builds First Rung
+
+| File | Produces |
+| --- | --- |
+| `01_method_debuts.sql` | One row per method with the date it was first rung, plus the denominator (1,192 methods have no dated performance at all) |
+| `02_debut_events.sql` | Every dated first-performance record with place and society, returning `method_id` **deliberately** — see below — and the keyboard-ringing event types |
+| `03_currency.sql` | Which methods were rung in 2021–24, as two sets: what the linkage asserted, and a generous bound including refused candidates |
+
+**The counting trap in `02`.** `method_performances` holds up to fifteen event
+types per method. Aggregating in SQL and summing the group counts therefore counts
+a method once per event, and "where methods come from" silently becomes "where
+first-performance events of any kind happened" — a different and much larger
+number. The builder keeps only the record matching the method's own earliest date.
+Getting this wrong put 946 methods in a virtual tower that in fact has 115.
+
 ## `occasions/` — what builds the Occasions Archive
 
 | File | Produces |

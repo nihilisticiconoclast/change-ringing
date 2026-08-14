@@ -18,7 +18,7 @@ gap was found.
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Done** — `docs/rhythm.html`; corrected two IDEAS figures |
 | 13 | Performance → method linkage | Claude Code | **Done** — `schema/005`; 72.2% of performances linked |
 | 14 | Vendor the CDN libraries | Claude Code | **Done** — fixed two live bugs it was hiding |
-| 8a | Method **invention** timeline (option C, first half) | Claude Code | **Next** — full history already held |
+| 8a | Method **invention** timeline (option C, first half) | Claude Code | **Done** — `docs/invention.html` |
 | 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
 | 6 | CompLib ingestion | Vibe | Queued |
 | 7 | Corpus integrity checker | Vibe | Queued |
@@ -31,6 +31,13 @@ gap was found.
 | 9 | Ringer identity across decades | Gemini | Present resolution covers 2021–24 only |
 | 10 | Run the backfill to completion | Claude Code | Needs the gate, and the freeze lifts 2026-09-01 |
 
+## Now, after 8a
+
+| # | Item | Owner | State |
+| --- | --- | --- | --- |
+| 17 | Provenance and caveats on `lineage` and `ringers` | Claude Code | Ready — `index`, `methods`, `rhythm`, `invention` and now `occasions` all cite their queries; those two cite nothing |
+| 18 | Document the 124 orphan `dove_tower_id` values | Claude Code | Ready — 25 of the 30 distinct IDs exist in `towers` but not `dove`, so it is export scope, not corruption. Belongs in `decisions/001` |
+
 ## Held
 
 | # | Item | Why held |
@@ -39,6 +46,41 @@ gap was found.
 | 15 | Felstead ingestion — 360,000 peals back to the 1800s | **Waiting on permission**, not on code. See `docs/felstead-enquiry.md`: no stated licence, no API, no robots.txt, and several thousand hours of volunteer transcription behind it. The join is verified (`towerbase-id`, 12/12 sampled) and the whole job is ~5,600 requests, so this is ready to start the day there is a reply |
 | 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 of them exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Held rather than queued: two rounds took the oracle from 63.6% to 68.0% and the next round is a third tuning parameter. The rows are recorded with their counts, so it can be picked up on evidence |
 | 12 | Consolidate data-quality caveats | Worth doing once the integrity checker exists, so the doc and the check agree |
+
+---
+
+## What 8a found, and the counting trap it nearly published
+
+`docs/invention.html`. 23,874 methods with a first-rung date, 1684–2026.
+
+Three findings worth keeping: **1940–45 is a hard zero** (bells silenced, three
+years with no new methods at all, which happens in no other year after 1889);
+**methods arrive in batches** (562 in one peal at Stow Bardolph in 1993 — 14% of
+the whole collection debuted on a day that introduced 60 or more, so an "invention
+rate" is close to meaningless); and **the pandemic produced a new category of
+first rather than new methods** (Ringing Room: 1,142 events, 115 debuts, and four
+new event types in the library of which 1,137 of 1,138 events are 2020 or later).
+
+**The trap.** The first version of the page claimed a virtual tower was the
+third-largest source of new methods, at 946. It was counting first-performance
+*events*, and `method_performances` holds up to fifteen per method — first
+tower-bell peal, first handbell quarter, first inclusion in a keyboard peal, each
+with its own date and place. Collapsing to one row per method took the figure to
+115 and removed Ringing Room from the top sixteen places entirely. Every place,
+society and batch number was inflated by the same bug.
+
+Worth generalising: **a table with one row per event type per entity will silently
+answer a different question from the one asked.** The clue was available before the
+page was written — the event-type breakdown was in the very first query run against
+that table — and it was not looked at.
+
+**The finding that needed a guard.** Of the 7,645 methods first rung in 1975–99,
+only 13.0% were rung at all in 2021–24; for pre-1900 methods it is 72–82%. That
+could have been an artefact of the schema/005 linkage, whose 72.2% coverage skews
+against exactly the spliced peals where rare methods appear. So both bounds are
+published — 13.0% strict, 16.4% counting every method merely *named* in a refused
+row — and the shape survives both. It is labelled **currency**, not survival: four
+years is a short window, and the real question needs the backfill.
 
 ---
 
