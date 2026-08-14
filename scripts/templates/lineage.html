@@ -218,21 +218,7 @@ footer{padding:48px 0;color:var(--ink-3);font-size:14px;border-top:1px solid var
 </head>
 <body>
 
-<div class="nav-bar">
-  <div class="nav-links">
-    <a href="index.html">Founder Atlas</a>
-    <a href="lineage.html" class="active">Method Lineage</a>
-    <a href="methods.html">Blue Line Atlas</a>
-    <a href="invention.html">First Rung</a>
-    <a href="rhythm.html">Rhythm of Ringing</a>
-    <a href="ringers.html">Ringer Constellation</a>
-    <a href="occasions.html">The Occasions Archive</a>
-    <a href="nexus.html">The Temporal Nexus</a>
-    <a href="geometry.html">Sacred Geometry</a>
-  </div>
-  <button class="theme-btn" id="theme-toggle" type="button">Theme</button>
-</div>
-
+<!--NAV:lineage.html-->
 <div class="wrap">
   <header>
     <div class="eyebrow">CCCBR Methods Library & Historical Analysis</div>
@@ -449,12 +435,7 @@ footer{padding:48px 0;color:var(--ink-3);font-size:14px;border-top:1px solid var
     </div>
   </section>
 
-  <footer>
-    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px">
-      <div>The Change Ringing Project · Method Lineage & Genealogy Atlas</div>
-      <div>Source: CCCBR Methods Library (25,055 methods) · Fully Offline Queryable</div>
-    </div>
-  </footer>
+  <!--FOOTER:lineage.html-->
 </div>
 
 <script>
@@ -474,7 +455,7 @@ $('#top-figures').innerHTML = `
 `;
 
 // Theme Toggle
-const themeBtn = $('#theme-toggle');
+const themeBtn = $('#themeToggle');
 themeBtn.onclick = () => {
   const cur = document.documentElement.getAttribute('data-theme');
   const next = cur === 'dark' ? 'light' : 'dark';

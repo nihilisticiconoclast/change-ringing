@@ -1,6 +1,11 @@
 import sqlite3
 import pandas as pd
 import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
 
 DB_PATH = "data/change-ringing.db"
 OUTPUT_PATH = "docs/geometry.html"
@@ -67,8 +72,13 @@ def generate_html(graph_data):
            slides in, and with overflow only on body the documentElement still
            scrolled 400px sideways -- which also widened the containing block, so
            .nav-bar resolved to 100% of 1328px rather than of the viewport. */
-        html { overflow: hidden; }
-        body { margin: 0; overflow: hidden; background-color: #030308; font-family: 'Inter', sans-serif; color: #fff; }
+        /* overflow-x hidden, overflow-y auto -- not `overflow: hidden`.
+           Hidden on both axes clipped the side panel parked at right:-400px, but
+           it also made the footer unreachable: the page is 100vh of canvas and
+           there was no way to scroll past it. The footer carries this page's only
+           provenance, so it has to be reachable. */
+        html { overflow-x: hidden; overflow-y: auto; }
+        body { margin: 0; overflow-x: hidden; background-color: #030308; font-family: 'Inter', sans-serif; color: #fff; }
         #3d-graph { width: 100vw; height: 100vh; }
         
         .overlay {
@@ -193,20 +203,7 @@ def generate_html(graph_data):
     <script src="vendor/three-0.160.0.min.js"></script>
 </head>
 <body>
-    <div class="nav-bar">
-      <div class="nav-links">
-        <a href="index.html">Founder Atlas</a>
-        <a href="lineage.html">Method Lineage</a>
-        <a href="methods.html">Blue Line Atlas</a>
-        <a href="invention.html">First Rung</a>
-        <a href="rhythm.html">Rhythm of Ringing</a>
-        <a href="ringers.html">Ringer Constellation</a>
-        <a href="occasions.html">The Occasions Archive</a>
-        <a href="nexus.html">The Temporal Nexus</a>
-        <a href="geometry.html" class="active">Sacred Geometry</a>
-      </div>
-    </div>
-    
+    <!--NAV:geometry.html-->
     <div id="3d-graph"></div>
     
     <div class="overlay">
@@ -383,6 +380,7 @@ def generate_html(graph_data):
         }, 30);
             
     </script>
+<!--FOOTER:geometry.html-->
 </body>
 </html>"""
     
@@ -390,6 +388,8 @@ def generate_html(graph_data):
     html_content = html_template.replace("{{GRAPH_DATA}}", graph_json)
     
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
+        # One nav bar and one footer for the whole site: scripts/site_chrome.py
+        html_content = apply_chrome(html_content, dark=True)
         f.write(html_content)
     
     print(f"Generated {OUTPUT_PATH} with {len(graph_data['nodes'])} nodes and {len(graph_data['links'])} links.")

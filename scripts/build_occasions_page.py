@@ -6,6 +6,10 @@ import random
 from datetime import datetime
 
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 DB_PATH = str(ROOT / "data" / "change-ringing.db")
@@ -345,20 +349,7 @@ def generate_html(stats, coverage):
     <script src="vendor/chart-4.5.1.min.js"></script>
 </head>
 <body>
-    <div class="nav-bar">
-      <div class="nav-links">
-            <a href="index.html">Founder Atlas</a>
-            <a href="lineage.html">Method Lineage</a>
-            <a href="methods.html">Blue Line Atlas</a>
-            <a href="invention.html">First Rung</a>
-            <a href="rhythm.html">Rhythm of Ringing</a>
-            <a href="ringers.html">Ringer Constellation</a>
-            <a href="occasions.html" class="active">The Occasions Archive</a>
-            <a href="nexus.html">The Temporal Nexus</a>
-            <a href="geometry.html">Sacred Geometry</a>
-          </div>
-    </div>
-    
+    <!--NAV:occasions.html-->
     <div class="container">
         <div class="header">
             <p class="eyebrow">Change Ringing Corpus · Second analytical output</p>
@@ -677,6 +668,7 @@ def generate_html(stats, coverage):
         
         window.addEventListener('resize', renderViolin);
     </script>
+<!--FOOTER:occasions.html-->
 </body>
 </html>"""
     
@@ -709,6 +701,8 @@ def generate_html(stats, coverage):
         raise SystemExit(f"ERROR: placeholders survived substitution: {leftover}")
     
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
+        # One nav bar and one footer for the whole site: scripts/site_chrome.py
+        html_content = apply_chrome(html_content)
         f.write(html_content)
     
     print(f"Generated {OUTPUT_PATH}")

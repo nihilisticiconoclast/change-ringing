@@ -79,6 +79,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
+
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "scripts" / "templates" / "invention.html"
 QUERIES = ROOT / "queries" / "invention"
@@ -299,6 +302,8 @@ def main():
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
+    # One nav bar and one footer for the whole site: scripts/site_chrome.py
+    html = apply_chrome(html)
     out.write_text(html, encoding="utf-8")
 
     t = data["totals"]

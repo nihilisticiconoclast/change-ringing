@@ -17,6 +17,9 @@ import sys
 from pathlib import Path
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
+
 ROOT = Path(__file__).parent.parent
 QUERIES_DIR = ROOT / "queries"
 TEMPLATE = ROOT / "scripts" / "templates" / "lineage.html"
@@ -230,6 +233,8 @@ def main():
     html = html.replace("/*__DATA__*/", json_str)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    # One nav bar and one footer for the whole site: scripts/site_chrome.py
+    html = apply_chrome(html)
     out_path.write_text(html, encoding="utf-8")
 
     print(f"Wrote {out_path} ({out_path.stat().st_size / 1024:.0f} KB)")

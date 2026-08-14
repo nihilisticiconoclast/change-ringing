@@ -14,6 +14,10 @@ import math
 import sqlite3
 import pandas as pd
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 DB_PATH = ROOT / "data" / "change-ringing.db"
@@ -254,6 +258,8 @@ def build_page():
     # Write HTML page
     html_content = generate_html(nodes, edges, search_data, stats)
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
+    # One nav bar and one footer for the whole site: scripts/site_chrome.py
+    html_content = apply_chrome(html_content)
     OUT_HTML.write_text(html_content, encoding="utf-8")
     print(f"\nWrote {OUT_HTML} ({OUT_HTML.stat().st_size / 1024:.1f} KB)", flush=True)
 
@@ -442,21 +448,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
 </head>
 <body>
 
-<div class="nav-bar">
-  <div class="nav-links">
-    <a href="index.html">Founder Atlas</a>
-    <a href="lineage.html">Method Lineage</a>
-    <a href="methods.html">Blue Line Atlas</a>
-    <a href="invention.html">First Rung</a>
-    <a href="rhythm.html">Rhythm of Ringing</a>
-    <a href="ringers.html" class="active">Ringer Constellation</a>
-    <a href="occasions.html">The Occasions Archive</a>
-    <a href="nexus.html">The Temporal Nexus</a>
-    <a href="geometry.html">Sacred Geometry</a>
-  </div>
-  <button class="theme-btn" id="themeToggle">Dark Mode</button>
-</div>
-
+<!--NAV:ringers.html-->
 <div class="wrap">
   <header>
     <div class="eyebrow">Gemini Task 3 &middot; Band Networks &middot; Community Resolution</div>
@@ -951,6 +943,7 @@ updateDossier(selectedNode);
 renderTable();
 render();
 </script>
+<!--FOOTER:ringers.html-->
 </body>
 </html>
 """

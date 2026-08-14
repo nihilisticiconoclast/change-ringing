@@ -27,6 +27,9 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import notation as N  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).parent))
+from site_chrome import apply_chrome  # noqa: E402
+
 OUT = ROOT / "docs" / "methods.html"
 STAGES = (6, 8, 10, 12)
 STAGE_NAMES = {2: "Two", 3: "Singles", 4: "Minimus", 5: "Doubles", 6: "Minor",
@@ -165,21 +168,7 @@ footer a{color:var(--bronze)}
 </head>
 <body>
 
-<div class="nav-bar">
-  <div class="nav-links">
-    <a href="index.html">Founder Atlas</a>
-    <a href="lineage.html">Method Lineage</a>
-    <a href="methods.html" class="active">Blue Line Atlas</a>
-    <a href="invention.html">First Rung</a>
-    <a href="rhythm.html">Rhythm of Ringing</a>
-    <a href="ringers.html">Ringer Constellation</a>
-    <a href="occasions.html">The Occasions Archive</a>
-    <a href="nexus.html">The Temporal Nexus</a>
-    <a href="geometry.html">Sacred Geometry</a>
-  </div>
-  <button class="theme-btn" id="themeToggle">Dark Mode</button>
-</div>
-
+<!--NAV:methods.html-->
 <div class="wrap">
 <header>
   <p class="eyebrow">Change Ringing Corpus · Method shapes</p>
@@ -221,18 +210,7 @@ footer a{color:var(--bronze)}
   ringers describe them as being “near” one another despite quite different notation.</div>
 </section>
 
-<footer>
-  <p class="eyebrow">Method and provenance</p>
-  <p>Lines are computed from the place notation published by the
-  <a href="https://methods.cccbr.org.uk">CCCBR Methods Library</a>, parsed by
-  <code>scripts/notation.py</code>. Only methods whose parse is confirmed against the
-  library's own published <code>lead_head</code> are shown: __NVERIFIED_ALL__ of
-  __NTOTAL__ methods verify (__PCT__%), and the __NFAILED__ that do not are excluded
-  rather than drawn unchecked. Failures concentrate at odd stages; at Minor and Major —
-  the stages here — the parser agrees with the library on over 99.7% of methods.</p>
-  <p>Blue line diagrams are standard in ringing software; what is new here is drawing
-  the whole collection at once so families can be compared side by side.</p>
-</footer>
+<!--FOOTER:methods.html-->
 </div>
 
 <dialog id="dlg"><div class="dlg">
@@ -408,6 +386,8 @@ def main():
             .replace("__PCT__", f"{100*n_all/total:.1f}")
             .replace("__NCLS__", str(len(counts))))
     out = Path(args.out)
+    # One nav bar and one footer for the whole site: scripts/site_chrome.py
+    html = apply_chrome(html)
     out.write_text(html, encoding="utf-8")
     print(f"Wrote {out} ({out.stat().st_size/1024:.0f} KB)")
     print(f"  drawn: {len(verified):,} methods at stages {STAGES}")

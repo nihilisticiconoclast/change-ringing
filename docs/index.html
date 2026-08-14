@@ -108,6 +108,27 @@ footer a{color:var(--bronze)}
 .nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
 .nav-links a:hover{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* The last <section> on the typographic pages already draws a bottom rule, so
+   the footer's own top rule made a doubled line with a dead 56px band between
+   them. Suppress the section's, keep the footer's, and every page gets exactly
+   one separator whether or not it has sections at all. */
+section:last-of-type{border-bottom:none}
+.site-footer{border-top:1px solid var(--rule,rgba(255,255,255,.14));
+  margin-top:24px;padding:36px 24px 72px;font-size:14px;
+  color:var(--ink-3,#8b93a3);max-width:1200px;margin-left:auto;margin-right:auto}
+.site-map{list-style:none;margin:0 0 22px;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 28px}
+.site-map li{padding:5px 0;line-height:1.45}
+.site-map a{color:var(--bronze,#38bdf8);text-decoration:none;font-weight:500}
+.site-map a:hover{text-decoration:underline}
+.site-map a[aria-current="page"]{color:var(--ink-2,#e2e8f0);font-weight:600}
+.site-map a[aria-current="page"]::after{content:" — you are here";
+  font-size:11px;font-weight:400;opacity:.7}
+.site-map span{display:block;font-size:12.5px;opacity:.78}
+.site-note{max-width:78ch;margin:12px 0 0;font-size:13px;line-height:1.6}
+.site-note a{color:var(--bronze,#38bdf8)}
+.site-note code{font-size:.92em}
 </style>
 </head>
 <body>
@@ -124,8 +145,8 @@ footer a{color:var(--bronze)}
     <a href="nexus.html">The Temporal Nexus</a>
     <a href="geometry.html">Sacred Geometry</a>
   </div>
+  <button class="theme-btn" id="themeToggle">Dark Mode</button>
 </div>
-
 <div class="wrap">
 <header>
   <p class="eyebrow">Change Ringing Corpus · First analytical output</p>
@@ -192,10 +213,22 @@ footer a{color:var(--bronze)}
   <div class="cards" id="cards"></div>
 </section>
 
-<footer>
-  <p class="eyebrow">Provenance</p>
-  <p>Built from <strong>Dove's Guide for Church Bell Ringers</strong> (<a href="https://dove.cccbr.org.uk">dove.cccbr.org.uk</a>, CC BY-SA 4.0) and the <strong>CCCBR Methods Library</strong> (<a href="https://methods.cccbr.org.uk">methods.cccbr.org.uk</a>). Snapshot 9 August 2026. Changes made: column names normalised, the sources loaded into a relational schema, and first-performance locations linked to Dove tower IDs by adjudicated name matching.</p>
-  <p>Attribution and share-alike apply to anything derived from this data. 8,623 of 30,734 first-performance records are deliberately unlinked — mostly handbell peals rung in private houses, which have no tower to link to.</p>
+<footer class="site-footer">
+  <ul class="site-map">
+    <li><a href="index.html" aria-current="page">Founder Atlas</a> <span>51,451 attributed bells mapped by the foundry that cast them</span></li>
+    <li><a href="lineage.html">Method Lineage</a> <span>How methods extend from one stage to the next</span></li>
+    <li><a href="methods.html">Blue Line Atlas</a> <span>20,679 methods drawn as the path a bell traces</span></li>
+    <li><a href="invention.html">First Rung</a> <span>Three centuries of method invention, 1684–2026</span></li>
+    <li><a href="rhythm.html">Rhythm of Ringing</a> <span>The week, the year, and 24 days that carry a fifth of it</span></li>
+    <li><a href="ringers.html">Ringer Constellation</a> <span>Who rings with whom, across 44,280 names</span></li>
+    <li><a href="occasions.html">The Occasions Archive</a> <span>Why bells are rung, from 113,894 footnotes</span></li>
+    <li><a href="nexus.html">The Temporal Nexus</a> <span>Towers, methods and ringers in one 3-D field</span></li>
+    <li><a href="geometry.html">Sacred Geometry</a> <span>Method symmetries arranged on a phyllotaxis sphere</span></li>
+  </ul>
+  <p class="site-note">Built from Dove’s Guide for Church Bell Ringers (<a href='https://dove.cccbr.org.uk'>dove.cccbr.org.uk</a>) and the CCCBR Methods Library (<a href='https://methods.cccbr.org.uk'>methods.cccbr.org.uk</a>). Snapshot 9 August 2026. <strong>Changes made:</strong> column names normalised, the sources loaded into a relational schema, and first-performance locations linked to Dove tower IDs by adjudicated name matching.</p>
+  <p class="site-note">8,623 of 30,734 first-performance records are <strong>deliberately unlinked</strong> — mostly handbell peals rung in private houses, which have no tower to link to.</p>
+  <p class="site-note">Built from <code>data/change-ringing.db</code> by the scripts in <code>scripts/</code>; the SQL behind each page is in <code>queries/</code>, read at build time rather than copied, so the recorded queries are the ones that ran. Data derived from Dove’s Guide, the CCCBR Methods Library and BellBoard — <strong>CC BY-SA 4.0</strong>, see <code>data/LICENCE-DATA.md</code> before reusing it. The code is MIT.</p>
+  <p class="site-note"><a href="https://github.com/nihilisticiconoclast/change-ringing">Repository</a></p>
 </footer>
 </div>
 

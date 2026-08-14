@@ -193,6 +193,22 @@ were probed by hand and all twelve resolved.
 Felstead states no licence, publishes no API and has no robots.txt, and it
 represents several thousand hours of volunteer transcription. Permission first.
 
+## Site navigation
+
+Every page's nav bar and footer come from `scripts/site_chrome.py` — one ordered
+list of pages, expanded into `<!--NAV:page.html-->` and `<!--FOOTER:page.html-->`
+markers at build time. Nothing else in the repository hard-codes a list of pages,
+and `apply_chrome` raises if a marker is missing.
+
+`python scripts/verify_chrome.py` checks the built pages and exits non-zero if any
+of them disagrees: same nine links, same order, exactly one marked as current, and
+a link back here. Run it after building.
+
+This exists because the site drifted twice. Nav bars diverged as pages were added
+one at a time; then, once those were corrected by hand, the footers turned out to
+be worse — two pages linked to two different subsets of the site and five had no
+footer at all.
+
 ## Repository layout
 
 ```
@@ -202,6 +218,7 @@ docs/       -- architecture, agent division of labour, connection instructions
 data/       -- NOT the raw CSVs (see data/SOURCES.md) -- provenance and licensing only
 .github/    -- scheduled refresh: Dove weekly, BellBoard daily
 docs/vendor -- pinned third-party JS, so every page opens offline (see its README)
+scripts/site_chrome.py -- the one definition of the nav bar and footer
 ```
 
 ## Database freeze (2026-08-09)
