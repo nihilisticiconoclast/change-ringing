@@ -101,6 +101,10 @@ finding something other than a calendar to put on the page.
 
 ### C. Invention and Survival — the long tail of methods
 
+> **Invention half built — `docs/invention.html`. Survival still waits.** The
+> premise below contains a factual error, corrected underneath rather than
+> deleted, because it is the kind of error that shapes a whole plan.
+
 **The idea.** 9,169 distinct methods were rung across four years. **6,389 of
 them — 70% — were rung exactly once.** Meanwhile Plain Bob Doubles was rung
 5,719 times.
@@ -108,13 +112,33 @@ them — 70% — were rung exactly once.** Meanwhile Plain Bob Doubles was rung
 Set that against Gemini's extension-lineage data and the question becomes
 interesting: of the methods rung once, which spawned descendants at higher
 stages, and which are evolutionary dead ends? Method invention is unusually
-well documented — every method has a named inventor and a first-peal date — so
+well documented — ~~every method has a named inventor and~~ a first-peal date — so
 this is a rare chance to watch a creative tradition's hit rate.
 
 **Risk.** Four years is a short window for a survival claim. A method rung once
 in 2021–24 may be a century-old standard that simply had a quiet spell. This
 needs the historical backfill to be honest, or it must be framed strictly as
 "in this window".
+
+**Corrections from building it.**
+
+- **No method has a named inventor in this data.** No column in any of the four
+  corpora records who devised a method — not the Methods Library, not BellBoard,
+  not Dove, not CompLib. What exists is the first *performance*: date, place and
+  society. In change ringing that is close to the same event, since a method
+  enters the collection by being rung and named, so the page says "first rung"
+  throughout. But "watch a creative tradition's hit rate" cannot be done by
+  inventor, and planning around that sentence would have wasted a day.
+- **The risk paragraph was right, and is the reason C split.** Invention needed
+  no backfill at all; survival still does. `docs/invention.html` publishes
+  *currency* — what share of each vintage was rung in the window — with strict
+  and generous bounds rather than one number, and says plainly that it is not
+  survival.
+- **Plain Bob Doubles at 5,719 was an undercount.** That figure came from exact
+  matches on the method string. With the `schema/005` linkage, which also
+  attributes the constituents of spliced performances, it is **8,046**. Any
+  method-frequency figure computed before that linkage existed is low, and by
+  an amount that varies with how often the method appears in spliced peals.
 
 **Also worth knowing:** "Tolling" appears as the third most common *method* at
 4,168 performances, and is not a method at all. Any method-frequency chart must
