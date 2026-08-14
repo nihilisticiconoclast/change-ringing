@@ -58,6 +58,16 @@ can be checked instead of taken on trust.
       (measured via `search.php`), stopping early without erroring. See
       `docs/decisions/002-backfill-count-discrepancy.md`. The corpus still
       holds a single recent window of 1,401 performances.
+- [x] Performance -> method linkage (`schema/005`,
+      `scripts/resolve_performance_methods.py`) -- 69,368 of 96,067 performances
+      (72.2%) now carry at least one method link, 126,973 links in all. The hard
+      part was the 15,497 performances naming several methods at once
+      ("Spliced Surprise Major (8m)"), whose constituents are free text in
+      `details`; the method string states how many to find, which makes every row
+      self-checking. 26,699 are recorded as unresolved with the reason and the
+      counts, of which 19,750 are not methods at all (tolling, call changes).
+      First question it answers: **81.6% of the 10,838 Major methods in the
+      library were not rung once in four years.**
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
@@ -137,6 +147,22 @@ than this one. Choosing work where verification is cheap, giving agents an
 instrument rather than a warning, and why a fix that went from 18 minutes to 19
 seconds saved no money at all.
 
+## Historic peal records: Felstead
+
+`docs/felstead-enquiry.md` -- a **drafted, unsent** enquiry to the CCCBR about the
+Felstead database, which holds "over 360,000 towerbell peals" going back to the
+1800s (the tower sampled starts in 1875). It would take the corpus from a
+four-year window to a century and a half, for peals.
+
+The join needs no name matching and was already in our data: BellBoard publishes
+a `towerbase-id`, present on 79,918 of 96,067 performances across 5,600 towers,
+and Felstead's lookup takes exactly that identifier. Twelve sampled identifiers
+were probed by hand and all twelve resolved.
+
+**Nothing has been fetched beyond 16 manual page loads while establishing that.**
+Felstead states no licence, publishes no API and has no robots.txt, and it
+represents several thousand hours of volunteer transcription. Permission first.
+
 ## Repository layout
 
 ```
@@ -145,6 +171,7 @@ scripts/    -- migration and ingestion scripts
 docs/       -- architecture, agent division of labour, connection instructions
 data/       -- NOT the raw CSVs (see data/SOURCES.md) -- provenance and licensing only
 .github/    -- scheduled refresh: Dove weekly, BellBoard daily
+docs/vendor -- pinned third-party JS, so every page opens offline (see its README)
 ```
 
 ## Database freeze (2026-08-09)

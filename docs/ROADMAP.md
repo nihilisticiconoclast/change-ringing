@@ -16,6 +16,8 @@ gap was found.
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
 | 3 | Footnote occasion classification (option D) | Gemini | **Shipped** — `docs/occasions.html`; not yet reviewed against the aggregate-only constraint |
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Done** — `docs/rhythm.html`; corrected two IDEAS figures |
+| 13 | Performance → method linkage | Claude Code | **Done** — `schema/005`; 72.2% of performances linked |
+| 14 | Vendor the CDN libraries | Claude Code | **Done** — fixed two live bugs it was hiding |
 | 8a | Method **invention** timeline (option C, first half) | Claude Code | **Next** — full history already held |
 | 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
 | 6 | CompLib ingestion | Vibe | Queued |
@@ -34,7 +36,31 @@ gap was found.
 | # | Item | Why held |
 | --- | --- | --- |
 | 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly |
+| 15 | Felstead ingestion — 360,000 peals back to the 1800s | **Waiting on permission**, not on code. See `docs/felstead-enquiry.md`: no stated licence, no API, no robots.txt, and several thousand hours of volunteer transcription behind it. The join is verified (`towerbase-id`, 12/12 sampled) and the whole job is ~5,600 requests, so this is ready to start the day there is a reply |
+| 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 of them exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Held rather than queued: two rounds took the oracle from 63.6% to 68.0% and the next round is a third tuning parameter. The rows are recorded with their counts, so it can be picked up on evidence |
 | 12 | Consolidate data-quality caveats | Worth doing once the integrity checker exists, so the doc and the check agree |
+
+---
+
+## What linkage 13 changed about what can be asked
+
+`performances.method` was free text with no link to the method library, so the
+two largest corpora could not be joined at all. 69,368 of 96,067 performances
+(72.2%) now carry at least one method link.
+
+The interesting part was the 15,497 performances that name several methods at
+once. "Spliced Surprise Major (8m)" is eight methods, listed in `details` as
+prose — and the string states how many to find, so **every row checks itself**.
+Same shape as the notation parser's `lead_head` oracle, and the same conclusion:
+ship what the oracle proves (68.0%), record the rest with the numbers that made
+them fail, and do not chase the remainder.
+
+First finding out of it, and it reframes item 8b: **81.6% of the 10,838 Major
+methods in the library were not rung once in 2021–24.** At Minor it is 77.2%, at
+Triples 85.1%. That is a stronger version of what `IDEAS.md` had as "70% of the
+9,169 methods rung in four years were rung exactly once" — the library is mostly
+a register of things nobody rings. Whether they are dead or merely dormant is
+exactly the survival question, and it still needs the backfill.
 
 ---
 

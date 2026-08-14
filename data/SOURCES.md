@@ -52,8 +52,42 @@ attribution is owed if any output of this project is published.
 ## CompLib (Composition Library)
 
 - URL: https://complib.org
-- API: documented, includes an auto-proving engine
 - Not yet ingested
+- **Correction (2026-08-14):** this file previously said "API: documented".
+  `https://complib.org/api` returns 571 bytes -- a client-rendered application
+  shell with no documentation in the HTML. There may well be an API, but its
+  existence has not been established from that page, and Vibe's Task 2 brief was
+  written on the earlier assumption. Establish what the API actually offers
+  before designing around it, which is what the brief itself says to do.
+
+## Felstead (CCCBR peal records)
+
+- URL: https://felstead.cccbr.org.uk (redirects from felstead.org.uk)
+- **Not ingested, and not to be ingested without permission.** See
+  `docs/felstead-enquiry.md`.
+- Coverage: states "over 360,000 towerbell peals". The tower sampled
+  (TowerBase 2606, Huntsham) begins Tue 2 Feb 1875. Peals only -- no quarter
+  peals, no service ringing, no tolling, so it is not a substitute for the
+  BellBoard backfill.
+- Licence: **none stated.** Not on the index, `intro.html` or `other.php`. There
+  is no robots.txt either (404). Dove, from the same body, is CC BY-SA 4.0, but
+  that is not evidence about this.
+- Provenance: Canon K W H Felstead's handwritten card index, bequeathed to the
+  Central Council, transcribed by roughly 100 volunteers over several thousand
+  hours. Maintained by the ICT and Peal Records Committees.
+- Linkage: `tbid.php?tid=<TowerBase ID>` -- the identifier BellBoard publishes as
+  `towerbase-id`, present on 79,918 of our 96,067 performances across 5,600
+  distinct towers. It is a **different identifier space from Dove's `TowerID`**:
+  zero of our 5,600 values resolve against `dove.TowerID`, which is why the
+  column had been sitting unused. Twelve sampled identifiers were probed
+  manually and all twelve resolved, returning 41-783 peals each. `rpp=1000`
+  returns a tower's whole history in one request.
+- Fields per peal: peal number, PB-ID, status, full date rung, method, and a
+  bibliographic citation (`CB v.127; BL 13.ii.75`, `RW 5009.0421`) -- *Church
+  Bells*, *Bell News* and *The Ringing World*.
+- Known discrepancy to report if permission is granted: BellBoard records
+  TowerBase 7924 for Crowhurst, The Forewood Ring, East Sussex; Felstead's place
+  search returns 7898 for "Crowhurst, Forewood Ring, Suffolk".
 
 ## regions.csv scope note
 

@@ -50,6 +50,16 @@ the same weekday within six weeks either side. Same weekday because Sunday is
 two and a half times Monday, so a plain rolling mean flags every Sunday; median
 because the thing being detected would otherwise inflate its own baseline.
 
+## `occasions/` — what builds the Occasions Archive
+
+| File | Produces |
+| --- | --- |
+| `01_footnotes_with_length.sql` | Every footnote with its date and performance length, plus the denominators the page needs to state its own coverage |
+
+One row per **footnote**, not per performance: 113,894 footnotes attach to 76,163
+performances. Calling those counts performances overstates by half, which the page
+did until it was corrected.
+
 ## `findings/` — the claims in the prose
 
 One file per assertion made on the atlas page or in the commit history, so
@@ -62,6 +72,8 @@ each can be checked rather than taken on trust.
 | `founder_reach_by_methods.sql` | Why the `Group` column matters: Taylor under two names |
 | `first_peals_by_decade.sql` | Post-war growth in new methods |
 | `unlinked_performances.sql` | The 8,623 records deliberately left unlinked, and why |
+| `most_rung_methods.sql` | Which methods are actually rung — and that 81.6% of Major methods were not rung once in four years |
+| `method_linkage_coverage.sql` | The coverage and confidence claims for `schema/005`, including the unresolved half |
 | `september_is_one_funeral.sql` | Why "September is the busiest ringing month" was wrong: 54% of the month is one fortnight of 2022 |
 | `remembrance_muffle_rate.sql` | 73% / 74% / 72% / 74% half-muffled on Remembrance Sunday, against a 5.7% baseline |
 | `counted_tolls_are_ages.sql` | "99 Tolling" peaks the day after a 99-year-old died; "96" the day after a 96-year-old; "365" one year after the first lockdown |

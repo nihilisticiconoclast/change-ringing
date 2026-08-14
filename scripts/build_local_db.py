@@ -13,7 +13,7 @@ develop against it:
 
   Dove's Guide      -- public CSVs, https://dove.cccbr.org.uk
   CCCBR Methods     -- public XML,  https://methods.cccbr.org.uk
-  schema/001..004   -- in this repo
+  schema/001..005   -- in this repo
   location linkage  -- data/method_location_adjudication.csv, in this repo
 
 The one exception is BellBoard. Its corpus is only reachable through an API
@@ -75,6 +75,9 @@ def main() -> int:
                          "is useful without it.")
     ap.add_argument("--skip-adjudication", action="store_true",
                     help="Leave method_performances.dove_tower_id unpopulated")
+    ap.add_argument("--skip-method-linkage", action="store_true",
+                    help="Do not resolve performances to methods "
+                         "(schema/005, scripts/resolve_performance_methods.py)")
     args = ap.parse_args()
 
     if not HAVE_LIBSQL:
@@ -211,6 +214,27 @@ def main() -> int:
         conn.executescript('DROP TABLE IF EXISTS "_loc_map";')
         conn.commit()
         print(f"\nApplied {len(accepted)} adjudicated tower links.")
+
+    # Performance -> method linkage. Only meaningful when BellBoard rows exist,
+    # so it is skipped rather than run against an empty table -- a resolver that
+    # reports 0 links because there was nothing to link looks identical to one
+    # that reports 0 because it is broken.
+    if not args.skip_method_linkage:
+        n_perf = conn.execute("SELECT COUNT(*) FROM performances").fetchone()[0]
+        if n_perf:
+            conn.executescript(
+                (SCHEMA_DIR / "005_init_performance_methods.sql").read_text())
+            conn.commit()
+            conn.close()
+            run([sys.executable, str(ROOT / "scripts" / "resolve_performance_methods.py"),
+                 "--local-db", str(out), "--reset"])
+            conn = libsql.connect(str(out))
+        else:
+            conn.executescript(
+                (SCHEMA_DIR / "005_init_performance_methods.sql").read_text())
+            conn.commit()
+            print("\nMethod-linkage tables created but left empty "
+                  "(no BellBoard performances loaded).")
 
     print(f"\n{'='*60}\nOffline replica ready: {out}\n{'='*60}")
     for t in ("dove", "bells", "towers", "frames", "founders", "regions", "changes",
