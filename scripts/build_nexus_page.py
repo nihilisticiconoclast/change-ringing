@@ -294,8 +294,8 @@ def generate_html(graph_data):
         }
     </style>
     <!-- Use 3d-force-graph via CDN -->
-    <script src="https://unpkg.com/3d-force-graph"></script>
-    <script src="https://unpkg.com/three"></script>
+    <script src="vendor/3d-force-graph-1.80.0.min.js"></script>
+    <script src="vendor/three-0.160.0.min.js"></script>
 </head>
 <body>
     <div class="nav-bar">

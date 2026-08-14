@@ -5,8 +5,27 @@ import re
 import random
 from datetime import datetime
 
-DB_PATH = "data/change-ringing.db"
-OUTPUT_PATH = "docs/occasions.html"
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+DB_PATH = str(ROOT / "data" / "change-ringing.db")
+OUTPUT_PATH = str(ROOT / "docs" / "occasions.html")
+QUERIES = ROOT / "queries" / "occasions"
+
+
+def sql(name, index=0):
+    """Load one statement from queries/occasions/.
+
+    The SQL lives in a file rather than a string literal here so the recorded
+    query and the one that builds the page cannot drift apart. Comments are
+    stripped before splitting on ';', not after -- splitting first breaks on any
+    semicolon inside a '--' comment.
+    """
+    text = (QUERIES / name).read_text(encoding="utf-8")
+    body = "\n".join(
+        line for line in text.splitlines() if not line.strip().startswith("--")
+    )
+    return [s.strip() for s in body.split(";") if s.strip()][index]
 
 # Define regex patterns for classification
 CATEGORIES = {
@@ -23,17 +42,24 @@ CATEGORIES = {
 def fetch_and_classify():
     conn = sqlite3.connect(DB_PATH)
     
-    query = """
-        SELECT p.perf_date, p.changes, f.footnote 
-        FROM performance_footnotes f 
-        JOIN performances p ON f.perf_id = p.perf_id 
-        WHERE f.footnote IS NOT NULL AND f.footnote != ''
-    """
-    df = pd.read_sql(query, conn)
+    df = pd.read_sql(sql("01_footnotes_with_length.sql", 0), conn)
+    denom = conn.execute(sql("01_footnotes_with_length.sql", 1)).fetchone()
     conn.close()
     
     # Initialize stats dictionary
     stats = {cat: {"total": 0, "by_month": {m: 0 for m in range(1, 13)}, "changes": []} for cat in CATEGORIES}
+
+    # The categories are keyword patterns tested independently, so they are NOT a
+    # partition: a footnote can match several, or none. Both have to be counted
+    # while classifying and both have to appear on the page, otherwise the ledger
+    # reads as a breakdown of a whole when it is neither exhaustive nor exclusive.
+    coverage = {"footnotes": 0, "unclassified": 0, "multi": 0,
+                "pairs": {}, "denom": denom, "thanksgiving_for_the_life": 0}
+    # One overlap is worth naming rather than leaving in the pair counts: the
+    # Memorial pattern matches "thanksgiving for the life" and the Church Service
+    # pattern matches bare "thanksgiving", so every memorial thanksgiving is
+    # counted as a service too. Measured, not guessed at.
+    thanks_re = re.compile(r"thanksgiving for the life", re.IGNORECASE)
     
     for _, row in df.iterrows():
         footnote = row['footnote']
@@ -59,16 +85,30 @@ def fetch_and_classify():
             except:
                 pass
                 
+        matched = []
         for cat, pattern in CATEGORIES.items():
             if pattern.search(footnote):
+                matched.append(cat)
                 stats[cat]["total"] += 1
                 stats[cat]["by_month"][month] += 1
                 if valid_changes is not None:
                     stats[cat]["changes"].append(valid_changes)
-                
-    return stats
 
-def generate_html(stats):
+        coverage["footnotes"] += 1
+        if thanks_re.search(footnote):
+            coverage["thanksgiving_for_the_life"] += 1
+        if not matched:
+            coverage["unclassified"] += 1
+        elif len(matched) > 1:
+            coverage["multi"] += 1
+            for i, a in enumerate(matched):
+                for b in matched[i + 1:]:
+                    key = " + ".join(sorted((a, b)))
+                    coverage["pairs"][key] = coverage["pairs"].get(key, 0) + 1
+
+    return stats, coverage
+
+def generate_html(stats, coverage):
     # Format data for Violin plot
     violin_data = []
     
@@ -275,8 +315,8 @@ def generate_html(stats):
             .grid-2 { grid-template-columns: 1fr; }
         }
     </style>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="vendor/d3-7.9.0.min.js"></script>
+    <script src="vendor/chart-4.5.1.min.js"></script>
 </head>
 <body>
     <div class="nav-bar">
@@ -296,13 +336,13 @@ def generate_html(stats):
         <div class="header">
             <p class="eyebrow">Change Ringing Corpus · Second analytical output</p>
             <h1>Why people <em>ring</em></h1>
-            <p class="standfirst">Every performance is woven with human intent. By classifying hundreds of thousands of footnotes, we can map the overarching reasons why bells are rung—and the physical endurance those occasions demand—all while strictly preserving individual privacy.</p>
+            <p class="standfirst">Ringers write a footnote saying why they rang. Classifying <strong>{{N_FOOTNOTES}}</strong> of them maps the reasons bells are rung in England, and the physical endurance each occasion asks for. Nothing below identifies anybody: only aggregate counts and lengths leave the database, and no footnote text is published on this page.</p>
         </div>
         
         <div class="visualizations">
             <div class="card">
                 <h2>Endurance of Intent</h2>
-                <p class="desc">The distribution of changes rung (length of performance) across different occasion types. Notice the dense peaks around 1,260 (Quarter Peals) and 5,040 (Full Peals).</p>
+                <p class="desc">The distribution of changes rung — how long the performance was — across occasion types. The dense bands at 1,260 (quarter peal) and 5,040 (full peal) are the two standard lengths, and every category has both, so occasion does not choose length nearly as much as you would expect. Restricted to performances of 100–15,000 changes, plotted to 6,000, and thinned to at most 300 points per category for rendering: read the shape, not the dot count.</p>
                 <div id="violin-chart-container"></div>
                 <div class="tooltip" id="violin-tooltip"></div>
             </div>
@@ -310,7 +350,7 @@ def generate_html(stats):
             <div class="grid-2">
                 <div class="card">
                     <h2>Seasonality</h2>
-                    <p class="desc">The cadence of ringing occasions throughout the calendar year.</p>
+                    <p class="desc">Footnotes per month, by category, across 2021–24. The Royal / National line is dominated by four national events rather than by any seasonal cycle — see <a href="rhythm.html" style="color:var(--bronze)">Rhythm of Ringing</a>, where 24 days carry 21% of all ringing in the window.</p>
                     <div id="line-chart-container">
                         <canvas id="seasonalityChart"></canvas>
                     </div>
@@ -318,12 +358,49 @@ def generate_html(stats):
                 
                 <div class="card">
                     <h2>The Occasions Ledger</h2>
-                    <p class="desc">Total performances categorised by underlying motivation.</p>
+                    <p class="desc"><strong>Footnotes</strong> — not performances — matching each occasion keyword. <strong>These do not sum to a total and must not be added up:</strong> the categories are independent keyword tests, so {{N_MULTI}} footnotes ({{PC_MULTI}}%) match more than one, and {{N_UNCLS}} ({{PC_UNCLS}}%) match none.</p>
                     <div class="leaderboard" id="leaderboard-container">
                         <!-- Injected via JS -->
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="card" style="margin-top:8px">
+            <h2>How this was made, and where it is weak</h2>
+            <p class="desc" style="max-width:78ch">
+            Built by <code>scripts/build_occasions_page.py</code> from
+            <code>data/change-ringing.db</code>; the SQL is
+            <code>queries/occasions/01_footnotes_with_length.sql</code> and the script reads
+            that file rather than holding a copy, so the recorded query is the one that ran.
+            The eight categories are regular expressions over footnote text, listed in full
+            at the top of the builder.</p>
+            <p class="desc" style="max-width:78ch">
+            <strong>Four limitations, stated rather than buried.</strong>
+            <em>One:</em> the unit is footnotes. {{N_FOOTNOTES}} footnotes attach to
+            {{N_PERFS}} performances, a mean of {{FN_PER_PERF}} each, so a category count is
+            not a count of ringing occasions.
+            <em>Two:</em> the categories overlap by construction — {{N_MULTI}} footnotes
+            match two or more, the largest pair being {{TOP_PAIR}}. Some of that is real
+            (a birthday <em>is</em> a celebration) and some is an artefact: {{N_THANKS}}
+            footnotes say “thanksgiving for the life of”, which the Memorial pattern and the
+            Church Service pattern both claim, so Church Service is inflated by that much.
+            <em>Three:</em> {{PC_UNCLS}}% match no keyword at all, so this is a map of eight
+            reasons and not of every reason.
+            <em>Four:</em> a keyword is not an intent. “First” catches a ringer’s personal
+            milestone and the word “first” in any other sentence alike; no sample has been
+            hand-checked to estimate that error rate, and until one has, treat the ordering
+            of the smaller categories as unproven.</p>
+            <p class="desc" style="max-width:78ch">
+            <strong>Privacy.</strong> Footnotes are written by ringers for ringers, and many
+            are memorials and funeral tributes composed by people who did not anticipate
+            republication. Only aggregate counts and change-lengths are embedded in this
+            page — no footnote text, no names, no dates of individual performances. That is
+            a deliberate constraint on the analysis, recorded in
+            <code>docs/ROADMAP.md</code>.</p>
+            <p class="desc" style="max-width:78ch">
+            Data derived from BellBoard and Dove’s Guide, <strong>CC BY-SA 4.0</strong> — see
+            <code>data/LICENCE-DATA.md</code> before reusing anything here. The code is MIT.</p>
         </div>
     </div>
 
@@ -576,9 +653,33 @@ def generate_html(stats):
 </body>
 </html>"""
     
-    html_content = html_template.replace("{{VIOLIN_DATA}}", json.dumps(violin_data))
-    html_content = html_content.replace("{{LINE_DATA}}", json.dumps({"labels": months, "datasets": line_datasets}))
-    html_content = html_content.replace("{{LB_DATA}}", json.dumps(leaderboard_data))
+    n = coverage["footnotes"]
+    _, n_perfs, _ = coverage["denom"]
+    top_pair, top_pair_n = sorted(
+        coverage["pairs"].items(), key=lambda kv: -kv[1])[0] if coverage["pairs"] else ("none", 0)
+    fills = {
+        "{{VIOLIN_DATA}}": json.dumps(violin_data),
+        "{{LINE_DATA}}": json.dumps({"labels": months, "datasets": line_datasets}),
+        "{{LB_DATA}}": json.dumps(leaderboard_data),
+        # Every figure in the prose is filled from the same pass that built the
+        # charts. None of them is typed in, so a re-run on a larger corpus cannot
+        # leave a stale number in a sentence.
+        "{{N_FOOTNOTES}}": f"{n:,}",
+        "{{N_PERFS}}": f"{n_perfs:,}",
+        "{{FN_PER_PERF}}": f"{n / n_perfs:.1f}",
+        "{{N_MULTI}}": f"{coverage['multi']:,}",
+        "{{PC_MULTI}}": f"{100 * coverage['multi'] / n:.0f}",
+        "{{N_UNCLS}}": f"{coverage['unclassified']:,}",
+        "{{PC_UNCLS}}": f"{100 * coverage['unclassified'] / n:.0f}",
+        "{{TOP_PAIR}}": f"{top_pair_n:,} in “{top_pair}”",
+        "{{N_THANKS}}": f"{coverage['thanksgiving_for_the_life']:,}",
+    }
+    html_content = html_template
+    for k, v in fills.items():
+        html_content = html_content.replace(k, v)
+    leftover = [k for k in fills if k in html_content]
+    if leftover:
+        raise SystemExit(f"ERROR: placeholders survived substitution: {leftover}")
     
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         f.write(html_content)
@@ -587,6 +688,15 @@ def generate_html(stats):
 
 if __name__ == "__main__":
     print("Extracting and classifying footnotes...")
-    stats = fetch_and_classify()
+    stats, coverage = fetch_and_classify()
     print("Generating visualization...")
-    generate_html(stats)
+    generate_html(stats, coverage)
+    n = coverage["footnotes"]
+    print(f"  {n:,} footnotes across {coverage['denom'][1]:,} performances")
+    print(f"  unclassified {coverage['unclassified']:,} "
+          f"({100 * coverage['unclassified'] / n:.1f}%)")
+    print(f"  in more than one category {coverage['multi']:,} "
+          f"({100 * coverage['multi'] / n:.1f}%)")
+    top = sorted(coverage["pairs"].items(), key=lambda kv: -kv[1])[:3]
+    for k, v in top:
+        print(f"    {v:,}  {k}")

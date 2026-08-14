@@ -183,8 +183,8 @@ def generate_html(graph_data):
             font-style: italic;
         }
     </style>
-    <script src="https://unpkg.com/3d-force-graph"></script>
-    <script src="https://unpkg.com/three"></script>
+    <script src="vendor/3d-force-graph-1.80.0.min.js"></script>
+    <script src="vendor/three-0.160.0.min.js"></script>
 </head>
 <body>
     <div class="nav-bar">
@@ -351,7 +351,13 @@ def generate_html(graph_data):
         Graph.d3Force('charge').strength(0);
         Graph.d3Force('link').distance(0).strength(0);
         Graph.d3Force('center', null);
-        Graph.d3AlphaTarget(0).restart();
+        // cooldownTicks(0), not d3AlphaTarget(0).restart(): d3AlphaTarget is a
+        // d3-force simulation method that force-graph does not re-export, so the
+        // original line threw "Graph.d3AlphaTarget is not a function" and every
+        // statement after it -- including the camera position -- never ran. It went
+        // unnoticed because the page was blank for an unrelated reason (see
+        // docs/vendor/README.md); fixing the libraries surfaced this one.
+        Graph.cooldownTicks(0);
         
         // Setup initial camera view
         Graph.cameraPosition({ x: 0, y: 1500, z: 6000 });
