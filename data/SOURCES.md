@@ -36,6 +36,13 @@ attribution is owed if any output of this project is published.
   not inferred.
 - Deletions are not tracked: BellBoard does not record deletion dates, so a
   performance removed upstream persists locally until a full reload.
+- Completeness check: `export.php` carries no row count of its own, and a
+  truncated response page is indistinguishable from a genuine last page.
+  `search.php?from=...&to=...` renders an independent count ("Found N
+  performances") in its HTML, which `scripts/backfill_bellboard.py` uses as
+  a per-window expected count: a window fetched materially short of it is
+  retried and failed rather than checkpointed. Measured 2026-08-09: 25,859
+  for 2023, 25,267 for 2024, 336,654 for 2012-01-01 to 2026-08-09.
 
 ## CCCBR Methods Library
 

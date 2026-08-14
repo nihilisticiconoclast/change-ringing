@@ -52,12 +52,18 @@ can be checked instead of taken on trust.
       records (71.9%) linked to a Dove tower; decisions recorded in
       `data/method_location_adjudication.csv`
 - [x] BellBoard historical backfill runner -- resumable and checkpointed
-      (PR #2, usage below). `export.php` honours `from`/`to`, not
-      `date_from`/`date_to`, and returns results newest-first. **The run so far
-      has failed**: it captured 55,000 rows against a true corpus of 336,654
-      (measured via `search.php`), stopping early without erroring. See
-      `docs/decisions/002-backfill-count-discrepancy.md`. The corpus still
-      holds a single recent window of 1,401 performances.
+      (PR #2, usage below), now with a **completeness gate** (PR #5): each
+      window's fetched row count is checked against the count BellBoard's
+      `search.php` reports for that window, and a window that comes up short
+      is retried and (if still short) failed rather than checkpointed; the
+      run exits non-zero on any shortfall. `export.php` honours `from`/`to`,
+      not `date_from`/`date_to`, and returns results newest-first. The earlier
+      run captured 55,000 rows against a true corpus of 336,654 (measured via
+      `search.php`), stopping early without erroring -- see
+      `docs/decisions/002-backfill-count-discrepancy.md` and Task 5 of the
+      Vibe roadmap. The corpus still holds a single recent window of 1,401
+      performances; the gated full backfill is a long job that cannot reach
+      production until 2026-09-01.
 - [x] Performance -> method linkage (`schema/005`,
       `scripts/resolve_performance_methods.py`) -- 69,368 of 96,067 performances
       (72.2%) now carry at least one method link, 126,973 links in all. The hard

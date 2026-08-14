@@ -6,6 +6,7 @@ This module provides importable functions for parsing BellBoard XML and
 inserting data into the database, used by both ingest_bellboard.py and
 backfill_bellboard.py.
 """
+import re
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -15,11 +16,18 @@ import time
 
 NS = "{http://bb.ringingworld.co.uk/NS/performances#}"
 EXPORT_URL = "https://bb.ringingworld.co.uk/export.php"
+SEARCH_URL = "https://bb.ringingworld.co.uk/search.php"
 PAGE_SIZE = 1000  # BellBoard rejects >10000 with HTTP 413; 1000 keeps pages small
 PARAM_BUDGET = 16000
 USER_AGENT = (
     "change-ringing-corpus/0.1 (+https://github.com/nihilisticiconoclast/change-ringing)"
 )
+
+# A window whose fetched row count falls below EXPECTED * (1 - WINDOW_TOLERANCE)
+# is treated as truncated, not complete. 5% absorbs BellBoard records that
+# appear in export.php but not search.php (or vice versa) -- a handful per
+# window -- without masking a real shortfall, which is in the thousands.
+WINDOW_TOLERANCE = 0.05
 
 
 def text_of(elem):
@@ -57,6 +65,40 @@ def fetch_page(url, retries: int = 4) -> bytes:
             time.sleep(delay)
             delay *= 2
     raise RuntimeError("unreachable")
+
+
+def fetch_expected_count(date_from, date_to, retries=4):
+    """Ask BellBoard's search page how many performances a date window holds.
+
+    search.php renders the count in its HTML ("Found N performances ..."),
+    which is the cheap, independent ground truth that export.php lacks: the
+    XML root carries no total attribute, and a truncated export page looks
+    identical to the last page of a complete window. This is the signal the
+    backfill uses to refuse checkpointing a short window.
+
+    Args:
+        date_from: start date (YYYY-MM-DD)
+        date_to: end date (YYYY-MM-DD)
+        retries: number of fetch attempts
+
+    Returns:
+        int or None: the reported count, or None if the window has no
+        performances (search.php says "no performances matching" rather
+        than "Found 0"). None is the expected, correct answer for an empty
+        window; a fetch failure raises instead.
+    """
+
+    url = f"{SEARCH_URL}?from={date_from}&to={date_to}"
+    raw = fetch_page(url, retries)
+    body = raw.decode("utf-8", errors="replace")
+    # search.php renders "Found 25,267 performances" (with a thousands
+    # separator) on a non-empty window. An empty window renders
+    # "The database has no performances matching your search criteria"
+    # and no count, which we report as None.
+    m = re.search(r"Found\s+([\d,]+)\s+performances", body)
+    if not m:
+        return None
+    return int(m.group(1).replace(",", ""))
 
 
 def fetch_performances(changed_since=None, date_from=None, date_to=None, page=1, pagesize=PAGE_SIZE, retries=4):

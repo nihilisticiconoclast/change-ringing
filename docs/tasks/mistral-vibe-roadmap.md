@@ -11,7 +11,7 @@ ones find.
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
-| 5 | Backfill completeness gate | **Urgent** — brief below |
+| 5 | Backfill completeness gate | **Done** — see brief below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
@@ -125,7 +125,45 @@ cannot create or destroy a linked record, so anything else is wrong.
 
 ---
 
-## Task 5 — Backfill completeness gate *(urgent, do this before Task 2)*
+## Task 5 — Backfill completeness gate *(done)*
+
+**Done.** `scripts/bellboard_common.py` gained `fetch_expected_count`,
+which parses the "Found N performances" count BellBoard's `search.php`
+renders in HTML (verified: 25,267 for 2024, 1,792 for Jan 2024, None
+for an empty window). `scripts/backfill_bellboard.py` now:
+
+1. Asks `search.php` for each window's expected count before fetching,
+   and refuses to checkpoint a window whose fetched total falls more
+   than 5% short (retrying with a longer cool-off, then failing).
+2. Compares the DB row count for the whole range against `search.php`'s
+   corpus count at the end, and exits non-zero on a material shortfall.
+3. Bumps the checkpoint to `version: 2`, so a checkpoint from the
+   broken run (which marked truncated windows complete) is discarded
+   rather than resumed. `--reset-checkpoint` discards explicitly.
+4. Counts duplicate `perf_id`s within a window to surface the
+   re-fetching that inflated the original run's raw artefact.
+
+Definition of done met: a bounded run over January 2024 loaded
+1,792 rows (matching `search.php` exactly) and exited 0; an
+artificially truncated window (one page, 1,000 of 1,792) was not
+checkpointed and exited 1. The full backfill is not run here — it is a
+long job and cannot reach production until 2026-09-01.
+
+**Size-signal investigation.** The broken run produced ~2.0 KB/row
+against Gemini's ~1.0 KB/row while holding fewer unique records. The
+committed `data/bellboard/` CSVs — the same export format — measure
+~0.5 KB/row even including ringers, footnotes and flags, so the
+discrepancy is not an artefact of the format. Clean `export.php`
+pagination is non-overlapping (Jan 2024: 1,792 unique IDs across two
+pages, zero duplicates), so pages do not overlap each other within a
+window under normal operation. That leaves overlapping *date windows*
+(the loop not advancing, or `changed_since` semantics leaking in) as
+the cause: the same performances re-fetched, collapsing via
+`INSERT OR REPLACE` in the DB but inflating the raw cache. The gate's
+per-window duplicate counter and final range count would both surface
+this.
+
+Original brief, retained for reference:
 
 The backfill runner is merged and the run it produced is **wrong**: 55,000 rows
 against a true corpus of **336,654**. It captured 16% and reported success.
