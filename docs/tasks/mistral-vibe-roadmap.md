@@ -10,7 +10,7 @@ ones find.
 | --- | --- | --- |
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Done** — see brief below |
-| 3 | Corpus integrity checker | Queued — sketch below |
+| 3 | Corpus integrity checker | **Done** — PR #10, merged with four changes; see below |
 | 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
@@ -136,7 +136,42 @@ take on the Gemini roadmap.
 
 ---
 
-## Task 3 — Corpus integrity checker *(queued)*
+## Task 3 — Corpus integrity checker *(done — PR #10)*
+
+**Merged 2026-08-15** as `scripts/verify_corpus.py`, with four changes made on
+merge. The submission was good: it covered everything the sketch asked for, it
+exits non-zero, and — unusually — it came with a negative test. Verified before
+merging rather than taken on trust: clean replica 49 checks / 0 failures /
+exit 0, and a deliberately corrupted copy 3 failures / exit 1.
+
+The four changes:
+
+1. **A missing view was a SKIP; now it FAILs** unless it belongs to a migration
+   listed as optional. Found by deleting `v_towers_unique` — the entire artefact
+   of decision 001, the thing the checker most exists to defend — from a copy:
+   the run reported SKIP and exited 0.
+2. **`_plan_has_bad_scan()` was dead code that always returned False.** Its
+   docstring described the right rule — a `SCAN` on the *outer* driving table is
+   normal, it is an inner un-indexed scan that multiplies — while the live
+   inlined check implemented a cruder one that FAILs on any bare `SCAN`. That
+   crude rule turns a correctness fix into a red build: moving
+   `v_tower_performances` onto `v_towers_unique` produces `CO-ROUTINE
+   v_towers_unique / SCAN d`, where `d` is the co-routine, not a table. Replaced
+   with `bad_scans()`, which implements the docstring: a non-driving bare `SCAN`
+   of a name that is actually in `sqlite_master`.
+3. **The join identity joined a hand-written `SELECT DISTINCT TowerID FROM
+   towers` rather than `v_towers_unique`.** An inline equivalent passes happily
+   while the real view is broken or missing — the check is worth having only if
+   it exercises the object the rest of the codebase joins (lesson 20).
+4. **Added `check_csv_agreement`** — the replica must hold exactly the rows the
+   committed CSVs hold. This is the check that found a live defect: after the
+   2020 backfill merged, the CSVs said 106,756 performances and the replica said
+   96,067, and so did the README, because it had been written from the replica.
+   Every other check passed on that database — it was internally perfect and a
+   year out of date. A range check cannot catch that; only comparing the
+   database against the thing it is built from can.
+
+### Original Task 3 brief, retained
 
 `scripts/verify_corpus.py`: one command that checks a database — local or, one
 day, production — and reports anything wrong. Motivated by how many real

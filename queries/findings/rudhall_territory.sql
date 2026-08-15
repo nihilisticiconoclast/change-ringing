@@ -12,7 +12,7 @@ SELECT
   COUNT(*) AS bells
 FROM bells b
 JOIN founders f ON f.Name     = b.Founder
-JOIN dove     d ON d.TowerID  = b.Tower_ID
+JOIN v_towers_unique d ON d.TowerID  = b.Tower_ID
 WHERE f."Group" = 'Rudhall'
 GROUP BY d.County
 ORDER BY bells DESC

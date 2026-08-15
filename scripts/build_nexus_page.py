@@ -15,34 +15,42 @@ OUTPUT_PATH = "docs/nexus.html"
 def fetch_nexus_data():
     conn = sqlite3.connect(DB_PATH)
     
-    # Get a sample of performances from 2024
+    # A sample of 1,500 performances spread across the whole corpus.
+    #
+    # Three things about this query are deliberate.
+    #
+    # 1. It is no longer restricted to 2024. That restriction made sense when the
+    #    corpus was one year; it now spans 2018-2024 and a single year is 16% of
+    #    it, chosen for no reason a reader could defend.
+    #
+    # 2. The sample is DETERMINISTIC, not `ORDER BY RANDOM()`. A random sample
+    #    redraws the entire graph on every rebuild, so a diff of nexus.html shows
+    #    thousands of changed lines whether or not the data moved, and no run can
+    #    be reproduced. The multiplier is Knuth's 2654435761 (2^32 / phi), which
+    #    scatters consecutive perf_ids evenly across the modulus, so taking the
+    #    lowest residues is a spread sample rather than a block of neighbours.
+    #    Same database in, same page out.
+    #
+    # 3. It joins v_towers_unique, not towers. `towers` repeats TowerID -- 307
+    #    towers appear once per installation -- so the old join silently
+    #    duplicated those performances in the graph (decision 001).
     perfs_query = """
-        SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
+        SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date,
+               t.Lat, t.Long, m.stage
         FROM performances p
-        LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
+        LEFT JOIN v_towers_unique t ON p.dove_tower_id = t.TowerID
         LEFT JOIN methods m ON p.method = m.title
-        WHERE p.perf_date LIKE '2024%' 
-        AND p.method IS NOT NULL
-        AND p.method != ''
-        LIMIT 1000
+        WHERE p.method IS NOT NULL
+          AND p.method != ''
+        ORDER BY (p.perf_id * 2654435761) % 1000003
+        LIMIT 1500
     """
     perfs = pd.read_sql(perfs_query, conn)
     perf_ids = perfs['perf_id'].tolist()
-    
     if not perf_ids:
-        print("No 2024 performances found. Taking 1000 most recent.")
-        perfs_query = """
-            SELECT p.perf_id, p.bb_id, p.place, p.method, p.perf_date, t.Lat, t.Long, m.stage
-            FROM performances p
-            LEFT JOIN towers t ON p.dove_tower_id = t.TowerID
-            LEFT JOIN methods m ON p.method = m.title
-            WHERE p.method IS NOT NULL
-            AND p.method != ''
-            ORDER BY p.perf_date DESC
-            LIMIT 1000
-        """
-        perfs = pd.read_sql(perfs_query, conn)
-        perf_ids = perfs['perf_id'].tolist()
+        raise SystemExit(
+            "No performances with a method in the database -- refusing to build "
+            "an empty nexus page. Rebuild the replica: scripts/rebuild_all.py")
 
     placeholders = ','.join('?' for _ in perf_ids)
     

@@ -94,5 +94,11 @@ FROM "methods" m
 LEFT JOIN "method_performances" mp
   ON mp."method_id" = m."method_id"
   AND mp."event_type" = 'firstTowerbellPeal'
-LEFT JOIN "dove" d
+LEFT JOIN "v_towers_unique" d
   ON d."TowerID" = mp."dove_tower_id";
+-- v_towers_unique (schema/007), not "dove", per decision 001. Because this is a
+-- LEFT JOIN driven off "methods" and filtered to one event type, the effect is
+-- not the one decision 001 predicted for method_performances as a whole -- see
+-- the measured correction in that document. Measured 2026-08-15: 25,351 rows
+-- -> 25,340, eleven duplicates removed, and 38 rows that previously carried a
+-- NULL tower now carry the tower they always referenced.

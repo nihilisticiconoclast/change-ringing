@@ -104,10 +104,29 @@ from; the rule that identifies them is in `scripts/build_rhythm_page.py`.
 
 ## Two things that will bite you
 
-**`dove.TowerID` is not unique.** 7,262 rows carry 7,249 distinct IDs, because
-13 towers hold more than one ring — Farnham S Andrew has a full-circle and a
-lightweight ring under `TowerID 11301`. Joining on it alone fans out and
-inflates counts. Use `RingID` where the question is about a specific ring.
+**Never join `dove` or `towers` on `TowerID`. Join `v_towers_unique`.**
+Neither table is a tower register; both are installation registers. `dove` has
+7,262 rows against 7,249 distinct IDs, because 13 towers hold more than one ring
+— Farnham S Andrew has a full-circle and a lightweight ring under `TowerID
+11301`. `towers` is worse: 15,722 rows against 15,402 IDs, 307 towers repeating.
+So joining either on `TowerID` fans out, and joining `dove` *also* silently drops
+every installation outside its full-circle/lightweight scope.
+
+Both errors run in the same query and they partly cancel, which is why this went
+unnoticed: joining `performances` to `dove` returned 80,231 rows from 80,128
+linked records, so the total looked roughly right while 227 rows were duplicates
+and 124 records were missing entirely.
+
+- **`v_towers_unique`** — one row per tower, drawn from `towers`, so chimes and
+  other non-ringing installations survive. **The default.**
+- **`v_dove_towers`** — the same shape over `dove`, when you need Dove's
+  ringing-specific attributes and accept its narrower scope.
+- **`RingID` against raw `dove`** — only when the question is strictly about one
+  ring. BellBoard supplies `dove_ring_id` per performance, so its data can be
+  ring-accurate; the Methods Library supplies no ring identifier, so
+  first-performance records are tower-level and cannot be made otherwise.
+
+Full reasoning and the measured before/after: `docs/decisions/001-ring-vs-tower-joins.md`.
 
 **Founder counts overlap and must not be summed.** A ring usually mixes
 founders, so a first-peal can count towards more than one tradition. The

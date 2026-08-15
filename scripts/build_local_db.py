@@ -56,10 +56,19 @@ LOC_KEY = lambda b, t, c: f"{b or ''}|{t or ''}|{c or ''}"
 
 
 def run(cmd):
-    print(f"\n$ {' '.join(str(c) for c in cmd)}")
-    result = subprocess.run([sys.executable, *cmd])
+    """Run a script under this interpreter. `cmd` is the script and its args --
+    do NOT include sys.executable, run() adds it.
+
+    Echo the argv that actually runs, prefix included. The version that printed
+    `cmd` alone hid a caller which passed sys.executable itself: the echoed line
+    read correctly while the real argv had the interpreter twice, and the error
+    that came back ("source code cannot contain null bytes") pointed at
+    /usr/local/bin/python3 rather than at the caller."""
+    argv = [sys.executable, *[str(c) for c in cmd]]
+    print(f"\n$ {' '.join(argv)}")
+    result = subprocess.run(argv)
     if result.returncode != 0:
-        raise SystemExit(f"step failed: {' '.join(str(c) for c in cmd)}")
+        raise SystemExit(f"step failed: {' '.join(argv)}")
 
 
 def main() -> int:
@@ -126,52 +135,48 @@ def main() -> int:
         # against a true 83%. Empty means unknown here, so it becomes NULL.
         nz = lambda v: None if v == "" else v
 
-        total_p, total_r = 0, 0
+        def load(path, table, verb="INSERT"):
+            """Load one committed CSV into one table. Returns rows loaded.
+
+            The three copies of this that used to sit inline differed only in
+            table name and verb -- and the fourth, flags, was simply never
+            written. 25,030 committed flag rows sat unread through every build
+            because the loop that would have loaded them did not exist, and
+            nothing noticed: performance_flags reported 0 and 0 was inside the
+            expected range. scripts/verify_corpus.py now compares every table
+            against its CSVs, which is what surfaced it."""
+            if not path.exists():
+                return 0
+            with open(path, encoding="utf-8") as f:
+                rows = list(csv.DictReader(f))
+            if not rows:
+                return 0
+            flds = list(rows[0].keys())
+            cols = ", ".join('"' + c + '"' for c in flds)
+            conn.executemany(
+                f"{verb} INTO {table} ({cols}) "
+                f"VALUES ({', '.join(['?'] * len(flds))})",
+                [[nz(r.get(k)) for k in flds] for r in rows],
+            )
+            return len(rows)
+
+        totals = {"performances": 0, "performance_ringers": 0,
+                  "performance_footnotes": 0, "performance_flags": 0}
         for p_csv in bb_perf_csvs:
             yr = p_csv.stem.split("_")[-1]
-            r_csv = bb_dir / f"ringers_{yr}.csv"
-            fn_csv = bb_dir / f"footnotes_{yr}.csv"
-
-            # Load performances
-            with open(p_csv, encoding="utf-8") as f:
-                p_rows = list(csv.DictReader(f))
-                if p_rows:
-                    flds = list(p_rows[0].keys())
-                    cols = ', '.join('"' + c + '"' for c in flds)
-                    conn.executemany(
-                        f"INSERT OR REPLACE INTO performances ({cols}) VALUES ({', '.join(['?']*len(flds))})",
-                        [[nz(r.get(k)) for k in flds] for r in p_rows]
-                    )
-                    total_p += len(p_rows)
-
-            # Load ringers
-            if r_csv.exists():
-                with open(r_csv, encoding="utf-8") as f:
-                    r_rows = list(csv.DictReader(f))
-                    if r_rows:
-                        flds = list(r_rows[0].keys())
-                        cols = ', '.join('"' + c + '"' for c in flds)
-                        conn.executemany(
-                            f"INSERT INTO performance_ringers ({cols}) VALUES ({', '.join(['?']*len(flds))})",
-                            [[nz(r.get(k)) for k in flds] for r in r_rows]
-                        )
-                        total_r += len(r_rows)
-
-            # Load footnotes
-            if fn_csv.exists():
-                with open(fn_csv, encoding="utf-8") as f:
-                    fn_rows = list(csv.DictReader(f))
-                    if fn_rows:
-                        flds = list(fn_rows[0].keys())
-                        cols = ', '.join('"' + c + '"' for c in flds)
-                        conn.executemany(
-                            f"INSERT INTO performance_footnotes ({cols}) VALUES ({', '.join(['?']*len(flds))})",
-                            [[nz(r.get(k)) for k in flds] for r in fn_rows]
-                        )
+            totals["performances"] += load(p_csv, "performances", "INSERT OR REPLACE")
+            totals["performance_ringers"] += load(
+                bb_dir / f"ringers_{yr}.csv", "performance_ringers")
+            totals["performance_footnotes"] += load(
+                bb_dir / f"footnotes_{yr}.csv", "performance_footnotes")
+            totals["performance_flags"] += load(
+                bb_dir / f"flags_{yr}.csv", "performance_flags")
 
         conn.commit()
         conn.close()
-        print(f"  Ingested {total_p:,} performances and {total_r:,} ringers from {len(bb_perf_csvs)} years.")
+        print(f"  Ingested from {len(bb_perf_csvs)} years: "
+              + ", ".join(f"{v:,} {k.replace('performance_', '')}"
+                          for k, v in totals.items()))
     else:
         # Create the tables even when not populating them, so queries and
         # schema checks against the replica behave the same as production.
@@ -229,7 +234,14 @@ def main() -> int:
                 (SCHEMA_DIR / "005_init_performance_methods.sql").read_text())
             conn.commit()
             conn.close()
-            run([sys.executable, str(ROOT / "scripts" / "resolve_performance_methods.py"),
+            # run() already prepends sys.executable. Passing it here too made
+            # argv [python3, python3, resolver.py, ...], so Python was handed its
+            # own ELF binary as a source file and died with "source code cannot
+            # contain null bytes" -- while the echoed command line above looked
+            # perfectly correct, because run() prints cmd without the prefix it
+            # adds. The linkage step has therefore never run inside a build; the
+            # populated tables came from running the resolver by hand.
+            run([str(ROOT / "scripts" / "resolve_performance_methods.py"),
                  "--local-db", str(out), "--reset"])
             conn = libsql.connect(str(out))
         else:

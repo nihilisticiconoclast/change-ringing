@@ -10,7 +10,7 @@ SELECT
   COUNT(DISTINCT mp.method_id) AS methods_first_rung,
   COUNT(DISTINCT d.TowerID)    AS towers
 FROM method_performances mp
-JOIN dove  d ON d.TowerID  = mp.dove_tower_id
+JOIN v_towers_unique  d ON d.TowerID  = mp.dove_tower_id
 JOIN bells b ON b.Tower_ID = d.TowerID
 WHERE mp.event_type = 'firstTowerbellPeal'
   AND b.Founder IS NOT NULL

@@ -23,8 +23,24 @@ SELECT "TowerID",
        MAX("Dedicn")  AS "Dedicn",
        MAX("County")  AS "County",
        MAX("Country") AS "Country",
+       MAX("Lat")     AS "Lat",
+       MAX("Long")    AS "Long",
        COUNT(*)       AS "installations"
 FROM "towers" GROUP BY "TowerID";
+
+-- Lat and Long were added on 2026-08-15 so that the mapping pages can join this
+-- projection instead of raw `towers`, which was duplicating every performance at
+-- a multi-installation tower. MAX() over a coordinate is only safe if the
+-- coordinate is a tower attribute rather than a per-installation one, and this
+-- document says not to extend the MAX() pattern to a new column without
+-- checking. Checked:
+--
+--   SELECT COUNT(*) FROM (SELECT "TowerID" FROM "towers" GROUP BY "TowerID"
+--     HAVING COUNT(DISTINCT "Lat") > 1 OR COUNT(DISTINCT "Long") > 1);
+--   -> 0
+--
+-- Zero towers disagree with themselves about where they are, so MAX() picks the
+-- only value there is. Re-run that query before adding another column here.
 
 DROP VIEW IF EXISTS "v_dove_towers";
 CREATE VIEW "v_dove_towers" AS

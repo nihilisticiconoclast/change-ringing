@@ -11,6 +11,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
 | 4 | Footnote occasion classification | **Partly done** — a page shipped, the dataset was never built. See below |
 | 5 | Measure the occasion classifier | **Still active** — PR #7 delivered the classifier but its measurement was circular; see below |
+| 6 | BellBoard historical backfill, one year per PR | **2020, 2019, 2018 done** — PRs #8, #9. Next: 2017 backwards to 2012 |
 
 ---
 

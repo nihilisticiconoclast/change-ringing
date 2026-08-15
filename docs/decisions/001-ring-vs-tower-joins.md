@@ -1,6 +1,10 @@
 # Decision 001 — what a join to `dove` means: a tower, or a ring?
 
-**Status:** **implemented** in `schema/007_init_tower_views.sql`, 2026-08-15
+**Status:** **implemented and adopted.** The projections landed in
+`schema/007_init_tower_views.sql` on 2026-08-15; on the same day
+`v_tower_performances` (`schema/002`), `v_first_tower_peals` (`schema/003`) and
+four queries were moved onto them, and `scripts/verify_corpus.py` began asserting
+the join identity on every run.
 **Date:** 2026-08-09, with a correction and an addition on 2026-08-15
 
 ## The problem
@@ -154,8 +158,9 @@ any particular figure, is the acceptance test, because the figures move with the
 snapshot.
 
 1. **Add `v_towers_unique`** — one row per TowerID, drawn from `towers` so the
-   non-ringing installations survive (179 in `method_performances`, 121 of the
-   124 in `performances`):
+   non-ringing installations survive (179 records in `method_performances`, and
+   54 of the 124 in `performances` — see the correction above; the other 70 cite
+   TowerIDs absent from both tables):
 
    ```sql
    CREATE VIEW "v_towers_unique" AS
@@ -213,19 +218,55 @@ snapshot.
    A join cannot create or destroy a linked record, so any other number is wrong
    by construction.
 
-## What to change
+## What to change — done 2026-08-15, and the prediction was wrong
 
-- `v_first_tower_peals` — currently joins `dove` on `TowerID`. Move it to
-  `v_towers_unique`, which recovers the 160 dropped rows and removes the 19
-  duplicates. Its count will change; that is the point. Record before and after.
-- `v_tower_performances` — same join, same fix, and now measured: it returns
-  **80,231** where the underlying records number **80,128**, so it is 227 rows
-  too high and drops 124. Both errors go away with `v_towers_unique`.
-- `queries/` — update anything joining `dove` on `TowerID`, and add a note to
-  `queries/README.md`, which currently tells readers to use `RingID` without
-  saying that `towers` is the better default.
-- `scripts/build_atlas.py` — `queries/atlas/02` joins `dove`. The atlas
-  first-peal figures will move slightly. Rebuild and republish.
+Both views and all four affected queries now join `v_towers_unique`. The before
+and after were measured on the same snapshot rather than predicted:
+
+| View | Before (`dove`) | After (`v_towers_unique`) | Change |
+| --- | ---: | ---: | ---: |
+| `v_tower_performances` | 80,231 | **80,058** | −173 |
+| `v_first_tower_peals` | 25,351 | **25,340** | −11 |
+
+`v_tower_performances` behaves exactly as this document said it would: −227
+duplicate rows, +54 records recovered, net −173. The result, 80,058, is the join
+identity holding — 80,128 linked records minus the 70 that cite TowerIDs present
+in neither table.
+
+> ### Correction, 2026-08-15: the `v_first_tower_peals` prediction was wrong
+>
+> "How to verify the fix" below said to expect **+179 recovered, −19
+> de-duplicated** for `v_first_tower_peals`. Measured, it is **−11 rows, and +38
+> rows that gained a tower they had always referenced** (rows with a non-NULL
+> `dove_place`: 14,512 → 14,550).
+>
+> Neither predicted number was close, and the reason is structural rather than
+> arithmetic. 179 and 19 are properties of `method_performances` **as a whole**.
+> `v_first_tower_peals` is a `LEFT JOIN` driven off `methods` and filtered to
+> `event_type = 'firstTowerbellPeal'`, so it sees a subset — only 11 of the 13
+> two-ring towers appear in it at all — and because the join is `LEFT`, a
+> recovered record does not add a row. It fills in three columns on a row that
+> was already there.
+>
+> This is the third correction on this page, and unlike the first two it is not a
+> unit error: it is the more ordinary mistake of quoting a figure measured on a
+> table as though it described a view over that table. The lesson is the same
+> one, though — **measure the object you are actually changing.** The row counts
+> above were taken by building both versions of each view on a copy of the
+> snapshot and counting, which took about a minute and would have caught this
+> before it was written down.
+
+- `queries/` — `atlas/02_first_peals_by_foundry`,
+  `findings/busiest_towers_for_first_peals`, `findings/founder_reach_by_methods`
+  and `findings/rudhall_territory` all moved to `v_towers_unique`.
+  `queries/README.md` now names `v_towers_unique` as the default join target
+  rather than pointing readers at `RingID`.
+- `v_tower_performances` **loses `dove_ring_type`.** `RingType` describes a ring,
+  and `v_towers_unique` is one row per tower, so there is no single correct value
+  to carry; `MAX()` would have kept the column and made it arbitrary. Nothing
+  outside `schema/002` read it.
+- `scripts/build_atlas.py` — the atlas first-peal figures move with
+  `queries/atlas/02`. Rebuild and republish.
 
 ## What not to change
 
@@ -238,10 +279,14 @@ rows; a soft reference keeps them and lets the next refresh resolve them.
 ## How to verify the fix
 
 `SELECT COUNT(*)` before and after on each view, and confirm the difference is
-accounted for exactly. For `v_first_tower_peals`: +179 recovered, −19
-de-duplicated. For `v_tower_performances`: +121 recovered, −227 de-duplicated. A
-change of any other size means something else moved and should be understood
-before merging.
+accounted for exactly. **The figures once given here — "+179 recovered, −19
+de-duplicated" for `v_first_tower_peals`, "+121 recovered" for
+`v_tower_performances` — were both wrong**; the measured values are in "What to
+change" above. A change of any other size means something else moved and should
+be understood before merging.
+
+`scripts/verify_corpus.py` now checks the identity below on every run, so this
+is a gate rather than a habit.
 
 The single sharpest check, for either corpus: the record count after the join
 must equal the count of rows carrying a `dove_tower_id`. Any other number is

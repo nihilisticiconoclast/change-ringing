@@ -105,7 +105,19 @@ SELECT
   d."TowerID"   AS "dove_tower_id",
   d."Place"     AS "dove_place",
   d."Dedicn"    AS "dove_dedication",
-  d."County"    AS "dove_county",
-  d."RingType"  AS "dove_ring_type"
+  d."County"    AS "dove_county"
 FROM "performances" p
-JOIN "dove" d ON d."TowerID" = p."dove_tower_id";
+JOIN "v_towers_unique" d ON d."TowerID" = p."dove_tower_id";
+-- Joins v_towers_unique (schema/007), not "dove", per decision 001. Joining
+-- "dove" on TowerID both duplicated rows and dropped others: measured on the
+-- 2026-08-15 snapshot this view returned 80,231 rows from 80,128 linked records
+-- -- 227 duplicates -- while 124 records failed to join at all. Against
+-- v_towers_unique it returns 80,058: no duplicates, and 54 of those 124
+-- recovered. The remaining 70 cite five TowerIDs present in neither "dove" nor
+-- "towers" and cannot be resolved by any projection of either.
+--
+-- "dove_ring_type" is deliberately gone. RingType is an attribute of a ring, not
+-- of a tower, and v_towers_unique is one row per tower -- 307 towers hold more
+-- than one installation, so there is no single correct RingType to carry here.
+-- MAX() would have kept the column and made it a coin toss. Nothing outside this
+-- file read it. Ring-level questions use RingID against "dove" directly.
