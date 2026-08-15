@@ -294,7 +294,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <option value="fast">Fast-Forward</option>
         <option value="realtime">Real-Time (Audio)</option>
       </select>
-      <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
+      <button class="play-btn" onclick="toggleAnimation()">▶ Compose</button>
     </div>
     
     <div id="blank-state">
@@ -309,14 +309,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       
       <div class="bottom-panels">
         <div class="text-panel">
-          <div class="panel-header">
-            <h4>Output</h4>
-            <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+          <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <h4>Composition Output</h4>
+              <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+            </div>
+            <div style="font-size: 11px; color: var(--ink-3); line-height: 1.3;">
+              The sequence of calls applied, and the resulting course heads.
+            </div>
           </div>
           <div id="text-output"></div>
         </div>
         <div class="svg-panel">
-          <div class="panel-header"><h4>Blue Line (Treble & Tenor)</h4></div>
+          <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <h4>Blue Line (Treble & Tenor)</h4>
+            </div>
+            <div style="font-size: 11px; color: var(--ink-3); line-height: 1.3;">
+              While the graph above shows the high-level transitions between Course Heads, this diagram traces the physical path of the bells row-by-row as they sound. The vertical axis is time (each row), and the horizontal axis is the bell's place (1st to 8th). The <strong>Treble (1)</strong> is traced in green, and the <strong>Tenor (8)</strong> in bronze.
+            </div>
+          </div>
           <div id="svg-container"></div>
         </div>
       </div>
@@ -394,14 +406,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       osc.connect(gainNode);
       gainNode.connect(masterGain);
       
-      // Fast attack, exponential decay
+      // Fast attack, exponential decay to near zero, then linear to exactly zero to avoid clicks
       gainNode.gain.setValueAtTime(0, time);
       gainNode.gain.linearRampToValueAtTime(p.gain, time + 0.02);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, time + p.decay);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, time + p.decay - 0.05);
+      gainNode.gain.linearRampToValueAtTime(0, time + p.decay);
       
       osc.start(time);
-      osc.stop(time + p.decay);
+      osc.stop(time + p.decay + 0.1);
     });
+  }
+
+  function setPlayButtonState(isPlaying) {
+    const btn = document.querySelector('.play-btn');
+    if (btn) btn.innerHTML = isPlaying ? '⏹ Stop' : '▶ Compose';
   }
 
   // Theme toggler
@@ -440,6 +458,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   function selectComp(idx) {
     animationState.isPlaying = false;
     if (animationState.timer) clearTimeout(animationState.timer);
+    setPlayButtonState(false);
     
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
@@ -585,6 +604,7 @@ Call\tCourse Head
     if (animationState.currentRowIdx >= comp.rows.length) {
       animationState.isPlaying = false;
       network.fit({ animation: true });
+      setPlayButtonState(false);
       return;
     }
     
@@ -625,6 +645,7 @@ Call\tCourse Head
     if (animationState.step >= comp.calls.length) {
       animationState.isPlaying = false;
       network.fit({ animation: true });
+      setPlayButtonState(false);
       return;
     }
     
@@ -648,22 +669,31 @@ Call\tCourse Head
     animationState.timer = setTimeout(playFastForwardLoop, 400);
   }
 
-  function playAnimation() {
-    if (animationState.timer) clearTimeout(animationState.timer);
-    animationState.isPlaying = true;
-    
-    setupVisuals();
-    
-    const speedMode = document.getElementById('speed-select').value;
-    if (speedMode === 'realtime') {
-      initAudio();
-      animationState.currentRowIdx = 0;
-      animationState.step = 0;
-      playRealTimeLoop();
+  function toggleAnimation() {
+    if (animationState.isPlaying) {
+      // Stop
+      animationState.isPlaying = false;
+      if (animationState.timer) clearTimeout(animationState.timer);
+      setPlayButtonState(false);
     } else {
-      animationState.currentRowIdx = 0;
-      animationState.step = 0;
-      playFastForwardLoop();
+      // Play
+      if (animationState.timer) clearTimeout(animationState.timer);
+      animationState.isPlaying = true;
+      setPlayButtonState(true);
+      
+      setupVisuals();
+      
+      const speedMode = document.getElementById('speed-select').value;
+      if (speedMode === 'realtime') {
+        initAudio();
+        animationState.currentRowIdx = 0;
+        animationState.step = 0;
+        playRealTimeLoop();
+      } else {
+        animationState.currentRowIdx = 0;
+        animationState.step = 0;
+        playFastForwardLoop();
+      }
     }
   }
 
