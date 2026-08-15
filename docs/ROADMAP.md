@@ -12,9 +12,9 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 1 | Backfill completeness gate | **Vibe** | **In review** — PR #5. Mechanism right and its counts verified live; one blocking bug returned (the gate measures completeness with a row count that includes duplicates) |
-| 5 | Ring-level join semantics | **Vibe** | **Next after #1** — spec in `decisions/001`, which gained a correction and a third finding on 2026-08-15 |
-| 19 | Occasion classifier error rate | **Gemini** | **Next** — see below. Its own page ships eight categories with no measured precision |
+| 3 | Footnote occasion classification (option D) | **Gemini** | **Partly done** — `docs/occasions.html` shipped and is good; the labelled dataset the brief asked for was never built, and the two things it put out of scope are the two that were done |
+| 5 | Ring-level join semantics | **Vibe** | **Next** — spec in `decisions/001`, which gained a correction and a third finding on 2026-08-15 |
+| 19 | Measure the occasion classifier | **Gemini** | **Active** — Gemini Task 5. Not a new task: it is Task 4's actual deliverable, which was never built |
 | 6 | CompLib ingestion | Vibe | Queued — but `data/SOURCES.md` now records that the "documented API" claim is unverified; establishing what the API offers is step one |
 | 7 | Corpus integrity checker | Vibe | Queued |
 | 16 | Spliced abbreviation expansion | Claude Code | Available, deliberately unqueued — see Held |
@@ -23,8 +23,9 @@ gap was found.
 
 | # | Item | Owner | Where |
 | --- | --- | --- | --- |
+| 1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
 | 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
-| 3 | Footnote occasion classification (option D) | Gemini | `docs/occasions.html` — privacy constraint verified met; its prose corrected |
+
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
 | 8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
 | 13 | Performance → method linkage | Claude Code | `schema/005` — 72.2% of performances linked |
@@ -49,26 +50,27 @@ gap was found.
 | 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly. The r/bellringing post may produce one |
 | 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Two rounds took the oracle from 63.6% to 68.0% and the next is a third tuning parameter, so it was stopped deliberately. The rows are recorded with their counts, so it can be resumed on evidence rather than from scratch |
 
-## Item 19 — the one genuinely new task
+## Item 19 — not a new task, the missing half of an old one
 
-**Gemini, and it closes a loop on Gemini's own work.** `docs/occasions.html`
-classifies 113,894 footnotes into eight occasions using keyword patterns, and the
-footer now says plainly what has not been established: *"a keyword is not an
-intent. 'First' catches a ringer's personal milestone and the word 'first' in any
-other sentence alike; no sample has been hand-checked to estimate that error
-rate, and until one has, treat the ordering of the smaller categories as
-unproven."*
+Full brief: `docs/tasks/gemini-roadmap.md` Task 5.
 
-That is the gap. The deliverable is a **hand-labelled sample with a measured
-precision and recall per category** — the same shape as the location-adjudication
-dataset that worked well before. It needs no new data, no network, and no
-production access, and it either confirms the page or tells us which categories
-to stop reporting.
+`docs/occasions.html` shipped and is good. But the Task 4 brief asked for
+`data/footnote_occasions.csv` with a hand-labelled 300-footnote oracle, precision
+and recall per class, and a `subject_type` distinguishing "in memory of" a person
+from "in memory of the old bells" — and it put **visualising it out of scope**,
+along with touching `scripts/`.
 
-The privacy constraint is unchanged and applies to the sample as much as the
-page: the labelled CSV may hold footnote text because it is a working file, but
-**nothing derived from it may name an individual**, and the sample must not be
-published as a browsable index.
+Checked against the git history: the CSV was never created on any branch, no
+sample was labelled, no accuracy was reported, and the only files touched were
+`docs/occasions.html` and `scripts/build_occasions_page.py` — the two things
+ruled out.
+
+**Why this is a lesson and not a telling-off.** Given an unglamorous measurable
+deliverable and an implicit chance to build something visual, the visual thing
+got built — and it was good enough that nobody asked where the dataset was for a
+day. A missing CSV is invisible in review; an attractive page is not. The fix is
+in how the next brief is written, which is why Task 5 asks for exactly two files
+and says the PR description must lead with the precision of the largest category.
 
 ---
 

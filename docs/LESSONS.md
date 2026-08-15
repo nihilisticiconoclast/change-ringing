@@ -291,7 +291,44 @@ itself an honest picture of how much the conclusion rests on your own pipeline.
 
 ## Keeping the work
 
-### 18. Commit the recipe, not the output
+### 18. If a brief offers both a measurement and an artefact, the artefact is what you get
+
+A brief asked for a labelled dataset with measured precision and recall, and put
+visualising it explicitly out of scope. What came back was a visualisation, and no
+dataset. The two things ruled out — a page, and a file under `scripts/` — were the
+two things built; the CSV was never created on any branch.
+
+The interesting part is not that it happened. It is that **it took a day to
+notice**, because the page was good. Its category counts recomputed exactly, it
+respected the privacy constraint, and it looked finished. A missing file makes no
+impression in review; an attractive artefact positively argues for itself. Nobody
+asks "where is the CSV" while looking at a nice violin plot.
+
+Four things follow, all about how the brief is written rather than how the work
+was done:
+
+1. **Do not put a measurement and an artefact in the same brief.** If both are
+   wanted, they are two tasks, and the measurement goes first. Otherwise the
+   artefact absorbs the effort and the measurement becomes the part that gets cut
+   when time runs short — which is the wrong way round, because the artefact is
+   worthless if the measurement fails.
+2. **Say how many files the pull request should contain.** "Exactly two new files
+   and no modifications to anything else" is checkable in one glance at the diff.
+   "Out of scope: visualising it" is a sentence that can be read and forgotten.
+3. **Make the headline number the first thing the PR description must say.** A
+   deliverable you have to go looking for is a deliverable that can be quietly
+   omitted; one that has to lead the write-up cannot.
+4. **Review the diff against the brief's file list, not against the impression
+   the work makes.** This is the whole lesson in one line. The check that would
+   have caught it on day one is `git log --diff-filter=A -- data/the_file.csv`,
+   and it takes five seconds.
+
+There is a matching failure on the reviewing side, which is mine: I read the page,
+verified its numbers, corrected its prose, wrote it a limitations panel, and
+marked the task shipped — all without once opening the brief to see what had been
+asked for.
+
+### 19. Commit the recipe, not the output
 
 What belongs in the repository is whatever cannot be regenerated: schema,
 loaders, and every adjudication decision with its reasoning. Raw sources are
@@ -303,20 +340,20 @@ one was frozen. It was removed a few hours later — it was heading for GitHub's
 100 MB limit, and a binary that changes wholesale on each rebuild stays in git
 history forever. Use a Release asset if a large file genuinely needs sharing.
 
-### 19. Recorded SQL must be the SQL that runs
+### 20. Recorded SQL must be the SQL that runs
 
 A `queries/` folder that duplicates the real queries is worse than none: it
 looks authoritative while going stale. The build script here reads those files
 at build time, so the recorded query and the executed query cannot diverge.
 
-### 20. Write decisions down with the numbers in them
+### 21. Write decisions down with the numbers in them
 
 Short decision records — the problem, what was measured, what was chosen, what
 the acceptance test is — did more good than any amount of code comments. They
 also make delegation possible: a spec with an exact expected row count can be
 handed to an agent and verified on return.
 
-### 21. Dual-license data and code separately, explicitly
+### 22. Dual-license data and code separately, explicitly
 
 The code here is MIT; the data is CC BY-SA 4.0, inherited from Dove's Guide.
 Putting data into an MIT repository does not relicense it, and share-alike
