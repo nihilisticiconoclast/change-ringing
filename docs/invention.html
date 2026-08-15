@@ -46,15 +46,11 @@
     }
     .main-view {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
       position: relative;
     }
     #mynetwork {
-      flex: 1;
-      height: 100%;
-      width: 100%;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: var(--ground);
     }
     .play-btn {
@@ -256,23 +252,7 @@ section:last-of-type{border-bottom:none}
 </footer>
 
 <script>
-  // Theme toggler
-  const tb = document.getElementById('themeToggle');
-  const setTheme = t => { 
-    document.documentElement.setAttribute('data-theme', t);
-    if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
-    try { localStorage.setItem('cr-theme', t); } catch (e) {}
-    if (network) redrawGraph(); // Redraw graph to update colors
-  };
-  if (tb) tb.onclick = () =>
-    setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  (() => { 
-    let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
-    if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-    setTheme(t); 
-  })();
-
-  // Inject JSON data
+  // Global state
   const compositions = [
   {
     "id": 1,
@@ -4977,10 +4957,25 @@ section:last-of-type{border-bottom:none}
 ];
   let network = null;
   let activeIdx = 0;
-  
   let animationTimer = null;
   let visNodes = null;
   let visEdges = null;
+
+  // Theme toggler
+  const tb = document.getElementById('themeToggle');
+  const setTheme = t => { 
+    document.documentElement.setAttribute('data-theme', t);
+    if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+    try { localStorage.setItem('cr-theme', t); } catch (e) {}
+    if (network) redrawGraph(); // Redraw graph to update colors
+  };
+  if (tb) tb.onclick = () =>
+    setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  (() => { 
+    let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
+    if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    setTheme(t); 
+  })();
 
   function renderList() {
     const list = document.getElementById('comp-list');

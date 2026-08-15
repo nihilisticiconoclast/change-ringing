@@ -59,15 +59,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     }
     .main-view {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
       position: relative;
     }
     #mynetwork {
-      flex: 1;
-      height: 100%;
-      width: 100%;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: var(--ground);
     }
     .play-btn {
@@ -148,6 +144,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <!--FOOTER:invention.html-->
 
 <script>
+  // Global state
+  const compositions = __DATA_JSON__;
+  let network = null;
+  let activeIdx = 0;
+  let animationTimer = null;
+  let visNodes = null;
+  let visEdges = null;
+
   // Theme toggler
   const tb = document.getElementById('themeToggle');
   const setTheme = t => { 
@@ -163,15 +167,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
     setTheme(t); 
   })();
-
-  // Inject JSON data
-  const compositions = __DATA_JSON__;
-  let network = null;
-  let activeIdx = 0;
-  
-  let animationTimer = null;
-  let visNodes = null;
-  let visEdges = null;
 
   function renderList() {
     const list = document.getElementById('comp-list');
