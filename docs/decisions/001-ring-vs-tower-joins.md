@@ -1,6 +1,6 @@
 # Decision 001 — what a join to `dove` means: a tower, or a ring?
 
-**Status:** decided, not yet implemented (Vibe roadmap Task 4)
+**Status:** **implemented** in `schema/007_init_tower_views.sql`, 2026-08-15
 **Date:** 2026-08-09, with a correction and an addition on 2026-08-15
 
 ## The problem
@@ -109,10 +109,25 @@ distinct TowerIDs:
   reused after a deletion.
 
 So the same conclusion holds for BellBoard as for the Methods Library: **join
-the deduplicated projection of `towers`, not `dove`**, and 121 of the 124
-orphans resolve. The remaining handful stay unresolved and visible, which is the
-right outcome — see "What not to change" below on why a hard foreign key would
-be wrong here.
+the deduplicated projection of `towers`, not `dove`**.
+
+> **Correction, 2026-08-15: "121 of the 124 resolve" was wrong — it is 54.**
+>
+> That sentence took 30 distinct TowerIDs minus the 5 absent ones and reported
+> the answer as if it were a count of records. It is a count of *identifiers*.
+> The 5 absent IDs carry 70 records between them — 14615×2, 15542×23, 25193×1,
+> 25225×26, 25756×18 — so **54 of the 124 orphan records resolve via `towers`,
+> and 70 do not.**
+>
+> This is the second unit error in this document, and it is the same one the
+> document was written to correct. It surfaced only when `v_towers_unique`
+> actually existed and could be joined: `performances` → `v_towers_unique`
+> returns 80,058 against 80,128 linked records, short by exactly 70. Counting
+> identifiers where records are meant is evidently easy to do twice on one page,
+> which is an argument for naming the unit in the sentence every time.
+
+The 70 stay unresolved and visible, which is the right outcome — see "What not to
+change" below on why a hard foreign key would be wrong here.
 
 ## Checking the obvious fix, which does not work
 
@@ -189,6 +204,11 @@ snapshot.
    | `method_performances` → `v_dove_towers` | that, minus the orphans (21,938 today) |
    | `performances` → `v_towers_unique` | records with a `dove_tower_id` (80,128 today) |
    | `performances` → `v_dove_towers` | that, minus the orphans (80,004 today) |
+
+  Measured after implementation: `method_performances` → `v_towers_unique`
+  returns **22,117**, exactly the linked count. `performances` →
+  `v_towers_unique` returns **80,058** against 80,128, short by the 70 records
+  whose TowerIDs exist in neither table.
 
    A join cannot create or destroy a linked record, so any other number is wrong
    by construction.

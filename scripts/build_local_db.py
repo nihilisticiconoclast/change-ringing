@@ -13,7 +13,7 @@ develop against it:
 
   Dove's Guide      -- public CSVs, https://dove.cccbr.org.uk
   CCCBR Methods     -- public XML,  https://methods.cccbr.org.uk
-  schema/001..005   -- in this repo
+  schema/001..007   -- in this repo
   location linkage  -- data/method_location_adjudication.csv, in this repo
 
 The one exception is BellBoard. Its corpus is only reachable through an API
@@ -184,6 +184,9 @@ def main() -> int:
 
     conn = libsql.connect(str(out))
     conn.executescript((SCHEMA_DIR / "004_read_cost_indexes.sql").read_text())
+    # Deduplicated tower projections. Every tower-level join should use these
+    # rather than `dove` or `towers` directly -- see decisions/001.
+    conn.executescript((SCHEMA_DIR / "007_init_tower_views.sql").read_text())
     conn.commit()
 
     if not args.skip_adjudication and ADJUDICATION.exists():

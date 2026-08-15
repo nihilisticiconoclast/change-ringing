@@ -12,10 +12,10 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 3 | Footnote occasion classification (option D) | **Gemini** | **Partly done** — `docs/occasions.html` shipped and is good; the labelled dataset the brief asked for was never built, and the two things it put out of scope are the two that were done |
-| 5 | Ring-level join semantics | **Vibe** | **Next** — spec in `decisions/001`, which gained a correction and a third finding on 2026-08-15 |
-| 19 | Measure the occasion classifier | **Gemini** | **Active** — Gemini Task 5. Not a new task: it is Task 4's actual deliverable, which was never built |
-| 6 | CompLib ingestion | Vibe | Queued — but `data/SOURCES.md` now records that the "documented API" claim is unverified; establishing what the API offers is step one |
+| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed, measurement still missing** — `data/footnote_occasions.csv`, 113,895 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
+| 6 | CompLib ingestion | **Vibe** | **In review** — PR #6, `schema/006`. Gemini submitted a rival implementation in PR #7; Vibe's is the one being taken |
+| 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 113,895-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
+
 | 7 | Corpus integrity checker | Vibe | Queued |
 | 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
 
@@ -24,6 +24,7 @@ gap was found.
 | # | Item | Owner | Where |
 | --- | --- | --- | --- |
 | 1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
+| 5 | Ring-level join semantics | Gemini (was Vibe's) | **Merged** — `schema/007_init_tower_views.sql`. Verified against the decisions/001 acceptance test |
 | 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
 
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |

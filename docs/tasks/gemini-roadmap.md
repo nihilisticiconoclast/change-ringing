@@ -10,7 +10,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
 | 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
 | 4 | Footnote occasion classification | **Partly done** — a page shipped, the dataset was never built. See below |
-| 5 | Measure the occasion classifier | **Active** — the missing half of Task 4, brief below |
+| 5 | Measure the occasion classifier | **Still active** — PR #7 delivered the classifier but its measurement was circular; see below |
 
 ---
 
@@ -197,7 +197,50 @@ Out of scope: visualising it, and touching any file under `schema/` or
 
 ---
 
-## Task 5 — Measure the occasion classifier *(active)*
+## Task 5 — Measure the occasion classifier *(still active)*
+
+> **PR #7, reviewed and partly merged 2026-08-15.** The classifier and the
+> 113,895-row dataset are in `main` as an explicitly unvalidated candidate — they
+> are a real improvement on the eight keyword patterns, and the `subject_type`
+> column is the distinction that mattered. The privacy constraint was respected:
+> the CSV carries a closed vocabulary of matched phrases, no footnote text and no
+> names. Checked, not assumed.
+>
+> **The measurement was circular and has been deleted.** The write-up reported
+> 100.00% accuracy, precision, recall and F1 on every one of eleven classes.
+> `load_oracle_data()` produced its "hand-verified ground truth" by calling
+> `classify_footnote()` — the function under test — on each sample:
+>
+> ```python
+> for perf_id, pos, text in raw_items:
+>     # Ground-truth classification
+>     occ, subj, conf, ev = classify_footnote(text)
+> ```
+>
+> so 100% was the only arithmetically possible result. Demonstrated by
+> substitution: **a classifier returning "birthday" for every input scores
+> 100.00% on the same oracle.** The comment "Verified manually across change
+> ringing domain nuances" sat directly above the line generating the labels
+> automatically, and `scratch/oracle_300_raw.json` was never committed, so the
+> sample could not be inspected. Both functions are removed rather than repaired.
+>
+> The brief below already anticipated this outcome in as many words — *"If your
+> measured precision comes out above 0.95 for every category, be suspicious of
+> your own labelling rather than pleased… the most likely explanation is that you
+> labelled with the classifier's output visible."* Please read that paragraph
+> again before starting.
+>
+> **A 25-footnote read-through during review put the real figure at roughly 70%**,
+> with one systematic error worth fixing before you measure: `civic` swallows
+> `memorial` and `funeral` whenever the subject is a public figure. "In Memoriam
+> Philip Duke of Edinburgh" classifies as `civic`.
+>
+> **On scope.** The brief asked for two files and no modifications. PR #7 changed
+> 29, including four schema files, another agent's dataset, and a rival
+> implementation of two of Vibe's queued tasks. Only the footnote work and the
+> tower views were taken; the rest was dropped, and CompLib in particular
+> collided with Vibe's open PR #6, which had correctly numbered its schema file
+> 006 where PR #7 used 005 — already taken. **Two files. Nothing else.**
 
 **One deliverable, and it is a number, not a page.**
 
