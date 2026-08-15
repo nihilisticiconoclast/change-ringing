@@ -52,6 +52,32 @@ attribution is owed if any output of this project is published.
   5% first proposed -- there is no discrepancy for a tolerance to absorb, and 5%
   of a 30-day window is around a hundred records. Transient shortfalls are the
   retry loop's job.
+- **Corpus span: 2018-2024, seven complete years, 156,513 performances.** Each
+  year is committed as four CSVs under `data/bellboard/`, and no year was
+  accepted until its performance count matched `search.php` for the same window
+  **exactly** -- the completeness gate above, run per 30-day window at fetch time.
+
+  | Year | Performances | Ringers | Footnotes | Flags | Re-checked against `search.php` |
+  | --- | ---: | ---: | ---: | ---: | --- |
+  | 2018 | 25,260 | 176,769 | 29,714 | 898 | 2026-08-15, exact |
+  | 2019 | 24,497 | 163,848 | 26,815 | 1,236 | 2026-08-15, exact |
+  | 2020 | 10,689 | 57,541 | 12,891 | 2,312 | 2026-08-15, exact |
+  | 2021 | 16,729 | 78,952 | 18,222 | 6,640 | gate only, at fetch time |
+  | 2022 | 28,212 | 180,584 | 32,524 | 6,540 | gate only, at fetch time |
+  | 2023 | 25,859 | 183,509 | 31,362 | 4,650 | gate only, at fetch time |
+  | 2024 | 25,267 | 172,041 | 31,787 | 2,754 | gate only, at fetch time |
+  | **Total** | **156,513** | **1,013,244** | **183,315** | **25,030** | |
+
+  The last column is a deliberate distinction. 2018, 2019 and 2020 were each
+  re-queried against `search.php` as a whole year during review and agreed to the
+  record. 2021-2024 were gated the same way per window when they were fetched,
+  but have not been re-checked as whole years since; the counts above are of the
+  committed CSVs, which is a different claim from "verified today".
+
+  **2020 is not missing data -- it is the pandemic.** Towers were shut for most of
+  the year and the corpus records a 56% fall against 2019, which `search.php`
+  confirms to the record. The 2023 figure (25,859) is also the one quoted from
+  `search.php` on 2026-08-09 above, an independent agreement a year apart.
 
 ## CCCBR Methods Library
 
