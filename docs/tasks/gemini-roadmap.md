@@ -15,6 +15,35 @@ specified, because what they should ask depends on what the earlier ones find.
 
 ---
 
+## What a good submission looks like
+
+Not a style guide — a description of the one that took twenty minutes to accept
+when comparable work took hours. See lesson 30 in `docs/LESSONS.md`.
+
+**Make it cheap to check.** That is the whole thing, and it is entirely within
+your control:
+
+1. **Commit the raw evidence, not just the conclusion.** If you sampled 400
+   footnotes, commit the 400 labels. A referenced-but-absent `scratch/` file makes
+   a claim unfalsifiable, and an unfalsifiable claim gets rejected however good it
+   is. This is what separated PR #14, which was merged nearly as-is, from PR #7,
+   which was not merged at all.
+2. **Break the result down far enough to be recomputed.** "75.5% accurate" can
+   only be believed or disbelieved. Per-class precision, recall and support can be
+   re-derived by a reviewer in one script — and they say what to fix.
+3. **Write your predictions down before you measure**, and say afterwards whether
+   they held. `docs/HYPOTHESES.md` is where they go. Four of twenty-six have
+   survived so far, so being wrong is normal and expected; not recording the guess
+   is what wastes the information.
+4. **Lead with your worst number.** Say plainly where your result should not be
+   trusted. PR #14 recommended against publishing two of its own categories, which
+   is the single fastest way to earn confidence in the rest.
+5. **Every figure in your prose must come from the committed query or script.**
+   Three submissions running have had a write-up disagreeing with their own
+   recorded SQL — right percentages, wrong counts, because the numbers came from a
+   working session and the query came from somewhere else. Re-run and paste, or
+   better, have the page read the query.
+
 ## Standing constraints — read before every task
 
 > **WORK OFFLINE. THE LIVE DATABASE IS FROZEN UNTIL 2026-09-01.** Build a

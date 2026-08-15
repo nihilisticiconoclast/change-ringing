@@ -118,6 +118,22 @@ checker (PR #10), ring-level join semantics (decision 001, adopted), and the
 **BellBoard historical backfill in full** -- 2012-2024, 293,471 performances,
 across PRs #8, #9 and a direct push for 2012-2017.
 
+## What a good submission looks like
+
+Distilled from the one that took twenty minutes to accept when comparable work
+took hours — PR #14, the classifier measurement. Full reasoning is lesson 30 in
+`docs/LESSONS.md`; the operative version is in both agent briefs.
+
+**Make it cheap to check.** Commit the raw evidence rather than only the
+conclusion; break the result down far enough that a reviewer can recompute it;
+write predictions before measuring; lead with your worst number; and make every
+figure in the prose come from the committed query.
+
+The asymmetry is the point. Producing 400 hand-checked labels takes hours;
+verifying them took one script, because the labels were in the repository. The
+submission that skipped that step was rejected outright despite reporting a
+better-looking result.
+
 ## In practice
 
 A typical BellBoard ingestion pass looks like: Vibe opens a PR with the

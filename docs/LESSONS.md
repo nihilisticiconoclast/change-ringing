@@ -548,6 +548,69 @@ with `(-count, key)` tie-breaks. Verified by building twice under different
 `PYTHONHASHSEED` values and comparing SHA-256. **Determinism is not a nicety in a
 repository that commits its output; it is what makes the diff mean anything.**
 
+### 30. The best submission was the one engineered to be cheap to check
+
+Almost every lesson here is drawn from something going wrong. This one is not.
+
+Over a dozen agent submissions, one stood out — PR #14, the measurement of the
+footnote occasion classifier — and it is worth being precise about *why*, because
+the reason is reproducible and none of it is about the author being cleverer.
+
+**It cost hours to produce and about twenty minutes to check.** That asymmetry
+was not luck. Four choices created it, and a contributor can make all four
+deliberately:
+
+1. **It committed the evidence, not just the conclusion.**
+   `data/footnote_occasion_labels.csv` — 400 rows, the raw oracle — is in the
+   repository. So the first question a reviewer must ask ("is this ground truth
+   independent, or is it the classifier's own output again?") was answerable by
+   running one script: 98 of the 400 labels disagree with the classifier, so it
+   is independent. The predecessor that failed, PR #7, did not commit its sample.
+   Its `scratch/oracle_300_raw.json` was referenced and absent, and **that alone
+   made its 100.00% unfalsifiable** regardless of the circular-oracle bug behind
+   it. Committing the evidence is what converts a claim into something a reviewer
+   can attack.
+
+2. **It reported per-class figures, not an aggregate.** "75.5% accurate" is a
+   number you can only believe or disbelieve. Eleven rows of precision, recall
+   and support are a number you can *recompute* — I did, and all eleven matched
+   to the decimal — and they tell you what to fix. The aggregate says the
+   classifier is imperfect; the breakdown says `civic` precision is 38.8% and the
+   royal-death patterns are eating memorial and funeral records.
+
+3. **It wrote its predictions down before measuring.** A short section listing
+   what the author expected, including "civic will suffer severe precision loss".
+   That turns a review from "do I trust this?" into "did the stated prediction
+   survive?", which is a much cheaper question.
+
+4. **It led with its own worst number and argued against its own usefulness.**
+   The recommendation was that `civic` and `practice` counts should not be
+   published. A submission that volunteers where it should not be trusted has
+   already done the reviewer's most expensive work.
+
+The spectrum across three submissions in one afternoon makes the point better
+than the abstraction does:
+
+| | Verification cost | Outcome |
+| --- | --- | --- |
+| PR #7 | Impossible — sample not committed, oracle circular | Rejected |
+| PR #15 | Expensive — every figure had to be re-derived, and the prose turned out to disagree with its own committed query | Merged after rework |
+| PR #14 | Twenty minutes — run the committed CSV against the classifier | Merged nearly as-is |
+
+The analysis quality in #15 was excellent; it found something a reviewer's own
+seed measurement had missed. It still took an order of magnitude longer to accept,
+purely because of how it was packaged.
+
+**This is lesson 1 applied to a deliverable rather than a project.** Choosing work
+where checking is far cheaper than producing is the same instinct as *shaping a
+submission* so that checking is far cheaper than producing. The second is
+something a contributor controls completely, and it is the single highest-leverage
+thing an agent can do to get its work accepted quickly.
+
+The brief should ask for it explicitly: **commit the raw evidence, break the
+result down far enough to be recomputed, state predictions before measuring, and
+say plainly where the result should not be trusted.**
+
 ---
 
 ## Where the predictions are kept
