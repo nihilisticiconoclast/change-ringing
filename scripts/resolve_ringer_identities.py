@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Ringer Identity Resolution Engine for Change Ringing Corpus (Gemini Task 3).
+Ringer Identity Resolution Engine for Change Ringing Corpus (Gemini Task 3 / Roadmap Item 9).
 
-Resolves naming variations, initials, and diminutives across 355,550 ringer performance
-records (51,126 peals) using multi-signal orthographic matching and band co-occurrence networks.
+Resolves naming variations, initials, and diminutives across 1,969,949 ringer performance
+records (293,471 performances, 2012–2024) using multi-signal orthographic matching,
+anti-conflation middle-initial guards, and band co-occurrence networks.
 
 Outputs:
     data/ringer_identity_candidates.csv
@@ -241,19 +242,29 @@ def resolve_identities(db_path: Path, out_path: Path):
         parent[i] = find(parent[i])
         return parent[i]
 
-    def has_first_name_conflict(c_members1, c_members2):
-        """Check if merging two clusters would place two mutually conflicting full first names together."""
+    def middle_initials_conflict(mid1: list, mid2: list) -> bool:
+        """Check if two sets of middle initials are mutually contradictory."""
+        if not mid1 or not mid2:
+            return False
+        min_len = min(len(mid1), len(mid2))
+        for k in range(min_len):
+            if mid1[k] != mid2[k]:
+                return True
+        return False
+
+    def has_cluster_conflict(c_members1, c_members2):
+        """Check if merging two clusters would place two mutually conflicting full names or middle initials together."""
         for m1 in c_members1:
-            f1, _, _, can1 = parse_name(m1)
-            if len(f1) <= 1:
-                continue  # Initial only, not a hard conflict
+            f1, mid1, _, can1 = parse_name(m1)
             for m2 in c_members2:
-                f2, _, _, can2 = parse_name(m2)
-                if len(f2) <= 1:
-                    continue  # Initial only
-                # Both are full first names: check if they are compatible
-                if can1 != can2 and f1.lower() != f2.lower():
-                    return True  # Hard conflict (e.g. Derek vs Dylan, John vs James)
+                f2, mid2, _, can2 = parse_name(m2)
+                # 1. First name conflict
+                if len(f1) > 1 and len(f2) > 1:
+                    if can1 != can2 and f1.lower() != f2.lower():
+                        return True
+                # 2. Middle initial conflict
+                if middle_initials_conflict(mid1, mid2):
+                    return True
         return False
 
     def union(i, j, score, rationale):
@@ -262,8 +273,8 @@ def resolve_identities(db_path: Path, out_path: Path):
         if root_i == root_j:
             return
 
-        # Check if merging would violate full first-name incompatibility
-        if has_first_name_conflict(cluster_members[root_i], cluster_members[root_j]):
+        # Check if merging would violate full first-name or middle-initial incompatibility
+        if has_cluster_conflict(cluster_members[root_i], cluster_members[root_j]):
             return  # Block merge: prevent ambiguous initial from bridging two distinct people
 
         parent[root_i] = root_j
@@ -274,7 +285,7 @@ def resolve_identities(db_path: Path, out_path: Path):
         match_evidence[pair_key] = {"score": score, "rationale": rationale}
 
     total_pairs_evaluated = 0
-    total_matches_found = 0
+    candidate_matches = []
 
     for s_lower, names in surname_groups.items():
         if len(names) <= 1:
@@ -318,10 +329,15 @@ def resolve_identities(db_path: Path, out_path: Path):
                         rationale.append(f"Initial/name match ({name_score:.2f}) + Network (Band {band_sim:.2f}, Tower {tower_sim:.2f})")
 
                 if is_match:
-                    union(n1, n2, combined_score, "; ".join(rationale))
-                    total_matches_found += 1
+                    candidate_matches.append((combined_score, n1, n2, "; ".join(rationale)))
 
-    print(f"  Evaluated {total_pairs_evaluated:,} candidate pairs. Formed {total_matches_found:,} identity links.", flush=True)
+    # Sort candidate matches by combined score descending so strongest evidence merges first
+    candidate_matches.sort(key=lambda x: -x[0])
+
+    for score, n1, n2, rationale in candidate_matches:
+        union(n1, n2, score, rationale)
+
+    print(f"  Evaluated {total_pairs_evaluated:,} candidate pairs. Formed {len(match_evidence):,} identity links.", flush=True)
 
     # 5. Extract clusters and select canonical name
     clusters = collections.defaultdict(list)
