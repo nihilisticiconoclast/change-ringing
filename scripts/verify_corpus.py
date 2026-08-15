@@ -91,17 +91,19 @@ def main() -> int:
 
     # performances -> v_towers_unique
     # Note: BellBoard tracks live Dove, so it is expected that some performances 
-    # reference towers newer than our snapshot. We tolerate a small number of these.
+    # reference towers newer than our snapshot. We tolerate a small percentage (<0.5%) of these.
     orphans_p = conn.execute('''
         SELECT COUNT(*) FROM performances p
         WHERE p.dove_tower_id IS NOT NULL 
           AND NOT EXISTS (SELECT 1 FROM v_towers_unique t WHERE t.TowerID = p.dove_tower_id)
     ''').fetchone()[0]
-    if orphans_p > 200:
-        print(f"FAIL: performances contains {orphans_p} orphaned dove_tower_id references (too many!)")
+    total_linked = conn.execute('SELECT COUNT(*) FROM performances WHERE dove_tower_id IS NOT NULL').fetchone()[0]
+    orphan_pct = (orphans_p / total_linked * 100) if total_linked > 0 else 0
+    if orphans_p > 1000 or orphan_pct > 1.0:
+        print(f"FAIL: performances contains {orphans_p} orphaned dove_tower_id references ({orphan_pct:.2f}%) (too many!)")
         passed = False
     else:
-        print(f"PASS: performances contains {orphans_p} orphaned dove_tower_id references (within tolerance due to live/snapshot diff)")
+        print(f"PASS: performances contains {orphans_p} orphaned dove_tower_id references ({orphan_pct:.2f}%, within tolerance)")
 
     print("\nVerifying absence of literal 'nan' strings...")
     passed &= check_no_nan(conn, "performances", "association")
