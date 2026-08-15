@@ -268,6 +268,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
+    <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
+    
     <div id="blank-state">
       <h3>Visualizer Ready</h3>
       <p>Select a composition from the sidebar and click <strong>▶ Compose</strong> to begin the visualization.</p>
@@ -275,7 +277,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     
     <div id="viz-container">
       <div id="mynetwork-wrapper">
-        <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
         <div id="mynetwork"></div>
       </div>
       
@@ -360,11 +361,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   function copyText() {
     const comp = compositions[activeIdx];
     if (!comp) return;
-    let txt = "Score: " + comp.score.toFixed(1) + "\n";
-    txt += "Call\tCourse Head\n";
-    txt += "-\t" + comp.path[0] + "\n";
+    let txt = `Score: ${comp.score.toFixed(1)}
+Call\tCourse Head
+-\t${comp.path[0]}
+`;
     for(let i=0; i<comp.calls.length; i++) {
-      txt += comp.calls[i] + "\t" + comp.path[i+1] + "\n";
+      txt += `${comp.calls[i]}\t${comp.path[i+1]}\n`;
     }
     navigator.clipboard.writeText(txt).then(() => {
       const btn = document.querySelector('.copy-btn');
