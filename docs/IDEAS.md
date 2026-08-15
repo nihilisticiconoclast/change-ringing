@@ -25,6 +25,121 @@ same query as the corpus grew:
 Nothing about the method or the library changed. Three thousand Major methods
 moved from "dead" to "in use" on nothing but a wider view.
 
+
+---
+
+## Seams worth mining now the corpus is whole — 2026-08-15
+
+Thirteen years, four corpora, and a method linkage joining the two largest.
+Nearly every idea below is only possible *because* of a join nobody had made,
+and each is stated with what was measured to check it is worth doing, so none
+of them is a hunch.
+
+The theme is deliberate: **things every ringer knows and nobody has measured**,
+and **things sitting in two datasets that have never been put side by side**.
+
+### A. Does a tower ring on the night Dove says it does? — *measured, and the answer is "sort of"*
+
+Dove records a practice night for 3,515 towers. BellBoard records when ringing
+actually happened. **The two have never been compared**, and it is the cheapest
+cross-source check in the repository.
+
+Measured, 897 towers with an unambiguous non-Sunday practice night and at least
+20 reported non-Sunday short performances:
+
+| | |
+| --- | ---: |
+| Towers whose busiest non-Sunday night is the one Dove states | **31.3%** |
+| Expected if the stated night carried no information | 16.7% |
+| Mean share of a tower's non-Sunday ringing on its stated night | **23.8%** |
+| A flat week would give | 16.7% |
+
+So Dove's practice night is real but weak: about twice chance, and **two towers
+in three do not ring most on the night their own Dove entry names.**
+
+The first cut of this got 15.9% agreement and looked like a scandal. It was
+confounded: Sunday service ringing dominates reported short performances at
+almost every tower, so the "busiest day" was Sunday nearly everywhere. Excluding
+Sunday is what turns a mistake into a measurement.
+
+**The caveat is as important as the number.** BellBoard records *reported*
+performances — quarter peals, mostly — and ordinary practice-night ringing is
+almost never reported. So this measures where reported short performances
+cluster, which is a proxy for practice night and not the thing itself. 31.3% is
+a lower bound on agreement, not an estimate of how many Dove entries are stale.
+Anyone publishing this must say so in the same breath.
+
+### B. A ringing career, from the bell people stand behind
+
+`performance_ringers.bell` is populated on **1,897,741 rows** and, as far as I
+can tell, nothing in this project has ever read it. It is the single most
+underused column in the corpus.
+
+Every ringer knows the progression — you learn on the treble, graduate to the
+inside bells, and the tenor or the conducting comes later. Nobody has watched it
+happen to real people at scale. **6,563 ringers have 50 or more appearances
+spanning five or more years**, which is enough to trace an individual arc:
+first appearance, the bells they ring over time, the peal at which they first
+conduct, and whether they stop.
+
+Three questions it answers that cannot be answered any other way:
+
+- **How long is the apprenticeship?** Appearances before a first conducted peal.
+- **Does the progression actually exist?** Or do most people find a bell and
+  stay on it for twenty years — which is what I would bet on.
+- **What does leaving look like?** A ringer's last appearance is in the data.
+  Attrition is a real concern in the exercise and nobody has measured its shape.
+
+Careful with the last one: an absence is not a death or a resignation, it is an
+absence. Published as a cohort rate, never as an individual.
+
+### C. Two populations, one exercise: Sunday service and the peal circuit
+
+Measured on the full corpus:
+
+| | Peals (5,000+ changes) | Shorter |
+| --- | ---: | ---: |
+| Sunday | 6,995 | 67,812 |
+| Saturday | 13,634 | 35,653 |
+| Weekday | 31,870 | 115,719 |
+
+**Sunday is 91% short performances; Saturday is the peal day.** Ringers know
+these are largely different activities and substantially different people. The
+corpus can now test the second half: with 55,326 canonical identities, do the
+Sunday population and the peal population overlap, or is the exercise two
+communities sharing a set of buildings? That is a structural claim about a
+hobby that nobody has been able to check.
+
+### D. Heavy bells as a separate circuit — the Dove-to-BellBoard join nobody uses
+
+Dove carries every ring's tenor weight; BellBoard carries who rang. Joining them
+asks whether the heavy towers — 25cwt and up — draw a distinct and smaller
+population, which is the received wisdom and has never been shown. The same join
+gives the honest version of Gemini's conductor question below: speed controlled
+for weight rather than confounded by it.
+
+### E. What is regional is not what anyone thinks — *measured, and it is a negative*
+
+Exactly **one** library method out of 25,066 is more than 50% concentrated in a
+single county, against a baseline where the busiest county holds 6.6% of all
+ringing. The named repertoire is effectively uniform across England.
+
+Regional distinctiveness is real and lives entirely in what the Methods Library
+does not index: Devon Call Changes at 85% in Devon, Quick Tolling at 99% in
+Lincolnshire, a Cornish doubles call-change form found essentially nowhere else.
+See `queries/findings/method_regionalism.sql` and `regional_traditions.sql`.
+
+The follow-up is normalisation: those are free-text strings, so each tradition's
+count is a lower bound and one recorded under several spellings is invisible.
+
+### Dropped after checking
+
+- **Composition reuse.** `performances.composition` is populated on **0** of
+  293,471 rows, so "do bands ring published compositions or the same handful?"
+  cannot be asked of this corpus. `composer` is there on 24.5%, which supports a
+  much weaker version and not the interesting question. CompLib's 86,040
+  compositions cannot be joined to performances without the composition text.
+
 ---
 
 ## Visualisation options

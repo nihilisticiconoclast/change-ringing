@@ -117,6 +117,9 @@ each can be checked rather than taken on trust.
 | `september_is_one_funeral.sql` | Why "September is the busiest ringing month" was wrong: 54% of the month is one fortnight of 2022 |
 | `remembrance_muffle_rate.sql` | 73% / 74% / 72% / 74% half-muffled on Remembrance Sunday, against a 5.7% baseline |
 | `counted_tolls_are_ages.sql` | "99 Tolling" peaks the day after a 99-year-old died; "96" the day after a 96-year-old; "365" one year after the first lockdown |
+| `method_regionalism.sql` | Whether library methods are regional. **One** of 25,066 exceeds 50% in a single county — the named repertoire is national |
+| `regional_traditions.sql` | What IS regional, once you stop requiring it be a method: Devon Call Changes 85% in Devon, Quick Tolling 99% in Lincolnshire |
+| `conductor_speed_signature.sql` | Whether some conductors ring faster. Between-conductor variation is half the within-conductor variation, so barely |
 
 ## A third thing that will bite you
 

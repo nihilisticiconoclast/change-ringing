@@ -39,6 +39,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from site_chrome import apply_chrome  # noqa: E402
+import sqlfile  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "scripts" / "templates" / "atlas.html"
@@ -63,12 +64,7 @@ def sql(name, index=0):
     loader in this project (schema/001 has a semicolon inside a comment), and
     it reappeared here the moment these queries grew prose worth reading.
     """
-    text = (QUERIES / name).read_text(encoding="utf-8")
-    body = "\n".join(
-        line for line in text.splitlines() if not line.strip().startswith("--")
-    )
-    statements = [s.strip() for s in body.split(";") if s.strip()]
-    return statements[index]
+    return sqlfile.statement(QUERIES / name, index)
 
 year_of = lambda s: (lambda m: int(m.group()) if m else None)(
     re.search(r"(1[0-9]{3}|20[0-9]{2})", str(s or ""))

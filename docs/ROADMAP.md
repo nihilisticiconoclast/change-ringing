@@ -19,6 +19,11 @@ gap was found.
 | 7 | Corpus integrity checker | Vibe | **Merged** 86a00c3 — PR #10, four changes on merge. 49 checks, exits non-zero, negative-tested. Found two live defects on its first run: 25,030 committed flag rows never loaded, and the replica a year behind the CSVs |
 | 20 | Load CompLib in full | Vibe | **Next for Vibe** — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
 | 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
+| 21 | Practice night: Dove's claim vs BellBoard's record | **Gemini** | **Next for Gemini** — the cheapest cross-source check in the repo and never done. Measured seed: 31.3% of 897 towers ring most on their stated night against 16.7% by chance. Brief is Gemini Task 6 |
+| 22 | A ringing career, from `performance_ringers.bell` | **Vibe** | Queued behind item 20; brief is Vibe Task 7. 1,897,741 rows in a column nothing has ever read; 6,563 ringers with 50+ appearances over 5+ years. Apprenticeship length, whether the treble→inside→tenor progression is real, and the shape of attrition |
+| 23 | Sunday service vs the peal circuit — do the people overlap? | **Claude Code** | Mine. Sunday is 91% short performances, Saturday is the peal day; with 55,326 canonical identities the question of whether these are two communities is finally answerable |
+| 24 | Conductor speed, controlled for bell weight | **Claude Code** | Landed as `queries/findings/conductor_speed_signature.sql` from Gemini's `feature/data-insights`, bug fixed. Between-conductor variation is **half** within-conductor variation. Open half: separate band, tower and method from the conductor |
+| 25 | Normalise the free-text `method` column for regional traditions | **Gemini** | After item 21. `regional_traditions.sql` finds Devon Call Changes at 85% in Devon, but on raw strings, so every count is a lower bound |
 
 ### Done
 

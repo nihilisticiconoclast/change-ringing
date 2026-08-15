@@ -1,0 +1,130 @@
+# Runs on every pull request. This is the first CI in this repository, and it
+# exists because five branches in a row arrived cut from the same stale commit
+# and every one of them was caught by a human reading a large diff carefully.
+# That is not a process, it is luck with a good week.
+#
+# Deliberately cheap: no database is built here. Building the replica needs
+# network access to Dove and the Methods Library and takes about fifteen
+# minutes, so the data checks stay in scripts/verify_corpus.py, run locally
+# against a replica. What runs here is everything that needs only the repo.
+name: PR checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  branch-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The safety check needs real history to find the merge base. The
+          # default shallow clone makes `git merge-base` return the wrong answer,
+          # which would make a stale branch look fresh -- the exact failure this
+          # job is here to catch.
+          fetch-depth: 0
+
+      - name: Branch is fresh enough, and revives nothing already rejected
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          git fetch origin main --depth=0 2>/dev/null || git fetch origin main
+          python3 scripts/check_branch_safety.py \
+            --base origin/main \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --body "$PR_BODY"
+
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Every script compiles
+        run: python3 -m compileall -q scripts/
+
+      - name: Nav and footer are identical on all nine pages
+        # Reads docs/*.html and scripts/site_chrome.py only -- no database.
+        run: python3 scripts/verify_chrome.py
+
+      - name: Every schema file and recorded query parses
+        # Applies the schema to an empty in-memory database and prepares each
+        # query against it. Catches a syntax error, or a reference to a column
+        # that does not exist, without needing any data.
+        #
+        # Splitting uses scripts/sqlfile.py rather than a local `split(";")`.
+        # The first draft of this step did split inline, and reported eight
+        # healthy queries as syntax errors -- `near "81"`, `near "he"` -- because
+        # it split before stripping comments and then tried to parse fragments of
+        # English prose. That bug was already documented as having happened three
+        # times here; writing it a fourth time inside the check meant to catch it
+        # is why the splitter now lives in one module.
+        run: |
+          python3 - <<'PY'
+          import pathlib, sqlite3, sys
+          sys.path.insert(0, "scripts")
+          import sqlfile
+          conn = sqlite3.connect(":memory:")
+          bad = []
+          for f in sorted(pathlib.Path("schema").glob("*.sql")):
+              try:
+                  conn.executescript(f.read_text())
+              except sqlite3.Error as e:
+                  bad.append(f"{f}: {e}")
+          for f in sorted(pathlib.Path("queries").rglob("*.sql")):
+              for stmt in sqlfile.statements(f):
+                  try:
+                      # Recorded queries may be parameterised (:group_name, ?).
+                      # EXPLAIN still needs something bound, so bind nothing of
+                      # the right shape and let SQLite check the syntax.
+                      conn.execute("EXPLAIN " + stmt,
+                                   {} if ":" in stmt else [None] * stmt.count("?"))
+                  except sqlite3.ProgrammingError:
+                      pass          # bindings only; the statement itself parsed
+                  except sqlite3.Error as e:
+                      bad.append(f"{f}: {e}")
+                      break
+          for b in bad:
+              print("FAIL", b)
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: No credentials, and no local filesystem paths
+        # The second half exists because 55 links to a contributor's own
+        # machine -- absolute local paths, dead for every other reader --
+        # reached main in two docs and sat there until someone happened to grep.
+        # Note this file cannot contain an example of the pattern it matches.
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          PATTERNS = [
+              (re.compile(r"file:///[a-zA-Z]:/"), "absolute local filesystem path"),
+              (re.compile(r"[A-Za-z]:\\\\Users\\\\"), "Windows user path"),
+              (re.compile(r"\beyJ[A-Za-z0-9_-]{20,}"), "what looks like a JWT"),
+              (re.compile(r"(?i)\b(auth[_-]?token|api[_-]?key|secret)\s*[=:]\s*['\"][A-Za-z0-9_\-]{16,}"),
+               "an inline credential"),
+          ]
+          bad = []
+          for p in pathlib.Path(".").rglob("*"):
+              if not p.is_file() or ".git/" in str(p):
+                  continue
+              if p.suffix.lower() not in {".md", ".py", ".sql", ".yml", ".yaml", ".html", ".txt"}:
+                  continue
+              try:
+                  text = p.read_text(encoding="utf-8", errors="ignore")
+              except OSError:
+                  continue
+              for rx, what in PATTERNS:
+                  for m in rx.finditer(text):
+                      line = text[:m.start()].count("\n") + 1
+                      bad.append(f"{p}:{line}: {what}")
+          for b in bad[:40]:
+              print("FAIL", b)
+          if len(bad) > 40:
+              print(f"... and {len(bad)-40} more")
+          sys.exit(1 if bad else 0)
+          PY

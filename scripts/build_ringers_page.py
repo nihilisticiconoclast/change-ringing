@@ -125,7 +125,13 @@ def build_page():
             pass
 
     # Compute pairwise co-occurrences
-    perf_bands = perf_df.groupby("perf_id")["canon_id"].apply(lambda s: list(set(s.dropna()))).to_dict()
+    # sorted(), not list(set(...)). Python randomises string hashing per process,
+    # so set iteration order differs between runs; that order reached the output
+    # through the tie-breaks in most_common() below and made this page build
+    # differently every time from an unchanged database. Sorting costs nothing
+    # here and makes the page a function of the data.
+    perf_bands = (perf_df.groupby("perf_id")["canon_id"]
+                  .apply(lambda s: sorted(set(s.dropna()))).to_dict())
 
     co_counts = collections.Counter()
     top_partners = collections.defaultdict(collections.Counter)
@@ -150,7 +156,9 @@ def build_page():
         
         # Primary association
         ass_counter = ringer_assocs[c_id]
-        primary_assoc = ass_counter.most_common(1)[0][0] if ass_counter else "Other"
+        # sorted by (-count, name) so equal counts break the same way every run
+        primary_assoc = (min(ass_counter.items(), key=lambda kv: (-kv[1], kv[0]))[0]
+                         if ass_counter else "Other")
         
         # Map to standard color category
         color_cat = "Other Regional / Independent"
@@ -163,14 +171,14 @@ def build_page():
         t_counter = ringer_towers[c_id]
         top_towers_list = [
             {"tower": tower_lookup.get(t_id, f"Tower #{t_id}"), "peals": cnt}
-            for t_id, cnt in t_counter.most_common(5)
+            for t_id, cnt in sorted(t_counter.items(), key=lambda kv: (-kv[1], kv[0]))[:5]
         ]
 
         # Top 5 partners
         p_counter = top_partners[c_id]
         top_partners_list = [
             {"id": p_id, "name": canon_ringers.loc[canon_ringers["canonical_ringer_id"] == p_id, "canonical_name"].values[0], "peals": cnt}
-            for p_id, cnt in p_counter.most_common(5)
+            for p_id, cnt in sorted(p_counter.items(), key=lambda kv: (-kv[1], kv[0]))[:5]
             if p_id in top_200_ids and len(canon_ringers[canon_ringers["canonical_ringer_id"] == p_id]) > 0
         ]
 

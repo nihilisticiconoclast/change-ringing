@@ -10,6 +10,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 from site_chrome import apply_chrome  # noqa: E402
+import sqlfile  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 DB_PATH = str(ROOT / "data" / "change-ringing.db")
@@ -25,11 +26,7 @@ def sql(name, index=0):
     stripped before splitting on ';', not after -- splitting first breaks on any
     semicolon inside a '--' comment.
     """
-    text = (QUERIES / name).read_text(encoding="utf-8")
-    body = "\n".join(
-        line for line in text.splitlines() if not line.strip().startswith("--")
-    )
-    return [s.strip() for s in body.split(";") if s.strip()][index]
+    return sqlfile.statement(QUERIES / name, index)
 
 # Define regex patterns for classification
 CATEGORIES = {
@@ -125,8 +122,17 @@ def generate_html(stats, coverage):
     for cat in valid_cats:
         c_data = stats[cat]["changes"]
         if not c_data: continue
-        # Downsample for JS passing to keep JSON small
-        sampled = random.sample(c_data, min(len(c_data), 2000))
+        # Downsample for JS passing to keep JSON small.
+        #
+        # SEEDED, and the seed is the point. This was a bare random.sample(),
+        # so every rebuild drew a different 2,000 and the committed page changed
+        # on every build whether or not the data had. Two consecutive builds from
+        # an unchanged database produced different SHA-256s, which means no
+        # published version of this page could be reproduced, and `git status`
+        # always showed it modified -- training everyone to ignore that.
+        # A fixed seed keeps the sample statistically arbitrary, which is all it
+        # needs to be, while making the output a function of the data alone.
+        sampled = random.Random(20260815).sample(c_data, min(len(c_data), 2000))
         violin_data.append({"name": cat, "values": sampled})
         
     # Format data for Seasonality Line Chart

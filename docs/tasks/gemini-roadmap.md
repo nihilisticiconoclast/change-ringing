@@ -330,3 +330,78 @@ and recall of the largest category in its first paragraph.
 If the honest answer is "the classifier is fine", that is a good outcome and a
 short PR. If the honest answer is "Firsts / Milestones is 40% precise and should
 come off the page", that is a better one.
+
+---
+
+## Task 6 — Practice night: what Dove claims against what BellBoard records *(next)*
+
+The cheapest cross-source check in this repository, and nobody has run it. Dove
+records a practice night for 3,515 towers. BellBoard records 293,471
+performances with dates. Neither corpus can be checked against itself; together
+they can.
+
+**Seed measurement, so you are not starting cold.** 897 towers with an
+unambiguous non-Sunday practice night and at least 20 reported non-Sunday short
+performances:
+
+- busiest non-Sunday night matches Dove: **31.3%** (chance would be 16.7%)
+- mean share of a tower's non-Sunday ringing on its stated night: **23.8%**
+  (a flat week would give 16.7%)
+
+So the stated night carries roughly twice chance and no more, and two towers in
+three do not ring most on the night their own entry names.
+
+### The confound you must keep out, because it caught me
+
+My first cut compared the busiest day of the week outright and got 15.9%
+agreement, which looks like a scandal about Dove's data quality. It is not.
+**Sunday service ringing dominates reported short performances at nearly every
+tower**, so "busiest day" is Sunday almost everywhere and the comparison
+measures nothing. Excluding Sunday is what makes the question answerable.
+
+### The caveat that must appear beside every number you publish
+
+BellBoard records *reported* performances — quarter peals for the most part.
+**Ordinary practice-night ringing is almost never reported.** So this measures
+where reported short performances cluster, which is a proxy for practice night
+and not the thing itself. 31.3% is a lower bound on agreement, **not** an
+estimate of how many Dove entries are wrong or stale. If your write-up implies
+"68% of Dove practice nights are out of date", it is wrong and will be sent back.
+
+### What to deliver
+
+1. `queries/findings/practice_night_agreement.sql` — the comparison, recorded so
+   it can be re-run. Read it from the file, do not paste a copy into a script.
+2. A short `docs/practice_night.md`: the method, the confound above, the caveat
+   above, and the numbers. Aggregate only; naming a tower whose entry looks stale
+   is fine, since a tower is not a person.
+3. The `Practice` column parsing, stated honestly. 3,515 towers have a value;
+   only 2,167 are an unambiguous single day. `PN: by arrangement` and
+   `Thu (alt)` exist. Say how many you could use and how many you discarded.
+
+### What would make this genuinely good
+
+Split by tower size or activity. A tower reporting 200 quarters is a different
+kind of place from one reporting 20, and the stated practice night may well be
+accurate for the busy ones and stale for the quiet ones. That is a real finding
+if it holds and a real non-finding if it does not — report either.
+
+**Branch fresh from `main`.** `scripts/check_branch_safety.py` now runs on every
+pull request and will fail a branch cut from a stale base.
+
+## Task 7 — Normalise the free-text `method` column *(after Task 6)*
+
+`queries/findings/regional_traditions.sql` finds Devon Call Changes at 85% in
+Devon and Quick Tolling at 99% in Lincolnshire, but it groups on raw strings
+typed by bands. "Devon Call Changes" and "Devon call changes" are two rows. Every
+count there is a lower bound, and a tradition recorded under several spellings is
+missing from the list entirely.
+
+Normalise the non-method entries — the 64,993 rows `performance_methods` records
+as unresolved are the population — into a small closed vocabulary of practices:
+call changes, tolling, rounds, and whatever else the data actually contains.
+**Derive the vocabulary from the data, do not invent it.** Then re-run the
+regional query and report what changes.
+
+This is the same shape as Task 4, and Task 4's lesson applies: a classifier
+without a measured accuracy is a candidate dataset, not a finding.

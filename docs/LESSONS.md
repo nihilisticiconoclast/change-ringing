@@ -462,6 +462,71 @@ became **70.6%** once the window went from four years to seven: about a thousand
 more methods turned out to be in use. The claim was not wrong, but the window
 was doing some of the work the claim attributed to the data.
 
+### 27. `git diff main branch` is not what merging does, and the difference is 2.2 million lines
+
+Four pull request reviews said, in writing, that merging a stale branch "would
+delete" `site_chrome.py`, two published pages, three schema files and the shared
+completeness gate. The evidence was `git diff --stat main <branch>`, which
+reported 2,204,732 deletions for the largest of them.
+
+That figure is real and the conclusion drawn from it was wrong. `git diff A B` is
+a **two-dot** diff: it compares two trees and counts everything B lacks as a
+deletion, including every file A gained after the branch point. A merge is
+**three-way** — it consults the merge base, and a file the branch never touched
+survives untouched. Test-merged all three branches into a scratch worktree:
+
+    branch                              deletions  conflicts  rejected files re-added
+    feature/gemini-footnote-occasions           0         20                        4
+    cleanup/repo-audit-and-consistency          0         26                        4
+    feature/data-insights                       0         16                        1
+
+**Zero deletions, every time.** The danger was imaginary. The cost was real but
+it was a different cost: sixteen to twenty-six conflicted files, and previously
+rejected work arriving as clean additions where it looks like a new contribution.
+
+Two things worth keeping from this. First, the safety check written to prevent
+the problem checked for the wrong thing, because it was written from the same
+misreading — a guard built on a wrong diagnosis guards nothing. Second, the way
+out was thirty seconds of `git merge --no-commit` in a throwaway worktree.
+**When a claim is about what an operation will do, run the operation somewhere
+safe rather than inferring it from a summary of a different operation.**
+
+### 28. The fourth copy of a fix is where it gets written wrong
+
+`build_rhythm_page.py` carried this comment: *"Comments are stripped before
+splitting on ';', not after -- splitting first breaks on any semicolon inside a
+'--' comment. That bug has now appeared three times in this project."* Three
+copies of the correct fix, each with a note saying how often it had recurred.
+
+The CI step written to catch broken SQL then split on `;` inline, and reported
+eight healthy queries as syntax errors: `near "81"`, `near "he"`, `near "these"`
+— fragments of English prose out of the comments. A fourth copy, in the check
+built to catch that class of problem, written by someone who had read the comment
+warning about it an hour earlier.
+
+Counting the recurrences in a comment does not stop the recurrence. Extracting
+the function does. `scripts/sqlfile.py` is now the only copy and the four
+builders call it.
+
+### 29. A page that rebuilds differently every time trains people to ignore its diff
+
+Two published pages produced different bytes from an unchanged database on every
+build. `occasions.html` drew an unseeded `random.sample` of 2,000 values;
+`ringers.html` passed `list(set(...))` into tie-breaks, and Python randomises
+string hashing per process, so set order — and the resulting page — changed run
+to run.
+
+The direct harm is that no published version could be reproduced. The larger harm
+is what it does to everyone's attention: `git status` showed those two files
+modified after every rebuild, whether or not anything had changed, so the only
+sane response was to stop looking. A real change would have arrived in exactly
+the place nobody was reading.
+
+Fixes were one line each — a seeded `Random(...)`, and `sorted()` for `set()`,
+with `(-count, key)` tie-breaks. Verified by building twice under different
+`PYTHONHASHSEED` values and comparing SHA-256. **Determinism is not a nicety in a
+repository that commits its output; it is what makes the diff mean anything.**
+
 ---
 
 ## The honest summary

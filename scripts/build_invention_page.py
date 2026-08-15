@@ -81,6 +81,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from site_chrome import apply_chrome  # noqa: E402
+import sqlfile  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "scripts" / "templates" / "invention.html"
@@ -97,11 +98,7 @@ def sql(name, index=0):
     Comments stripped before splitting on ';', not after -- splitting first breaks
     on any semicolon inside a '--' comment.
     """
-    text = (QUERIES / name).read_text(encoding="utf-8")
-    body = "\n".join(
-        line for line in text.splitlines() if not line.strip().startswith("--")
-    )
-    return [s.strip() for s in body.split(";") if s.strip()][index]
+    return sqlfile.statement(QUERIES / name, index)
 
 
 def build(db_path):

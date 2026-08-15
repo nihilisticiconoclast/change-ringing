@@ -321,3 +321,48 @@ Claude Code needed this for the Blue Line Atlas and wrote it:
 `scripts/notation.py`, verified on 24,404 of 25,066 methods against the
 library's published `lead_head`. Not yours to redo. Noted here rather than
 deleted so nobody wonders where the task went.
+
+---
+
+## Task 7 — A ringing career, from the bell people stand behind *(after item 20)*
+
+`performance_ringers.bell` is populated on **1,897,741 rows** and nothing in this
+project has ever read it. It is the most underused column in the corpus.
+
+Every ringer knows the progression: you learn on the treble, move to the inside
+bells, and the tenor or the conducting comes later. Nobody has watched it happen
+to real people at scale. **6,563 ringers have 50 or more appearances spanning
+five or more years** — enough to trace an individual arc.
+
+### Three questions, and the third needs care
+
+1. **How long is the apprenticeship?** Appearances before a first conducted peal.
+2. **Is the progression real?** Or do most people find a bell and stay on it for
+   twenty years? I would bet on the second; measure it rather than assume either.
+3. **What does leaving look like?** A ringer's last appearance is in the data.
+
+On the third: **an absence is not a death or a resignation, it is an absence.**
+Publish attrition as a cohort rate — "of ringers first seen in 2014, N% have no
+appearance after 2020" — never as a statement about an individual, and never a
+list of names. The corpus cannot distinguish someone who stopped ringing from
+someone who moved, changed name, or rings at a tower that does not report.
+
+### Data notes, measured
+
+- `bell` holds single bells (`'1'`, `'11'`) and handbell pairs (`'1-2'`, and
+  runs up to `'1-2-3-4-5-6-7-8-9-10-11-12-13-14'`). Handle both; the pairs are
+  handbell performances and are a different activity.
+- Bell number alone is not comparable across towers: the tenor of a six is the
+  6, of a twelve the 12. **Normalise by the number of bells rung** or the
+  comparison is meaningless.
+- Identity comes from `data/ringer_identity_candidates.csv`, 55,326 canonical
+  entities. It is a candidate dataset with unmeasured accuracy; say so.
+
+### Deliver
+
+`queries/findings/ringing_careers.sql` plus a short `docs/ringing_careers.md`
+with the numbers and the caveats above. A page can come later if the finding
+justifies one.
+
+**Branch fresh from `main`.** `scripts/check_branch_safety.py` runs on every pull
+request and fails a branch cut from a stale base.
