@@ -68,13 +68,43 @@ attribution is owed if any output of this project is published.
 ## CompLib (Composition Library)
 
 - URL: https://complib.org
-- Not yet ingested
-- **Correction (2026-08-14):** this file previously said "API: documented".
-  `https://complib.org/api` returns 571 bytes -- a client-rendered application
-  shell with no documentation in the HTML. There may well be an API, but its
-  existence has not been established from that page, and Vibe's Task 2 brief was
-  written on the earlier assumption. Establish what the API actually offers
-  before designing around it, which is what the brief itself says to do.
+- API: https://api.complib.org, documented by an OpenAPI 3.0 spec at
+  https://complib.org/complib.api.yml (rendered as Redoc at
+  https://complib.org/api). The `/api` HTML page is a client-rendered shell
+  with no docs in the HTML itself -- the spec is the file it loads.
+- Ingested via `scripts/ingest_complib.py` into the tables defined in
+  `schema/006_init_complib.sql` (`compositions`, `composition_methods`, and
+  view `v_composition_methods`).
+- Coverage: 86,039 compositions (measured 2026-08-15 via the search
+  endpoint's `count`). The loader walks `/composition/search` page by page.
+- Licence: none stated beyond site terms (`https://complib.org/terms`).
+  CompLib is a community-maintained, freely-browsable public database; treat
+  this corpus as public data with attribution to Composition Library if any
+  derived output is published.
+- Pagination: `/composition/search?page=N&perpage=N` returns `{count, page,
+  perpage, compositions[]}`. The OpenAPI spec says `perpage` defaults to 25
+  but does not state a maximum; the server enforces one -- `perpage > 25`
+  returns HTTP 400 `"perpage maximum 25"`. So a full corpus walk is ~3,400+
+  pages at 25/page. The loader caches each page to disk (`complib-cache/`)
+  and rate-limits (0.5s/page by default) so re-runs do not re-hit the API.
+- Method linkage: the brief asked whether CompLib carries a method
+  identifier matching the CCCBR library. The search payload does not: each
+  composition's `methodDefinitions[]` carries a free-text method `title`
+  (e.g. "Rutland Surprise Major") and `placeNotation`, not a CCCBR id. The
+  `/composition/{id}/rows` endpoint does return a `methodid` for
+  single-method (non-spliced) compositions, and empirically that integer
+  corresponds to the CCCBR `method_id` by the rule `method_id = 'm' ||
+  methodid` (11 of 12 sampled resolved; the 12th was a constructed spliced
+  title with no single CCCBR method). That is recorded as
+  `complib_method_id`, and `composition_methods.method_id` is populated by
+  that exact identifier lookup only -- never by fuzzy title matching, which
+  is Gemini's to resolve and Claude Code's to adjudicate. Fetching the
+  `methodid` costs one extra request per composition, so it is opt-in
+  (`--fetch-method-ids`); without it, the free-text `method_title` is the
+  only linkage.
+- Be gentle with the API: it is Cloudflare-fronted, returns ~0.6s/page,
+  and publishes no rate-limit headers. The loader assumes it throttles
+  until shown otherwise, as the brief required.
 
 ## Felstead (CCCBR peal records)
 

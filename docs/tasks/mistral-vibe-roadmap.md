@@ -9,7 +9,7 @@ ones find.
 | # | Task | State |
 | --- | --- | --- |
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
-| 2 | CompLib ingestion | **Active** — full brief below |
+| 2 | CompLib ingestion | **Done** — see brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
 | 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
@@ -59,7 +59,47 @@ time; none are hypothetical.
 
 ---
 
-## Task 2 — CompLib ingestion *(active)*
+## Task 2 — CompLib ingestion *(done)*
+
+**Done.** The API the brief was unsure about exists and is well
+documented: `https://api.complib.org`, with an OpenAPI 3.0 spec at
+`https://complib.org/complib.api.yml` (rendered as Redoc at
+`/api`; the `/api` HTML page is a client-rendered shell, which is
+why an earlier check concluded the API was undocumented -- the
+spec is the YAML file that shell loads).
+
+Deliverables: `schema/006_init_complib.sql` (the brief said 005,
+but that slot is taken by `005_init_performance_methods.sql`),
+`scripts/ingest_complib.py` (`--init`, `--reset`, `--local-db`,
+matching the other loaders), and a CompLib section in
+`data/SOURCES.md`. The loader caches pages to `complib-cache/` and
+rate-limits (0.5s/page) so re-runs do not re-hit the API.
+
+**What the API offers (verified 2026-08-15):**
+- `/composition/search?page=N&perpage=N` returns
+  `{count, page, perpage, compositions[]}`; `count` is **86,039**.
+- The OpenAPI spec says `perpage` defaults to 25 but does not state
+  a maximum; the server enforces one -- `perpage > 25` returns HTTP
+  400 `"perpage maximum 25"`. A full walk is ~3,400+ pages.
+- A composition's `methodDefinitions[]` carry free-text method
+  `title` and `placeNotation`, **not** a CCCBR method id.
+- `/composition/{id}/rows` returns a `methodid` for single-method
+  compositions (null for spliced). That integer maps to the CCCBR
+  `method_id` by `'m' || methodid` (11/12 sampled resolved). It is
+  recorded as `complib_method_id`; `method_id` is populated by that
+  exact lookup only, never by fuzzy matching. Opt-in via
+  `--fetch-method-ids` because it costs one extra request per comp.
+
+**Row counts from a real run** (bounded, against the local replica):
+4 search pages = 100 compositions, 196 method-definition rows;
+with `--fetch-method-ids`, 54 single-method compositions got a
+CompLib method id and 39 of 196 method-definition rows resolved to
+a CCCBR `method_id`. Re-runs converge (idempotent). The full
+86,039-composition load is not run here -- it is ~3,400 pages and
+the loader is designed for it, but the PR establishes the pipeline
+and verifies it on a bounded slice.
+
+Original brief, retained for reference:
 
 Add composition data as the fourth corpus. Read `data/SOURCES.md`,
 `schema/003_init_methods.sql` and `scripts/ingest_methods.py` first — this
