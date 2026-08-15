@@ -5,9 +5,14 @@ Options, not commitments. Every figure below was measured against
 be built and where it could go wrong — so a choice can be made on evidence
 rather than on how good the idea sounds.
 
-**What the corpus now holds.** 96,067 BellBoard performances (2021–2024),
-615,086 ringer appearances across 44,280 distinct names, 113,895 footnotes,
-25,066 methods with complete place notation, 63,894 bells, 7,262 rings.
+**What the corpus now holds.** 156,513 BellBoard performances (2018–2024),
+1,013,244 ringer appearances across 54,674 distinct names, 183,315 footnotes,
+25,030 performance flags, 25,066 methods with complete place notation, 63,966
+bells, 7,262 rings, and 86,040 CompLib compositions.
+
+Figures below that predate the 2018–2019 backfill are marked with the window
+they were measured over. A finding stated without a window is a finding waiting
+to change size.
 
 ---
 
@@ -148,7 +153,7 @@ exclude it or it will be visibly wrong to a ringer.
 
 ### D. Why People Ring — the footnote corpus
 
-**The idea.** 113,895 footnotes are free text, and they are where the human
+**The idea.** 183,315 footnotes are free text, and they are where the human
 occasion lives:
 
 | Mentions | Count |
@@ -166,7 +171,7 @@ ringing has ever shown *why* it happened.
 **The pairing with "Tolling":** 4,168 single-bell performances, overwhelmingly
 memorial. Band size confirms it — 4,576 performances have exactly one ringer.
 
-**Why it suits Gemini.** Classifying 113,895 free-text footnotes into occasion
+**Why it suits Gemini.** Classifying 183,315 free-text footnotes into occasion
 types is a large-context task with no published answer.
 
 **Risk, and it is real.** This is data about identifiable people, much of it

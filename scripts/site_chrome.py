@@ -135,8 +135,11 @@ NOTES = {
     ],
     "occasions.html": [
         "Occasions are keyword patterns over footnote text, so the categories "
-        "<strong>overlap and must not be summed</strong>: 22% of footnotes match two or "
-        "more and 27% match none. The unit is footnotes, not performances.",
+        "<strong>overlap and must not be summed</strong> — a large minority of footnotes "
+        "match more than one, and a larger one matches none. Both figures are computed "
+        "and stated on the page above; they are deliberately not repeated here, because "
+        "the version of this note that did repeat them said 27% after the corpus grew "
+        "and the real figure became 29%. The unit is footnotes, not performances.",
         "Only aggregate counts leave the database. <strong>No footnote text and no names "
         "are published</strong> — many footnotes are funeral tributes written by people "
         "who did not anticipate republication.",

@@ -11,7 +11,7 @@ Writes `performance_methods` and `performance_method_unresolved`
 
 The problem
 -----------
-`performances.method` is free text. 58,577 of 96,067 rows (61.0%) match a
+`performances.method` is free text. 100,874 of 156,513 rows (64.5%) match a
 `methods.title` exactly; the rest split three ways:
 
   * ~24,000 are not methods at all -- "Tolling", "General Ringing",
@@ -80,19 +80,20 @@ The three shapes of remaining failure:
 
 Result on the committed snapshot
 --------------------------------
-  performances                96,067
-  with >= 1 method link       69,625  (72.5%)
-  method links written       128,323
+  performances               156,513
+  with >= 1 method link      116,862  (74.7%)
+  method links written       205,825
 
-  high   107,377 links / 66,489 performances
-  low     20,697 links /  2,887 performances
-  medium     249 links /    249 performances
+  high   174,211 links / 112,181 performances
+  low     31,174 links /   4,241 performances
+  medium     440 links /     440 performances
 
-  unresolved                  26,442
-    not_a_method              19,750   tolling, general ringing, call changes
-    spliced_count_mismatch     4,091   the oracle refused it
-    no_title_match             1,994   a method the library does not hold
-    spliced_no_details           599   several methods claimed, none listed
+  unresolved                  39,651
+    not_a_method              25,538   tolling, general ringing, call changes
+    no_title_match             7,221   a method the library does not hold
+    spliced_count_mismatch     5,958   the oracle refused it
+    spliced_no_details           924   several methods claimed, none listed
+    no_stage_word                 10
     no_stage_word                  8
 
 `not_a_method` is not a failure. Tolling and call changes are bells being rung

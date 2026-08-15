@@ -365,6 +365,103 @@ Putting data into an MIT repository does not relicense it, and share-alike
 travels with anything substantially derived. Say so in a file next to the data,
 including the attribution and the note that changes were made.
 
+### 23. Check the build product against its source, not against a plausible range
+
+A database can be internally perfect and simply out of date. Every index
+present, every foreign key resolving, every join identity holding, every row
+count inside its expected range — and a whole year missing.
+
+That is not hypothetical. After a backfill merged, the committed CSVs held
+106,756 performances and the replica held 96,067, and so did the README,
+because the README had been written from the replica. The gap survived a merge
+review and two page rebuilds. Nothing was corrupt; the build had simply not been
+re-run, and no self-consistency check can see that, because the database is
+perfectly consistent with itself.
+
+The check that finds it is the one comparing the build product against the thing
+it is built from. Here that is exact rather than approximate, because the CSVs
+are committed: 156,513 must equal 156,513, not "be in a plausible range".
+
+Which is the second half of the lesson. **A range on a value that is exactly
+knowable is a weaker check wearing a stronger one's clothes.** The same corpus
+checker had `performance_flags: (0, 1000)` and the table held 0 — passing, for
+as long as the flags existed, because the loader that should have read those
+25,030 committed rows had never been written. Nobody looked, because it was
+green. Reserve ranges for quantities that genuinely drift, like a live upstream
+snapshot, and assert equality everywhere the true number is derivable.
+
+### 24. A silent step is worse than a missing one
+
+Two failures in one afternoon, same shape.
+
+`build_local_db.py` called `run([sys.executable, resolver, ...])` while `run()`
+already prepended `sys.executable`, so Python received its own ELF binary as a
+source file. The method-linkage step had therefore *never run inside a build* —
+the populated tables came from someone running the resolver by hand. What hid it
+for so long was that `run()` echoed `cmd` rather than the argv it actually
+executed, so the printed command line was correct and the error pointed at
+`/usr/local/bin/python3` rather than at the caller. **Echo the command you run,
+not the command you were asked to run.**
+
+An agent's pipeline orchestrator did the more direct version:
+
+```python
+res = subprocess.run(['python', script], capture_output=True, text=True)
+if res.returncode != 0:
+    print(f'Error in {script}: {res.stderr}')
+```
+
+— print, continue, exit 0, and the caller then announces `SUCCESS: Entire
+Pipeline Completed`. A run in which every page failed to build is
+indistinguishable, by exit code, from a clean one. An orchestrator whose exit
+code means nothing is worse than no orchestrator, because people trust it.
+
+### 25. A gate you have not tried to break is a decoration
+
+The corpus checker arrived with a negative test, which is rare and right. It
+still had a hole, and the hole was found by deleting the one object the checker
+most exists to defend — `v_towers_unique`, the whole artefact of decision 001 —
+from a copy of the database. The run reported `SKIP` and exited 0, because
+missing views were treated as an unapplied optional migration.
+
+The generalisation: **for each thing a check claims to protect, delete it and
+confirm the check goes red.** Not "does it pass on good input" — it does, that is
+easy — but "does it fail on the specific bad input it names in its own
+docstring".
+
+Two related traps, both live in the same file. A dead predicate that always
+returned `False` sat next to an inlined version implementing a cruder rule than
+the dead one's docstring described; the docstring was right and the running code
+was wrong, and the crude rule would have turned a correctness fix into a red
+build. And the join-identity check joined a hand-written `SELECT DISTINCT
+TowerID FROM towers` rather than the view it was written to verify — an inline
+equivalent passes happily while the real object is broken. That is lesson 20
+again, from the other direction: a check must exercise the object the codebase
+uses, not a lookalike.
+
+### 26. When the window changes, the prose does not
+
+Backfilling three extra years moved every figure on the site, and the figures
+updated themselves, because they are generated. The *words around them* did not.
+One page's standfirst ended with a literal `(2021–2024)` beside counts that had
+just become seven years wide, so the sentence was false while looking freshly
+built — the worst combination, because the generated numbers beside it vouch for
+it. Elsewhere, "44,280 names" and "113,894 footnotes" sat in the shared
+navigation module, one stale figure replicated across nine pages by the very
+module written to stop figures being replicated across nine pages.
+
+**Any date range or count stated in prose should be computed by the same query
+that produced the numbers next to it.** Where a page genuinely does use a
+narrower window than the corpus, say which, and say why in the first sentence of
+the caveat — the Rhythm page is still 2021–24 on purpose, because its anomaly
+rule compares each day against its own neighbourhood and a longer run changes
+which days qualify.
+
+There is a finding hiding in this one. "81.6% of Major methods were never rung"
+became **70.6%** once the window went from four years to seven: about a thousand
+more methods turned out to be in use. The claim was not wrong, but the window
+was doing some of the work the claim attributed to the data.
+
 ---
 
 ## The honest summary

@@ -1,8 +1,8 @@
 -- Performance -> Method linkage
 --
--- The gap this fills. `performances.method` is free text: 96,067 rows, of which
+-- The gap this fills. `performances.method` is free text: 156,513 rows, of which
 -- 61.0% match a `methods.title` exactly and the rest do not. Until now there was
--- no link at all between the 96,067 performances and the 25,066-method library,
+-- no link at all between the 156,513 performances and the 25,066-method library,
 -- so no question could be asked that needed both -- which methods are actually
 -- rung, how often a method is rung relative to its age, whether Surprise Major
 -- dominates because there are more of them or because they are rung more.

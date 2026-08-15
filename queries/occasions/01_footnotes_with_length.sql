@@ -3,7 +3,7 @@
 -- categorisation itself happens in scripts/build_occasions_page.py, because it
 -- is regex work that SQLite cannot express.
 --
--- ONE ROW PER FOOTNOTE, NOT PER PERFORMANCE. 113,894 footnotes attach to 76,163
+-- ONE ROW PER FOOTNOTE, NOT PER PERFORMANCE. 183,315 footnotes attach to 122,573
 -- performances -- a mean of 1.5 each -- so every count derived from this query
 -- is a count of footnotes. Calling them performances overstates by half, and
 -- the page says "footnotes" everywhere for that reason.

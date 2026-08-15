@@ -71,7 +71,7 @@ Getting this wrong put 946 methods in a virtual tower that in fact has 115.
 | --- | --- |
 | `01_footnotes_with_length.sql` | Every footnote with its date and performance length, plus the denominators the page needs to state its own coverage |
 
-One row per **footnote**, not per performance: 113,894 footnotes attach to 76,163
+One row per **footnote**, not per performance: 183,315 footnotes attach to 122,573
 performances. Calling those counts performances overstates by half, which the page
 did until it was corrected.
 
@@ -87,7 +87,7 @@ each can be checked rather than taken on trust.
 | `founder_reach_by_methods.sql` | Why the `Group` column matters: Taylor under two names |
 | `first_peals_by_decade.sql` | Post-war growth in new methods |
 | `unlinked_performances.sql` | The 8,623 records deliberately left unlinked, and why |
-| `most_rung_methods.sql` | Which methods are actually rung — and that 81.6% of Major methods were not rung once in four years |
+| `most_rung_methods.sql` | Which methods are actually rung — and that 70.6% of Major methods were not rung once in 2018–24 (81.6% over 2021–24 alone, which is how much a narrow window flatters that claim) |
 | `method_linkage_coverage.sql` | The coverage and confidence claims for `schema/005`, including the unresolved half |
 | `september_is_one_funeral.sql` | Why "September is the busiest ringing month" was wrong: 54% of the month is one fortnight of 2022 |
 | `remembrance_muffle_rate.sql` | 73% / 74% / 72% / 74% half-muffled on Remembrance Sunday, against a 5.7% baseline |
@@ -96,7 +96,8 @@ each can be checked rather than taken on trust.
 ## A third thing that will bite you
 
 **Any aggregate over `perf_date` needs to say whether the national days are in
-or out.** 24 days carry 21.0% of the four-year corpus. A monthly total that
+or out.** 24 days carry 21.0% of the 2021–24 window (the corpus now runs 2018–24;
+the Rhythm page is still restricted to those four years, see its footer). A monthly total that
 includes them is measuring the news: September leads the raw figures and comes
 7th once they are removed, and the weekly trough moves from Wednesday to Monday.
 `queries/rhythm/01_daily_profile.sql` gives you the per-day counts to exclude

@@ -168,7 +168,7 @@ attribution is owed if any output of this project is published.
   Central Council, transcribed by roughly 100 volunteers over several thousand
   hours. Maintained by the ICT and Peal Records Committees.
 - Linkage: `tbid.php?tid=<TowerBase ID>` -- the identifier BellBoard publishes as
-  `towerbase-id`, present on 79,918 of our 96,067 performances across 5,600
+  `towerbase-id`, present on 132,034 of our 156,513 performances across 5,891
   distinct towers. It is a **different identifier space from Dove's `TowerID`**:
   zero of our 5,600 values resolve against `dove.TowerID`, which is why the
   column had been sitting unused. Twelve sampled identifiers were probed

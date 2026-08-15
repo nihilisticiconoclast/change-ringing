@@ -2,7 +2,11 @@
 
 **Status: candidate dataset. Do not cite these counts as findings.**
 
-`data/footnote_occasions.csv` classifies all **113,895** BellBoard footnotes into
+*Regenerated 2026-08-15 against the 2018–2024 corpus: 183,315 footnotes, up from
+113,895. The accuracy is no better known than it was — a larger unmeasured
+dataset is still an unmeasured dataset.*
+
+`data/footnote_occasions.csv` classifies all **183,315** BellBoard footnotes into
 eleven occasions and five subject types, produced by
 `scripts/classify_footnote_occasions.py`. It is a genuine improvement on the
 eight keyword patterns behind `docs/occasions.html` — more classes, and a
@@ -65,7 +69,7 @@ Others seen in the same 25: "50th together" → `first-performance` rather than
 
 ## The confidence column is not a confidence column
 
-Every one of the 113,895 rows is `high`. A scale that only ever emits its top
+Every one of the 183,315 rows is `high`. A scale that only ever emits its top
 value carries no information, and it should not be read as the classifier
 expressing certainty — it expresses nothing. Treat the column as absent until it
 is populated with something measured.
@@ -104,5 +108,5 @@ python scripts/classify_footnote_occasions.py --local-db data/change-ringing.db
 Byte-identical to the committed CSV, verified by SHA-256. The writer's
 `lineterminator` had to be made explicit to achieve that: `csv.writer` defaults
 to CRLF on every platform, so the emitted file differed from the committed one
-byte-for-byte while every one of the 113,895 rows was identical — the sort of
+byte-for-byte while every one of the rows was identical — the sort of
 difference that makes a reviewer unable to tell reproduction from drift.
