@@ -85,7 +85,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    .play-btn:hover { background: var(--accent); }
+    .play-btn:hover { background: var(--bronze-soft, #B8873F); }
     .comp-card {
       padding: 16px;
       border-bottom: 1px solid var(--rule);
@@ -140,7 +140,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
-    <button class="play-btn" onclick="playAnimation()">▶ Play Animation</button>
+    <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
     <div id="mynetwork"></div>
   </div>
 </div>
@@ -280,9 +280,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     const hlColor = isDark ? "#C9974A" : "#8A5F22";
     const rdColor = isDark ? "#63A579" : "#2F6D53";
     
-    // Clear the datasets
-    visNodes.clear();
-    visEdges.clear();
+    // Completely destroy and recreate network so physics resets
+    const container = document.getElementById('mynetwork');
+    visNodes = new vis.DataSet([]);
+    visEdges = new vis.DataSet([]);
+    const data = { nodes: visNodes, edges: visEdges };
+    const options = {
+      physics: {
+        solver: 'forceAtlas2Based',
+        forceAtlas2Based: { gravitationalConstant: -100, springLength: 80 }
+      }
+    };
+    if (network) network.destroy();
+    network = new vis.Network(container, data, options);
     
     const nodeIds = new Set();
     
@@ -305,6 +315,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     animationTimer = setInterval(() => {
       if (step >= comp.calls.length) {
         clearInterval(animationTimer);
+        network.fit({ animation: true });
         return;
       }
       
@@ -333,6 +344,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
       });
       
+      network.fit({ animation: true });
       step++;
     }, 400); // add one step every 400ms
   }
