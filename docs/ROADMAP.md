@@ -14,7 +14,7 @@ gap was found.
 | --- | --- | --- | --- |
 | 1 | Backfill completeness gate | Vibe | **Urgent** — the run captured 16% and reported success |
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
-| 3 | Footnote occasion classification (option D) | Gemini | **Done** — `docs/occasions.html` |
+| 3 | Footnote occasion classification (option D) | Gemini | **Done** — `data/footnote_occasions.csv`, `docs/footnote_occasions.md` |
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Next** |
 | 8a | Method **invention** timeline (option C, first half) | Claude Code | Ready — full history already held |
 | 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |

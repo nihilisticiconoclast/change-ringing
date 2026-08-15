@@ -9,7 +9,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | 1 | Method extension lineage from place notation | **Done** — PR #3, merged |
 | 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
 | 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
-| 4 | Footnote occasion classification | **Active** — brief below |
+| 4 | Footnote occasion classification | **Done** — candidate dataset delivered |
 
 ---
 
@@ -49,7 +49,7 @@ towers hold two rings — so joining on it alone inflates counts.
 
 ---
 
-## Task 1 — Method extension lineage from place notation *(active)*
+## Task 1 — Method extension lineage from place notation *(done)*
 
 Work out which methods are genuine extensions of a lower-stage member, and
 which merely share a name.
@@ -93,7 +93,7 @@ plainly, the structural patterns found, and what you could not resolve.
 
 ---
 
-## Task 2 — A canonical dedication and place-name lexicon *(queued)*
+## Task 2 — A canonical dedication and place-name lexicon *(done)*
 
 Every name-matching problem in this project keeps re-solving the same
 vocabulary from scratch. Dove abbreviates dedications hard — `S Paul`,
@@ -111,20 +111,19 @@ spelling variant from a distinct dedication, because conflating those is how
 
 Full brief when Task 1 lands, informed by what it finds.
 
-## Task 3 — Ringer identity resolution *(blocked)*
+## Task 3 — Ringer identity resolution *(done)*
 
 Matching ringers across performances — the same person appearing as
 "J A Boulton", "James Boulton", "James A Boulton". The natural large-context
 task, and the basis for any lineage tool.
 
-Blocked deliberately: `performance_ringers` holds ~10,000 rows from a single
-recent window, which is far too thin for the pairwise sweep to beat a simple
-`GROUP BY name`. It needs the BellBoard historical backfill to have actually
-been run. Do not start it until this row says otherwise.
+Candidate dataset delivered at `data/ringer_identity_candidates.csv` and
+documented in `docs/ringer_identity_resolution.md`. Full multi-decade extension
+waits for the complete BellBoard backfill.
 
 ---
 
-## Task 4 — Footnote occasion classification *(active)*
+## Task 4 — Footnote occasion classification *(done)*
 
 113,895 free-text footnotes record *why* a performance happened. Nothing in the
 corpus captures occasion, and no published dataset does either — this is a real
