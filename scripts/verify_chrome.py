@@ -36,7 +36,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from site_chrome import PAGES, HREFS, REPO  # noqa: E402
+from site_chrome import PAGES, HREFS, REPO, NO_SITE_MAP  # noqa: E402
 
 DOCS = Path(__file__).parent.parent / "docs"
 SCRIPTS = Path(__file__).parent
@@ -79,7 +79,16 @@ def check_page(href):
     foot = block(html, r'<ul class="site-map">.*?</ul>')
     if nav is None:
         fails.append(f"{href}: no nav")
-    if foot is None:
+    # One page deliberately has no footer site-map, because its body is one --
+    # see site_chrome.NO_SITE_MAP. Assert BOTH directions, so the exemption
+    # cannot quietly grow to cover a page that lost its footer by accident.
+    if href in NO_SITE_MAP:
+        if foot is not None:
+            fails.append(f"{href}: has a footer site-map, but is in NO_SITE_MAP "
+                         f"because its body already lists every page")
+        if '<footer class="site-footer"' not in html:
+            fails.append(f"{href}: no footer at all")
+    elif foot is None:
         fails.append(f"{href}: no footer site-map")
     if nav is None or foot is None:
         return fails

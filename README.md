@@ -151,6 +151,19 @@ can be checked instead of taken on trust.
       `scripts/resolve_ringer_identities.py`). **A candidate dataset: its accuracy is
       not measured**, and `docs/two_populations.md` shows what unresolved variants do
       to a distribution. Validating it is the open half.
+- [x] A ringing career, from the bell people stand behind (Task 7) --
+      `docs/careers.html`, `docs/ringing_careers.md` and
+      `queries/findings/ringing_careers.sql`, reproduced by
+      `scripts/analyse_ringing_careers.py`. **The folk-model progression --
+      treble to inside to tenor -- is not in the data.** Mean normalised bell
+      position is 0.55 in a ringer's first tenth of a career and 0.55 in their
+      last: no upward drift, and no settling on one bell either -- the median
+      ringer rings across nearly the whole ring over a career. Of ringers with
+      50+ appearances, 72.5% ever conduct and the median waits 11 appearances
+      before the first; restricted to *peals*, 20.0% and a median of 37. ~60%
+      of a 2013 first-seen cohort have no appearance after 2020 (that line
+      crosses COVID). `bell` had been populated on 1,897,741 rows and read by
+      nothing.
 
 ## Hypotheses and observations
 

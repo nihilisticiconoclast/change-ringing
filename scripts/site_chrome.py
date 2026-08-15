@@ -250,12 +250,19 @@ def nav_html(active, dark=False, indent="  "):
             f'{indent}</nav>')
 
 
+# The one page that does not get a site map in its footer. The landing page's
+# whole body IS the site map -- a numbered, ruled list of the same eleven links --
+# so the footer repeated it immediately underneath, in a second style. Everywhere
+# else the footer map earns its place; here it was noise.
+NO_SITE_MAP = {"index.html"}
+
+
 def footer_html(active, dark=False, indent="  "):
     """The footer: every other page, with a one-line description, plus the repo.
 
     The active page is listed too, marked, rather than omitted -- so the footer is
     the same shape on every page and a reader can see the whole site from any of
-    them.
+    them. The exception is NO_SITE_MAP; see the note above it.
     """
     if active not in HREFS:
         raise ValueError(f"{active!r} is not a page; expected one of {HREFS}")
@@ -269,8 +276,10 @@ def footer_html(active, dark=False, indent="  "):
     notes = "".join(
         f'{indent}  <p class="site-note">{n}</p>\n' for n in NOTES.get(active, [])
     )
+    site_map = ("" if active in NO_SITE_MAP else
+                f'{indent}  <ul class="site-map">\n{rows}\n{indent}  </ul>\n')
     return (f'{indent}<footer class="site-footer"{style}>\n'
-            f'{indent}  <ul class="site-map">\n{rows}\n{indent}  </ul>\n'
+            f'{site_map}'
             f'{notes}'
             f'{indent}  <p class="site-note">{_FOOTER_NOTE}</p>\n'
             f'{indent}  <p class="site-note"><a href="{REPO}">Repository</a></p>\n'
