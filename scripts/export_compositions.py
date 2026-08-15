@@ -46,17 +46,23 @@ def main():
     results_to_export = completed if completed else beam
     top_n = results_to_export[:50] # export top 50
     
+    from scripts.composition_core import generate_lead
+    
     export_data = []
     
     for i, state in enumerate(top_n):
         novel = check_novelty(state.calls)
         
-        # We also want to export the path (the sequence of course heads visited).
-        # We can reconstruct it from the calls and graph transitions.
         path = [start_ch]
+        rows = [start_ch]
         current = start_ch
+        
         for call in state.calls:
-            next_ch = graph.transitions[current][call]
+            call_notation = available_calls[call]
+            lead_rows = generate_lead(current, method_body, call_notation)
+            rows.extend(lead_rows)
+            
+            next_ch = lead_rows[-1]
             path.append(next_ch)
             current = next_ch
             
@@ -67,7 +73,8 @@ def main():
             "is_complete": state.current_ch == start_ch and state.length_leads >= min_leads,
             "novel": novel,
             "calls": state.calls,
-            "path": path
+            "path": path,
+            "rows": rows
         }
         export_data.append(comp_data)
         

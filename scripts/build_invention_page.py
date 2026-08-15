@@ -73,7 +73,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     /* Visualizer App Layout */
     .layout {
       display: flex;
-      height: 800px;
+      height: 900px;
       max-width: 1200px;
       margin: 0 auto 64px auto;
       border: 1px solid var(--rule);
@@ -87,13 +87,90 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     }
     .main-view {
       flex: 1;
+      display: flex;
+      flex-direction: column;
       position: relative;
+    }
+    
+    #blank-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px;
+      color: var(--ink-2);
+    }
+    #blank-state h3 { color: var(--bronze); font-weight: 500; font-size: 1.5rem; margin-bottom: 8px; }
+    
+    #viz-container {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+    }
+    
+    #mynetwork-wrapper {
+      flex: 1;
+      position: relative;
+      border-bottom: 1px solid var(--rule);
     }
     #mynetwork {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--ground);
     }
+    
+    .bottom-panels {
+      height: 380px;
+      display: flex;
+      background: var(--surface);
+    }
+    .text-panel {
+      width: 250px;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+    }
+    .svg-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+    }
+    .panel-header {
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface-2);
+      flex: none;
+    }
+    .panel-header h4 { margin: 0; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--bronze); }
+    .copy-btn {
+      background: transparent; border: 1px solid var(--rule); color: var(--ink); border-radius: 4px; cursor: pointer; font-size: 11px; padding: 2px 6px;
+    }
+    .copy-btn:hover { background: var(--rule); }
+    
+    #text-output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    #text-output table { width: 100%; border-collapse: collapse; }
+    #text-output th, #text-output td { padding: 4px; text-align: left; border-bottom: 1px dashed var(--rule); }
+    #text-output th { color: var(--bronze); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: normal; }
+    
+    #svg-container {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+    }
+    
     .play-btn {
       position: absolute;
       top: 16px;
@@ -191,8 +268,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
-    <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
-    <div id="mynetwork"></div>
+    <div id="blank-state">
+      <h3>Visualizer Ready</h3>
+      <p>Select a composition from the sidebar and click <strong>▶ Compose</strong> to begin the visualization.</p>
+    </div>
+    
+    <div id="viz-container">
+      <div id="mynetwork-wrapper">
+        <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
+        <div id="mynetwork"></div>
+      </div>
+      
+      <div class="bottom-panels">
+        <div class="text-panel">
+          <div class="panel-header">
+            <h4>Output</h4>
+            <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+          </div>
+          <div id="text-output"></div>
+        </div>
+        <div class="svg-panel">
+          <div class="panel-header"><h4>Blue Line (Treble & Tenor)</h4></div>
+          <div id="svg-container"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -248,79 +348,74 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
     document.getElementById('comp-' + idx).classList.add('active');
-    redrawGraph();
+    
+    document.getElementById('blank-state').style.display = 'flex';
+    document.getElementById('viz-container').style.display = 'none';
+    if (network) {
+      network.destroy();
+      network = null;
+    }
   }
   
-  function getComputedColor(varName) {
-    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  function copyText() {
+    const comp = compositions[activeIdx];
+    if (!comp) return;
+    let txt = "Score: " + comp.score.toFixed(1) + "\n";
+    txt += "Call\tCourse Head\n";
+    txt += "-\t" + comp.path[0] + "\n";
+    for(let i=0; i<comp.calls.length; i++) {
+      txt += comp.calls[i] + "\t" + comp.path[i+1] + "\n";
+    }
+    navigator.clipboard.writeText(txt).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = "✅ Copied";
+      setTimeout(() => btn.textContent = "📋 Copy", 2000);
+    });
   }
-
-  function redrawGraph() {
-    drawGraph(compositions[activeIdx]);
-  }
-
-  function drawGraph(comp) {
-    if (animationTimer) clearInterval(animationTimer);
-    const nodes = [];
-    const edges = [];
-    const nodeIds = new Set();
+  
+  function generateSVG(rowsSubset) {
+    if (!rowsSubset || rowsSubset.length === 0) return "";
+    const stage = 8;
+    const dx = 9.2, dy = 20.0, pad = 12.0;
+    const w = pad * 2 + (rowsSubset.length - 1) * dx;
+    const h = pad * 2 + (stage - 1) * dy;
     
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
-    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
-    const hlColor = isDark ? "#C9974A" : "#8A5F22";
-    const rdColor = isDark ? "#63A579" : "#2F6D53";
+    let svg = `<svg viewBox="0 0 ${w} ${h}" style="width: ${w}px; height: ${h}px;" role="img">`;
     
-    // Add nodes
-    comp.path.forEach((ch, i) => {
-      if (!nodeIds.has(ch)) {
-        nodes.push({
-          id: ch,
-          label: ch,
-          shape: 'box',
-          color: {
-            background: ch === "12345678" ? rdColor : bgColor,
-            border: hlColor,
-            highlight: hlColor
-          },
-          font: { color: ch === "12345678" ? "#FFF" : fgColor, face: "monospace" }
-        });
-        nodeIds.add(ch);
+    for (let i = 0; i < rowsSubset.length; i += 32) {
+      let x = pad + i * dx;
+      svg += `<line x1="${x}" y1="${pad-6}" x2="${x}" y2="${h-pad+6}" stroke="var(--rule)" stroke-width="1" opacity=".7"/>`;
+    }
+    
+    const bells = rowsSubset[0].split('');
+    const highlight = { 
+      '1': { color: 'var(--bar)', width: 2.4 }, 
+      '8': { color: 'var(--bronze)', width: 2.4 } 
+    };
+    
+    bells.forEach(b => {
+      if (!highlight[b]) {
+        let pts = rowsSubset.map((row, i) => `${pad + i*dx},${pad + row.indexOf(b)*dy}`).join(' ');
+        svg += `<polyline points="${pts}" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".38" stroke-linejoin="round"/>`;
       }
     });
     
-    // Add edges
-    for (let i = 0; i < comp.calls.length; i++) {
-      edges.push({
-        from: comp.path[i],
-        to: comp.path[i+1],
-        label: comp.calls[i].toUpperCase(),
-        arrows: 'to',
-        color: { color: fgColor },
-        font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
-      });
-    }
-
-    const container = document.getElementById('mynetwork');
-    visNodes = new vis.DataSet(nodes);
-    visEdges = new vis.DataSet(edges);
-    const data = { nodes: visNodes, edges: visEdges };
-    const options = {
-      physics: {
-        solver: 'forceAtlas2Based',
-        forceAtlas2Based: {
-          gravitationalConstant: -100,
-          springLength: 80
-        }
-      }
-    };
+    Object.keys(highlight).forEach(b => {
+      if (!bells.includes(b)) return;
+      let pts = rowsSubset.map((row, i) => `${pad + i*dx},${pad + row.indexOf(b)*dy}`).join(' ');
+      let style = highlight[b];
+      svg += `<polyline points="${pts}" fill="none" stroke="${style.color}" stroke-width="${style.width}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
     
-    if (network) network.destroy();
-    network = new vis.Network(container, data, options);
+    svg += `</svg>`;
+    return svg;
   }
 
   function playAnimation() {
     if (animationTimer) clearInterval(animationTimer);
+    
+    document.getElementById('blank-state').style.display = 'none';
+    document.getElementById('viz-container').style.display = 'flex';
     
     const comp = compositions[activeIdx];
     
@@ -330,7 +425,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     const hlColor = isDark ? "#C9974A" : "#8A5F22";
     const rdColor = isDark ? "#63A579" : "#2F6D53";
     
-    // Completely destroy and recreate network so physics resets
     const container = document.getElementById('mynetwork');
     visNodes = new vis.DataSet([]);
     visEdges = new vis.DataSet([]);
@@ -345,20 +439,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     network = new vis.Network(container, data, options);
     
     const nodeIds = new Set();
-    
-    // Add just the first node (rounds)
     visNodes.add({
-      id: comp.path[0],
-      label: comp.path[0],
-      shape: 'box',
-      color: {
-        background: rdColor,
-        border: hlColor,
-        highlight: hlColor
-      },
+      id: comp.path[0], label: comp.path[0], shape: 'box',
+      color: { background: rdColor, border: hlColor, highlight: hlColor },
       font: { color: "#FFF", face: "monospace" }
     });
     nodeIds.add(comp.path[0]);
+    
+    const textOut = document.getElementById('text-output');
+    textOut.innerHTML = `<table><tr><th>Call</th><th>Course Head</th></tr><tr><td>-</td><td>${comp.path[0]}</td></tr></table>`;
+    const table = textOut.querySelector('table');
+    
+    const svgCont = document.getElementById('svg-container');
+    let currentRows = 1;
+    if (comp.rows && comp.rows.length > 0) {
+      svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
+    } else {
+      svgCont.innerHTML = "<p><em>No row data available for this composition.</em></p>";
+    }
     
     let step = 0;
     
@@ -369,40 +467,47 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         return;
       }
       
+      const call = comp.calls[step].toUpperCase();
       const nextNode = comp.path[step+1];
+      
       if (!nodeIds.has(nextNode)) {
         visNodes.add({
-          id: nextNode,
-          label: nextNode,
-          shape: 'box',
-          color: {
-            background: bgColor,
-            border: hlColor,
-            highlight: hlColor
-          },
+          id: nextNode, label: nextNode, shape: 'box',
+          color: { background: bgColor, border: hlColor, highlight: hlColor },
           font: { color: fgColor, face: "monospace" }
         });
         nodeIds.add(nextNode);
       }
-      
       visEdges.add({
-        from: comp.path[step],
-        to: nextNode,
-        label: comp.calls[step].toUpperCase(),
-        arrows: 'to',
-        color: { color: fgColor },
-        font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
+        from: comp.path[step], to: nextNode, label: call, arrows: 'to',
+        color: { color: fgColor }, font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
       });
-      
       network.fit({ animation: true });
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${call}</td><td>${nextNode}</td>`;
+      table.appendChild(tr);
+      textOut.scrollTop = textOut.scrollHeight;
+      
+      if (comp.rows && comp.rows.length > 0) {
+        let nextIndex = comp.rows.indexOf(nextNode, currentRows);
+        if (nextIndex !== -1) {
+          currentRows = nextIndex + 1;
+        } else {
+          currentRows += 32;
+        }
+        svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
+        svgCont.scrollLeft = svgCont.scrollWidth;
+      }
+      
       step++;
-    }, 400); // add one step every 400ms
+    }, 400);
   }
 
   window.onload = () => {
     if (compositions.length > 0) {
       renderList();
-      selectComp(0); // Select first by default
+      selectComp(0);
     }
   };
 </script>
