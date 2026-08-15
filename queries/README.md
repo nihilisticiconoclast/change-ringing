@@ -121,6 +121,7 @@ each can be checked rather than taken on trust.
 | `regional_traditions.sql` | What IS regional, once you stop requiring it be a method: Devon Call Changes 85% in Devon, Quick Tolling 99% in Lincolnshire |
 | `conductor_speed_signature.sql` | Whether some conductors ring faster. Between-conductor variation is half the within-conductor variation, so barely |
 | `peal_and_quarter_populations.sql` | Whether quarter ringers and peal ringers are two populations. They are not — one steep decay, no second mode. See `docs/two_populations.md` |
+| `ringing_careers.sql` | A ringer's career: sixteen appearances before a first conducted peal; almost nobody settles on one bell (8.5% ring half their apps on it); ~60% of ringers first seen in 2013-17 have no appearance 5 years later. See `docs/ringing_careers.md` |
 
 ## A third thing that will bite you
 

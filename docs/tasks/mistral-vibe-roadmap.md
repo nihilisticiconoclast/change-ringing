@@ -326,6 +326,19 @@ deleted so nobody wonders where the task went.
 
 ## Task 7 — A ringing career, from the bell people stand behind *(after item 20)*
 
+**Done.** `queries/findings/ringing_careers.sql` plus `docs/ringing_careers.md`.
+Three findings, on the cohort of 5,657 canonical ringers (50+ tower-bell
+appearances, 5+ year span): the median ringer rings sixteen appearances
+before a first conducted peal; almost nobody settles on one bell (8.5% ring
+half or more of their appearances on it, drift from first-10 to last-10 apps
+is −0.0032, a wash); and roughly six in ten ringers first seen in 2013–17
+have no reported appearance five years later. The SQL groups raw names
+(the identity CSV is a file, not a table, and the query must prepare in CI);
+the doc gives the canonical-id figures, 99.8% of rows resolve, and the two
+agree on every structural finding.
+
+Original brief, retained for reference:
+
 `performance_ringers.bell` is populated on **1,897,741 rows** and nothing in this
 project has ever read it. It is the most underused column in the corpus.
 
