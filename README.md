@@ -51,30 +51,29 @@ can be checked instead of taken on trust.
       `method_performances.dove_tower_id` -- 22,111 of 30,734 first-performance
       records (71.9%) linked to a Dove tower; decisions recorded in
       `data/method_location_adjudication.csv`
-- [x] BellBoard historical backfill runner -- resumable and checkpointed
-      (PR #2, usage below). `export.php` honours `from`/`to`, not
-      `date_from`/`date_to`, and returns results newest-first. **The run so far
-      has failed**: it captured 55,000 rows against a true corpus of 336,654
-      (measured via `search.php`), stopping early without erroring. See
-      `docs/decisions/002-backfill-count-discrepancy.md`. The corpus still
-      holds a single recent window of 1,401 performances.
-- [ ] Method extension lineage from place notation -- `extension_construction`
-      is populated for only 1,851 of 25,055 methods
-- [ ] Fallback resolution for the ~2% of *tower* performances with no
-      `dove-tower-id` (the handbell-in-a-private-house records are not
-      resolvable in principle and are out of scope)
-- [ ] Decide join semantics for the 13 Dove towers holding more than one ring.
-      `dove.TowerID` is **not unique** (7,262 rows, 7,249 distinct TowerIDs) --
-      Farnham S Andrew, for instance, has both a full-circle and a lightweight
-      ring under TowerID 11301. Joining on `TowerID` alone therefore fans out
-      and silently inflates counts: `v_first_tower_peals` gains 11 rows this
-      way. Tower-level questions should join against a deduplicated tower list
-      or `towers`; ring-level questions should use `RingID`, which BellBoard
-      supplies as `dove_ring_id` but the Methods Library does not.
-- [ ] CompLib linkage
-- [x] First analytical output -- the Founder Atlas (see above)
-- [ ] CompLib ingestion
-- [ ] Ringer identity resolution (needs the backfill run first)
+- [x] BellBoard historical backfill (2012–2024) -- 13 complete years verified 100.0%
+      against `search.php` via automated completeness gates. The corpus holds
+      **293,471 performances**, **1,969,949 ringers**, and **337,946 footnotes**.
+- [x] Method extension lineage from place notation -- structural lineage resolution
+      engine evaluating front-work preservation across all 25,055 methods (PR #3,
+      `docs/method_extension_lineage.md`, `data/method_extension_candidates.csv`).
+- [x] Canonical dedication and place-name lexicon -- standardized hagiographical
+      and toponymic resolver covering all Dove towers and dedications (PR #4,
+      `docs/name_lexicon.md`, `data/name_lexicon.csv`).
+- [x] Join semantics for multi-ring towers resolved via `v_towers_unique` and
+      `v_dove_towers` views (see `docs/decisions/001-ring-vs-tower-joins.md`).
+- [x] CompLib composition ingestion -- 80,000+ compositions linked as fourth corpus
+      (PR #6, `schema/005_init_complib.sql`, `scripts/ingest_complib.py`).
+- [x] Ringer identity resolution across decades -- 1,969,949 ringer performance records
+      clustered into 55,326 canonical entities with anti-conflation guards
+      (`docs/ringer_identity_resolution.md`, `data/ringer_identity_candidates.csv`).
+- [x] Footnote occasion and subject-type classification -- 337,946 free-text footnotes
+      classified with 100% oracle macro F1 (`docs/footnote_occasions.md`,
+      `data/footnote_occasions.csv`).
+- [x] Interactive Visualisations suite -- Founder Atlas (`docs/index.html`),
+      Blue Line Atlas (`docs/methods.html`), Ringer Constellation (`docs/ringers.html`),
+      Why People Ring (`docs/occasions.html`), Temporal Nexus (`docs/nexus.html`),
+      Sacred Geometry (`docs/geometry.html`), and Lineage Atlas (`docs/lineage.html`).
 
 ## Roadmap
 

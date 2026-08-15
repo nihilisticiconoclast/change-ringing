@@ -5,9 +5,9 @@ Options, not commitments. Every figure below was measured against
 be built and where it could go wrong — so a choice can be made on evidence
 rather than on how good the idea sounds.
 
-**What the corpus now holds.** 96,067 BellBoard performances (2021–2024),
-615,086 ringer appearances across 44,280 distinct names, 113,895 footnotes,
-25,066 methods with complete place notation, 63,894 bells, 7,262 rings.
+**What the corpus now holds.** 293,471 BellBoard performances (2012–2024),
+1,969,949 ringer appearances across 70,032 distinct names, 337,946 footnotes,
+25,066 methods with complete place notation, 63,966 bells, 7,262 towers (15,722 rings).
 
 ---
 

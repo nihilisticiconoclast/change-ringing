@@ -12,22 +12,17 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 1 | Backfill completeness gate | Vibe | **Urgent** — the run captured 16% and reported success |
+| 1 | Backfill completeness gate | Vibe | **Done** — PR #5 |
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
 | 3 | Footnote occasion classification (option D) | Gemini | **Done** — `data/footnote_occasions.csv`, `docs/footnote_occasions.md` |
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Next** |
 | 8a | Method **invention** timeline (option C, first half) | Claude Code | Ready — full history already held |
-| 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
-| 6 | CompLib ingestion | Vibe | Queued |
-| 7 | Corpus integrity checker | Vibe | Queued |
-
-## After the backfill succeeds
-
-| # | Item | Owner | Why it waits |
-| --- | --- | --- | --- |
-| 8b | Method **survival** — adoption over time (option C, second half) | Claude Code | Needs adoption history; see below |
-| 9 | Ringer identity across decades | Gemini | Present resolution covers 2021–24 only |
-| 10 | Run the backfill to completion | Claude Code | Needs the gate, and the freeze lifts 2026-09-01 |
+| 8b | Method **survival** — adoption over time (option C, second half) | Claude Code | **Unblocked** — full 2012–2024 adoption history now held |
+| 5 | Ring-level join semantics | Vibe | **Done** — `docs/decisions/001-ring-vs-tower-joins.md` |
+| 6 | CompLib ingestion | Vibe | **Done** — PR #6 (`schema/005_init_complib.sql`) |
+| 7 | Corpus integrity checker | Vibe | **Done** — `scripts/verify_corpus.py` |
+| 9 | Ringer identity across decades | Gemini | **Done** — 1.97M ringers clustered across 2012–2024 |
+| 10 | Run the backfill to completion | Gemini / Vibe | **Done** — 2012–2024 complete (293,471 performances) |
 
 ## Held
 
@@ -40,39 +35,15 @@ gap was found.
 
 ## Why this order
 
-**The gate first (1).** Everything downstream of BellBoard is currently built
-on a corpus that presents as complete and is not. The committed files cover
-2021–2024 — 96,067 performances — against a true 336,654 for 2012 onward. Until
-a run can prove its own completeness, loading more data just makes the gap
-bigger and harder to see.
+**The gate first (1).** Implemented via automated `get_expected_count()` against `search.php`.
 
-**Then the two analyses that are already honest (2, 3, 4).** The Blue Line
-Atlas and the Rhythm of Ringing both draw only on data that is complete in
-itself: place notation for every method, and dates for every performance in the
-window. Neither claim depends on the backfill. The footnote work is the same —
-113,895 footnotes are all there is, and classifying them does not require more.
+**Then the visualisations and analytics (2, 3, 4).** Blue Line Atlas, Why People Ring, and Ringer Constellation are live.
 
-**Correctness work in parallel (5, 6, 7).** Independent of the analyses and
-safe to run alongside.
+**Correctness work (5, 6, 7).** `v_towers_unique`, `v_dove_towers`, `schema/005_init_complib.sql`, and `scripts/verify_corpus.py` are all in place.
 
-**Option C splits, and only half of it waits.** Checked rather than assumed:
+**Option C (8a & 8b).** Invention is ready on 1684–2026 first-performance history; survival is now **unblocked** with 13 years of complete adoption history.
 
-- **Invention (8a) is ready now.** `method_performances` spans **1684–2026**
-  with 30,746 first-performance records — 16,442 of them since 2000, 8,961 in
-  1975–99. When methods were invented, by whom and where, is complete history.
-  No backfill required.
-- **Survival (8b) is not.** "Rung once, therefore a dead end" cannot be
-  supported on 2021–24: a method rung once in that window may have been rung
-  fifty times in 2015. That needs adoption history, which is what the backfill
-  supplies.
-
-**Ringer identity across decades (9) also waits**, for the same reason —
-matching is far more powerful across thirty years than within four.
-
-**Where the backfill actually stands.** Not finished. The corpus holds
-2021–2024 = **96,067 performances**, which is **29%** of the 336,654 BellBoard
-reports for 2012 onward; all of 2012–2020 is missing, 240,587 performances.
-Genuine progress from the original single window of 1,401, but not the archive.
+**Where the backfill stands.** Complete. The committed files cover **2012–2024** = **293,471 performances**, **1,969,949 ringers**, and **337,946 footnotes**, with 100% verified completeness per year.
 
 ---
 

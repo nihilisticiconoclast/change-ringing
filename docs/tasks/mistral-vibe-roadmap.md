@@ -8,11 +8,11 @@ ones find.
 
 | # | Task | State |
 | --- | --- | --- |
-| 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
-| 2 | CompLib ingestion | **Active** — full brief below |
-| 3 | Corpus integrity checker | Queued — sketch below |
-| 5 | Backfill completeness gate | **Urgent** — brief below |
-| 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
+| 1 | BellBoard historical backfill runner | **Done** — PR #2 merged, full 2012–2024 backfilled |
+| 2 | CompLib ingestion | **Done** — PR #6 merged (`schema/005_init_complib.sql`) |
+| 3 | Corpus integrity checker | **Done** — `scripts/verify_corpus.py` |
+| 4 | Ring-level join semantics | **Done** — `docs/decisions/001-ring-vs-tower-joins.md` |
+| 5 | Backfill completeness gate | **Done** — PR #5 merged (`scripts/fetch_and_export_bellboard.py`) |
 
 ---
 

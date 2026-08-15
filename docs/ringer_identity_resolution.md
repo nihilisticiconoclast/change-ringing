@@ -42,17 +42,17 @@ graph TD
 
 ---
 
-## 3. Key Dataset Statistics
+## 3. Key Dataset Statistics (Full 2012–2024 Archive)
 
 | Metric | Count |
 | --- | --- |
-| Total Ringer Performance Instances | **355,550** |
-| Distinct Cleaned Ringer Name Strings | **35,090** |
-| Surname Cohorts Partitioned | **10,226** |
-| Candidate Pairs Evaluated | **410,959** |
-| Resolved Canonical Ringers | **29,446** |
-| Multi-Name Variant Clusters Unified | **4,835** |
-| Single-Name Canonical Ringers | **24,611** |
+| Total Ringer Performance Instances | **1,969,949** |
+| Distinct Cleaned Ringer Name Strings | **70,032** |
+| Surname Cohorts Partitioned | **16,812** |
+| Candidate Pairs Evaluated | **1,389,639** |
+| Resolved Canonical Ringers | **55,326** |
+| Multi-Name Variant Clusters Unified | **11,146** |
+| Single-Name Canonical Ringers | **44,180** |
 
 ---
 

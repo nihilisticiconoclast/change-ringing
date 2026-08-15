@@ -46,6 +46,17 @@ each can be checked rather than taken on trust.
 | `first_peals_by_decade.sql` | Post-war growth in new methods |
 | `unlinked_performances.sql` | The 8,623 records deliberately left unlinked, and why |
 
+## Extraction Queries (`queries/*.sql`)
+
+Canonical extraction scripts used by offline inference engines:
+
+| File | Purpose |
+| --- | --- |
+| `extract_dedications_and_places.sql` | Extracts distinct tower places, dedications, and dioceses for `build_name_lexicon.py` |
+| `extract_lineage_stats.sql` | Extracts stage, method classifications, and extension counts for `build_lineage_atlas.py` |
+| `extract_method_families.sql` | Extracts method definitions, notations, lead heads, and classifications for `resolve_method_extensions.py` |
+| `extract_ringer_performances.sql` | Extracts ringer appearances, towers, and dates for `resolve_ringer_identities.py` |
+
 ## Two things that will bite you
 
 **`dove.TowerID` is not unique.** 7,262 rows carry 7,249 distinct IDs, because

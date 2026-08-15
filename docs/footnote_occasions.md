@@ -47,7 +47,7 @@ Before classifying the complete corpus, a representative oracle of **300 randoml
 
 ---
 
-## 2. Dataset Distribution Across 113,895 Footnotes
+## 2. Dataset Distribution Across 337,946 Historical Footnotes (2012–2024)
 
 The candidate dataset is saved in [`data/footnote_occasions.csv`](file:///c:/Users/james/Documents/Projects/change-ringing/data/footnote_occasions.csv) with schema `perf_id,position,occasion,subject_type,confidence,evidence`.
 
@@ -55,27 +55,27 @@ The candidate dataset is saved in [`data/footnote_occasions.csv`](file:///c:/Use
 
 | Occasion | Count | Proportion | Primary Signifiers |
 | :--- | :--- | :--- | :--- |
-| `none` | 30,374 | 26.7% | Purely technical notes, composition lines, band substitutions, umpire notes |
-| `first-performance` | 27,130 | 23.8% | "first peal", "first quarter", "first in method", "first as conductor", "circled tower" |
-| `civic` | 20,957 | 18.4% | Platinum Jubilee, Accession, Coronation, Remembrance Sunday, national reflections |
-| `memorial` | 8,549 | 7.5% | "in memory of", "remembering", "half-muffled", "tribute to the late" |
-| `birthday` | 7,092 | 6.2% | "birthday compliment", "80th birthday", "happy birthday", "born on this day" |
-| `seasonal` | 7,060 | 6.2% | Christmas, Easter, Evensong, Sunday service, Harvest Festival, Patronal festivals |
-| `compliment` | 3,414 | 3.0% | "congratulations on", "best wishes", "farewell to", "retirement of", "welcome to" |
-| `anniversary` | 3,055 | 2.7% | Tower centenaries, ordination anniversaries, years of service, historical milestones |
-| `funeral` | 2,750 | 2.4% | "funeral service", "prior to the funeral", "thanksgiving for the life of", "cremation" |
-| `wedding` | 2,460 | 2.2% | Wedding peals, "golden wedding anniversary", "following the marriage of" |
-| `practice` | 1,054 | 0.9% | Practice nights, quarter peal weekends, striking competitions, ringing outings |
+| `none` | 92,945 | 27.5% | Purely technical notes, composition lines, band substitutions, umpire notes |
+| `first-performance` | 86,510 | 25.6% | "first peal", "first quarter", "first in method", "first as conductor", "circled tower" |
+| `civic` | 35,087 | 10.4% | Armistice Centenary, Platinum Jubilee, Accession, Coronation, Remembrance Sunday |
+| `memorial` | 28,575 | 8.5% | "in memory of", "remembering", "half-muffled", "tribute to the late" |
+| `seasonal` | 26,253 | 7.8% | Christmas, Easter, Evensong, Sunday service, Harvest Festival, Patronal festivals |
+| `birthday` | 25,254 | 7.5% | "birthday compliment", "80th birthday", "happy birthday", "born on this day" |
+| `compliment` | 12,032 | 3.6% | "congratulations on", "best wishes", "farewell to", "retirement of", "welcome to" |
+| `wedding` | 9,725 | 2.9% | Wedding peals, "golden wedding anniversary", "following the marriage of" |
+| `anniversary` | 9,600 | 2.8% | Tower centenaries, ordination anniversaries, years of service, historical milestones |
+| `funeral` | 7,639 | 2.3% | "funeral service", "prior to the funeral", "thanksgiving for the life of", "cremation" |
+| `practice` | 4,326 | 1.3% | Practice nights, quarter peal weekends, striking competitions, ringing outings |
 
 ### Subject-Type Breakdown
 
 | Subject Type | Count | Proportion | Meaning & Criteria |
 | :--- | :--- | :--- | :--- |
-| `none` | 61,492 | 54.0% | Internal ringing milestone, technical band remarks, general services |
-| `person` | 41,372 | 36.3% | Ringers, clergy, family members, couples, monarchs, public figures |
-| `institution` | 5,477 | 4.8% | Guilds, associations, societies, branches, NHS, charities, armed forces |
-| `bells` | 4,413 | 3.9% | The ring of bells, tenor/treble, augmentations, rehanging, restorations |
-| `building` | 1,141 | 1.0% | Towers, cathedrals, parish churches, guildhalls, chapels, abbeys |
+| `none` | 197,374 | 58.4% | Internal ringing milestone, technical band remarks, general services |
+| `person` | 109,449 | 32.4% | Ringers, clergy, family members, couples, monarchs, public figures |
+| `institution` | 15,275 | 4.5% | Guilds, associations, societies, branches, NHS, charities, armed forces |
+| `bells` | 12,297 | 3.6% | The ring of bells, tenor/treble, augmentations, rehanging, restorations |
+| `building` | 3,551 | 1.1% | Towers, cathedrals, parish churches, guildhalls, chapels, abbeys |
 
 ---
 

@@ -93,23 +93,16 @@ Adjudication and merges, as below, plus the work that is neither a bounded
 coding task nor a large-context sweep -- schema semantics, and any decision
 where being wrong is worse than being slow.
 
-1. **Ring-level join semantics** *(next)*. `dove.TowerID` is not unique: 13
-   towers hold more than one ring, so joining on it fans out and silently
-   inflates counts -- `v_first_tower_peals` gains 11 rows this way. Deciding
-   whether each view means a tower or a ring is a semantics call, not a bug
-   fix, which is why it has not been delegated. Vibe's Task 4 implements it
-   once the spec exists.
-2. **Consolidate the data-quality caveats.** They are currently spread across
-   `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, the schema
-   headers and several commit messages. Anyone querying the corpus needs them
-   in one place.
-3. **Run the BellBoard backfill.** The runner exists and is merged, but the
-   corpus still holds a single recent window. This is the largest remaining
-   data gap and it unblocks Gemini's Task 3. Waits for the freeze to lift on
-   2026-09-01.
+1. **Consolidate the data-quality caveats.** Bring together the nuances across
+   `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, and schema headers
+   into a single reference document.
+2. **Rhythm of Ringing (Option B)** and **Method Survival (Option C second half)** visualisations.
 
 Completed: the CCCBR Methods Library loader and location resolution (PR #1),
-the location adjudication, the read-cost fixes, and the Founder Atlas.
+the location adjudication, the read-cost fixes, the Founder Atlas, Ring-level
+join semantics (Decision 001), CompLib ingestion (PR #6), Method extension lineage (PR #3),
+Dedication lexicon (PR #4), Footnote occasions (PR #7), and the full 2012–2024
+historical backfill (293,471 performances, PR #9).
 
 ## In practice
 

@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
 """
-BellBoard historical backfill runner.
+BellBoard historical backfill runner (Prototype).
+
+NOTE: For authoritative, completeness-gated yearly partition exports (with
+automated search.php verification), use `scripts/fetch_and_export_bellboard.py`.
+This script is preserved for historical prototype reference.
 
 A resumable, checkpointed, politeness-aware runner that walks the BellBoard
 corpus back through time and loads it using the existing ingestion logic.
