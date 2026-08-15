@@ -93,7 +93,22 @@ Three questions it answers that cannot be answered any other way:
 Careful with the last one: an absence is not a death or a resignation, it is an
 absence. Published as a cohort rate, never as an individual.
 
-### C. Two populations, one exercise: Sunday service and the peal circuit
+### C. Two populations, one exercise — *measured, and the answer is no*
+
+**Done: `docs/two_populations.md`.** The folk model is wrong. Peal share per
+ringer is a single steep decay — median 3.0%, no second mode — and the same
+shape holds for towers. Peal-only ringers are 0.1%. Peal involvement does not
+rise with years ringing. 72% of ringers with 50+ appearances have rung at least
+one peal, and the median one still spends 97% of their ringing on quarters:
+**peal ringing is an occasional activity spread across one community, not a
+circuit with its own membership.**
+
+The framing below had to be corrected before it could be answered — ordinary
+Sunday service ringing is not reported to BellBoard and is absent from the
+corpus entirely, so the question the data can answer is quarter ringers versus
+peal ringers. The original text is kept:
+
+#### Original framing
 
 Measured on the full corpus:
 

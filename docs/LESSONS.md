@@ -505,8 +505,29 @@ built to catch that class of problem, written by someone who had read the commen
 warning about it an hour earlier.
 
 Counting the recurrences in a comment does not stop the recurrence. Extracting
-the function does. `scripts/sqlfile.py` is now the only copy and the four
-builders call it.
+the function does.
+
+Except that extracting it is not sufficient either, because the fifth appearance
+was **inside the module written to end the bug**. `sqlfile.py` v1 stripped only
+whole-line comments and asserted in its own docstring that trailing ones were
+"harmless". They are not:
+
+    AND p.duration NOT LIKE '%m%'   -- 'Nh MM'; the bare '45m' rows are quarters
+
+A semicolon in a trailing comment, splitting the statement in half. The CI check
+caught it — the system working — but only after the fix reintroduced the fault it
+was written to prevent.
+
+What finally worked was changing the *kind* of solution. Every version up to the
+fifth was a line filter, and no line filter can be correct here, because the
+thing being parsed is not lines: it is a stream with quoted regions in it. v2 is
+a small scanner that tracks whether it is inside a string literal, which handles
+the trailing case, the apostrophe case and `'a--b'` together. It ships with four
+self-tests, one per shape that has actually broken this repository, runnable as
+`python scripts/sqlfile.py`.
+
+**When a bug recurs, the question is not who forgot. It is whether the shape of
+the fix can be right.**
 
 ### 29. A page that rebuilds differently every time trains people to ignore its diff
 

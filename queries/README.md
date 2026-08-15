@@ -120,6 +120,7 @@ each can be checked rather than taken on trust.
 | `method_regionalism.sql` | Whether library methods are regional. **One** of 25,066 exceeds 50% in a single county — the named repertoire is national |
 | `regional_traditions.sql` | What IS regional, once you stop requiring it be a method: Devon Call Changes 85% in Devon, Quick Tolling 99% in Lincolnshire |
 | `conductor_speed_signature.sql` | Whether some conductors ring faster. Between-conductor variation is half the within-conductor variation, so barely |
+| `peal_and_quarter_populations.sql` | Whether quarter ringers and peal ringers are two populations. They are not — one steep decay, no second mode. See `docs/two_populations.md` |
 
 ## A third thing that will bite you
 
