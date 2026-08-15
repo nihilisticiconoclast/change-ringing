@@ -12,7 +12,7 @@ ones find.
 | 2 | CompLib ingestion | **Done** — see brief below |
 | 3 | Corpus integrity checker | **Done** — PR #10, merged with four changes; see below |
 | 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
-| 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
+| 4 | Ring-level join semantics | **Done** — merged with PR #10; spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
 
@@ -185,7 +185,17 @@ views, so a plan regression is caught before it costs a read budget again.
 
 Exit non-zero on failure so it can gate CI later. Full brief when Task 2 lands.
 
-## Task 4 — Ring-level join semantics *(unblocked)*
+## Task 4 — Ring-level join semantics *(done — merged with PR #10)*
+
+Implemented and merged alongside the corpus integrity checker in PR #10
+(commit `86a00c3`). The spec at `docs/decisions/001-ring-vs-tower-joins.md`
+carries **Status: implemented and adopted**; `schema/007_init_tower_views.sql`
+defines `v_towers_unique` and `v_dove_towers`, `schema/002`/`003` and four
+`queries/` files join them, and `scripts/verify_corpus.py` gates the join
+identity on every run. Verified on a local replica 2026-08-15: 49 checks / 0
+failures, `method_performances` → `v_towers_unique` returns 22,117 == the
+linked record count, exit 0. No further work — this entry was previously marked
+"Unblocked" and is corrected here.
 
 Spec: `docs/decisions/001-ring-vs-tower-joins.md`. Implement to it.
 
@@ -321,3 +331,39 @@ Claude Code needed this for the Blue Line Atlas and wrote it:
 `scripts/notation.py`, verified on 24,404 of 25,066 methods against the
 library's published `lead_head`. Not yours to redo. Noted here rather than
 deleted so nobody wonders where the task went.
+
+---
+
+## Task 7 — Ringer career analysis *(done)*
+
+The IDEAS.md insight seam *"is conducting a career stage?"* taken as a task,
+built on the resolved identities from Gemini Task 3 rather than raw names.
+A career is one resolved person's trajectory, so every metric groups on
+`canonical_ringer_id` — joining the alias "Sue Sawyer" onto the raw `name`
+column would split one person into two careers.
+
+**Deliverables**
+- `scripts/ringer_career_analysis.py` — `--local-db`, loads
+  `data/ringer_identity_candidates.csv` into a TEMP table, joins
+  `performance_ringers` → `performances` → the map.
+- `data/ringer_career_trajectories.csv` — one row per resolved ringer: span,
+  appearances, conducting, trajectory, archetype.
+- `docs/ringer_career_analysis.md` — method, findings, windows, caveats.
+
+**Headline findings** (window 2012–2024, 55,092 resolved ringers, 1,966,913
+appearances, 99.85% coverage):
+- **44.6% of ringers have a single-year career.** The population has a very long
+  tail of one-off participants.
+- **6.0% of ringers (those who conduct with ≥100 appearances) account for
+  67.7% of all ringer appearances.** Two-thirds of recorded ringing is done by
+  the 6% who conduct.
+- **Conducting is concentrated but not extreme:** the top 1% of conductors hold
+  25.9% of all conducted performances; the top 10 hold 6.5%.
+- **Conducting is *not* a clear late-career stage.** Only 50.9% of conductors
+  began conducting later than their first recorded appearance (median gap:
+  1 year); the most prolific were already conducting when the 2012 window
+  opens, so a window opening mid-career cannot measure when they started.
+
+Verified on a local replica: `verify_corpus.py` still 49 checks / 0 failures
+(no regressions), analysis idempotent, GROUP BY plan uses the covering index
+`idx_ringer_name_perf` (read-cheap, no correlated-subquery multiplication).
