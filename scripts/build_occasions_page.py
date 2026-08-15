@@ -17,7 +17,6 @@ DB_PATH = str(ROOT / "data" / "change-ringing.db")
 OUTPUT_PATH = str(ROOT / "docs" / "occasions.html")
 QUERIES = ROOT / "queries" / "occasions"
 
-
 def sql(name, index=0):
     """Load one statement from queries/occasions/.
 
@@ -191,14 +190,6 @@ def generate_html(stats, coverage):
                overflow-wrap: anywhere; word-break: break-word; }
         body { margin: 0; padding: 0; background: var(--ground); color: var(--ink); font-family: var(--serif); line-height: 1.62; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing:antialiased;}
         
-        .nav-bar{
-          background:var(--surface); border-bottom:1px solid var(--rule);
-          padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
-        ;flex-wrap:wrap;gap:10px}
-        .nav-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex-wrap:wrap;}
-        .nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
-        .nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}
-        .nav-links a:hover{color:var(--ink)}
         
         .container {
             width: 100%;

@@ -16,9 +16,17 @@ actually use.
 **https://nihilisticiconoclast.github.io/change-ringing/**
 
 Twelve pages served by GitHub Pages from `main` / `docs`, each a single
-self-contained file with no external requests. The root is a landing page; the
-navigation collapses to a hamburger below 900px, which it needed once the link
-list reached twelve.
+self-contained file with no external requests. The root is a landing page, with
+a hero drawn from the corpus itself — one plain course of Cambridge Surprise
+Minor, generated from the place notation the CCCBR library publishes and checked
+against the library's own lead head before the page is written.
+
+The navigation is one collapsed bar at every width. Twelve links unrolled into a
+row wrapped onto two lines even on a wide display, so there is no width at which
+unrolling them helps. Both its markup and its CSS come from
+`scripts/site_chrome.py` and from nowhere else: `scripts/verify_chrome.py` fails
+any template or builder that declares a nav rule of its own, which is the check
+that was missing while the same markup was being styled eleven different ways.
 
 ## The Founder Atlas
 

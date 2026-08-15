@@ -22,6 +22,14 @@ What it asserts, per page:
 Whitespace is normalised before comparison. Three pages sit inside a deeper block
 and are therefore indented further; that is not drift, and a check that fails on
 it would be ignored within a week.
+
+It also checks the SOURCES, not just the output: no template and no builder may
+declare a nav rule of its own. That check was added after the first version of
+this file passed a site whose nav bar visibly changed shape from page to page.
+Every page emitted byte-identical nav markup -- which is all this file looked at
+-- while eleven separate `.nav-bar` rules styled it eleven ways. Checking that
+the markup matches is not the same as checking that the page matches, and the
+gap between those two was invisible for as long as nothing looked at the CSS.
 """
 import re
 import sys
@@ -31,6 +39,28 @@ sys.path.insert(0, str(Path(__file__).parent))
 from site_chrome import PAGES, HREFS, REPO  # noqa: E402
 
 DOCS = Path(__file__).parent.parent / "docs"
+SCRIPTS = Path(__file__).parent
+
+# Selectors that belong to scripts/site_chrome.py and to nothing else.
+NAV_SELECTORS = ("nav-bar", "nav-links", "nav-title", "nav-header",
+                 "nav-toggle", "nav-over", "theme-btn")
+# A rule opener: something ending in `.<selector>...{`, not inside a comment.
+NAV_RULE = re.compile(
+    r"^[^/*\n]*\.(?:" + "|".join(NAV_SELECTORS) + r")[^{}\n]*\{", re.M)
+
+
+def check_no_local_nav_css():
+    """No template and no builder may style the nav. Only site_chrome.py may."""
+    fails = []
+    sources = sorted((SCRIPTS / "templates").glob("*.html"))
+    sources += [p for p in sorted(SCRIPTS.glob("*.py")) if p.name != "site_chrome.py"]
+    for path in sources:
+        text = path.read_text(encoding="utf-8")
+        for m in NAV_RULE.finditer(text):
+            line = text[:m.start()].count("\n") + 1
+            fails.append(f"{path.relative_to(SCRIPTS.parent)}:{line}: "
+                         f"declares a nav rule — {m.group(0).strip()[:60]!r}")
+    return fails
 
 
 def block(html, pattern):
@@ -110,6 +140,12 @@ def main():
             for i, (_, pages) in enumerate(seen.items(), 1):
                 print(f"          variant {i}: {pages}")
 
+    css_fails = check_no_local_nav_css()
+    all_fails += css_fails
+    print(f"\n  {'FAIL' if css_fails else 'ok  '}  nav CSS declared only in site_chrome.py")
+    for f in css_fails:
+        print(f"          {f}")
+
     print(f"\n{len(PAGES)} pages · "
           f"{len(shapes['nav'])} nav variant(s) · "
           f"{len(shapes['footer'])} footer variant(s)")
@@ -117,7 +153,8 @@ def main():
         print(f"\n{len(all_fails)} problem(s). Rebuild the pages, or fix "
               f"scripts/site_chrome.py -- do not edit a page's nav or footer by hand.")
         return 1
-    print("Every page links to every page, in the same order, with the same footer.")
+    print("Every page links to every page, in the same order, with the same footer,")
+    print("and every page's nav is styled by the same rules.")
     return 0
 
 

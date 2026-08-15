@@ -240,42 +240,6 @@ def generate_html(graph_data):
             z-index: 5;
         }
         
-        .nav-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(10, 15, 30, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            display: flex;
-            justify-content: flex-start;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-        }
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: 12px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-        .nav-links a {
-            color: #cbd5e1;
-            text-decoration: none;
-            padding: 4px 0;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-links a.active {
-            color: #38bdf8;
-            border-bottom-color: #38bdf8;
-            font-weight: 600;
-        }
-        .nav-links a:hover {
-            color: #fff;
-        }
         
         #timeline-slider {
             width: 100%;

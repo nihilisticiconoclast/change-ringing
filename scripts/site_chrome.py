@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-The one place the site's navigation and footer are defined.
+The one place the site's navigation and footer are defined -- markup AND styling.
 
 Every page's nav bar and footer are generated from PAGES below. Nothing else in
-this repository may hard-code a list of pages.
+this repository may hard-code a list of pages, and nothing else may style the nav.
 
 Why this exists
 ---------------
-There are eleven pages built by nine scripts and six HTML templates, written at
+There are twelve pages built by ten scripts and seven HTML templates, written at
 different times by three different agents. Adding a page previously meant editing
 every navigation block by hand, and the last one was always the one that got missed:
 by the time it was noticed, the nav bars had converged but the FOOTERS had not --
@@ -17,6 +17,9 @@ repository.
 
 So the fix is not "correct the nine copies again". It is to make nine copies
 impossible.
+
+That was written when this module only generated markup, and it was too
+confident. The copies came back immediately in the CSS -- see Styling below.
 
 How to use it
 -------------
@@ -36,11 +39,25 @@ not in PAGES.
 
 Styling
 -------
-Two palettes. The typographic pages use the shared CSS variables; the three
-dark full-screen 3-D pages (nexus, geometry, and their kin) do not define those
-variables, so `dark=True` emits the same markup with literal colours. The markup
-and the link list are identical either way -- only the colours differ, which is
-the one difference worth keeping.
+The nav's CSS lives here too, and ONLY here. The first version of this module
+unified the nav *markup* and left every page to style it, which turned out to be
+half a fix: eleven files each had their own `.nav-bar` rule, so the same markup
+rendered as a mono uppercase rule on one page and a mixed-case sans row on the
+next, and the bar visibly changed shape as you clicked between them. Styling
+drift is the same disease as markup drift and needs the same cure, so the rules
+below are authoritative and `verify_chrome.py` fails any template or builder that
+declares its own.
+
+Colours come from CSS variables with dark literals as fallbacks. The typographic
+pages define the variables; the three dark full-screen 3-D pages do not, so they
+get the fallbacks and `dark=True` drops the theme button they have nothing to
+toggle. Same markup, same rules, both ways.
+
+The nav is collapsed at every width, not just on narrow screens. Twelve links
+unrolled into a row wrapped onto two lines on a 1280px display -- which is what
+prompted a nav bar in the first place -- so there is no width at which unrolling
+them is an improvement, and a menu that is one shape everywhere is one less thing
+to be surprised by.
 """
 
 # href, label, and the one-line description used in the footer.
@@ -49,7 +66,7 @@ the one difference worth keeping.
 # method pages, then the two about when and why ringing happens, then the three
 # exploratory 3-D views.
 PAGES = [
-    ("index.html",      "The Corpus",
+    ("index.html",      "Home",
      "293,471 performances, 13 years, one complete record"),
     ("atlas.html",      "Founder Atlas",
      "51,523 attributed bells mapped by the foundry that cast them"),
@@ -216,10 +233,14 @@ def nav_html(active, dark=False, indent="  "):
     )
     btn = (f'\n{indent}    <button class="theme-btn" id="themeToggle">Dark Mode</button>'
            if not dark else "")
-    return (f'{indent}<nav class="nav-bar">\n'
+    # The dark pages are a full-screen canvas with nothing to sit above, so their
+    # bar floats over it rather than pushing it down. Same markup, same type, same
+    # menu -- one extra class, and the rule for it is in CHROME_CSS with the rest.
+    klass = "nav-bar nav-over" if dark else "nav-bar"
+    return (f'{indent}<nav class="{klass}">\n'
             f'{indent}  <input type="checkbox" id="nav-toggle" class="nav-toggle">\n'
             f'{indent}  <div class="nav-header">\n'
-            f'{indent}    <span class="nav-title">Change Ringing</span>\n'
+            f'{indent}    <span class="nav-title">The Change Ringing Corpus</span>\n'
             f'{indent}    <label for="nav-toggle" class="nav-toggle-label"'
             f' aria-label="Open navigation">\n'
             f'{indent}      <span></span><span></span><span></span>\n'
@@ -256,9 +277,18 @@ def footer_html(active, dark=False, indent="  "):
             f'{indent}</footer>')
 
 
-# Shared chrome CSS. Appended by apply_chrome so that pages which never had a
-# footer get one that looks like the others.
-FOOTER_CSS = """
+# The site's entire chrome CSS -- nav and footer -- appended by apply_chrome.
+#
+# Appended LAST, after each page's own <style>, so these rules win on specificity
+# ties. That ordering is a backstop, not the mechanism: verify_chrome.py fails any
+# page file that declares a nav rule of its own, because relying on cascade order
+# to beat eleven competing definitions is how the bar ended up a different shape
+# on every page.
+#
+# The content column is 1200px wide on every page, so the nav aligns to it with
+# `max(24px, (100% - 1200px) / 2)`: the bar and the dropped panel stay full-bleed
+# while their contents line up with the prose beneath them.
+CHROME_CSS = """
 /* The last <section> on the typographic pages already draws a bottom rule, so
    the footer's own top rule made a doubled line with a dead 56px band between
    them. Suppress the section's, keep the footer's, and every page gets exactly
@@ -280,38 +310,63 @@ section:last-of-type{border-bottom:none}
 .site-note a{color:var(--bronze,#38bdf8)}
 .site-note code{font-size:.92em}
 
-/* Hamburger Nav CSS */
-.nav-bar{position:relative;margin-bottom:2rem;z-index:100;font-family:var(--sans,-apple-system,system-ui,sans-serif)}
+/* ---- Navigation -------------------------------------------------------- */
+/* Collapsed at every width. See the module docstring for why. */
+.nav-bar{position:relative;z-index:100;background:var(--surface,#0f172a);
+  border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
+  font-family:var(--mono,ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace)}
+
+/* Off-screen rather than display:none -- display:none takes the checkbox out of
+   the tab order, which left the menu openable by pointer only. */
 .nav-toggle{position:absolute;opacity:0;width:1px;height:1px;margin:0}
-.nav-toggle:focus-visible ~ .nav-header .nav-toggle-label{outline:2px solid var(--bronze,#38bdf8);outline-offset:3px}
+.nav-toggle:focus-visible ~ .nav-header .nav-toggle-label{
+  outline:2px solid var(--bronze,#38bdf8);outline-offset:5px}
+
 .nav-header{display:flex;justify-content:space-between;align-items:center;
-  padding:12px 24px;border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
-  background:var(--surface,#0f172a)}
-.nav-title{font-weight:600;font-size:13px;color:var(--ink-2,#e2e8f0);
-  letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono,ui-monospace,monospace)}
-.nav-toggle-label{display:block;cursor:pointer;width:30px;height:24px;position:relative;z-index:101}
-.nav-toggle-label span{display:block;width:100%;height:2px;background:var(--ink-2,#e2e8f0);
-  position:absolute;transition:all .3s ease;left:0}
-.nav-toggle-label span:nth-child(1){top:4px}
-.nav-toggle-label span:nth-child(2){top:11px}
-.nav-toggle-label span:nth-child(3){top:18px}
-.nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;
-  background:var(--surface,#0f172a);border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
-  padding:12px 24px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
-.nav-toggle:checked ~ .nav-links{display:flex}
-.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(1){top:11px;transform:rotate(45deg)}
+  gap:20px;height:52px;padding-inline:max(24px,(100% - 1200px)/2)}
+.nav-title{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2,#e2e8f0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.nav-toggle-label{display:block;cursor:pointer;width:22px;height:14px;
+  position:relative;flex:none}
+.nav-toggle-label span{display:block;width:100%;height:1.5px;left:0;position:absolute;
+  background:var(--ink-2,#e2e8f0);transition:transform .22s ease,opacity .22s ease,top .22s ease}
+.nav-toggle-label span:nth-child(1){top:0}
+.nav-toggle-label span:nth-child(2){top:6.25px}
+.nav-toggle-label span:nth-child(3){top:12.5px}
+.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(1){
+  top:6.25px;transform:rotate(45deg)}
 .nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(2){opacity:0}
-.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(3){top:11px;transform:rotate(-45deg)}
-.nav-links a{padding:12px 0;color:var(--ink-2,#e2e8f0);text-decoration:none;font-size:15px;border-bottom:1px solid var(--rule,rgba(255,255,255,.05))}
-.nav-links a:last-child{border-bottom:none}
+.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(3){
+  top:6.25px;transform:rotate(-45deg)}
+
+/* The dropped panel. Full-bleed ground, contents on the 1200px column. */
+.nav-links{display:none;position:absolute;top:100%;left:0;right:0;
+  background:var(--surface,#0f172a);
+  border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
+  box-shadow:0 14px 28px rgba(0,0,0,.10);
+  padding-block:14px 20px;padding-inline:max(24px,(100% - 1200px)/2);
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));column-gap:32px}
+.nav-toggle:checked ~ .nav-links{display:grid}
+.nav-links a{display:block;padding:9px 0;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;text-decoration:none;color:var(--ink-2,#e2e8f0);
+  border-bottom:1px solid var(--rule,rgba(255,255,255,.10))}
+.nav-links a:hover{color:var(--ink,#fff)}
 .nav-links a.active{color:var(--bronze,#38bdf8);font-weight:600}
-.theme-btn{margin-top:12px;padding:8px 12px;align-self:flex-start}
-@media(min-width:900px){
-  .nav-header{display:none}
-  .nav-links{display:flex;flex-direction:row;position:static;background:transparent;border:none;padding:12px 24px;align-items:center;flex-wrap:wrap;gap:16px}
-  .nav-links a{padding:0;border:none}
-  .theme-btn{margin-top:0;margin-left:auto}
-}
+.nav-links a.active::after{content:" ·";opacity:.7}
+.theme-btn{grid-column:1/-1;justify-self:start;margin-top:18px;
+  font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--surface-2,rgba(255,255,255,.06));color:var(--ink-2,#e2e8f0);
+  border:1px solid var(--rule,rgba(255,255,255,.14));
+  padding:7px 13px;border-radius:2px;cursor:pointer}
+.theme-btn:hover{color:var(--ink,#fff);border-color:var(--bronze-soft,#38bdf8)}
+
+/* Overlay variant, for the full-screen 3-D pages. The bar is translucent over
+   the canvas; the dropped panel is NOT -- at .97 the page's own h1 was still
+   legible through the menu items behind it. */
+.nav-over{position:absolute;top:0;left:0;right:0;background:rgba(5,8,20,.9);
+  backdrop-filter:blur(12px)}
+.nav-over .nav-links{background:#070b18}
 """
 
 NAV_MARK = "<!--NAV:"
@@ -352,9 +407,9 @@ def apply_chrome(html, dark=False):
     if n_foot != 1:
         raise ValueError(f"expected exactly one {FOOTER_MARK}...--> marker, found {n_foot}")
     if "</style>" in html:
-        html = html.replace("</style>", FOOTER_CSS + "</style>", 1)
+        html = html.replace("</style>", CHROME_CSS + "</style>", 1)
     else:
-        html = html.replace("</head>", f"<style>{FOOTER_CSS}</style></head>", 1)
+        html = html.replace("</head>", f"<style>{CHROME_CSS}</style></head>", 1)
     return html
 
 

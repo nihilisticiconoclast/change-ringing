@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>The Change Ringing Corpus</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Change Ringing Corpus</title>
+<style>
 :root{
   --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
   --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
@@ -30,168 +30,100 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);
   font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
-main{max-width:1200px;margin:0 auto;padding:0 24px}
-h1,h2,h3{text-wrap:balance}
-h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em;margin:0 0 4px}
-section{padding:44px 0;border-bottom:1px solid var(--rule)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+/* max-width:none, because the `p{max-width:70ch}` below counts 70 characters of
+   the body serif and this line is set in mono at 11px with .18em of tracking --
+   which came to 455px and folded a six-word eyebrow onto two lines. */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px;max-width:none}
+header{padding:64px 0 44px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:34px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+.fig .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);
+  opacity:.72;margin-top:2px}
+section{padding:52px 0;border-bottom:1px solid var(--rule)}
 section:last-of-type{border-bottom:none}
-p{max-width:74ch;color:var(--ink-2)}
-    .hero {
-      position: relative;
-      width: 100%;
-      height: 60vh;
-      min-height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      margin-bottom: 3rem;
-      border-radius: 8px;
-    }
-    /* The submitted version used a 1 MB JPEG here with no stated origin. This
-       repository documents the licence of every byte of its data, so an
-       unattributed binary is the one thing it should not ship. Replaced with a
-       ground of the site's own palette -- and the hero reads better for it,
-       since the type is now the subject rather than sitting on top of a
-       picture. Put the image back the moment its provenance can be written
-       down. */
-    .hero {
-      background:
-        radial-gradient(ellipse at 30% 20%, rgba(138,95,34,.20), transparent 55%),
-        radial-gradient(ellipse at 75% 70%, rgba(47,109,83,.18), transparent 55%),
-        var(--surface, #14161a);
-      border: 1px solid var(--rule, rgba(255,255,255,.14));
-    }
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      color: var(--ink, #f8fafc);
-      padding: 0 20px;
-      max-width: 800px;
-    }
-    .hero-title {
-      font-size: 3rem;
-      font-weight: 700;
-      margin: 0 0 1rem;
-      letter-spacing: -0.02em;
-    }
-    .hero-subtitle {
-      font-size: 1.5rem;
-      font-weight: 400;
-      opacity: 0.9;
-      margin: 0;
-      color: var(--ink-2, #cbd5e1);
-    }
-    .corpus-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin: 3rem 0;
-      text-align: center;
-    }
-    .stat-sub {
-      display: block;
-      font-size: .72rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      opacity: .6;
-      margin-top: 4px;
-    }
-    .stat-box {
-      padding: 2rem;
-      background: var(--bg-surface, rgba(255,255,255,0.03));
-      border: 1px solid var(--rule, rgba(255,255,255,0.1));
-      border-radius: 8px;
-    }
-    .stat-value {
-      display: block;
-      font-size: 2.5rem;
-      font-weight: 600;
-      color: var(--bronze, #38bdf8);
-      margin-bottom: 0.5rem;
-    }
-    .stat-label {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink-2, #e2e8f0);
-    }
-    .toc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .toc-card {
-      display: block;
-      padding: 1.5rem;
-      text-decoration: none;
-      color: inherit;
-      border: 1px solid var(--rule, rgba(255,255,255,0.1));
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      background: var(--bg-surface, transparent);
-    }
-    .toc-card:hover {
-      border-color: var(--bronze, #38bdf8);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .toc-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem;
-      color: var(--bronze, #38bdf8);
-    }
-    .toc-desc {
-      font-size: 0.95rem;
-      line-height: 1.5;
-      color: var(--ink-2, #e2e8f0);
-      margin: 0;
-    }
-  </style>
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em}
+.lede{margin:16px 0 0;max-width:70ch;color:var(--ink-2)}
+p{max-width:70ch;color:var(--ink-2)}
+
+/* The plain course drawn across the top. No fixed height: the SVG keeps its own
+   aspect ratio so the lines never stretch, and the caption sits under it in the
+   same mono the figures use. */
+.course{margin-top:36px}
+.course svg{display:block;width:100%;height:auto}
+/* Serif, at the size the footer's provenance notes use. Set in mono it was six
+   dense lines of small caps under the drawing and read as more important than
+   the drawing. */
+.key{font-size:13.5px;color:var(--ink-3);margin:16px 0 0;max-width:88ch;line-height:1.65}
+.key b{font-weight:600}
+.key code{font-family:var(--mono);font-size:.92em}
+.key .k-work{color:var(--bronze)}
+.key .k-treble{color:var(--bar)}
+
+/* The index. A ruled list, not a grid of cards -- the rest of the site is set in
+   rules and hairlines, and a landing page in rounded boxes with lift-on-hover
+   read as a different website bolted to the front of this one. */
+.toc{list-style:none;margin:30px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));column-gap:44px}
+.toc li{border-top:1px solid var(--rule);padding:15px 0 15px}
+.toc a{display:block;color:var(--ink);text-decoration:none;font-size:1.12rem}
+.toc a:hover{color:var(--bronze)}
+.toc .num{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--bronze);
+  display:block;margin-bottom:5px}
+.toc p{margin:4px 0 0;font-size:.94rem;color:var(--ink-3);max-width:46ch;line-height:1.55}
+</style>
 </head>
 <body>
 <!--NAV:index.html-->
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · 2012–2024 · Four sources, one schema</p>
+  <h1>Every reported performance,<br>every method, every bell.<br><em>In one queryable record.</em></h1>
+  <p class="standfirst">Change ringing has kept meticulous records for three centuries, in
+  four separate collections that have never been joined. This corpus joins them, checks
+  every year against an independent count, and publishes what the joined data will and
+  will not support.</p>
 
-<main>
-  <div class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">The Change Ringing Corpus</h1>
-      <p class="hero-subtitle">Thirteen years of performances, resolved into a single relational dataset.</p>
-    </div>
+  <div class="course">
+    <!--/*COURSE*/-->
+    <p class="key"><!--/*COURSEKEY*/--></p>
   </div>
 
-  <section>
-    <h2>A Complete Record</h2>
-    <p>
-      Change ringing is a highly structured mathematical performance art. For over three centuries, ringers have developed 
-      thousands of "methods" — complex permutations of ringing sequences — and maintained meticulous records of their performances.
-    </p>
-    <p>
-      This site explores a unified corpus built from three primary sources: BellBoard’s performance archive, Dove’s Guide for 
-      Church Bell Ringers, and the CCCBR Methods Library. By normalising and linking these distinct datasets, we can visualise 
-      the entire ringing ecosystem: from the lineage of method invention and the geographic spread of foundries, to the tightly 
-      connected social networks of the ringers themselves.
-    </p>
-    
-    <div class="corpus-stats">
-      <!--/*STATS*/-->
-    </div>
-  </section>
+  <div class="figures"><!--/*STATS*/--></div>
+</header>
 
-  <section>
-    <h2>Explorations</h2>
-    <p>The corpus is explored through a series of visualisations, each focusing on a different dimension of the data.</p>
-    
-    <div class="toc-grid">
-      <!--/*TOC*/-->
-    </div>
-  </section>
+<section>
+  <h2>What is in it</h2>
+  <p class="lede">Performances and their bands from <strong>BellBoard</strong>; towers, bells
+  and founders from <strong>Dove’s Guide</strong>; methods and their place notation from the
+  <strong>CCCBR Methods Library</strong>; compositions from <strong>CompLib</strong>. The
+  four are normalised into one relational schema, so a question can cross between them —
+  which methods are rung on bells cast by which foundry, in which counties, on which nights
+  of the week.</p>
+  <p class="lede">Every year of the performance record is checked against BellBoard’s own
+  independent count before it is published, and the linkage rates, the classifier accuracy
+  and the parts that could not be matched are all stated rather than rounded away. Several
+  of the findings below overturn what ringers generally believe; two of them are negative
+  results, published because a checked negative is worth more than an unchecked positive.</p>
+</section>
 
-</main>
+<section>
+  <h2>The pages</h2>
+  <p class="lede">Each one asks a question the joined corpus can answer, and says how far the
+  answer can be trusted.</p>
+  <ul class="toc">
+    <!--/*TOC*/-->
+  </ul>
+</section>
 
+</div>
 <!--FOOTER:index.html-->
 <script>
 /* The same mechanism as every other page: data-theme on <html>, remembered in

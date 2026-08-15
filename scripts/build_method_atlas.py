@@ -36,7 +36,6 @@ STAGE_NAMES = {2: "Two", 3: "Singles", 4: "Minimus", 5: "Doubles", 6: "Minor",
                7: "Triples", 8: "Major", 9: "Caters", 10: "Royal",
                11: "Cinques", 12: "Maximus"}
 
-
 def build(db):
     conn = sqlite3.connect(db)
     rows = conn.execute(
@@ -66,7 +65,6 @@ def build(db):
         counts.setdefault(m["c"], 0)
         counts[m["c"]] += 1
     return verified, failed, len(rows), counts
-
 
 TEMPLATE = r"""<!doctype html>
 <html lang="en">
@@ -100,17 +98,6 @@ TEMPLATE = r"""<!doctype html>
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);
   font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
-.nav-bar{background:var(--surface);border-bottom:1px solid var(--rule);
-  padding:12px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.nav-links{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
-  letter-spacing:.08em;text-transform:uppercase}
-.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze)}
-.theme-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule);
-  padding:6px 12px;border-radius:2px;cursor:pointer}
-.theme-btn:hover{color:var(--ink);border-color:var(--bronze-soft)}
 .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
 h1,h2,h3{text-wrap:balance;margin:0}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
@@ -367,7 +354,6 @@ addEventListener("resize", ()=>render());
 </html>
 """
 
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", default=str(ROOT / "data" / "change-ringing.db"))
@@ -395,7 +381,6 @@ def main():
     for c, n in sorted(counts.items(), key=lambda x: -x[1]):
         print(f"    {c:16s} {n:6,}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

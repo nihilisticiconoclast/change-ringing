@@ -613,6 +613,47 @@ say plainly where the result should not be trusted.**
 
 ---
 
+### 31. Unifying the markup and leaving the styling behind is half a fix that reads as a whole one
+
+`site_chrome.py` was written because eleven pages had eleven hand-maintained nav
+bars and the footers had silently diverged. It generates the nav markup from one
+list, `verify_chrome.py` asserts every page's nav is byte-identical, CI runs it,
+and it has passed continuously ever since.
+
+The site still had eleven different nav bars.
+
+Every page emitted the same markup and then styled it with its own `.nav-bar`
+rule — mono uppercase on one page, mixed-case sans on the next, one bar with
+doubled padding, one positioned over a canvas. Clicking between pages, the header
+visibly changed shape. The user reported it; no check had, because the checker
+was written to compare the thing that had gone wrong last time.
+
+Three things are worth taking from that:
+
+- **A component is its markup *and* its rules.** Extracting one and leaving the
+  other creates a construct that looks centralised, is described as centralised
+  in its own docstring, and still has eleven authors. That is worse than eleven
+  honest copies, because it stops anyone looking.
+- **The check inherits the blind spot of the bug that prompted it.** The nav
+  drifted, so the check compared navs. The comparison was `re.findall` over
+  `<a href=...>` inside `<div class="nav-links">` — it could not have seen a CSS
+  difference if one had been painted across the page in red. Ask what *else*
+  could differ while this check passes, and check the second thing too.
+- **The verifier must read the sources, not only the output.** Comparing the
+  built pages to each other cannot catch a divergence that is uniform: eleven
+  pages each styling the nav differently is caught, but eleven pages sharing one
+  wrong rule is not. `verify_chrome.py` now fails any template or builder that
+  declares a nav selector at all, which is a property of the source and does not
+  depend on noticing the symptom.
+
+The generalisation is uncomfortable, because this project has several other
+"single source of truth" modules: **a single source of truth that governs only
+part of the thing it names is a liability, and the part it does not govern is
+exactly where nobody will look.** The palette and page-body CSS are still copied
+into every template here — roadmap item 31 — and they have already drifted.
+
+---
+
 ## Where the predictions are kept
 
 `docs/HYPOTHESES.md` records every claim this project has tested against what was

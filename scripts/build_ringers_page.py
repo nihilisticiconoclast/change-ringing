@@ -47,7 +47,6 @@ ASSOC_PALETTE = {
     "Other Regional / Independent": "#94A3B8"               # Slate Grey (Other Societies)
 }
 
-
 def build_page():
     print(f"Loading datasets for Ringer Constellation ...", flush=True)
     cand_df = pd.read_csv(CANDIDATES_CSV)
@@ -295,7 +294,6 @@ def build_page():
     OUT_HTML.write_text(html_content, encoding="utf-8")
     print(f"\nWrote {OUT_HTML} ({OUT_HTML.stat().st_size / 1024:.1f} KB)", flush=True)
 
-
 def generate_html(nodes, edges, search_data, stats):
     nodes_json = json.dumps(nodes)
     edges_json = json.dumps(edges)
@@ -332,18 +330,6 @@ body{{
   margin:0; background:var(--ground); color:var(--ink);
   font-family:var(--serif); font-size:17px; line-height:1.62;
   -webkit-font-smoothing:antialiased;
-}}
-.nav-bar{{
-  background:var(--surface); border-bottom:1px solid var(--rule);
-  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
-;flex-wrap:wrap;gap:10px}}
-.nav-links{{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex-wrap:wrap}}
-.nav-links a{{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}}
-.nav-links a.active{{color:var(--bronze);border-bottom-color:var(--bronze);font-weight:600}}
-.nav-links a:hover{{color:var(--ink)}}
-.theme-btn{{
-  background:none;border:1px solid var(--rule);color:var(--ink-2);padding:4px 10px;
-  font-family:var(--mono);font-size:11px;cursor:pointer;border-radius:2px;
 }}
 .wrap{{max-width:1180px;margin:0 auto;padding:0 24px}}
 header{{padding:60px 0 40px;border-bottom:1px solid var(--rule)}}
@@ -979,7 +965,6 @@ render();
 </body>
 </html>
 """
-
 
 if __name__ == "__main__":
     build_page()
