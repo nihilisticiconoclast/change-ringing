@@ -70965,14 +70965,17 @@ section:last-of-type{border-bottom:none}
       osc.connect(gainNode);
       gainNode.connect(masterGain);
       
-      // Fast attack, exponential decay to near zero, then linear to exactly zero to avoid clicks
+      // Smooth attack
       gainNode.gain.setValueAtTime(0, time);
       gainNode.gain.linearRampToValueAtTime(p.gain, time + 0.02);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, time + p.decay - 0.05);
-      gainNode.gain.linearRampToValueAtTime(0, time + p.decay);
+      
+      // Smooth asymptotic exponential decay to avoid any clipping/rasping
+      // The time constant (decay / 5) means it decays by ~63% every interval
+      gainNode.gain.setTargetAtTime(0.00001, time + 0.02, p.decay / 5);
       
       osc.start(time);
-      osc.stop(time + p.decay + 0.1);
+      // Wait a generous amount of time after the decay before stopping the oscillator
+      osc.stop(time + p.decay + 1.0);
     });
   }
 
