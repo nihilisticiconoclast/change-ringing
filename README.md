@@ -88,12 +88,19 @@ can be checked instead of taken on trust.
       way. Tower-level questions should join against a deduplicated tower list
       or `towers`; ring-level questions should use `RingID`, which BellBoard
       supplies as `dove_ring_id` but the Methods Library does not.
-- [ ] CompLib linkage
+- [ ] CompLib linkage -- CompLib's search payload carries free-text
+      method titles only, but `/composition/{id}/rows` returns a `methodid`
+      for single-method compositions that maps to the CCCBR `method_id` by
+      `'m' || methodid` (opt-in via `--fetch-method-ids`); spliced
+      compositions remain free-text for Gemini/Claude to resolve.
 - [x] First analytical output -- the Founder Atlas (see above)
 - [x] The Rhythm of Ringing -- the week, the year, and the 24 days that carry
       21% of it; corrected the September and Wednesday claims made in
       `docs/IDEAS.md` and in this README
-- [ ] CompLib ingestion
+- [x] CompLib ingestion -- the fourth corpus (`schema/006`,
+      `scripts/ingest_complib.py`): 86,039 compositions from the
+      `api.complib.org` JSON API, with `perpage` capped at 25 (a max
+      the OpenAPI spec omits). See `data/SOURCES.md`.
 - [ ] Ringer identity resolution (needs the backfill run first)
 
 ## Roadmap

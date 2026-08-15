@@ -6,6 +6,7 @@ __pycache__/
 # track large database files, or keep it as a local-only file.
 dove-csvs/
 methods-cache/
+complib-cache/
 *.xml
 *.zip
 
