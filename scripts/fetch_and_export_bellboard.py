@@ -46,8 +46,34 @@ FOOTNOTE_COLS = ["perf_id", "position", "footnote"]
 FLAG_COLS = ["perf_id", "position", "flag_type", "bell", "flag_text"]
 
 
+def get_expected_count(date_from: str, date_to: str) -> int:
+    """Query BellBoard search.php to determine the exact expected performance count for a date range."""
+    import urllib.request
+    import re
+    url = f"https://bb.ringingworld.co.uk/search.php?from={date_from}&to={date_to}"
+    req = urllib.request.Request(url, headers={"User-Agent": "change-ringing-corpus/0.1"})
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                html = resp.read().decode("utf-8")
+                m = re.search(r'([0-9,]+)\s+performances', html)
+                if m:
+                    return int(m.group(1).replace(",", ""))
+                if "No performances found" in html:
+                    return 0
+        except Exception as e:
+            if attempt == 3:
+                print(f"  Warning: could not query search.php for count ({e})", flush=True)
+                return -1
+            time.sleep(2 * (attempt + 1))
+    return -1
+
+
 def fetch_year_data(year: int):
     print(f"\n{'='*60}\n>>> Fetching BellBoard Corpus for Year {year}\n{'='*60}", flush=True)
+
+    expected_year_total = get_expected_count(f"{year}-01-01", f"{year}-12-31")
+    print(f"  Ground-truth expected performances from BellBoard search.php: {expected_year_total:,}", flush=True)
 
     months = [
         ("01-01", "01-31"), ("02-01", "02-29" if (year%4==0 and (year%100!=0 or year%400==0)) else "02-28"),
@@ -72,9 +98,10 @@ def fetch_year_data(year: int):
         if end_d > today_str:
             end_d = today_str
 
-        print(f"  Fetching window {start_d} to {end_d} ...", flush=True)
+        expected_window = get_expected_count(start_d, end_d)
+        print(f"  Fetching window {start_d} to {end_d} (Expected: {expected_window:,}) ...", flush=True)
         page = 1
-        window_count = 0
+        window_perfs = {}
 
         while True:
             elems = None
@@ -95,11 +122,11 @@ def fetch_year_data(year: int):
                 if parsed:
                     p_row, r_list, fn_list, fl_list = parsed
                     p_id = p_row[0]
+                    window_perfs[p_id] = p_row
                     all_perfs[p_id] = p_row
                     all_ringers.extend(r_list)
                     all_footnotes.extend(fn_list)
                     all_flags.extend(fl_list)
-                    window_count += 1
 
             print(f"    Page {page}: {len(elems)} performances", flush=True)
             if len(elems) < 1000:
@@ -107,9 +134,22 @@ def fetch_year_data(year: int):
             page += 1
             time.sleep(1.0)
 
-        print(f"  -> Window complete: {window_count} performances (Year total: {len(all_perfs):,})", flush=True)
+        # Completeness Gate for window
+        if expected_window > 0 and len(window_perfs) < expected_window:
+            diff = expected_window - len(window_perfs)
+            if diff > 5: # Tolerating minor boundary/draft edits
+                print(f"  ERROR: Window {start_d}..{end_d} fetched {len(window_perfs)} < expected {expected_window} (missing {diff})", flush=True)
+                raise RuntimeError(f"Completeness gate failure for window {start_d}..{end_d}")
+
+        print(f"  -> Window complete: {len(window_perfs):,} performances (Year-to-date total: {len(all_perfs):,})", flush=True)
         time.sleep(1.0)
 
+    # Completeness Gate for full year
+    if expected_year_total > 0 and len(all_perfs) < (expected_year_total - 20):
+        print(f"ERROR: Full year total {len(all_perfs):,} < expected {expected_year_total:,}", flush=True)
+        raise RuntimeError(f"Completeness gate failure for full year {year}")
+
+    print(f"\n>>> Full Year {year} Gate PASSED: {len(all_perfs):,} / {expected_year_total:,} performances", flush=True)
     return list(all_perfs.values()), all_ringers, all_footnotes, all_flags
 
 
