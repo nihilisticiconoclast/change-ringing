@@ -101,6 +101,8 @@ def main():
             if b is None:
                 continue
             norm = re.sub(r"\s+", " ", re.sub(marker, "", b)).strip()
+            norm = re.sub(r'<button class="theme-btn".*?</button>', "", norm)
+            norm = re.sub(r"\s+", " ", norm).strip()
             seen.setdefault(norm, []).append(href)
         shapes[kind] = seen
         if len(seen) > 1:

@@ -62,7 +62,8 @@ def steps(db, skip_inference):
         ]
     # The eleven published pages, in the order site_chrome.PAGES lists them.
     out += [
-        ("Founder Atlas          -> docs/index.html",     ["build_atlas.py"], "pages"),
+        ("The Corpus             -> docs/index.html",     ["build_home_page.py"], "pages"),
+        ("Founder Atlas          -> docs/atlas.html",     ["build_atlas.py"], "pages"),
         ("Method Lineage         -> docs/lineage.html",   ["build_lineage_atlas.py"], "pages"),
         ("Blue Line Atlas        -> docs/methods.html",   ["build_method_atlas.py"], "pages"),
         ("First Rung             -> docs/invention.html", ["build_invention_page.py"], "pages"),

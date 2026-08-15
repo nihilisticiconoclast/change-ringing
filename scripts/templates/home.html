@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Change Ringing Corpus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="typography.css">
+  <style>
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 60vh;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 3rem;
+      border-radius: 8px;
+    }
+    .hero img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.6;
+      filter: brightness(0.7) contrast(1.2);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      color: #f8fafc;
+      padding: 0 20px;
+      max-width: 800px;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-subtitle {
+      font-size: 1.5rem;
+      font-weight: 400;
+      opacity: 0.9;
+      margin: 0;
+      color: #cbd5e1;
+    }
+    .corpus-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+      text-align: center;
+    }
+    .stat-box {
+      padding: 2rem;
+      background: var(--bg-surface, rgba(255,255,255,0.03));
+      border: 1px solid var(--rule, rgba(255,255,255,0.1));
+      border-radius: 8px;
+    }
+    .stat-value {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--bronze, #38bdf8);
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-2, #e2e8f0);
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .toc-card {
+      display: block;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--rule, rgba(255,255,255,0.1));
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      background: var(--bg-surface, transparent);
+    }
+    .toc-card:hover {
+      border-color: var(--bronze, #38bdf8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .toc-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--bronze, #38bdf8);
+    }
+    .toc-desc {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--ink-2, #e2e8f0);
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+<!--NAV:index.html-->
+
+<main>
+  <div class="hero">
+    <img src="../change_ringing_nexus_hero_1786814077297.jpg" alt="Change Ringing Geometric Network" />
+    <div class="hero-content">
+      <h1 class="hero-title">The Change Ringing Corpus</h1>
+      <p class="hero-subtitle">Thirteen years of performances, resolved into a single relational dataset.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>A Complete Record</h2>
+    <p>
+      Change ringing is a highly structured mathematical performance art. For over three centuries, ringers have developed 
+      thousands of "methods" — complex permutations of ringing sequences — and maintained meticulous records of their performances.
+    </p>
+    <p>
+      This site explores a unified corpus built from three primary sources: BellBoard’s performance archive, Dove’s Guide for 
+      Church Bell Ringers, and the CCCBR Methods Library. By normalising and linking these distinct datasets, we can visualise 
+      the entire ringing ecosystem: from the lineage of method invention and the geographic spread of foundries, to the tightly 
+      connected social networks of the ringers themselves.
+    </p>
+    
+    <div class="corpus-stats">
+      <div class="stat-box">
+        <span class="stat-value">293,471</span>
+        <span class="stat-label">Performances</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value">51,451</span>
+        <span class="stat-label">Attributed Bells</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value">25,055</span>
+        <span class="stat-label">Methods</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value">70,351</span>
+        <span class="stat-label">Ringers</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Explorations</h2>
+    <p>The corpus is explored through a series of visualisations, each focusing on a different dimension of the data.</p>
+    
+    <div class="toc-grid">
+      <!--/*TOC*/-->
+    </div>
+  </section>
+
+</main>
+
+<!--FOOTER:index.html-->
+<script>
+  const toggle = document.getElementById("themeToggle");
+  if(toggle) {
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  }
+</script>
+</body>
+</html>
