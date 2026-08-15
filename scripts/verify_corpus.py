@@ -93,6 +93,14 @@ READ_COST_INDEXES = [
     "idx_ringer_name_perf",
 ]
 
+# performances.dove_tower_id values resolving in neither `dove` nor `towers`.
+# A handful is expected -- BellBoard tracks Dove live and this database holds a
+# snapshot -- and decision 001 says not to "clean" them. It was 70 on the
+# 2021-24 corpus and is 208 on 2018-24, so it scales with the corpus and no
+# fixed figure is right. The ceiling is not a prediction, it is the line between
+# "upstream drifted" and "a reload went wrong": thousands is never drift.
+ORPHAN_DRIFT_CEILING = 5000
+
 def _plan_text(plan_rows):
     return "\n".join(str(r[3]) for r in plan_rows)
 
@@ -435,11 +443,48 @@ def check_orphan_soft_fks(conn, rep):
             f'AND "dove_tower_id" NOT IN (SELECT "TowerID" FROM "towers" '
             f'    WHERE "TowerID" IS NOT NULL)',
         )
-        rep.report(
-            f"orphans {tbl}.dove_tower_id", Result.INFO,
-            f"{absent_both:,} of {total:,} linked records resolve to neither "
-            f"dove nor towers (expected per decision 001; not corruption)",
-        )
+        # The two tables are NOT the same kind of claim, and reporting both as
+        # INFO -- which this did -- throws away the difference. Taken from Vibe's
+        # second submission (PR #11), which got this right.
+        #
+        # method_performances.dove_tower_id was populated by adjudicating
+        # candidates AGAINST `towers`. Every value in it was therefore chosen
+        # because it resolves there, so an orphan is not drift, it is corruption
+        # or a botched reload. Measured today: 0 of 22,117. That zero is an
+        # invariant and should FAIL if it ever moves.
+        #
+        # performances.dove_tower_id comes from BellBoard, which tracks Dove live
+        # while this database holds a snapshot, so a handful of unresolvable IDs
+        # is expected and decision 001 says explicitly not to "clean" them. But
+        # unbounded INFO means a silent drift from 208 to 20,000 would report
+        # just as cheerfully, so it is bounded: a handful is drift, thousands is
+        # a broken reload.
+        if tbl == "method_performances":
+            if absent_both:
+                rep.report(
+                    f"orphans {tbl}.dove_tower_id", Result.FAIL,
+                    f"{absent_both:,} of {total:,} adjudicated links cite a "
+                    f"TowerID in neither dove nor towers. These were resolved "
+                    f"against `towers` when they were adjudicated, so an orphan "
+                    f"here is corruption, not upstream drift",
+                )
+            else:
+                rep.report(f"orphans {tbl}.dove_tower_id", Result.PASS,
+                           f"all {total:,} adjudicated links resolve")
+        elif absent_both > ORPHAN_DRIFT_CEILING:
+            rep.report(
+                f"orphans {tbl}.dove_tower_id", Result.FAIL,
+                f"{absent_both:,} of {total:,} linked records resolve to neither "
+                f"dove nor towers -- above the {ORPHAN_DRIFT_CEILING:,} ceiling "
+                f"for upstream drift. A handful is expected (decision 001); this "
+                f"many means a reload went wrong or Dove was refreshed badly",
+            )
+        else:
+            rep.report(
+                f"orphans {tbl}.dove_tower_id", Result.INFO,
+                f"{absent_both:,} of {total:,} linked records resolve to neither "
+                f"dove nor towers (expected per decision 001; not corruption)",
+            )
 
 
 def check_join_identity(conn, rep):
