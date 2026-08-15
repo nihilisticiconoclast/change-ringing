@@ -10,7 +10,7 @@ ones find.
 | --- | --- | --- |
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Done** — see brief below |
-| 3 | Corpus integrity checker | Queued — sketch below |
+| 3 | Corpus integrity checker | **Done** — see brief below |
 | 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
@@ -136,7 +136,37 @@ take on the Gemini roadmap.
 
 ---
 
-## Task 3 — Corpus integrity checker *(queued)*
+## Task 3 — Corpus integrity checker *(done)*
+
+**Done.** `scripts/verify_corpus.py` is one command that checks a
+database -- local or, one day, production -- and exits non-zero on
+failure so it can gate CI. Every check reports PASS / FAIL / SKIP
+(not applicable to this DB) / INFO (measured, not an invariant).
+
+It covers everything the sketch asked for:
+- declared schema objects present (tables/views, and especially the
+  schema/004 read-cost indexes -- a hard FAIL if missing);
+- row counts per table with tolerances (snapshots move, so out-of-
+  range is INFO unless a table is unexpectedly empty);
+- dove.TowerID and towers.TowerID fan-out (asserting the non-unique
+  shape decision 001 is built on; reported as INFO);
+- orphaned soft FKs (dove_tower_id absent from the tower tables),
+  reported with decision 001's "not corruption" explanation;
+- the decision-001 join identity in its snapshot-robust form: a
+  deduplicated tower join must equal records minus true orphans (a
+  join cannot create or destroy a record that joins);
+- literal "nan" strings in every text column (a real past bug);
+- EXPLAIN QUERY PLAN on the shipped views, asserting the
+  idx_method_perfs_method_event composite is actually used, so a
+  dropped-index regression is caught before it bills a read budget.
+
+Verified against the local replica: 47 checks, 0 failures, exit 0.
+A deliberately corrupted DB (a dropped schema/004 index + an injected
+"nan" string) produces 3 failures and exit 1. The join-identity check
+measures 22,117 == 22,117 - 0 orphans for method_performances and
+80,058 == 80,128 - 70 orphans for performances, matching decision 001.
+
+Original brief, retained for reference:
 
 `scripts/verify_corpus.py`: one command that checks a database — local or, one
 day, production — and reports anything wrong. Motivated by how many real

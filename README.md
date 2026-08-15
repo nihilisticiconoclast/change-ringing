@@ -101,6 +101,11 @@ can be checked instead of taken on trust.
       `scripts/ingest_complib.py`): 86,039 compositions from the
       `api.complib.org` JSON API, with `perpage` capped at 25 (a max
       the OpenAPI spec omits). See `data/SOURCES.md`.
+- [x] Corpus integrity checker -- `scripts/verify_corpus.py`, one
+      command that checks row counts, TowerID fan-out, orphaned soft
+      FKs, the decision-001 join identity, "nan" strings, and the
+      schema/004 read-cost indexes via EXPLAIN QUERY PLAN. Exits
+      non-zero on failure so it can gate CI.
 - [ ] Ringer identity resolution (needs the backfill run first)
 
 ## Roadmap
@@ -298,7 +303,12 @@ Two things make this a real check rather than an approximation. The replica
 uses an embedded libSQL connection rather than stdlib `sqlite3`, which accepts
 SQL that libSQL rejects -- that difference is how a double-quoted string
 literal reached production. And `EXPLAIN QUERY PLAN` works against it, so
-query cost can be assessed before anything runs for real.
+query cost can be assessed before anything runs for real. After building,
+`python scripts/verify_corpus.py --local-db local_corpus.db` runs the
+integrity checker (row counts, TowerID fan-out, orphaned soft FKs, the
+decision-001 join identity, `"nan"` strings, and the schema/004
+read-cost indexes via `EXPLAIN QUERY PLAN`); it exits non-zero on
+failure, so it is the post-build sanity check.
 
 Reaching production now requires `CHANGE_RINGING_ALLOW_PRODUCTION=1`. Without
 it the scripts refuse to connect, so an accidental production run is no longer
