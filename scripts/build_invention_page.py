@@ -125,18 +125,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       height: 380px;
       display: flex;
       background: var(--surface);
+      min-width: 0;
     }
     .text-panel {
       width: 250px;
       border-right: 1px solid var(--rule);
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .svg-panel {
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow-x: auto;
+      min-width: 0;
     }
     .panel-header {
       padding: 8px 16px;
@@ -386,19 +388,19 @@ Call\tCourse Head
     
     for (let i = 0; i < rowsSubset.length; i += 32) {
       let x = pad + i * dx;
-      svg += `<line x1="${x}" y1="${pad-6}" x2="${x}" y2="${h-pad+6}" stroke="var(--rule)" stroke-width="1" opacity=".7"/>`;
+      svg += `<line x1="${x}" y1="${pad-6}" x2="${x}" y2="${h-pad+6}" stroke="var(--rule, #ccc)" stroke-width="1" opacity=".7"/>`;
     }
     
     const bells = rowsSubset[0].split('');
     const highlight = { 
-      '1': { color: 'var(--bar)', width: 2.4 }, 
-      '8': { color: 'var(--bronze)', width: 2.4 } 
+      '1': { color: 'var(--bar, #2F6D53)', width: 2.4 }, 
+      '8': { color: 'var(--bronze, #8A5F22)', width: 2.4 } 
     };
     
     bells.forEach(b => {
       if (!highlight[b]) {
         let pts = rowsSubset.map((row, i) => `${pad + i*dx},${pad + row.indexOf(b)*dy}`).join(' ');
-        svg += `<polyline points="${pts}" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".38" stroke-linejoin="round"/>`;
+        svg += `<polyline points="${pts}" fill="none" stroke="var(--ink-3, #aaa)" stroke-width="1" opacity=".38" stroke-linejoin="round"/>`;
       }
     });
     
