@@ -12,41 +12,63 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 1 | Backfill completeness gate | Vibe | **In review** — see the Now-after-8a table |
-| 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
-| 3 | Footnote occasion classification (option D) | Gemini | **Shipped** — `docs/occasions.html`; not yet reviewed against the aggregate-only constraint |
-| 4 | Rhythm of Ringing (option B) | Claude Code | **Done** — `docs/rhythm.html`; corrected two IDEAS figures |
-| 13 | Performance → method linkage | Claude Code | **Done** — `schema/005`; 72.2% of performances linked |
-| 14 | Vendor the CDN libraries | Claude Code | **Done** — fixed two live bugs it was hiding |
-| 8a | Method **invention** timeline (option C, first half) | Claude Code | **Done** — `docs/invention.html` |
-| 5 | Ring-level join semantics | Vibe | Unblocked — spec in `decisions/001` |
-| 6 | CompLib ingestion | Vibe | Queued |
+| 1 | Backfill completeness gate | **Vibe** | **In review** — PR #5. Mechanism right and its counts verified live; one blocking bug returned (the gate measures completeness with a row count that includes duplicates) |
+| 5 | Ring-level join semantics | **Vibe** | **Next after #1** — spec in `decisions/001`, which gained a correction and a third finding on 2026-08-15 |
+| 19 | Occasion classifier error rate | **Gemini** | **Next** — see below. Its own page ships eight categories with no measured precision |
+| 6 | CompLib ingestion | Vibe | Queued — but `data/SOURCES.md` now records that the "documented API" claim is unverified; establishing what the API offers is step one |
 | 7 | Corpus integrity checker | Vibe | Queued |
+| 16 | Spliced abbreviation expansion | Claude Code | Available, deliberately unqueued — see Held |
 
-## After the backfill succeeds
+### Done
 
-| # | Item | Owner | Why it waits |
+| # | Item | Owner | Where |
 | --- | --- | --- | --- |
-| 8b | Method **survival** — adoption over time (option C, second half) | Claude Code | Needs adoption history; see below |
-| 9 | Ringer identity across decades | Gemini | Present resolution covers 2021–24 only |
-| 10 | Run the backfill to completion | Claude Code | Needs the gate, and the freeze lifts 2026-09-01 |
+| 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
+| 3 | Footnote occasion classification (option D) | Gemini | `docs/occasions.html` — privacy constraint verified met; its prose corrected |
+| 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
+| 8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
+| 13 | Performance → method linkage | Claude Code | `schema/005` — 72.2% of performances linked |
+| 14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
+| 17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
+| 18 | Document the orphan `dove_tower_id` values | Claude Code | `decisions/001` |
 
-## Now, after 8a
+## Blocked, and on what
 
-| # | Item | Owner | State |
+| # | Item | Owner | Blocked on |
 | --- | --- | --- | --- |
-| 17 | Provenance and caveats on every page | Claude Code | **Done** — `scripts/site_chrome.py` gives all nine pages a footer stating their own caveats, and `scripts/verify_chrome.py` fails if one drifts |
-| 18 | Document the orphan `dove_tower_id` values | Claude Code | **Done** — `decisions/001`, which also gained a correction: it said 160 orphans and the figure is 179 |
-| 1 | Backfill completeness gate | Vibe | **In review** — PR #5. Mechanism right, counts verified live; one blocking bug returned |
+| 10 | Run the backfill to completion | Claude Code | Item 1 landing, **and** the Turso freeze lifting on **2026-09-01** |
+| 8b | Method survival — adoption over time (option C, second half) | Claude Code | Item 10. Currency is published on `invention.html`; survival needs adoption history |
+| 9 | Ringer identity across decades | Gemini | Item 10. Present resolution covers 2021–24 only |
+| 15 | Felstead — 360,000 peals back to the 1800s | Claude Code | **A reply from the CCCBR.** Enquiry sent 2026-08-15; `docs/felstead-enquiry.md`. The join is verified and the job is ~5,600 requests, so this starts the day there is an answer |
+| 12 | Consolidate data-quality caveats | Claude Code | Item 7, so the doc and the check agree |
 
 ## Held
 
 | # | Item | Why held |
 | --- | --- | --- |
-| 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly |
-| 15 | Felstead ingestion — 360,000 peals back to the 1800s | **Waiting on permission**, not on code. See `docs/felstead-enquiry.md`: no stated licence, no API, no robots.txt, and several thousand hours of volunteer transcription behind it. The join is verified (`towerbase-id`, 12/12 sampled) and the whole job is ~5,600 requests, so this is ready to start the day there is a reply |
-| 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 of them exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Held rather than queued: two rounds took the oracle from 63.6% to 68.0% and the next round is a third tuning parameter. The rows are recorded with their counts, so it can be picked up on evidence |
-| 12 | Consolidate data-quality caveats | Worth doing once the integrity checker exists, so the doc and the check agree |
+| 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly. The r/bellringing post may produce one |
+| 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Two rounds took the oracle from 63.6% to 68.0% and the next is a third tuning parameter, so it was stopped deliberately. The rows are recorded with their counts, so it can be resumed on evidence rather than from scratch |
+
+## Item 19 — the one genuinely new task
+
+**Gemini, and it closes a loop on Gemini's own work.** `docs/occasions.html`
+classifies 113,894 footnotes into eight occasions using keyword patterns, and the
+footer now says plainly what has not been established: *"a keyword is not an
+intent. 'First' catches a ringer's personal milestone and the word 'first' in any
+other sentence alike; no sample has been hand-checked to estimate that error
+rate, and until one has, treat the ordering of the smaller categories as
+unproven."*
+
+That is the gap. The deliverable is a **hand-labelled sample with a measured
+precision and recall per category** — the same shape as the location-adjudication
+dataset that worked well before. It needs no new data, no network, and no
+production access, and it either confirms the page or tells us which categories
+to stop reporting.
+
+The privacy constraint is unchanged and applies to the sample as much as the
+page: the labelled CSV may hold footnote text because it is a working file, but
+**nothing derived from it may name an individual**, and the sample must not be
+published as a browsable index.
 
 ---
 
