@@ -326,6 +326,27 @@ deleted so nobody wonders where the task went.
 
 ## Task 7 — A ringing career, from the bell people stand behind *(after item 20)*
 
+**Done.** `scripts/analyse_ringing_careers.py` resolves identities through
+`data/ringer_identity_candidates.csv` (the resolution lives in a CSV, not a
+table, so this is a script rather than a query), and
+`queries/findings/ringing_careers.sql` is the database-only raw-name view kept
+for transparency. The numbers are in `docs/ringing_careers.md`; the headline is
+Q2 and is recorded as hypothesis H27.
+
+The folk model is wrong in both directions. Mean normalised bell position
+(bell / ring size) is 0.550 early-career and 0.546 late — no upward drift —
+but the median ringer rings across nearly the whole ring over a career
+(within-ringer range 0.889), so neither do they settle on one bell. The brief's
+own bet was on the settling form, and it fails too. Of the cohort, 72.5%
+conduct and the median waits 11 appearances before the first; ~60% of a 2013
+first-seen cohort have no appearance after 2020 (the 2020 line crosses the
+COVID discontinuity, stated as a cohort rate and never about an individual).
+
+Cohort measured at 5,641 canonical ringers against the brief's 6,563: the
+corpus and the identity CSV are both moving targets, and the figure reproduces
+from the committed replica. Verified against a local replica (49/49 integrity
+checks passing) and stated as such rather than as production.
+
 `performance_ringers.bell` is populated on **1,897,741 rows** and nothing in this
 project has ever read it. It is the most underused column in the corpus.
 

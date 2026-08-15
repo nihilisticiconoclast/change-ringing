@@ -229,6 +229,20 @@ for 1` — as `none`.
 **❌ Wrong.** 75.5% is measured against an imperfect ruler and should not be
 quoted to a tenth of a per cent.
 
+### H27. Ringers find a bell and stay on it for twenty years
+**Expected:** the folk model says you progress treble to inside to tenor; the
+brief's own bet was the weaker form -- that most ringers settle on one bell
+rather than graduate up the ring.
+**Observed:** neither. Mean normalised bell position (bell / ring size) is
+0.550 in the first tenth of a career and 0.546 in the last -- no upward drift,
+no settling. The up / down / stayed split is roughly even (32% / 35% / 33%),
+and the median ringer rings across nearly the whole ring over a career
+(within-ringer range 0.889). Ringers move around without moving up. Measured
+on 5,641 canonical ringers with 50+ tower appearances spanning 5+ years.
+**❌ Wrong.** Both the strong model (progression to the tenor) and the weaker
+bet (settle on one bell) fail. The replacement -- a band that rings everywhere
+and conducts early -- is the sharper finding.
+
 ---
 
 ## The tally
@@ -237,10 +251,10 @@ quoted to a tenth of a per cent.
 | --- | ---: |
 | ✅ Held | 4 |
 | 🟡 Wrong in size | 5 |
-| ❌ Wrong | 17 |
-| **Total** | **26** |
+| ❌ Wrong | 18 |
+| **Total** | **27** |
 
-**Four predictions out of twenty-six survived intact — 15%.** That is not a comment on
+**Four predictions out of twenty-seven survived intact — 15%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way

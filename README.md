@@ -129,6 +129,17 @@ can be checked instead of taken on trust.
       `scripts/ingest_complib.py`): 86,039 compositions from the
       `api.complib.org` JSON API, with `perpage` capped at 25 (a max
       the OpenAPI spec omits). See `data/SOURCES.md`.
+- [x] A ringing career, from the bell people stand behind (Task 7) --
+      `docs/ringing_careers.md` and `queries/findings/ringing_careers.sql`,
+      reproduced by `scripts/analyse_ringing_careers.py`. **The folk-model
+      progression -- treble to inside to tenor -- is not in the data.** Mean
+      normalised bell position is 0.55 in a ringer's first tenth of a career
+      and 0.55 in their last: no upward drift, no settling on one bell. The
+      median ringer rings across nearly the whole ring over a career. Of
+      ringers with 50+ appearances, 72.5% conduct and the median waits 11
+      appearances before the first; ~60% of a 2013 first-seen cohort have no
+      appearance after 2020 (the 2020 line crosses COVID). `bell` had been
+      populated on 1,897,741 rows and read by nothing.
 - [ ] Ringer identity resolution (needs the backfill run first)
 
 ## Hypotheses and observations
