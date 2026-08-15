@@ -17,3 +17,9 @@ local_corpus.db
 .local-build-cache/
 data/change-ringing.db
 *checkpoint*.json
+
+# from PR #13
+data/complib/
+scratch/
+*_output.txt
+*.log

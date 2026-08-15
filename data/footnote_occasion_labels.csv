@@ -1,0 +1,401 @@
+perf_id,position,label,subject_type,notes
+1767734,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1446405,0,memorial,person,Memorial tribute or muffled ringing
+1283574,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1546140,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1126501,0,birthday,person,Birthday milestone or celebration
+1145072,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+377603,0,memorial,person,Memorial tribute or muffled ringing
+1112952,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1631238,0,civic,person,"Royal, national, civic, or military commemoration"
+1537776,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1552941,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1083608,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1112102,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1744117,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1187912,0,anniversary,bells,"Anniversary of bell installation/casting, guild, or dedication"
+1623910,0,civic,person,"Royal, national, civic, or military commemoration"
+1140546,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1005349,38,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1905635,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1661588,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1623601,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1302048,0,seasonal,institution,"Church calendar service, festival, or liturgical feast"
+1282998,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1214341,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1052939,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1517129,2,memorial,person,Memorial tribute or muffled ringing
+1056949,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1706134,1,seasonal,institution,"Church calendar service, festival, or liturgical feast"
+1619002,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1255031,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1546354,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1326126,0,birthday,person,Birthday milestone or celebration
+1105162,0,memorial,person,Memorial tribute or muffled ringing
+1497633,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1125664,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1660651,1,multiple,person,Multiple occasions mentioned (e.g. Memorial + Event/First)
+1187700,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1668346,2,memorial,person,Memorial tribute or muffled ringing
+1314435,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1132064,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1096009,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+984471,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1250924,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1648532,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1160772,0,memorial,person,Memorial tribute or muffled ringing
+1156400,1,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1229051,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1238056,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1763639,0,multiple,person,Multiple occasions mentioned (e.g. Memorial + Event/First)
+1475552,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1396595,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1193959,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1159460,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+982229,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1137210,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1165479,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1803531,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1140032,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1910296,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+289590,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1300492,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1180526,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1282075,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1295256,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1743035,0,civic,person,Civic / historic national milestone anniversary
+1708915,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1624313,0,civic,person,"Royal, national, civic, or military commemoration"
+1259073,7,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1032758,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1734202,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1158367,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1128247,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1073555,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1785276,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1153887,1,funeral,person,"Funeral, committal or thanksgiving for life service"
+1283946,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1316547,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1092481,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1756145,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1165957,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1646631,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1702014,1,wedding,person,Wedding celebration or blessing
+1432605,0,memorial,person,Memorial tribute or muffled ringing
+1092073,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1530687,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+384761,1,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1697889,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1806115,1,memorial,person,Memorial tribute or muffled ringing
+1092037,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1130293,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1961748,0,birthday,person,Birthday milestone or celebration
+1126457,8,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1408808,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1336545,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1409980,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1436926,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1670531,0,civic,person,"Royal, national, civic, or military commemoration"
+1683381,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1026442,0,birthday,person,Birthday milestone or celebration
+1795266,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1776505,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1004857,0,wedding,person,Wedding celebration or blessing
+1393945,3,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1259547,1,memorial,person,Memorial tribute or muffled ringing
+993742,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1775047,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+287970,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1395176,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1572699,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1039724,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1494589,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1588107,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1479785,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1681412,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1743164,0,civic,person,Civic / historic national milestone anniversary
+1165464,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1658789,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1626330,0,civic,person,"Royal, national, civic, or military commemoration"
+1121708,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1524602,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1143294,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1560048,0,memorial,person,Memorial tribute or muffled ringing
+1011117,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1749075,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1025931,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1385769,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1070676,1,funeral,person,"Funeral, committal or thanksgiving for life service"
+1110724,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1554823,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1509139,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1459541,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1089813,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1469085,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1668644,4,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1140507,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1535990,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1332083,6,funeral,person,"Funeral, committal or thanksgiving for life service"
+1012913,0,birthday,person,Birthday milestone or celebration
+1766824,2,wedding,person,Wedding celebration or blessing
+1763435,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1693060,0,birthday,person,Birthday milestone or celebration
+1685184,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1143775,0,birthday,person,Birthday milestone or celebration
+1246219,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1069540,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1310423,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1594359,0,memorial,person,Memorial tribute or muffled ringing
+1110334,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1450430,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1377115,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1611294,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1504786,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1293903,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+979915,0,civic,person,"Royal, national, civic, or military commemoration"
+1089968,0,wedding,person,Wedding celebration or blessing
+408151,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1640988,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1702198,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1173088,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1224565,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+349764,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1112914,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1326420,0,wedding,person,Wedding celebration or blessing
+1269670,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1619390,0,civic,person,"Royal, national, civic, or military commemoration"
+1193876,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1724574,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1220607,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1538418,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1550073,0,memorial,person,Memorial tribute or muffled ringing
+1920368,0,civic,person,"Royal, national, civic, or military commemoration"
+1568277,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1685342,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1145767,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1255178,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1268743,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1478619,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+984637,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1725577,0,memorial,person,Memorial tribute or muffled ringing
+451755,0,memorial,person,Memorial tribute or muffled ringing
+294288,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1374101,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1135490,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1017318,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1543409,0,civic,person,"Royal, national, civic, or military commemoration"
+1137944,0,memorial,person,Memorial tribute or muffled ringing
+1023377,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1032428,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1290720,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+988928,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1218848,1,wedding,person,Wedding anniversary
+1067756,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1153158,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1542804,0,memorial,person,Memorial tribute or muffled ringing
+1041040,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1556822,6,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1232916,0,multiple,person,Multiple occasions mentioned (e.g. Birthday + First/Anniversary/Service)
+1108561,1,memorial,person,Memorial tribute or muffled ringing
+1046664,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1288113,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1061637,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1318025,0,birthday,person,Birthday milestone or celebration
+1534657,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1139635,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1122699,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1154291,0,memorial,person,Memorial tribute or muffled ringing
+1624412,0,civic,person,"Royal, national, civic, or military commemoration"
+394100,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1558903,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1485481,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1756883,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1077910,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1147480,4,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1462607,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1757453,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1591059,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1192832,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1270428,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1109696,0,wedding,person,Wedding anniversary
+1527750,0,memorial,person,Memorial tribute or muffled ringing
+1197937,0,multiple,person,Multiple occasions mentioned (e.g. Birthday + First/Anniversary/Service)
+1172144,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1714170,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1141905,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1450406,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1120663,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1238102,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1182472,0,birthday,person,Birthday milestone or celebration
+1280522,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1431951,0,memorial,person,Memorial tribute or muffled ringing
+1674009,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1196753,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+306267,0,birthday,person,Birthday milestone or celebration
+1335752,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1056055,0,wedding,person,Wedding celebration or blessing
+1215180,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1233734,8,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1512364,4,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1304343,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1146989,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1004243,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1205404,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1637413,0,memorial,person,Memorial tribute or muffled ringing
+1044049,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1335660,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1800066,3,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1389155,4,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1203401,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1154351,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1478456,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1744476,0,memorial,person,Memorial tribute or muffled ringing
+431699,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1415845,2,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+1209530,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+463613,1,birthday,person,Birthday milestone or celebration
+1070671,0,birthday,person,Birthday milestone or celebration
+1451393,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+447853,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1388875,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1947921,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1006534,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1308055,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1193324,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1097935,0,birthday,person,Birthday milestone or celebration
+973386,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1160229,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1065191,0,civic,person,"Royal, national, civic, or military commemoration"
+1090931,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1387477,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1244802,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1243258,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1434094,0,memorial,person,Memorial tribute or muffled ringing
+1530053,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+998757,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+333634,0,memorial,person,Memorial tribute or muffled ringing
+1260587,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1275488,0,memorial,person,Memorial tribute or muffled ringing
+1104314,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1000124,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1779641,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1586910,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1060449,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+385465,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+463718,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1040643,0,wedding,person,Wedding anniversary
+1490463,0,anniversary,person,"Anniversary of bell installation/casting, guild, or dedication"
+299676,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1213457,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+467944,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+434431,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1506556,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1412110,83,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1052029,0,birthday,person,Birthday milestone or celebration
+1640564,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1065577,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1300911,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1196089,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1629605,0,civic,person,"Royal, national, civic, or military commemoration"
+1200412,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+967757,0,memorial,person,Memorial tribute or muffled ringing
+1256818,0,memorial,person,Memorial tribute or muffled ringing
+1570584,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1776234,0,birthday,person,Birthday milestone or celebration
+1134747,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1593134,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1490493,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+358058,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1837143,0,civic,institution,Civic / historic national milestone anniversary
+1101827,0,birthday,person,Birthday milestone or celebration
+996290,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1547851,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1226845,0,memorial,person,Memorial tribute or muffled ringing
+1096964,0,wedding,person,Wedding celebration or blessing
+1263177,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1458607,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1384622,0,civic,person,Civic / historic national milestone anniversary
+1261005,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+346478,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1807685,0,birthday,person,Birthday milestone or celebration
+1040330,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1276586,3,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1541987,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1077600,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+289966,1,multiple,person,Multiple occasions mentioned (e.g. Birthday + First/Anniversary/Service)
+1156907,0,multiple,person,Performance milestone combined with Church service/anniversary
+995840,0,multiple,person,Multiple occasions mentioned (e.g. Birthday + First/Anniversary/Service)
+1055171,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1770436,0,wedding,person,Wedding anniversary
+1222854,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1518310,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1503667,1,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1074169,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1638421,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1097730,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1001776,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1115252,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1545850,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1248028,0,memorial,person,Memorial tribute or muffled ringing
+1149376,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1114166,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+986232,0,birthday,person,Birthday milestone or celebration
+1672722,1,memorial,person,Memorial tribute or muffled ringing
+1622174,0,civic,person,"Royal, national, civic, or military commemoration"
+1457763,3,civic,institution,Cultural / broadcast event
+1276264,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1046227,1,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1521827,0,civic,person,"Royal, national, civic, or military commemoration"
+1994836,0,memorial,person,Memorial tribute or muffled ringing
+1793497,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+983333,1,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1267133,0,multiple,person,Multiple occasions mentioned (e.g. Birthday + First/Anniversary/Service)
+1798861,4,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1279452,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1132070,0,anniversary,bells,"Anniversary of bell installation/casting, guild, or dedication"
+1459489,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1253307,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1217098,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1230070,0,memorial,person,Memorial tribute or muffled ringing
+1196827,0,memorial,person,Memorial tribute or muffled ringing
+1358210,0,civic,person,Civic / historic national milestone anniversary
+1556943,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1756745,1,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1105558,0,practice,institution,"Guild ringing week, festival, course, or striking competition"
+1070304,2,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1027637,1,birthday,person,Birthday milestone or celebration
+1743332,0,civic,person,Civic / historic national milestone anniversary
+1743738,0,civic,person,Civic / historic national milestone anniversary
+1081058,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1649164,2,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+353163,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1051171,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1792792,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1114932,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1654041,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1153635,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1050552,1,birthday,person,Birthday milestone or celebration
+1683042,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1153861,12,none,none,"Military regiment notation (1st/4th Bn. Lincs Regt), not a performance milestone"
+433598,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1061089,0,compliment,person,"Personal congratulations, birth of child, farewell, get-well wishes, or personal compliment"
+1143466,2,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1481305,0,seasonal,none,"Church calendar service, festival, or liturgical feast"
+1897375,0,birthday,person,Birthday milestone or celebration
+1149366,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1549768,0,memorial,person,Memorial tribute or muffled ringing
+1501394,0,birthday,person,Birthday milestone or celebration
+1129317,0,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1284421,4,none,none,"Technical detail, place notation, simulator flag, failed attempt, or URL"
+1123105,0,birthday,person,Birthday milestone or celebration
+1110579,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1482094,0,multiple,person,Performance milestone combined with Church service/anniversary
+1895496,0,civic,person,"Royal, national, civic, or military commemoration"
+1338419,0,memorial,person,Memorial tribute or muffled ringing
+1437243,0,memorial,person,Memorial tribute or muffled ringing
+1546375,0,funeral,person,"Funeral, committal or thanksgiving for life service"
+1715460,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1896500,0,birthday,person,Birthday milestone or celebration
+1607294,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1811377,0,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"
+1720239,1,first-performance,person,"Ringer milestone (first peal/quarter, first in method/stage, circle, etc.)"

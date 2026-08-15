@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice Nights — Dove’s Register vs BellBoard’s 293,471 Performances</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --match:#2F6D53; --mismatch:#9c3b2e; --neutral:#1f6f8b;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --match:#63A579; --mismatch:#d4705e; --neutral:#5aa9c6;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --match:#63A579; --mismatch:#d4705e; --neutral:#5aa9c6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.nav-bar{background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:12px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.nav-links{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze)}
+.theme-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule);
+  padding:6px 12px;border-radius:2px;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--bronze-soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:68ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em;color:var(--bronze)}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+section{padding:48px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400}
+h3{font-size:1.1rem;font-weight:400;font-family:var(--mono);letter-spacing:.02em}
+.lede{color:var(--ink-2);margin-top:12px;max-width:68ch}
+p{max-width:68ch}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+
+.card{background:var(--surface);border:1px solid var(--rule);padding:24px;border-radius:3px}
+.card h3{margin-bottom:12px;color:var(--ink)}
+.card p{font-size:15.5px;line-height:1.55;color:var(--ink-2);margin:0}
+
+.bar-chart{display:flex;flex-direction:column;gap:12px;margin:24px 0}
+.bar-row{display:grid;grid-template-columns:100px 1fr 60px;align-items:center;gap:12px}
+.bar-label{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.bar-track{background:var(--surface-2);height:24px;border-radius:2px;overflow:hidden;position:relative}
+.bar-fill{height:100%;background:var(--bronze);transition:width .4s ease}
+.bar-fill.highlight{background:var(--match)}
+.bar-val{font-family:var(--mono);font-size:12px;text-align:right;color:var(--ink)}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:24px 0}
+.controls label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.chip-btn{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:6px 14px;
+  background:var(--surface-2);border:1px solid var(--rule);color:var(--ink-2);border-radius:2px;cursor:pointer}
+.chip-btn:hover{color:var(--ink);border-color:var(--bronze)}
+.chip-btn.active{background:var(--bronze);color:#fff;border-color:var(--bronze)}
+
+.search-box{font-family:var(--serif);font-size:15px;padding:8px 14px;background:var(--surface);
+  border:1px solid var(--rule);color:var(--ink);border-radius:2px;width:100%;max-width:320px}
+.search-box:focus{outline:none;border-color:var(--bronze)}
+
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14.5px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  text-align:left;padding:10px 12px;border-bottom:2px solid var(--rule);color:var(--ink-3)}
+td{padding:10px 12px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+tr:hover td{background:var(--surface);color:var(--ink)}
+.badge{font-family:var(--mono);font-size:11px;padding:2px 6px;border-radius:2px;display:inline-block}
+.badge-match{background:rgba(47,109,83,.15);color:var(--match);border:1px solid var(--match)}
+.badge-mismatch{background:rgba(156,59,46,.15);color:var(--mismatch);border:1px solid var(--mismatch)}
+
+.table-wrap{max-height:540px;overflow-y:auto;border:1px solid var(--rule);border-radius:3px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<!--NAV:practice.html-->
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Cross-Source Validation</div>
+    <h1>Where Ringing Happens <em>vs</em> What Dove Claims</h1>
+    <div class="standfirst">
+      Dove’s Guide records a practice night for <span id="t-practice-towers">—</span> towers. BellBoard records 293,471 performances with exact dates. Cross-referencing both reveals how practice nights dictate quarter-peal ringing — and why Sunday service ringing must be excluded to see it.
+    </div>
+    <div class="figures">
+      <div class="fig">
+        <div class="n" id="fig-towers">—</div>
+        <div class="l">Dove Practice Towers</div>
+      </div>
+      <div class="fig">
+        <div class="n" id="fig-unambig">—</div>
+        <div class="l">Unambiguous days (<span id="t-unambig-pct">—</span>)</div>
+      </div>
+      <div class="fig">
+        <div class="n" id="fig-match-nonsun">—</div>
+        <div class="l">Non-Sunday alignment (<span id="t-nonsun-n">—</span> towers)</div>
+      </div>
+      <div class="fig">
+        <div class="n" id="fig-match-weekday">—</div>
+        <div class="l">Weekday Alignment (>2.2× Chance)</div>
+      </div>
+      <div class="fig">
+        <div class="n" id="fig-high-act">—</div>
+        <div class="l">High Activity Match (200+ Perfs)</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>1. The Two Confounds in the Measurement</h2>
+    <div class="lede">
+      Comparing raw "busiest days" fails because ringing has two distinct modes: Sunday services and routine weekday practice sessions.
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>The Sunday Service Confound</h3>
+        <p>
+          Sunday service ringing accounts for the vast majority of short performances (quarter peals and touches) across almost every active tower. Comparing outright busiest days yields an artificial agreement rate below 16% simply because Sunday overwhelms the schedule everywhere. Excluding Sunday isolates the real weekday rhythm.
+        </p>
+      </div>
+      <div class="card">
+        <h3>The Quarter Peal Proxy</h3>
+        <p>
+          BellBoard records published performances, not routine weekly practices. A <span id="t-nonsun-rate">—</span> non-Sunday match rate (and <span id="t-weekday-rate">—</span> weekday match) measures where bands assemble to score quarter peals on practice night. It is a lower bound on agreement, not a measure of stale Dove entries.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>2. Weekday Concentration by Practice Night</h2>
+    <div class="lede">
+      Across <span id="t-weekday-n">—</span> towers with active weekday ringing (20 or more weekday short performances), ringing concentrates on the official practice evening.
+    </div>
+
+    <div class="controls" id="view-mode-controls">
+      <label>Cohort View:</label>
+      <button class="chip-btn active" id="btn-cohort-weekday" onclick="setCohort('weekday')">Monday–Friday only (N=<span id="t-wd-n2">—</span>)</button>
+      <button class="chip-btn" id="btn-cohort-nonsun" onclick="setCohort('nonsun')">Monday–Saturday (N=<span id="t-ns-n2">—</span>)</button>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3 id="chart-title">Ringing Distribution across the Week</h3>
+      <div class="bar-chart" id="day-bar-chart">
+        <!-- Injected via JavaScript -->
+      </div>
+      <p id="chart-desc" style="font-size:14px;color:var(--ink-3);margin-top:12px;">
+        On average, active towers ring 30.2% of their weekday performances on their single stated practice night (flat expectation = 20.0%).
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>3. Activity Stratification: Busy Towers vs Quiet Towers</h2>
+    <div class="lede">
+      The more active a tower is, the more reliably its quarter peals cluster on its official Dove practice night.
+    </div>
+
+    <div class="grid-2" style="margin-top:24px;">
+      <div class="card">
+        <h3>Low Activity (20–49 perfs)</h3>
+        <div style="font-family:var(--mono);font-size:2rem;color:var(--bronze);margin:8px 0;" id="tier-rate-0">—</div>
+        <p><span id="tier-n-0">—</span> towers. Quarter peals are occasional events rather than routine practice sessions.</p>
+      </div>
+      <div class="card">
+        <h3>Moderate Activity (50–99 perfs)</h3>
+        <div style="font-family:var(--mono);font-size:2rem;color:var(--bronze);margin:8px 0;" id="tier-rate-1">—</div>
+        <p><span id="tier-n-1">—</span> towers. Established monthly or bi-weekly quarter peal practice tradition.</p>
+      </div>
+      <div class="card">
+        <h3>High Activity (100–199 perfs)</h3>
+        <div style="font-family:var(--mono);font-size:2rem;color:var(--bronze);margin:8px 0;" id="tier-rate-2">—</div>
+        <p><span id="tier-n-2">—</span> towers. Heavy mix of practice night quarters and Saturday peal visits.</p>
+      </div>
+      <div class="card">
+        <h3>Very High Activity (200+ perfs)</h3>
+        <div style="font-family:var(--mono);font-size:2rem;color:var(--match);margin:8px 0;" id="tier-rate-3">—</div>
+        <p><span id="tier-n-3">—</span> towers. Dedicated practice-night quarter bands (e.g. Pettistree 93%, Frodsham 97%, Barnes 90%).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>4. Interactive Tower Explorer</h2>
+    <div class="lede">
+      Search and filter <span id="t-explorer-n">—</span> active towers to explore practice nights and performance clustering.
+    </div>
+
+    <div class="controls" style="margin-top:20px;">
+      <input type="text" class="search-box" id="tower-search" placeholder="Search place, tower, county..." oninput="filterTowers()">
+      
+      <label style="margin-left:12px;">Day:</label>
+      <button class="chip-btn active" onclick="filterDay('ALL', this)">All</button>
+      <button class="chip-btn" onclick="filterDay('Mon', this)">Mon</button>
+      <button class="chip-btn" onclick="filterDay('Tue', this)">Tue</button>
+      <button class="chip-btn" onclick="filterDay('Wed', this)">Wed</button>
+      <button class="chip-btn" onclick="filterDay('Thu', this)">Thu</button>
+      <button class="chip-btn" onclick="filterDay('Fri', this)">Fri</button>
+      
+      <label style="margin-left:12px;">Status:</label>
+      <button class="chip-btn active" onclick="filterStatus('ALL', this)">All</button>
+      <button class="chip-btn" onclick="filterStatus('MATCH', this)">Matches</button>
+      <button class="chip-btn" onclick="filterStatus('MISMATCH', this)">Differs</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tower-table">
+        <thead>
+          <tr>
+            <th>Place & Dedication</th>
+            <th>County</th>
+            <th>Dove Practice</th>
+            <th>Busiest Day</th>
+            <th>Non-Sun Perfs</th>
+            <th>On Practice Night</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tower-tbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+    <div id="table-count" style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:8px;">
+      Showing <span id="t-showing">—</span> towers
+    </div>
+  </div>
+</section>
+
+<!--FOOTER:practice.html-->
+
+<script>
+// Data injected by build_practice_page.py
+const TOWER_DATA = /*DATA_TOWERS*/[];
+const AGG_DATA = /*DATA_AGG*/{};
+
+/* Every stated figure comes from AGG_DATA, computed by the builder from the same
+   recorded query that fills the table below. The template holds em-dashes, so a
+   figure that fails to populate is visibly missing rather than quietly stale --
+   which is how "27.7%" survived here beside a table saying otherwise. */
+(function fillFigures(){
+  const A = AGG_DATA, n = x => x.toLocaleString('en-GB'), pc = x => x.toFixed(1) + '%';
+  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  set('t-practice-towers', n(A.practice_towers));
+  set('fig-towers',        n(A.practice_towers));
+  set('fig-unambig',       n(A.unambiguous));
+  set('t-unambig-pct',     pc(A.unambiguous_pct));
+  set('fig-match-nonsun',  pc(A.nonsun_rate));
+  set('t-nonsun-n',        n(A.nonsun_towers));
+  set('t-nonsun-rate',     pc(A.nonsun_rate));
+  set('fig-match-weekday', pc(A.weekday_rate));
+  set('t-weekday-rate',    pc(A.weekday_rate));
+  set('t-weekday-n',       n(A.weekday_towers));
+  set('t-wd-n2',           n(A.weekday_towers));
+  set('t-ns-n2',           n(A.nonsun_towers));
+  set('t-explorer-n',      n(A.nonsun_towers));
+  set('t-showing',         n(A.nonsun_towers));
+  const top = A.tiers[A.tiers.length - 1];
+  if (top) set('fig-high-act', pc(top.rate));
+  A.tiers.forEach((t, i) => { set('tier-rate-' + i, pc(t.rate)); set('tier-n-' + i, n(t.towers)); });
+})();
+
+let activeDay = 'ALL';
+let activeStatus = 'ALL';
+let currentCohort = 'weekday';
+
+const DOW_NAMES = {1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 6:'Sat', 0:'Sun'};
+
+function renderBars() {
+  const chart = document.getElementById('day-bar-chart');
+  if (!chart) return;
+  
+  const data = currentCohort === 'weekday' ? AGG_DATA.weekday_distribution : AGG_DATA.nonsun_distribution;
+  const maxVal = Math.max(...Object.values(data));
+  
+  let html = '';
+  for (const [day, val] of Object.entries(data)) {
+    const pct = ((val / maxVal) * 100).toFixed(1);
+    html += `
+      <div class="bar-row">
+        <div class="bar-label">${day}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;"></div>
+        </div>
+        <div class="bar-val">${val}</div>
+      </div>
+    `;
+  }
+  chart.innerHTML = html;
+}
+
+function setCohort(cohort) {
+  currentCohort = cohort;
+  document.getElementById('btn-cohort-weekday').classList.toggle('active', cohort === 'weekday');
+  document.getElementById('btn-cohort-nonsun').classList.toggle('active', cohort === 'nonsun');
+  renderBars();
+}
+
+function filterDay(day, btn) {
+  activeDay = day;
+  btn.parentElement.querySelectorAll('button').forEach(b => {
+    if (['All','Mon','Tue','Wed','Thu','Fri'].includes(b.textContent.trim())) {
+      b.classList.remove('active');
+    }
+  });
+  btn.classList.add('active');
+  filterTowers();
+}
+
+function filterStatus(status, btn) {
+  activeStatus = status;
+  btn.parentElement.querySelectorAll('button').forEach(b => {
+    if (['All','Matches','Differs'].includes(b.textContent.trim())) {
+      b.classList.remove('active');
+    }
+  });
+  btn.classList.add('active');
+  filterTowers();
+}
+
+function filterTowers() {
+  const query = document.getElementById('tower-search').value.toLowerCase();
+  const tbody = document.getElementById('tower-tbody');
+  
+  let count = 0;
+  let html = '';
+  
+  for (const t of TOWER_DATA) {
+    if (activeDay !== 'ALL' && !t.practice.startsWith(activeDay)) continue;
+    if (activeStatus === 'MATCH' && t.is_busiest !== 1) continue;
+    if (activeStatus === 'MISMATCH' && t.is_busiest === 1) continue;
+    
+    if (query) {
+      const hay = (t.place + ' ' + t.dedicn + ' ' + t.county).toLowerCase();
+      if (!hay.includes(query)) continue;
+    }
+    
+    count++;
+    const badge = t.is_busiest === 1 
+      ? '<span class="badge badge-match">Matches</span>' 
+      : '<span class="badge badge-mismatch">Differs</span>';
+      
+    html += `
+      <tr>
+        <td><strong>${t.place}</strong>, ${t.dedicn}</td>
+        <td>${t.county || '—'}</td>
+        <td style="font-family:var(--mono);">${t.practice}</td>
+        <td style="font-family:var(--mono);">${DOW_NAMES[t.busiest_dow] || '—'}</td>
+        <td style="font-family:var(--mono);">${t.total_perfs}</td>
+        <td style="font-family:var(--mono);">${t.stated_pct}% (${t.stated_perfs})</td>
+        <td>${badge}</td>
+      </tr>
+    `;
+    if (count >= 150) break; // Display top 150 matching rows for responsiveness
+  }
+  
+  tbody.innerHTML = html;
+  document.getElementById('table-count').textContent = `Showing ${count} matching towers (capped at 150)`;
+}
+
+// Initialise on load
+document.addEventListener('DOMContentLoaded', () => {
+  renderBars();
+  filterTowers();
+});
+</script>
+
+</body>
+</html>

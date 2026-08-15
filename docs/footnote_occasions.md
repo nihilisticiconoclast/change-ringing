@@ -15,8 +15,11 @@ eight keyword patterns behind `docs/occasions.html` — more classes, and a
 old bells", which was the distinction that mattered most and was previously
 absent.
 
-**Its accuracy is not known.** No labelled sample exists. Establishing one is
-Gemini Task 5, and it remains open.
+**Its accuracy is now known: 75.5% overall**, measured against an independent
+400-footnote sample in PR #14. See
+[`docs/footnote_occasion_accuracy.md`](footnote_occasion_accuracy.md) for the
+per-class breakdown. The `civic` problem described below was confirmed at **38.8%
+precision** — the worst class by a distance, exactly as this file predicted.
 
 ---
 

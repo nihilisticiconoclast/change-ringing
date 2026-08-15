@@ -7,7 +7,7 @@ this repository may hard-code a list of pages.
 
 Why this exists
 ---------------
-There are ten pages built by eight scripts and five HTML templates, written at
+There are eleven pages built by nine scripts and six HTML templates, written at
 different times by three different agents. Adding a page previously meant editing
 every navigation block by hand, and the last one was always the one that got missed:
 by the time it was noticed, the nav bars had converged but the FOOTERS had not --
@@ -63,6 +63,8 @@ PAGES = [
      "Who rings with whom, across 70,351 names"),
     ("occasions.html",  "The Occasions Archive",
      "Why bells are rung, from 337,946 footnotes"),
+    ("practice.html",   "Practice Nights",
+     "Dove says the tower rings on Tuesday. Does it?"),
     ("populations.html", "Two Populations",
      "The split every ringer describes, which the data does not contain"),
     ("nexus.html",      "The Temporal Nexus",
@@ -152,6 +154,20 @@ NOTES = {
         "not unique and the corpus has no person identifier, so two ringers sharing a "
         "name are one node here. Treat the structure as indicative rather than as a "
         "register of people.",
+    ],
+    "practice.html": [
+        "<strong>BellBoard records reported performances — mostly quarter peals — not "
+        "routine practices.</strong> Ordinary practice-night ringing is almost never "
+        "reported, so this measures where reported quarters cluster as a proxy for "
+        "practice night. The agreement rates are a <em>lower bound</em>, and are not an "
+        "estimate of how many Dove entries are stale.",
+        "<strong>Sunday is excluded throughout.</strong> Sunday service quarters dominate "
+        "reported short ringing at nearly every tower, so an outright busiest-day "
+        "comparison returns Sunday almost everywhere and measures nothing — it scored "
+        "15.9% before Sunday was removed. Excluding Saturday as well lifts agreement from "
+        "27.3% to 43.9%, against a 20.0% chance baseline.",
+        "Towers are named; <strong>no individual is named anywhere</strong>. A tower is a "
+        "building.",
     ],
     "populations.html": [
         "<strong>The corpus contains no ordinary service ringing.</strong> Rounds and "

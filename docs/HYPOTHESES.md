@@ -5,8 +5,8 @@ what the measurement said, and whether the expectation survived.
 
 **The wrong ones are the point.** A record that only lists confirmed hypotheses
 is a marketing document: it tells you nothing about how often the guessing works,
-which is the only thing that calibrates the next guess. **Twenty of the
-twenty-three entries below are wrong or wrong in size**, which is worth knowing
+which is the only thing that calibrates the next guess. **Twenty-two of the
+twenty-six entries below are wrong or wrong in size**, which is worth knowing
 before trusting the twenty-fourth.
 
 The first version of this page's own tally was also wrong — it claimed 4 / 5 / 14
@@ -204,18 +204,43 @@ tie-breaks.
 **❌ Wrong.** Fixed and verified byte-identical across two `PYTHONHASHSEED`
 values.
 
+### H24. Dove's practice night, refined: does excluding Saturday sharpen it?
+**Expected:** the seed measurement gave 31.3% against 16.7% chance over Mon–Sat,
+and I recorded it as "real but weak, about twice chance and no better".
+**Observed:** excluding Saturday, **43.9% of 1,054 towers** ring most on their
+stated night against a 20.0% baseline, with 31.0% of weekday ringing on that one
+evening. Saturday is outing and peal-attempt day and was masking the signal.
+**🟡 Wrong in size**, in Dove's favour. My seed under-sold the register.
+Gemini's PR #15.
+
+### H25. The occasion classifier is around 70% accurate
+**Expected:** ~70%, from a 25-footnote read-through, with `civic` the worst class.
+**Observed:** **75.5%** overall against a 400-footnote independent oracle, and
+`civic` precision **38.8%** — the worst by a distance, with royal-death patterns
+swallowing 12 memorial and 5 funeral records.
+**✅ Held.** Both the figure and the named failure mode. PR #14.
+
+### H26. The 400-footnote oracle is ground truth
+**Expected:** treat the labels as correct and report accuracy against them.
+**Observed:** reading 16 of the 98 disagreements, roughly 4 favour the
+*classifier*, so the oracle is itself around 93% accurate. It systematically
+labels terse milestone forms — `1st blows in Method: 5`, `First on the Treble
+for 1` — as `none`.
+**❌ Wrong.** 75.5% is measured against an imperfect ruler and should not be
+quoted to a tenth of a per cent.
+
 ---
 
 ## The tally
 
 | | Count |
 | --- | ---: |
-| ✅ Held | 3 |
-| 🟡 Wrong in size | 4 |
-| ❌ Wrong | 16 |
-| **Total** | **23** |
+| ✅ Held | 4 |
+| 🟡 Wrong in size | 5 |
+| ❌ Wrong | 17 |
+| **Total** | **26** |
 
-**Three predictions out of twenty-three survived intact — 13%.** That is not a comment on
+**Four predictions out of twenty-six survived intact — 15%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way

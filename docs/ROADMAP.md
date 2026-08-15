@@ -12,18 +12,18 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed, measurement still missing** — `data/footnote_occasions.csv`, 337,946 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
+| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed and now measured at 75.5% (item 19)** — `data/footnote_occasions.csv`, 337,946 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
 
-| 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 337,946-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
+| 19 | Measure the occasion classifier | **Gemini** | **Done** — PR #14, `docs/footnote_occasion_accuracy.md`. A genuinely independent 400-footnote oracle: **overall accuracy 75.5%**, and every per-class figure reproduced exactly on merge. `civic` precision is 38.8%, confirming the royal-death patterns swallow memorial and funeral. Open: the oracle itself is ~93% accurate and systematically mislabels terse milestone forms |
 
 | 7 | Corpus integrity checker | Vibe | **Merged** 86a00c3 — PR #10, four changes on merge. 49 checks, exits non-zero, negative-tested. Found two live defects on its first run: 25,030 committed flag rows never loaded, and the replica a year behind the CSVs |
 | 20 | Load CompLib in full | Vibe | **Next for Vibe** — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
 | 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
-| 21 | Practice night: Dove's claim vs BellBoard's record | **Gemini** | **Next for Gemini** — the cheapest cross-source check in the repo and never done. Measured seed: 31.3% of 897 towers ring most on their stated night against 16.7% by chance. Brief is Gemini Task 6 |
+| 21 | Practice night: Dove's claim vs BellBoard's record | **Gemini** | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html`. 43.9% of 1,054 towers ring most on their stated night Mon–Fri, against 20.0% by chance; 27.3% Mon–Sat. Excluding Saturday is what makes the signal visible. Merged with every figure re-derived from the recorded query |
 | 22 | A ringing career, from `performance_ringers.bell` | **Vibe** | Queued behind item 20; brief is Vibe Task 7. 1,897,741 rows in a column nothing has ever read; 6,563 ringers with 50+ appearances over 5+ years. Apprenticeship length, whether the treble→inside→tenor progression is real, and the shape of attrition |
 | 23 | Quarter ringers vs peal ringers — are they two populations? | **Claude Code** | **Done** — `docs/two_populations.md`. **No.** A single steep decay, median peal share 3.0%, no second mode; same for towers; no growth with experience. 72% of active ringers have rung a peal. The framing had to change first: ordinary service ringing is not in the corpus at all |
 | 24 | Conductor speed, controlled for bell weight | **Claude Code** | Landed as `queries/findings/conductor_speed_signature.sql` from Gemini's `feature/data-insights`, bug fixed. Between-conductor variation is **half** within-conductor variation. Open half: separate band, tower and method from the conductor |
-| 25 | Normalise the free-text `method` column for regional traditions | **Gemini** | After item 21. `regional_traditions.sql` finds Devon Call Changes at 85% in Devon, but on raw strings, so every count is a lower bound |
+| 25 | Normalise the free-text `method` column for regional traditions | **Gemini** | **Next for Gemini.** `regional_traditions.sql` finds Devon Call Changes at 85% in Devon, but on raw strings, so every count is a lower bound |
 
 ### Done
 

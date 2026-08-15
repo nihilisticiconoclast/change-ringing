@@ -60,7 +60,7 @@ def steps(db, skip_inference):
              ["classify_footnote_occasions.py", "--local-db", db,
               "--out", "data/footnote_occasions.csv"], "data"),
         ]
-    # The ten published pages, in the order site_chrome.PAGES lists them.
+    # The eleven published pages, in the order site_chrome.PAGES lists them.
     out += [
         ("Founder Atlas          -> docs/index.html",     ["build_atlas.py"], "pages"),
         ("Method Lineage         -> docs/lineage.html",   ["build_lineage_atlas.py"], "pages"),
@@ -69,13 +69,14 @@ def steps(db, skip_inference):
         ("Rhythm of Ringing      -> docs/rhythm.html",    ["build_rhythm_page.py"], "pages"),
         ("Ringer Constellation   -> docs/ringers.html",   ["build_ringers_page.py"], "pages"),
         ("The Occasions Archive  -> docs/occasions.html", ["build_occasions_page.py"], "pages"),
+        ("Practice Nights       -> docs/practice.html",    ["build_practice_page.py"], "pages"),
         ("Two Populations       -> docs/populations.html",["build_populations_page.py"], "pages"),
         ("The Temporal Nexus     -> docs/nexus.html",     ["build_nexus_page.py"], "pages"),
         ("Sacred Geometry        -> docs/geometry.html",  ["build_geometry_page.py"], "pages"),
         # Both verifiers run last and both can fail the build. verify_chrome
         # catches a nav or footer that drifted; verify_corpus catches a database
         # the pages were just built against that should not have been trusted.
-        ("Verify nav and footer are identical on all ten pages",
+        ("Verify nav and footer are identical on all eleven pages",
          ["verify_chrome.py"], "pages"),
         ("Verify corpus integrity",
          ["verify_corpus.py", "--local-db", db], "pages"),
