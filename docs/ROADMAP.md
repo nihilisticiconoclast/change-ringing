@@ -16,7 +16,6 @@ gap was found.
 
 | 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 113,895-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
 
-| 7 | Corpus integrity checker | Vibe | **Next for Vibe** — Gemini submitted a version in PR #7 which was not taken; write it fresh to the Task 3 brief |
 | 20 | Load CompLib in full | Vibe | Queued — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
 | 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
 
@@ -37,6 +36,7 @@ gap was found.
 | 14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
 | 17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
 | 18 | Document the orphan `dove_tower_id` values | Claude Code | `decisions/001` |
+| 7 | Corpus integrity checker | Vibe | `scripts/verify_corpus.py` — six check groups, exits non-zero on failure |
 
 ## Blocked, and on what
 

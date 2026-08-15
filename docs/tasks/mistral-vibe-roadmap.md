@@ -10,7 +10,7 @@ ones find.
 | --- | --- | --- |
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Done** — see brief below |
-| 3 | Corpus integrity checker | Queued — sketch below |
+| 3 | Corpus integrity checker | **Done** — see brief below |
 | 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
@@ -136,7 +136,63 @@ take on the Gemini roadmap.
 
 ---
 
-## Task 3 — Corpus integrity checker *(queued)*
+## Task 3 — Corpus integrity checker *(done)*
+
+**Done.** `scripts/verify_corpus.py` checks a database — local replica or,
+one day, production — and exits non-zero on any failure, so it can gate CI
+later. It takes `--local-db` like every loader and reuses `scripts/db.py`'s
+connection handling, so a local run is a real check under libsql rather than
+a sqlite3 approximation (see `db.py`'s module docstring on why that matters).
+
+Six check groups, each matching a defect this project has actually shipped:
+
+1. **Row counts within tolerance bands.** Each core table has an expected
+   count measured on a 2026-08-15 replica, with a per-table tolerance and a
+   `--tolerance` flag to widen every band at once. The snapshot moves, so
+   the bands are ranges, not constants; a count below the floor means a
+   truncated or missing load.
+2. **Orphaned `dove_tower_id` references.** `method_performances` must
+   resolve against the wider `towers` register (orphans there are real
+   corruption); `performances` may carry a handful of IDs absent from both
+   `dove` and `towers`, because BellBoard tracks Dove live while this DB
+   holds a snapshot — see `decisions/001` on why a hard FK would be wrong.
+   Those are reported and bounded, not failed hard.
+3. **`dove.TowerID` fan-out and the join identity.** The 13 two-ring
+   towers are counted, and the sharp check from `decisions/001` is
+   asserted: joining the linked records to `v_towers_unique` must return
+   exactly the count carrying a `dove_tower_id`, minus the records citing
+   a TowerID in neither table. A join cannot create or destroy a resolvable
+   linked record, so any other number is wrong by construction.
+4. **The three `schema/004` read-cost indexes.** Their absence is what
+   turned `SELECT COUNT(*) FROM v_first_tower_peals` into 396 million reads;
+   each is checked for presence by name.
+5. **Literal `"nan"` strings in text columns.** pandas round-trips NaN as
+   the string `nan`, and the loaders convert empty CSV cells to NULL so
+   `IS NULL` checks work; a `nan` string is a loader that forgot that step.
+6. **`EXPLAIN QUERY PLAN` on the shipped views.** Each view has an assertion
+   on the plan for `SELECT COUNT(*) FROM <view>` — an index it must use, or
+   a bare SCAN it must not. A `SCAN ... USING INDEX` is correct for a GROUP
+   BY (the dedup views); the regression to catch is a bare `SCAN <table>`
+   with no index, the shape that walks the whole table unordered.
+
+**Verified against a full local replica** (rebuilt from public sources via
+`build_local_db.py`): all six groups pass and the script exits 0. Five
+deliberately-injected defects were each caught with a non-zero exit — a
+truncated row count, an orphaned FK, a dropped `schema/004` index (which
+also trips the plan assertion on `v_first_tower_peals`), a literal `nan`
+string, and a damaged `v_towers_unique` that breaks the join identity.
+
+One bug was found and fixed in the checker itself during that work: the
+`scalar` helper passed bound parameters as a tuple, which libsql rejects
+(`sqlite3` accepts it), and the `nan` check's broad `except Exception`
+swallowed the resulting `ValueError` — so the check reported "no nan
+strings" against a database that had one. Parameters now use a list and
+the `nan` check no longer catches broadly; a checker must fail loud, not
+pass silently. This is exactly the libsql-over-sqlite3 asymmetry `db.py`
+warns about, and it reinforces why a local run under libsql is the intended
+default.
+
+Original brief, retained for reference:
 
 `scripts/verify_corpus.py`: one command that checks a database — local or, one
 day, production — and reports anything wrong. Motivated by how many real

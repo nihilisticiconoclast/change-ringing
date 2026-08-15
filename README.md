@@ -300,6 +300,14 @@ SQL that libSQL rejects -- that difference is how a double-quoted string
 literal reached production. And `EXPLAIN QUERY PLAN` works against it, so
 query cost can be assessed before anything runs for real.
 
+Once the replica is built, `python scripts/verify_corpus.py --local-db
+local_corpus.db` checks it end to end and exits non-zero on any failure,
+so it can gate CI. It covers row-count bands per table, orphaned
+`dove_tower_id` references, the `dove.TowerID` fan-out and its join
+identity, the three `schema/004` read-cost indexes, literal `"nan"`
+strings, and `EXPLAIN QUERY PLAN` assertions on the shipped views. Each
+check exists because a defect of that shape shipped and was caught late.
+
 Reaching production now requires `CHANGE_RINGING_ALLOW_PRODUCTION=1`. Without
 it the scripts refuse to connect, so an accidental production run is no longer
 possible.
