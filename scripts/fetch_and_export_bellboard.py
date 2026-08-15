@@ -29,7 +29,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from bellboard_common import fetch_performances, parse_performance, insert_many
+from bellboard_common import (fetch_performances, parse_performance, insert_many,
+                              fetch_expected_count, WINDOW_TOLERANCE)
 
 DEFAULT_DB = ROOT / "data" / "change-ringing.db"
 DEFAULT_OUT_DIR = ROOT / "data" / "bellboard"
@@ -63,6 +64,27 @@ def fetch_year_data(year: int):
 
     today_str = date.today().isoformat()
 
+    # Completeness gate. export.php gives no total of its own and a truncated
+    # page is indistinguishable from a genuine last page, so every window is
+    # checked against the count search.php reports for the same range, and the
+    # year is checked against the year. A short fetch raises; silence is the bug.
+    #
+    # fetch_expected_count comes from bellboard_common, deliberately: it is the
+    # same function backfill_bellboard.py gates on, so the two runners cannot
+    # disagree about what a window should hold. An earlier version of this file
+    # carried its own copy, which drifted in three ways -- a regex without the
+    # "Found" anchor that could match another number on the page, an empty-window
+    # check for text search.php does not emit, and a hardcoded five-record
+    # tolerance. The shared version's tolerance is 0, measured across six windows
+    # where search.php and export.php agreed exactly.
+    expected_year = fetch_expected_count(f"{year}-01-01",
+                                         min(f"{year}-12-31", today_str))
+    if expected_year is None:
+        raise RuntimeError(
+            f"search.php reports no performances for {year}; refusing to run a "
+            f"backfill whose expected size is unknown.")
+    print(f"  search.php expects {expected_year:,} performances for {year}", flush=True)
+
     for m_start, m_end in months:
         start_d = f"{year}-{m_start}"
         end_d = f"{year}-{m_end}"
@@ -72,9 +94,12 @@ def fetch_year_data(year: int):
         if end_d > today_str:
             end_d = today_str
 
-        print(f"  Fetching window {start_d} to {end_d} ...", flush=True)
+        expected_window = fetch_expected_count(start_d, end_d)
+        print(f"  Fetching window {start_d} to {end_d} "
+              f"(expecting {expected_window if expected_window is not None else 'none'}) ...",
+              flush=True)
         page = 1
-        window_count = 0
+        window_perfs = set()
 
         while True:
             elems = None
@@ -99,7 +124,10 @@ def fetch_year_data(year: int):
                     all_ringers.extend(r_list)
                     all_footnotes.extend(fn_list)
                     all_flags.extend(fl_list)
-                    window_count += 1
+                    # DISTINCT ids, not a row counter: export.php can return the
+                    # same record on more than one page, and a counter would let
+                    # duplicates make up a shortfall.
+                    window_perfs.add(p_id)
 
             print(f"    Page {page}: {len(elems)} performances", flush=True)
             if len(elems) < 1000:
@@ -107,8 +135,28 @@ def fetch_year_data(year: int):
             page += 1
             time.sleep(1.0)
 
-        print(f"  -> Window complete: {window_count} performances (Year total: {len(all_perfs):,})", flush=True)
+        if expected_window is not None:
+            floor = expected_window * (1 - WINDOW_TOLERANCE)
+            if len(window_perfs) < floor:
+                raise RuntimeError(
+                    f"completeness gate: {start_d}..{end_d} fetched "
+                    f"{len(window_perfs)} unique performances against "
+                    f"{expected_window} expected. BellBoard truncates silently, "
+                    f"so a short window is a truncated one, not a finished one.")
+        elif window_perfs:
+            print(f"  WARNING: search.php reported no performances for "
+                  f"{start_d}..{end_d} but export.php returned "
+                  f"{len(window_perfs)}", flush=True)
+
+        print(f"  -> Window complete: {len(window_perfs):,} performances "
+              f"(year to date {len(all_perfs):,})", flush=True)
         time.sleep(1.0)
+
+    if len(all_perfs) < expected_year * (1 - WINDOW_TOLERANCE):
+        raise RuntimeError(
+            f"completeness gate: {year} fetched {len(all_perfs):,} unique "
+            f"performances against {expected_year:,} expected.")
+    print(f"  {year} gate passed: {len(all_perfs):,} / {expected_year:,}", flush=True)
 
     return list(all_perfs.values()), all_ringers, all_footnotes, all_flags
 

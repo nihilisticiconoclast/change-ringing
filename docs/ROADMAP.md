@@ -13,10 +13,11 @@ gap was found.
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
 | 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed, measurement still missing** — `data/footnote_occasions.csv`, 113,895 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
-| 6 | CompLib ingestion | **Vibe** | **In review** — PR #6, `schema/006`. Gemini submitted a rival implementation in PR #7; Vibe's is the one being taken |
+
 | 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 113,895-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
 
-| 7 | Corpus integrity checker | Vibe | Queued |
+| 7 | Corpus integrity checker | Vibe | **Next for Vibe** — Gemini submitted a version in PR #7 which was not taken; write it fresh to the Task 3 brief |
+| 20 | Load CompLib in full | Vibe | Queued — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
 | 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
 
 ### Done
@@ -25,6 +26,8 @@ gap was found.
 | --- | --- | --- | --- |
 | 1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
 | 5 | Ring-level join semantics | Gemini (was Vibe's) | **Merged** — `schema/007_init_tower_views.sql`. Verified against the decisions/001 acceptance test |
+| 6 | CompLib ingestion | Vibe | **Merged** 4d84c62 — PR #6, no amendments needed. 86,040 compositions available; the `m + methodid` join verified 8/8 |
+| 10 | Backfill 2020 | Gemini | **Merged** — 10,689 performances, matching `search.php` exactly. 2012–2019 remain |
 | 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
 
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
@@ -39,7 +42,7 @@ gap was found.
 
 | # | Item | Owner | Blocked on |
 | --- | --- | --- | --- |
-| 10 | Run the backfill to completion | Claude Code | Item 1 landing, **and** the Turso freeze lifting on **2026-09-01** |
+| 10 | Run the backfill to completion | Gemini | **In progress** — 2020 landed and verified; 2019 running. 2012–2018 after that. Reaching *production* still waits for the freeze on **2026-09-01**, but the CSVs land in the repo meanwhile |
 | 8b | Method survival — adoption over time (option C, second half) | Claude Code | Item 10. Currency is published on `invention.html`; survival needs adoption history |
 | 9 | Ringer identity across decades | Gemini | Item 10. Present resolution covers 2021–24 only |
 | 15 | Felstead — 360,000 peals back to the 1800s | Claude Code | **A reply from the CCCBR.** Enquiry sent 2026-08-15; `docs/felstead-enquiry.md`. The join is verified and the job is ~5,600 requests, so this starts the day there is an answer |
