@@ -12,7 +12,7 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 1 | Backfill completeness gate | Vibe | **Urgent** — the run captured 16% and reported success |
+| 1 | Backfill completeness gate | Vibe | **In review** — see the Now-after-8a table |
 | 2 | Blue Line Atlas (IDEAS option A) | Claude Code | **Done** — `docs/methods.html` |
 | 3 | Footnote occasion classification (option D) | Gemini | **Shipped** — `docs/occasions.html`; not yet reviewed against the aggregate-only constraint |
 | 4 | Rhythm of Ringing (option B) | Claude Code | **Done** — `docs/rhythm.html`; corrected two IDEAS figures |
@@ -35,8 +35,9 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 17 | Provenance and caveats on `lineage` and `ringers` | Claude Code | Ready — `index`, `methods`, `rhythm`, `invention` and now `occasions` all cite their queries; those two cite nothing |
-| 18 | Document the 124 orphan `dove_tower_id` values | Claude Code | Ready — 25 of the 30 distinct IDs exist in `towers` but not `dove`, so it is export scope, not corruption. Belongs in `decisions/001` |
+| 17 | Provenance and caveats on every page | Claude Code | **Done** — `scripts/site_chrome.py` gives all nine pages a footer stating their own caveats, and `scripts/verify_chrome.py` fails if one drifts |
+| 18 | Document the orphan `dove_tower_id` values | Claude Code | **Done** — `decisions/001`, which also gained a correction: it said 160 orphans and the figure is 179 |
+| 1 | Backfill completeness gate | Vibe | **In review** — PR #5. Mechanism right, counts verified live; one blocking bug returned |
 
 ## Held
 

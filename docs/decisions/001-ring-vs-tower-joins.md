@@ -1,7 +1,7 @@
 # Decision 001 — what a join to `dove` means: a tower, or a ring?
 
 **Status:** decided, not yet implemented (Vibe roadmap Task 4)
-**Date:** 2026-08-09
+**Date:** 2026-08-09, with a correction and an addition on 2026-08-15
 
 ## The problem
 
@@ -38,15 +38,81 @@ different query shape and is wrong; 19 is the measured number for this join.
 
 ## A second finding, which changes the fix
 
-Of the 22,111 first-performance records carrying a `dove_tower_id`, only
-**21,951 join to `dove` at all**. The other **160 point at TowerIDs present in
-`towers` but not in `dove`** — installations that are not full-circle or
-lightweight rings, and so fall outside Dove's ringing subset. The adjudication
-accepted them because they resolve against the wider register.
+Of the first-performance records carrying a `dove_tower_id`, some **point at
+TowerIDs present in `towers` but not in `dove`** — installations that are not
+full-circle or lightweight rings, and so fall outside Dove's ringing subset. The
+adjudication accepted them because they resolve against the wider register.
 
-So joining to `dove` does two wrong things at once: it duplicates 19 rows and
-silently drops 160. The second is the larger error, and no amount of
+So joining to `dove` does two wrong things at once: it duplicates rows and
+silently drops others. The second is the larger error, and no amount of
 de-duplication fixes it.
+
+> ### Correction, 2026-08-15: this section said 160, and it is 179
+>
+> The original text computed the orphans as 22,111 − 21,951 = 160. Those two
+> numbers are not the same kind of thing. 22,111 counts **records**; 21,951 is
+> the **row count the join returns**, which already contains 19 duplicates.
+> Subtracting one from the other mixes units and undercounts the orphans by
+> exactly those 19.
+>
+> Re-measured on the current snapshot, keeping records and rows apart:
+>
+> | | `method_performances` |
+> | --- | ---: |
+> | records carrying a `dove_tower_id` | 22,117 |
+> | rows returned by joining `dove` on `TowerID` | 21,957 |
+> | **records that join at all** | **21,938** |
+> | inflation (rows − records) | 19 |
+> | **orphan records** (22,117 − 21,938) | **179** |
+>
+> The totals have also drifted from the 2026-08-09 figures — 22,111 → 22,117 —
+> because the replica is rebuilt against a live Dove snapshot. Any count in this
+> document is true of a snapshot, not of the source.
+>
+> This is a mildly embarrassing error to find in a decision record whose whole
+> subject is joins that quietly return the wrong number of rows, and it is left
+> visible for that reason. The expected-count checks below use the corrected
+> figures.
+
+## A third finding, added 2026-08-15: BellBoard has the same problem
+
+The record above concerns `method_performances`. `performances` — the BellBoard
+corpus, 80,128 records carrying a `dove_tower_id` — behaves identically and had
+not been measured:
+
+| | `performances` |
+| --- | ---: |
+| records carrying a `dove_tower_id` | 80,128 |
+| rows returned by joining `dove` on `TowerID` | 80,231 |
+| records that join at all | 80,004 |
+| **inflation** | **227** |
+| **orphan records** | **124**, across 30 distinct TowerIDs |
+
+The inflation is 227 rather than 19 simply because there are more records
+passing through the same 13 two-ring towers. `v_tower_performances` is built on
+this join and is therefore 227 rows too high today.
+
+**The 124 orphans are not corruption, and should not be "cleaned".** Of the 30
+distinct TowerIDs:
+
+- **25 exist in `towers` but not in `dove`.** Most are chimes and tubular
+  chimes — Melsonby S James Gt, Leighterton S Andrew, Haywards Heath S Wilfrid
+  — which are outside Dove's full-circle/lightweight scope by definition. A few
+  are recorded as full-circle rings (Southport Holy Trinity, S Margaret Pattens
+  in the City of London, Sheviock, Shilbottle, Leusdon), which most likely means
+  the ring has left Dove's ringable list since BellBoard recorded the
+  performance.
+- **5 exist in neither table**: 14615, 15542 (Aberavon, 23 performances), 25193,
+  25225 (Leonard Stanley, 26), 25756 (Somerton, 18). These are the ones worth
+  watching. 14615 carries performances filed under two different places —
+  Steventon and North Collingham — which is either an upstream error or an ID
+  reused after a deletion.
+
+So the same conclusion holds for BellBoard as for the Methods Library: **join
+the deduplicated projection of `towers`, not `dove`**, and 121 of the 124
+orphans resolve. The remaining handful stay unresolved and visible, which is the
+right outcome — see "What not to change" below on why a hard foreign key would
+be wrong here.
 
 ## Checking the obvious fix, which does not work
 
@@ -67,11 +133,14 @@ finer than the tower.
 deduplicated tower projection, and that projection is what callers join to.**
 
 Verified: joining the linked records to `SELECT DISTINCT TowerID FROM towers`
-returns exactly **22,111** — every linked row, once each. Nothing dropped,
-nothing duplicated.
+returns exactly the number of records carrying a `dove_tower_id` — every linked
+row, once each. Nothing dropped, nothing duplicated. That identity, rather than
+any particular figure, is the acceptance test, because the figures move with the
+snapshot.
 
 1. **Add `v_towers_unique`** — one row per TowerID, drawn from `towers` so the
-   160 non-ringing installations survive:
+   non-ringing installations survive (179 in `method_performances`, 121 of the
+   124 in `performances`):
 
    ```sql
    CREATE VIEW "v_towers_unique" AS
@@ -111,18 +180,27 @@ nothing duplicated.
    a ring.
 
 4. **Expected counts after the change**, so the implementation can be checked
-   rather than eyeballed: `method_performances` joined to `v_towers_unique`
-   must be exactly 22,111. Against `v_dove_towers` it will be 21,932 — the
-   ringing subset, correctly excluding the 160.
+   rather than eyeballed. Written as identities, not constants, because the
+   snapshot moves:
+
+   | Join | Must equal |
+   | --- | --- |
+   | `method_performances` → `v_towers_unique` | records with a `dove_tower_id` (22,117 today) |
+   | `method_performances` → `v_dove_towers` | that, minus the orphans (21,938 today) |
+   | `performances` → `v_towers_unique` | records with a `dove_tower_id` (80,128 today) |
+   | `performances` → `v_dove_towers` | that, minus the orphans (80,004 today) |
+
+   A join cannot create or destroy a linked record, so any other number is wrong
+   by construction.
 
 ## What to change
 
 - `v_first_tower_peals` — currently joins `dove` on `TowerID`. Move it to
   `v_towers_unique`, which recovers the 160 dropped rows and removes the 19
   duplicates. Its count will change; that is the point. Record before and after.
-- `v_tower_performances` — same join, same fix. It reads 0 in the committed
-  snapshot only because BellBoard is empty there; check it against a replica
-  built with `--bellboard-since`.
+- `v_tower_performances` — same join, same fix, and now measured: it returns
+  **80,231** where the underlying records number **80,128**, so it is 227 rows
+  too high and drops 124. Both errors go away with `v_towers_unique`.
 - `queries/` — update anything joining `dove` on `TowerID`, and add a note to
   `queries/README.md`, which currently tells readers to use `RingID` without
   saying that `towers` is the better default.
@@ -140,10 +218,13 @@ rows; a soft reference keeps them and lets the next refresh resolve them.
 ## How to verify the fix
 
 `SELECT COUNT(*)` before and after on each view, and confirm the difference is
-accounted for exactly: +160 recovered, −19 de-duplicated. A change of any other
-size means something else moved and should be understood before merging.
+accounted for exactly. For `v_first_tower_peals`: +179 recovered, −19
+de-duplicated. For `v_tower_performances`: +121 recovered, −227 de-duplicated. A
+change of any other size means something else moved and should be understood
+before merging.
 
-The single sharpest check: `method_performances` joined to `v_towers_unique`
-must return **22,111**, matching the count of rows carrying a `dove_tower_id`.
-Any other number is wrong by construction — the join cannot legitimately
-create or destroy a linked record.
+The single sharpest check, for either corpus: the record count after the join
+must equal the count of rows carrying a `dove_tower_id`. Any other number is
+wrong by construction — a join cannot legitimately create or destroy a linked
+record. Compare records with records; the mistake corrected above happened
+because a row count was subtracted from a record count.

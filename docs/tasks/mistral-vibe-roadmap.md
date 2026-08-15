@@ -11,7 +11,7 @@ ones find.
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
-| 5 | Backfill completeness gate | **Urgent** — brief below |
+| 5 | Backfill completeness gate | **In review** — PR #5, one blocking change requested |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
@@ -125,7 +125,25 @@ cannot create or destroy a linked record, so anything else is wrong.
 
 ---
 
-## Task 5 — Backfill completeness gate *(urgent, do this before Task 2)*
+## Task 5 — Backfill completeness gate *(in review — PR #5)*
+
+> **Reviewed 2026-08-15. The mechanism is right and the numbers check out** — I
+> re-queried `search.php` live and got 25,267 for 2024 and 1,792 for January 2024,
+> matching the PR exactly; the full range now reads 336,689, up 35 from the
+> 336,654 recorded on 9 August, because the corpus grows.
+>
+> **One blocking bug.** `store_performances` returns `len(perf_rows)`, which has
+> duplicates appended to it, and the gate compares that against an `expected` that
+> counts unique performances. A window returning 1,000 unique records plus 800
+> duplicates of them measures as 1,800 against an expected 1,792, passes the gate,
+> and is checkpointed as complete while 792 records are missing from the database.
+> That is the exact pathology this PR's own size-signal investigation concludes was
+> happening. Return `len(seen_ids)` instead.
+>
+> Two smaller points: the 5% tolerance has no measurement behind it (the one
+> window measured agrees exactly), and `fetch_expected_count` returning `None`
+> conflates "empty window" with "regex did not match", which `process_window`
+> treats as complete. Full review on the PR.
 
 The backfill runner is merged and the run it produced is **wrong**: 55,000 rows
 against a true corpus of **336,654**. It captured 16% and reported success.
