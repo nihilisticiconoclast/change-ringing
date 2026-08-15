@@ -27,7 +27,7 @@ gap was found.
 | 1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
 | 5 | Ring-level join semantics | Gemini (was Vibe's) | **Merged** — `schema/007_init_tower_views.sql`. Verified against the decisions/001 acceptance test |
 | 6 | CompLib ingestion | Vibe | **Merged** 4d84c62 — PR #6, no amendments needed. 86,040 compositions available; the `m + methodid` join verified 8/8 |
-| 10 | Backfill 2018–2020 | Gemini | **Merged** — PRs #8 and #9. 2020 (10,689), 2019 (24,497), 2018 (25,260), each matching `search.php` exactly. Corpus now 2018–2024, 156,513 performances. 2012–2017 remain |
+| 10 | BellBoard historical backfill | Gemini | **Complete** — PRs #8, #9 and the 2012–2017 push. Thirteen years, 2012–2024, **293,471 performances**. Twelve years match `search.php` to the record; 2022 is one short of a count taken today, which is retrospective upstream growth, not a gate failure |
 | 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
 
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
@@ -42,9 +42,9 @@ gap was found.
 
 | # | Item | Owner | Blocked on |
 | --- | --- | --- | --- |
-| 10 | Run the backfill to completion | Gemini | **In progress** — 2018, 2019 and 2020 landed and verified. 2017 next, then back to 2012, one year per PR, **branched fresh from `main`** (three PRs in a row have arrived on a stale base). Reaching *production* still waits for the freeze on **2026-09-01**, but the CSVs land in the repo meanwhile |
+| 10 | Run the backfill to completion | Gemini | **Done** — 2012–2024 committed and verified. Only *production* loading remains, and that waits for the freeze on **2026-09-01** |
 | 8b | Method survival — adoption over time (option C, second half) | Claude Code | Item 10. Currency is published on `invention.html`; survival needs adoption history |
-| 9 | Ringer identity across decades | Gemini | Item 10. Resolution now covers 2018–24, 54,674 distinct names — still not the thirty years the technique wants |
+| 9 | Ringer identity across decades | Gemini | **Unblocked.** Item 10 is done, so resolution now has thirteen years to work with rather than four — which is what makes co-occurrence matching worth doing at all |
 | 15 | Felstead — 360,000 peals back to the 1800s | Claude Code | **A reply from the CCCBR.** Enquiry sent 2026-08-15; `docs/felstead-enquiry.md`. The join is verified and the job is ~5,600 requests, so this starts the day there is an answer |
 | 12 | Consolidate data-quality caveats | Claude Code | Item 7, so the doc and the check agree |
 
@@ -193,12 +193,16 @@ safe to run alongside.
 **Ringer identity across decades (9) also waits**, for the same reason —
 matching is far more powerful across thirty years than within four.
 
-**Where the backfill actually stands.** Not finished, but past halfway. The
-corpus holds 2018–2024 = **156,513 performances**, which is **46%** of the
-336,689 BellBoard reports for 2012 onward; 2012–2017 is missing, about 180,000
-performances. Genuine progress from the original single window of 1,401, and now
-enough history that findings stop being artefacts of a four-year window — the
-"81.6% of Major methods never rung" figure fell to 70.6% on the wider corpus.
+**Where the backfill actually stands. Finished.** The corpus holds 2012–2024 =
+**293,471 performances**, against 293,472 that `search.php` reports for the same
+range — one record, added upstream after 2022 was fetched. That is the whole of
+BellBoard's near-complete era, from an original single window of 1,401.
+
+The thing to carry forward is what the width bought. Findings that looked solid
+on four years moved once there were thirteen: "81.6% of Major methods were never
+rung" was already down to 70.6% at seven years. A window is a parameter of a
+finding, not a detail of its provenance, and this corpus is now wide enough that
+the parameter stops doing the work.
 
 ---
 

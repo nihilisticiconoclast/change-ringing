@@ -5,14 +5,17 @@ Options, not commitments. Every figure below was measured against
 be built and where it could go wrong — so a choice can be made on evidence
 rather than on how good the idea sounds.
 
-**What the corpus now holds.** 156,513 BellBoard performances (2018–2024),
-1,013,244 ringer appearances across 54,674 distinct names, 183,315 footnotes,
-25,030 performance flags, 25,066 methods with complete place notation, 63,966
-bells, 7,262 rings, and 86,040 CompLib compositions.
+**What the corpus now holds.** 293,471 BellBoard performances (2012–2024,
+thirteen complete years — the whole of BellBoard's near-complete era),
+1,969,949 ringer appearances, 337,946 footnotes, 28,066 performance flags,
+25,066 methods with complete place notation, 63,966 bells, 7,262 rings, and
+86,040 CompLib compositions.
 
-Figures below that predate the 2018–2019 backfill are marked with the window
-they were measured over. A finding stated without a window is a finding waiting
-to change size.
+Figures below that predate the backfill are marked with the window they were
+measured over. **A finding stated without a window is a finding waiting to
+change size** — "81.6% of Major methods were never rung" was measured over four
+years and is 70.6% over seven, so about a thousand methods moved from "dead" to
+"in use" on nothing but a wider view.
 
 ---
 

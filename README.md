@@ -61,13 +61,14 @@ can be checked instead of taken on trust.
       run captured 55,000 rows against a true corpus of 336,654 (measured via
       `search.php`), stopping early without erroring -- see
       `docs/decisions/002-backfill-count-discrepancy.md` and Task 5 of the
-      Vibe roadmap. The corpus now holds **156,513 performances spanning
-      2018-01-01 to 2024-12-31**, seven complete years -- 46% of the 336,689
-      BellBoard reports since 2012 -- so the gated full backfill remains a long
-      job, and it cannot reach production until the Turso freeze lifts on
-      2026-09-01. Every year agreed with `search.php` exactly; the per-year
-      counts and which of them have been re-checked since are in
-      `data/SOURCES.md`.
+      Vibe roadmap. **The backfill is now complete: 293,471 performances
+      spanning 2012-01-01 to 2024-12-31**, thirteen years, which is the whole of
+      BellBoard's near-complete era. Twelve of the thirteen years agree with
+      `search.php` to the record; 2022 is one performance short of a count taken
+      today, because BellBoard grows retrospectively and that record was filed
+      after 2022 was fetched. Per-year counts, and which years were re-checked
+      when, are in `data/SOURCES.md`. Loading this to *production* still waits
+      for the Turso freeze to lift on 2026-09-01.
 - [x] Performance -> method linkage (`schema/005`,
       `scripts/resolve_performance_methods.py`) -- 116,862 of 156,513 performances
       (74.7%) now carry at least one method link, 205,825 links in all. The hard

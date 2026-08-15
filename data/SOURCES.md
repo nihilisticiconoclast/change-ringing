@@ -52,32 +52,44 @@ attribution is owed if any output of this project is published.
   5% first proposed -- there is no discrepancy for a tolerance to absorb, and 5%
   of a 30-day window is around a hundred records. Transient shortfalls are the
   retry loop's job.
-- **Corpus span: 2018-2024, seven complete years, 156,513 performances.** Each
-  year is committed as four CSVs under `data/bellboard/`, and no year was
-  accepted until its performance count matched `search.php` for the same window
-  **exactly** -- the completeness gate above, run per 30-day window at fetch time.
+- **Corpus span: 2012-2024, thirteen complete years, 293,471 performances.**
+  This is the whole of BellBoard's near-complete era. Each year is committed as
+  four CSVs under `data/bellboard/`, and no year was accepted until its
+  performance count matched `search.php` for the same window **exactly** -- the
+  completeness gate above, run per 30-day window at fetch time.
 
-  | Year | Performances | Ringers | Footnotes | Flags | Re-checked against `search.php` |
+  | Year | Performances | Ringers | Footnotes | Flags | Re-checked against `search.php`, 2026-08-15 |
   | --- | ---: | ---: | ---: | ---: | --- |
-  | 2018 | 25,260 | 176,769 | 29,714 | 898 | 2026-08-15, exact |
-  | 2019 | 24,497 | 163,848 | 26,815 | 1,236 | 2026-08-15, exact |
-  | 2020 | 10,689 | 57,541 | 12,891 | 2,312 | 2026-08-15, exact |
-  | 2021 | 16,729 | 78,952 | 18,222 | 6,640 | gate only, at fetch time |
-  | 2022 | 28,212 | 180,584 | 32,524 | 6,540 | gate only, at fetch time |
-  | 2023 | 25,859 | 183,509 | 31,362 | 4,650 | gate only, at fetch time |
-  | 2024 | 25,267 | 172,041 | 31,787 | 2,754 | gate only, at fetch time |
-  | **Total** | **156,513** | **1,013,244** | **183,315** | **25,030** | |
+  | 2012 | 23,264 | 164,132 | 26,859 | 462 | exact |
+  | 2013 | 22,147 | 155,705 | 24,918 | 166 | exact |
+  | 2014 | 21,516 | 150,900 | 23,689 | 184 | exact |
+  | 2015 | 23,101 | 160,327 | 26,386 | 449 | exact |
+  | 2016 | 23,807 | 164,432 | 26,624 | 955 | exact |
+  | 2017 | 23,123 | 161,209 | 26,155 | 820 | exact |
+  | 2018 | 25,260 | 176,769 | 29,714 | 898 | exact |
+  | 2019 | 24,497 | 163,848 | 26,815 | 1,236 | exact |
+  | 2020 | 10,689 | 57,541 | 12,891 | 2,312 | exact |
+  | 2021 | 16,729 | 78,952 | 18,222 | 6,640 | exact |
+  | 2022 | 28,212 | 180,584 | 32,524 | 6,540 | **short by 1** -- see below |
+  | 2023 | 25,859 | 183,509 | 31,362 | 4,650 | exact |
+  | 2024 | 25,267 | 172,041 | 31,787 | 2,754 | exact |
+  | **Total** | **293,471** | **1,969,949** | **337,946** | **28,066** | |
 
-  The last column is a deliberate distinction. 2018, 2019 and 2020 were each
-  re-queried against `search.php` as a whole year during review and agreed to the
-  record. 2021-2024 were gated the same way per window when they were fetched,
-  but have not been re-checked as whole years since; the counts above are of the
-  committed CSVs, which is a different claim from "verified today".
+  **Twelve of thirteen years agree with `search.php` to the record. 2022 is one
+  performance short**, 28,212 against 28,213 measured on 2026-08-15. That is not
+  a gate failure; it is the retrospective growth documented above. 2022 was
+  fetched and gated earlier, when `search.php` reported 28,212, and one
+  performance has since been added with a 2022 date. Recorded rather than
+  silently corrected, because a corpus that is one record behind a live source is
+  the normal state of affairs and a corpus that hides it is not. The whole-range
+  query agrees to the same single record: `search.php` for 2012-01-01 to
+  2024-12-31 returns 293,472 against our 293,471.
 
   **2020 is not missing data -- it is the pandemic.** Towers were shut for most of
   the year and the corpus records a 56% fall against 2019, which `search.php`
-  confirms to the record. The 2023 figure (25,859) is also the one quoted from
-  `search.php` on 2026-08-09 above, an independent agreement a year apart.
+  confirms to the record. The five years either side sit between 21,516 and
+  25,260, so the shape of that dip is unmistakable across thirteen years in a way
+  it was not across four.
 
 ## CCCBR Methods Library
 
