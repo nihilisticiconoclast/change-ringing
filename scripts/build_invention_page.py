@@ -175,11 +175,28 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       padding: 16px;
     }
     
-    .play-btn {
+    .control-select {
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .control-select:hover { border-color: var(--bronze); }
+    
+    #controls {
       position: absolute;
       top: 16px;
       right: 24px;
       z-index: 10;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .play-btn {
       background: var(--bronze);
       color: #fff;
       border: none;
@@ -272,7 +289,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
-    <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
+    <div id="controls">
+      <select id="speed-select" class="control-select">
+        <option value="fast">Fast-Forward</option>
+        <option value="realtime">Real-Time (Audio)</option>
+      </select>
+      <button class="play-btn" onclick="playAnimation()">▶ Compose</button>
+    </div>
     
     <div id="blank-state">
       <h3>Visualizer Ready</h3>
@@ -302,31 +325,97 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </div>
 
 <!--FOOTER:invention.html-->
-
 <script>
   // Global state
   const compositions = __DATA_JSON__;
-  let network = null;
   let activeIdx = 0;
-  let animationTimer = null;
+  
+  let animationState = {
+    timer: null,
+    step: 0,
+    currentRowIdx: 0,
+    isPlaying: false
+  };
+
+  let network = null;
   let visNodes = null;
   let visEdges = null;
+
+  // Web Audio Context & Synthesizer
+  let audioCtx = null;
+  
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  // Frequencies for a C Major scale
+  const bellFrequencies = {
+    '8': 261.63, // C4
+    '7': 293.66, // D4
+    '6': 329.63, // E4
+    '5': 349.23, // F4
+    '4': 392.00, // G4
+    '3': 440.00, // A4
+    '2': 493.88, // B4
+    '1': 523.25  // C5
+  };
+
+  function playBell(bellChar, time) {
+    if (!audioCtx) return;
+    const baseFreq = bellFrequencies[bellChar];
+    if (!baseFreq) return;
+
+    // Additive synthesis partials for a bell
+    const partials = [
+      { ratio: 0.5, gain: 0.6, decay: 4.0 },  // Hum
+      { ratio: 1.0, gain: 1.0, decay: 2.0 },  // Prime
+      { ratio: 1.2, gain: 0.7, decay: 1.5 },  // Tierce (minor 3rd)
+      { ratio: 1.5, gain: 0.5, decay: 1.0 },  // Quint
+      { ratio: 2.0, gain: 0.8, decay: 0.8 },  // Nominal
+      { ratio: 2.6, gain: 0.4, decay: 0.5 }   // Extra metallic brightness
+    ];
+
+    const masterGain = audioCtx.createGain();
+    masterGain.connect(audioCtx.destination);
+    masterGain.gain.value = 0.4; // Global volume
+
+    partials.forEach(p => {
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.value = baseFreq * p.ratio;
+      
+      osc.connect(gainNode);
+      gainNode.connect(masterGain);
+      
+      // Fast attack, exponential decay
+      gainNode.gain.setValueAtTime(0, time);
+      gainNode.gain.linearRampToValueAtTime(p.gain, time + 0.02);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, time + p.decay);
+      
+      osc.start(time);
+      osc.stop(time + p.decay);
+    });
+  }
 
   // Theme toggler
   const tb = document.getElementById('themeToggle');
   const setTheme = t => { 
-    document.documentElement.setAttribute('data-theme', t);
-    if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
-    try { localStorage.setItem('cr-theme', t); } catch (e) {}
-    if (network) redrawGraph(); // Redraw graph to update colors
+    document.documentElement.setAttribute('data-theme', t); 
+    localStorage.setItem('cr-theme', t); 
   };
   if (tb) tb.onclick = () =>
     setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  (() => { 
+  else {
     let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
-    if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-    setTheme(t); 
-  })();
+    if (t) setTheme(t);
+  }
 
   function renderList() {
     const list = document.getElementById('comp-list');
@@ -349,7 +438,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   }
 
   function selectComp(idx) {
-    if (animationTimer) clearInterval(animationTimer);
+    animationState.isPlaying = false;
+    if (animationState.timer) clearTimeout(animationState.timer);
+    
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
     document.getElementById('comp-' + idx).classList.add('active');
@@ -417,19 +508,15 @@ Call\tCourse Head
     return svg;
   }
 
-  function playAnimation() {
-    if (animationTimer) clearInterval(animationTimer);
+  function setupVisuals() {
+    const comp = compositions[activeIdx];
     
     document.getElementById('blank-state').style.display = 'none';
     document.getElementById('viz-container').style.display = 'flex';
     
-    const comp = compositions[activeIdx];
-    
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
-    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
-    const hlColor = isDark ? "#C9974A" : "#8A5F22";
     const rdColor = isDark ? "#63A579" : "#2F6D53";
+    const hlColor = isDark ? "#C9974A" : "#8A5F22";
     
     const container = document.getElementById('mynetwork');
     visNodes = new vis.DataSet([]);
@@ -444,74 +531,144 @@ Call\tCourse Head
     if (network) network.destroy();
     network = new vis.Network(container, data, options);
     
-    const nodeIds = new Set();
+    animationState.nodeIds = new Set();
     visNodes.add({
       id: comp.path[0], label: comp.path[0], shape: 'box',
       color: { background: rdColor, border: hlColor, highlight: hlColor },
       font: { color: "#FFF", face: "monospace" }
     });
-    nodeIds.add(comp.path[0]);
+    animationState.nodeIds.add(comp.path[0]);
     
     const textOut = document.getElementById('text-output');
     textOut.innerHTML = `<table><tr><th>Call</th><th>Course Head</th></tr><tr><td>-</td><td>${comp.path[0]}</td></tr></table>`;
-    const table = textOut.querySelector('table');
     
     const svgCont = document.getElementById('svg-container');
-    let currentRows = 1;
-    if (comp.rows && comp.rows.length > 0) {
-      svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
-    } else {
-      svgCont.innerHTML = "<p><em>No row data available for this composition.</em></p>";
+    svgCont.innerHTML = generateSVG(comp.rows.slice(0, 1));
+  }
+
+  function advanceGraph(step) {
+    const comp = compositions[activeIdx];
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
+    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
+    const hlColor = isDark ? "#C9974A" : "#8A5F22";
+    
+    const call = comp.calls[step].toUpperCase();
+    const nextNode = comp.path[step+1];
+    
+    if (!animationState.nodeIds.has(nextNode)) {
+      visNodes.add({
+        id: nextNode, label: nextNode, shape: 'box',
+        color: { background: bgColor, border: hlColor, highlight: hlColor },
+        font: { color: fgColor, face: "monospace" }
+      });
+      animationState.nodeIds.add(nextNode);
+    }
+    visEdges.add({
+      from: comp.path[step], to: nextNode, label: call, arrows: 'to',
+      color: { color: fgColor }, font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
+    });
+    network.fit({ animation: true });
+    
+    const textOut = document.getElementById('text-output');
+    const table = textOut.querySelector('table');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${call}</td><td>${nextNode}</td>`;
+    table.appendChild(tr);
+    textOut.scrollTop = textOut.scrollHeight;
+  }
+
+  function playRealTimeLoop() {
+    if (!animationState.isPlaying) return;
+    const comp = compositions[activeIdx];
+    
+    if (animationState.currentRowIdx >= comp.rows.length) {
+      animationState.isPlaying = false;
+      network.fit({ animation: true });
+      return;
     }
     
-    let step = 0;
+    const row = comp.rows[animationState.currentRowIdx];
+    const isHandstroke = (animationState.currentRowIdx % 2 === 0);
+    const strikeInterval = 0.25; // 250ms per strike
+    const rowDuration = 8 * strikeInterval;
+    const gap = isHandstroke ? 0 : strikeInterval; 
     
-    animationTimer = setInterval(() => {
-      if (step >= comp.calls.length) {
-        clearInterval(animationTimer);
-        network.fit({ animation: true });
-        return;
-      }
-      
-      const call = comp.calls[step].toUpperCase();
-      const nextNode = comp.path[step+1];
-      
-      if (!nodeIds.has(nextNode)) {
-        visNodes.add({
-          id: nextNode, label: nextNode, shape: 'box',
-          color: { background: bgColor, border: hlColor, highlight: hlColor },
-          font: { color: fgColor, face: "monospace" }
-        });
-        nodeIds.add(nextNode);
-      }
-      visEdges.add({
-        from: comp.path[step], to: nextNode, label: call, arrows: 'to',
-        color: { color: fgColor }, font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
-      });
+    // Schedule Audio
+    const now = audioCtx.currentTime;
+    const bells = row.split('');
+    bells.forEach((b, i) => {
+      playBell(b, now + (i * strikeInterval));
+    });
+    
+    // Update SVG row-by-row
+    const svgCont = document.getElementById('svg-container');
+    svgCont.innerHTML = generateSVG(comp.rows.slice(0, animationState.currentRowIdx + 1));
+    svgCont.scrollLeft = svgCont.scrollWidth;
+    
+    // Check if we hit a course head boundary
+    if (animationState.step < comp.calls.length && row === comp.path[animationState.step + 1]) {
+      advanceGraph(animationState.step);
+      animationState.step++;
+    }
+    
+    animationState.currentRowIdx++;
+    
+    const timeUntilNextRow = (rowDuration + gap) * 1000;
+    animationState.timer = setTimeout(playRealTimeLoop, timeUntilNextRow);
+  }
+
+  function playFastForwardLoop() {
+    if (!animationState.isPlaying) return;
+    const comp = compositions[activeIdx];
+    
+    if (animationState.step >= comp.calls.length) {
+      animationState.isPlaying = false;
       network.fit({ animation: true });
+      return;
+    }
+    
+    const nextNode = comp.path[animationState.step+1];
+    advanceGraph(animationState.step);
+    
+    // Update SVG in chunks
+    let currentRows = animationState.currentRowIdx;
+    if (comp.rows && comp.rows.length > 0) {
+      let nextIndex = comp.rows.indexOf(nextNode, currentRows + 1);
+      if (nextIndex !== -1) currentRows = nextIndex;
+      else currentRows += 32;
       
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${call}</td><td>${nextNode}</td>`;
-      table.appendChild(tr);
-      textOut.scrollTop = textOut.scrollHeight;
-      
-      if (comp.rows && comp.rows.length > 0) {
-        let nextIndex = comp.rows.indexOf(nextNode, currentRows);
-        if (nextIndex !== -1) {
-          currentRows = nextIndex + 1;
-        } else {
-          currentRows += 32;
-        }
-        svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
-        svgCont.scrollLeft = svgCont.scrollWidth;
-      }
-      
-      step++;
-    }, 400);
+      const svgCont = document.getElementById('svg-container');
+      svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows + 1));
+      svgCont.scrollLeft = svgCont.scrollWidth;
+      animationState.currentRowIdx = currentRows;
+    }
+    
+    animationState.step++;
+    animationState.timer = setTimeout(playFastForwardLoop, 400);
+  }
+
+  function playAnimation() {
+    if (animationState.timer) clearTimeout(animationState.timer);
+    animationState.isPlaying = true;
+    
+    setupVisuals();
+    
+    const speedMode = document.getElementById('speed-select').value;
+    if (speedMode === 'realtime') {
+      initAudio();
+      animationState.currentRowIdx = 0;
+      animationState.step = 0;
+      playRealTimeLoop();
+    } else {
+      animationState.currentRowIdx = 0;
+      animationState.step = 0;
+      playFastForwardLoop();
+    }
   }
 
   window.onload = () => {
-    if (compositions.length > 0) {
+    if (compositions && compositions.length > 0) {
       renderList();
       selectComp(0);
     }
