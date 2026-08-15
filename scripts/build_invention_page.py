@@ -90,6 +90,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       position: relative;
+      min-width: 0;
     }
     
     #blank-state {
@@ -108,6 +109,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       flex: 1;
       display: none;
       flex-direction: column;
+      min-width: 0;
     }
     
     #mynetwork-wrapper {
