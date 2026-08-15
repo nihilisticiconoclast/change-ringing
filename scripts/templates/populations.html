@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two Populations — the split that isn't there</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --bar:#2F6D53; --bar-soft:#8AB289; --ghost:#B8873F; --warn:#9c3b2e;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.nav-bar{background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:12px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.nav-links{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase}
+.nav-links a{color:var(--ink-2);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--bronze);border-bottom-color:var(--bronze)}
+.theme-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule);
+  padding:6px 12px;border-radius:2px;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--bronze-soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+section{padding:52px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em}
+h3{font-size:1.05rem;font-weight:600;margin:0 0 8px}
+.lede{margin:16px 0 0;max-width:70ch;color:var(--ink-2)}
+p{max-width:70ch}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  padding:22px;margin-top:26px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:22px}
+.cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+.note{font-size:14px;color:var(--ink-3);max-width:74ch;margin-top:14px;line-height:1.55}
+.note strong{color:var(--ink-2)}
+.pull{border-left:3px solid var(--bronze);padding:4px 0 4px 18px;margin:26px 0;
+  font-size:1.2rem;max-width:66ch;color:var(--ink)}
+table{border-collapse:collapse;font-family:var(--mono);font-size:13px;
+  font-variant-numeric:tabular-nums;margin-top:18px;width:100%}
+th,td{text-align:right;padding:6px 10px;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink-3);font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+td.dim{color:var(--ink-3)}
+.tscroll{overflow-x:auto}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);margin-top:12px;align-items:center}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.correction{background:var(--surface-2);border-left:3px solid var(--warn);
+  padding:16px 20px;margin-top:26px;border-radius:0 3px 3px 0}
+.correction h3{color:var(--warn)}
+svg{display:block;max-width:100%;height:auto}
+/* Histograms share a viewBox, so a chart in a full-width panel scales up and its
+   10px labels render at twice the size of the same chart in a two-column grid.
+   Cap the rendered width so type stays the same size wherever a chart sits. */
+.hist svg{max-width:520px}   /* the viewBox width: render 1:1, never scale up */
+.hist{display:flex;justify-content:center}
+.axl{font-family:var(--mono);font-size:10px;fill:var(--ink-3)}
+.val{font-family:var(--mono);font-size:10.5px;fill:var(--ink-2);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!--NAV:populations.html-->
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · Roadmap item 23 · A negative result</p>
+  <h1>Everyone says there are<br>two kinds of ringer.<br><em>There is one.</em></h1>
+  <p class="standfirst" id="standfirst"></p>
+  <div class="figures" id="figs"></div>
+</header>
+
+<section>
+  <h2>What two populations would look like</h2>
+  <p class="lede">Ringers describe two worlds. The Sunday band turns up week after
+  week at one tower. The peal circuit is smaller and more mobile, travelling to ring
+  long performances. The received wisdom is that these are largely different people
+  who happen to share a set of buildings.</p>
+  <p class="lede">If that were true, the share of a ringer's performances that are
+  peals would be <strong>bimodal</strong> — a hump near zero for the Sunday band, a
+  second hump near the top for the peal circuit, and few people in between. That is
+  a shape, and a shape is checkable.</p>
+  <div class="panel two">
+    <div>
+      <p class="cap">If the folk model were right — illustrative, not data</p>
+      <div class="hist" id="synthetic"></div>
+      <p class="note">Drawn by hand to show the shape being tested. <strong>This is
+      not a measurement</strong> and no number in it comes from the corpus.</p>
+    </div>
+    <div>
+      <p class="cap">What the corpus actually shows</p>
+      <div class="hist" id="canonical"></div>
+      <p class="note" id="canonicalNote"></p>
+    </div>
+  </div>
+  <div class="pull">One mode with a long thin tail. The median active ringer spends
+  <strong id="medianInline"></strong> of their reported ringing on peals, and ringers
+  who ring <em>only</em> peals essentially do not exist.</div>
+</section>
+
+<section>
+  <h2>It is not two kinds of tower either</h2>
+  <p class="lede">The same test, run over towers rather than people: what share of a
+  tower's performances are peals? If there were peal towers and quarter towers, this
+  would be bimodal too.</p>
+  <div class="panel">
+    <p class="cap" id="towerCap"></p>
+    <div class="hist" id="towers"></div>
+    <p class="note">Same shape. Towers differ in how much peal ringing they host,
+    continuously, the way they differ in everything else.</p>
+  </div>
+</section>
+
+<section>
+  <h2>And it is not something you graduate to</h2>
+  <p class="lede">A third possibility: one population, but peals are what you
+  progress to, so peal share climbs with experience. It does not.</p>
+  <div class="panel">
+    <div id="experience"></div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--bar)"></span>Mean peal share</span>
+      <span><span class="sw" style="background:var(--ghost)"></span>Share who have ever rung a peal</span>
+    </div>
+    <p class="note">Flat between 8.5% and 12.1% from one year active to eleven. The
+    twelve-year point is the full width of the corpus, so it means “present
+    throughout” rather than “has rung for twelve years”, and is marked as
+    confounded rather than dropped.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The activity ladder</h2>
+  <p class="lede">The share of ringers who have never rung a peal falls steadily as
+  you require more ringing — which is what a single population with a long tail looks
+  like, and not what two separate groups would produce.</p>
+  <div class="tscroll"><table id="ladder"></table></div>
+</section>
+
+<section>
+  <h2>Why bad identity resolution invents a split</h2>
+  <p class="lede">The same histogram, computed over raw name strings instead of
+  resolved identities. It is the same corpus and the same question; only the notion
+  of “a ringer” changes.</p>
+  <div class="panel two">
+    <div>
+      <p class="cap">Resolved identities</p>
+      <div class="hist" id="canonical2"></div>
+    </div>
+    <div>
+      <p class="cap">Raw name strings</p>
+      <div class="hist" id="raw"></div>
+    </div>
+  </div>
+  <p class="note">Splitting one person across name variants gives each fragment a
+  narrower slice of their ringing, so a fragment can look 100% peal when the person
+  is not. <strong>Poor identity resolution manufactures apparent specialists at both
+  ends.</strong> The unresolved view is the one that looks more like two populations
+  — and it is the less trustworthy of the two, so better resolution would strengthen
+  this finding rather than undo it.</p>
+  <div class="correction">
+    <h3>A correction, left visible</h3>
+    <p class="note">The first draft of the query comment claimed unresolved names
+    could only thicken the left-hand bar. That was wrong, and the pair of charts
+    above is what showed it. The right tail is where the damage is.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What this page cannot see</h2>
+  <p class="lede">The corpus is overwhelmingly quarter peals: <strong
+  id="quarterCount"></strong> performances of 1,000–1,399 changes, against <strong
+  id="pealCount"></strong> peals. The commonest Sunday length is 1,260, tens of
+  thousands of times over.</p>
+  <p class="lede"><strong>Ordinary Sunday service ringing is not in this corpus at
+  all.</strong> Rounds and call changes for half an hour before a service are not
+  reported to BellBoard; only performances somebody thought worth recording are. So
+  the original question — service band versus peal circuit — asks about a population
+  the data cannot see, and this page answers the version it can: quarter ringers
+  versus peal ringers.</p>
+  <p class="lede">That population, the one that only ever rings for services and
+  never rings a quarter, may well be genuinely separate. Nothing here rules it out.
+  What is ruled out is a split between the two activities the corpus does record.</p>
+</section>
+
+<!--FOOTER:populations.html-->
+</div>
+
+<script>
+const D = /*__DATA__*/;
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('en-GB');
+
+const tb = $('#themeToggle');
+const setTheme = t => { document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark' ? 'Light Mode' : 'Dark Mode';
+  try{ localStorage.setItem('cr-theme',t); }catch(e){} };
+tb.onclick = () => setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+(()=>{ let t=null; try{ t=localStorage.getItem('cr-theme'); }catch(e){}
+  if(!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  tb.textContent = t==='dark'?'Light Mode':'Dark Mode'; })();
+
+const NS='http://www.w3.org/2000/svg';
+function el(n,a){ const e=document.createElementNS(NS,n);
+  for(const k in a) e.setAttribute(k,a[k]); return e; }
+
+/* Horizontal decile histogram. counts[0] is 0-9% peals, counts[9] is 90-100%. */
+function histogram(host, counts, opts){
+  opts = opts || {};
+  const W=520, rowH=26, padL=74, padR=64, H=counts.length*rowH+26;
+  const max = Math.max.apply(null, counts) || 1;
+  const s = el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  s.appendChild(el('title',{})).textContent =
+    opts.title || 'Distribution of peal share, one row per ten per cent band';
+  counts.forEach((n,i)=>{
+    const y = i*rowH+8;
+    const lab = el('text',{x:padL-10,y:y+13,'text-anchor':'end',class:'axl'});
+    lab.textContent = `${i*10}–${i*10+9}%`;
+    s.appendChild(lab);
+    const full = W-padL-padR;
+    s.appendChild(el('rect',{x:padL,y:y+2,width:full,height:rowH-8,
+      fill:'var(--surface-2)',rx:2}));
+    const w = Math.max(1, full*n/max);
+    s.appendChild(el('rect',{x:padL,y:y+2,width:w,height:rowH-8,
+      fill:opts.colour||'var(--bar)',rx:2}));
+    const v = el('text',{x:padL+w+8,y:y+13,class:'val'});
+    v.textContent = opts.pct ? `${Math.round(100*n/counts.reduce((a,b)=>a+b,0))}%` : fmt(n);
+    s.appendChild(v);
+  });
+  const ax = el('text',{x:padL,y:H-2,class:'axl'});
+  ax.textContent = opts.axis || 'share of this ringer’s performances that are peals';
+  s.appendChild(ax);
+  host.innerHTML=''; host.appendChild(s);
+}
+
+/* The shape the folk model predicts. Hand-drawn, deliberately not from data. */
+histogram($('#synthetic'), [30,12,6,4,3,3,4,7,14,26],
+  {colour:'var(--ghost)', pct:true, title:'Illustrative bimodal shape, not a measurement',
+   axis:'two humps — what two separate populations would produce'});
+
+histogram($('#canonical'), D.canonical, {title:'Measured distribution of peal share per ringer'});
+histogram($('#canonical2'), D.canonical, {title:'Measured, resolved identities'});
+histogram($('#raw'), D.raw, {colour:'var(--bronze-soft)', title:'Measured, raw name strings'});
+histogram($('#towers'), D.towers,
+  {title:'Measured distribution of peal share per tower',
+   axis:'share of this tower’s performances that are peals'});
+
+$('#standfirst').textContent =
+  `Across ${fmt(D.canonicalN)} ringers with ${D.minAppearances} or more performances in `
+  + `2012–24, the share of ringing that is peals forms a single steep decay — not `
+  + `the two humps the folk model predicts. The same is true of towers, and peal `
+  + `involvement does not climb with experience.`;
+
+$('#figs').innerHTML = [
+  [D.medianPct + '%', 'median peal share'],
+  [D.everRangPct + '%', 'have rung a peal'],
+  [fmt(D.canonicalN), 'ringers measured'],
+  [fmt(D.towersN), 'towers measured'],
+].map(([n,l])=>`<div class="fig"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+$('#medianInline').textContent = D.medianPct + '%';
+const lowPct = Math.round(100*D.canonical[0]/D.canonicalN);
+$('#canonicalNote').innerHTML =
+  `${fmt(D.canonicalN)} ringers with ${D.minAppearances}+ performances. `
+  + `<strong>${lowPct}% sit in the lowest band</strong> and the tail thins monotonically. `
+  + `Peals are counted as ${fmt(D.pealThreshold)} changes or more.`;
+$('#towerCap').textContent =
+  `${fmt(D.towersN)} towers with 50 or more performances · median ${D.towerMedianPct}%`;
+$('#quarterCount').textContent = fmt(D.lengths.quarters);
+$('#pealCount').textContent = fmt(D.lengths.peals);
+
+$('#ladder').innerHTML =
+  '<thead><tr><th>Minimum performances</th><th>Ringers</th>'
+  + '<th>Never rung a peal</th><th>Only rings peals</th></tr></thead><tbody>'
+  + D.ladder.map(r=>`<tr><td>${fmt(r.threshold)}</td><td>${fmt(r.ringers)}</td>`
+      + `<td>${r.no_peals_pct}%</td><td class="dim">${r.all_peals_pct}%</td></tr>`).join('')
+  + '</tbody>';
+
+/* Experience: paired bars per year-active bucket. */
+(function(){
+  const E = D.experience, W=760, padL=54, padB=42, padT=12, rowW=W/E.length, H=250;
+  const s = el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  s.appendChild(el('title',{})).textContent =
+    'Mean peal share and share who have ever rung a peal, by years active';
+  const maxV = 100, plotH = H-padB-padT;
+  [0,25,50,75,100].forEach(v=>{
+    const y = padT + plotH*(1-v/maxV);
+    s.appendChild(el('line',{x1:padL,x2:W-8,y1:y,y2:y,stroke:'var(--rule)','stroke-width':1}));
+    const t = el('text',{x:padL-8,y:y+3,'text-anchor':'end',class:'axl'});
+    t.textContent = v+'%'; s.appendChild(t);
+  });
+  E.forEach((r,i)=>{
+    const x = padL + i*((W-padL-8)/E.length) + 6;
+    const bw = Math.max(6, (W-padL-8)/E.length/2 - 6);
+    const h1 = plotH*r.mean_pct/maxV, h2 = plotH*r.ever_pct/maxV;
+    s.appendChild(el('rect',{x:x, y:padT+plotH-h1, width:bw, height:h1,
+      fill:'var(--bar)', rx:1, opacity:r.corpus_width?0.45:1}));
+    s.appendChild(el('rect',{x:x+bw+3, y:padT+plotH-h2, width:bw, height:h2,
+      fill:'var(--ghost)', rx:1, opacity:r.corpus_width?0.45:1}));
+    const t = el('text',{x:x+bw, y:H-26, 'text-anchor':'middle', class:'axl'});
+    t.textContent = r.years + (r.corpus_width?'+':''); s.appendChild(t);
+    if(r.corpus_width){
+      const c = el('text',{x:x+bw, y:H-12, 'text-anchor':'middle', class:'axl'});
+      c.textContent = 'confounded'; s.appendChild(c);
+    }
+  });
+  const ax = el('text',{x:padL, y:H-2, class:'axl'});
+  ax.textContent = 'years between a ringer’s first and last appearance';
+  s.appendChild(ax);
+  $('#experience').innerHTML=''; $('#experience').appendChild(s);
+})();
+</script>
+</body>
+</html>

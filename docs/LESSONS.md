@@ -550,6 +550,16 @@ repository that commits its output; it is what makes the diff mean anything.**
 
 ---
 
+## Where the predictions are kept
+
+`docs/HYPOTHESES.md` records every claim this project has tested against what was
+expected beforehand. Three of twenty-three held intact. The lessons above are
+what those twenty failures had in common; the hypotheses page is the raw tally,
+kept separately so the hit rate stays visible rather than being smoothed into
+narrative.
+
+---
+
 ## The honest summary
 
 None of this made the work error-free. There were three production-only bugs, a

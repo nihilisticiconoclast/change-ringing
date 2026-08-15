@@ -118,11 +118,26 @@ can be checked instead of taken on trust.
 - [x] The Rhythm of Ringing -- the week, the year, and the 24 days that carry
       21% of it; corrected the September and Wednesday claims made in
       `docs/IDEAS.md` and in this README
+- [x] Two Populations (roadmap item 23) -- `docs/populations.html` and
+      `docs/two_populations.md`. **The split every ringer describes is not in the
+      data.** Peal share per ringer is a single steep decay, median 3.0%, with no
+      second mode; the same holds for towers; and peal involvement does not climb
+      with experience. 72% of ringers with 50+ appearances have rung a peal. The
+      question had to be corrected first: ordinary service ringing is never
+      reported to BellBoard and is absent from the corpus entirely.
 - [x] CompLib ingestion -- the fourth corpus (`schema/006`,
       `scripts/ingest_complib.py`): 86,039 compositions from the
       `api.complib.org` JSON API, with `perpage` capped at 25 (a max
       the OpenAPI spec omits). See `data/SOURCES.md`.
 - [ ] Ringer identity resolution (needs the backfill run first)
+
+## Hypotheses and observations
+
+`docs/HYPOTHESES.md` — every claim this project has tested, what was expected
+before the measurement, and whether the expectation survived. **Three of
+twenty-three predictions held intact.** The wrong ones are kept deliberately: a
+record of only confirmed hypotheses says nothing about how often the guessing
+works, which is the only thing that calibrates the next guess.
 
 ## Roadmap
 

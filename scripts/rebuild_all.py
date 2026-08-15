@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Rebuild everything derived: the replica, the inferred datasets, the nine pages.
+Rebuild everything derived: the replica, the inferred datasets, the ten pages.
 
 One command, in dependency order, that fails loudly at the first broken step.
 
@@ -33,7 +33,7 @@ not captured here: a rebuild is a thing you watch, and swallowing stdout to
 reprint it on failure loses the progress of the step that hung.
 
 STEPS is the list, and it is the only list. Adding a page means adding a line
-here, the same way adding a page means adding a line to site_chrome.PAGES.
+here, the same way adding a page means adding a line to site_chrome.PAGES (and both lists are checked against each other by verify_chrome.py).
 """
 import argparse
 import subprocess
@@ -60,7 +60,7 @@ def steps(db, skip_inference):
              ["classify_footnote_occasions.py", "--local-db", db,
               "--out", "data/footnote_occasions.csv"], "data"),
         ]
-    # The nine published pages, in the order site_chrome.PAGES lists them.
+    # The ten published pages, in the order site_chrome.PAGES lists them.
     out += [
         ("Founder Atlas          -> docs/index.html",     ["build_atlas.py"], "pages"),
         ("Method Lineage         -> docs/lineage.html",   ["build_lineage_atlas.py"], "pages"),
@@ -69,12 +69,13 @@ def steps(db, skip_inference):
         ("Rhythm of Ringing      -> docs/rhythm.html",    ["build_rhythm_page.py"], "pages"),
         ("Ringer Constellation   -> docs/ringers.html",   ["build_ringers_page.py"], "pages"),
         ("The Occasions Archive  -> docs/occasions.html", ["build_occasions_page.py"], "pages"),
+        ("Two Populations       -> docs/populations.html",["build_populations_page.py"], "pages"),
         ("The Temporal Nexus     -> docs/nexus.html",     ["build_nexus_page.py"], "pages"),
         ("Sacred Geometry        -> docs/geometry.html",  ["build_geometry_page.py"], "pages"),
         # Both verifiers run last and both can fail the build. verify_chrome
         # catches a nav or footer that drifted; verify_corpus catches a database
         # the pages were just built against that should not have been trusted.
-        ("Verify nav and footer are identical on all nine pages",
+        ("Verify nav and footer are identical on all ten pages",
          ["verify_chrome.py"], "pages"),
         ("Verify corpus integrity",
          ["verify_corpus.py", "--local-db", db], "pages"),
@@ -123,7 +124,7 @@ def main():
         print(f"  ok ({time.time() - t:.1f}s)", flush=True)
 
     print(f"\n{'=' * 72}\nAll {len(plan)} steps passed in {time.time() - t0:.0f}s.")
-    print("Rebuilt: the replica, the derived CSVs, and all nine pages in docs/.")
+    print("Rebuilt: the replica, the derived CSVs, and every page in docs/.")
     return 0
 
 

@@ -7,9 +7,9 @@ this repository may hard-code a list of pages.
 
 Why this exists
 ---------------
-There are nine pages built by seven scripts and four HTML templates, written at
+There are ten pages built by eight scripts and five HTML templates, written at
 different times by three different agents. Adding a page previously meant editing
-nine navigation blocks by hand, and the ninth was always the one that got missed:
+every navigation block by hand, and the last one was always the one that got missed:
 by the time it was noticed, the nav bars had converged but the FOOTERS had not --
 `rhythm.html` and `invention.html` linked to two different subsets of the site,
 five pages had no footer at all, and only two carried a link back to the
@@ -63,6 +63,8 @@ PAGES = [
      "Who rings with whom, across 70,351 names"),
     ("occasions.html",  "The Occasions Archive",
      "Why bells are rung, from 337,946 footnotes"),
+    ("populations.html", "Two Populations",
+     "The split every ringer describes, which the data does not contain"),
     ("nexus.html",      "The Temporal Nexus",
      "Towers, methods and ringers in one 3-D field"),
     ("geometry.html",   "Sacred Geometry",
@@ -150,6 +152,18 @@ NOTES = {
         "not unique and the corpus has no person identifier, so two ringers sharing a "
         "name are one node here. Treat the structure as indicative rather than as a "
         "register of people.",
+    ],
+    "populations.html": [
+        "<strong>The corpus contains no ordinary service ringing.</strong> Rounds and "
+        "call changes before a Sunday service are not reported to BellBoard, so this "
+        "page compares quarter ringers with peal ringers — the two activities the data "
+        "records — and not the Sunday band with the peal circuit, which is the question "
+        "it was originally asked. The genuinely separate population, if there is one, is "
+        "invisible here.",
+        "Ringer identity comes from <code>data/ringer_identity_candidates.csv</code>, "
+        "55,326 canonical entities whose <strong>accuracy is not measured</strong>. The "
+        "page shows what unresolved names do to the answer rather than hiding it. "
+        "<strong>No individual is named anywhere.</strong>",
     ],
     "nexus.html": [
         "Positions are a force layout, not a map projection: distance between nodes "
