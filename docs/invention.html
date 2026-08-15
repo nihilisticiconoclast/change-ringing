@@ -48,11 +48,31 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      height: 100%;
+      position: relative;
     }
     #mynetwork {
       flex: 1;
+      height: 100%;
+      width: 100%;
       background: var(--ground);
     }
+    .play-btn {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      z-index: 10;
+      background: var(--bronze);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .play-btn:hover { background: var(--accent); }
     .comp-card {
       padding: 16px;
       border-bottom: 1px solid var(--rule);
@@ -108,7 +128,7 @@ section:last-of-type{border-bottom:none}
 .site-map a{color:var(--bronze,#38bdf8);text-decoration:none;font-weight:500}
 .site-map a:hover{text-decoration:underline}
 .site-map a[aria-current="page"]{color:var(--ink-2,#e2e8f0);font-weight:600}
-.site-map a[aria-current="page"]::after{content:" ó you are here";
+.site-map a[aria-current="page"]::after{content:" ‚Äî you are here";
   font-size:11px;font-weight:400;opacity:.7}
 .site-map span{display:block;font-size:12.5px;opacity:.78}
 .site-note{max-width:78ch;margin:12px 0 0;font-size:13px;line-height:1.6}
@@ -158,7 +178,7 @@ section:last-of-type{border-bottom:none}
   border-bottom:1px solid var(--rule,rgba(255,255,255,.10))}
 .nav-links a:hover{color:var(--ink,#fff)}
 .nav-links a.active{color:var(--bronze,#38bdf8);font-weight:600}
-.nav-links a.active::after{content:" ∑";opacity:.7}
+.nav-links a.active::after{content:" ¬∑";opacity:.7}
 .theme-btn{grid-column:1/-1;justify-self:start;margin-top:18px;
   font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   background:var(--surface-2,rgba(255,255,255,.06));color:var(--ink-2,#e2e8f0);
@@ -209,6 +229,7 @@ section:last-of-type{border-bottom:none}
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
+    <button class="play-btn" onclick="playAnimation()">‚ñ∂ Play Animation</button>
     <div id="mynetwork"></div>
   </div>
 </div>
@@ -220,7 +241,7 @@ section:last-of-type{border-bottom:none}
     <li><a href="lineage.html">Method Lineage</a> <span>How methods extend from one stage to the next</span></li>
     <li><a href="methods.html">Blue Line Atlas</a> <span>20,679 methods drawn as the path a bell traces</span></li>
     <li><a href="invention.html" aria-current="page">First Rung: Composition Visualizer</a> <span>Heuristic search engine for novel compositions</span></li>
-    <li><a href="rhythm.html">Rhythm of Ringing</a> <span>The week, the year, and 24 days that carry a fifth of 2021ñ24</span></li>
+    <li><a href="rhythm.html">Rhythm of Ringing</a> <span>The week, the year, and 24 days that carry a fifth of 2021‚Äì24</span></li>
     <li><a href="ringers.html">Ringer Constellation</a> <span>Who rings with whom, across 70,351 names</span></li>
     <li><a href="occasions.html">The Occasions Archive</a> <span>Why bells are rung, from 337,946 footnotes</span></li>
     <li><a href="practice.html">Practice Nights</a> <span>Dove says the tower rings on Tuesday. Does it?</span></li>
@@ -228,9 +249,9 @@ section:last-of-type{border-bottom:none}
     <li><a href="nexus.html">The Temporal Nexus</a> <span>Towers, methods and ringers in one 3-D field</span></li>
     <li><a href="geometry.html">Sacred Geometry</a> <span>Method symmetries arranged on a phyllotaxis sphere</span></li>
   </ul>
-  <p class="site-note"><strong>ìFirst rungî, not ìinventedî.</strong> No column in any of the four corpora records who devised a method. What the CCCBR library records is the first performance, and a method enters the collection by being rung and named, so that is the date used here. A method can be worked out on paper years before a band attempts it, and that gap is invisible in this data.</p>
-  <p class="site-note">Each method is counted <strong>once</strong>, at its own earliest dated performance. <code>method_performances</code> holds up to fifteen first-performance event types per method, so counting rows instead would answer a different question ó and did, in an earlier draft of this page.</p>
-  <p class="site-note">Built from <code>data/change-ringing.db</code> by the scripts in <code>scripts/</code>; the SQL behind each page is in <code>queries/</code>, read at build time rather than copied, so the recorded queries are the ones that ran. Data derived from Doveís Guide, the CCCBR Methods Library and BellBoard ó <strong>CC BY-SA 4.0</strong>, see <code>data/LICENCE-DATA.md</code> before reusing it. The code is MIT.</p>
+  <p class="site-note"><strong>‚ÄúFirst rung‚Äù, not ‚Äúinvented‚Äù.</strong> No column in any of the four corpora records who devised a method. What the CCCBR library records is the first performance, and a method enters the collection by being rung and named, so that is the date used here. A method can be worked out on paper years before a band attempts it, and that gap is invisible in this data.</p>
+  <p class="site-note">Each method is counted <strong>once</strong>, at its own earliest dated performance. <code>method_performances</code> holds up to fifteen first-performance event types per method, so counting rows instead would answer a different question ‚Äî and did, in an earlier draft of this page.</p>
+  <p class="site-note">Built from <code>data/change-ringing.db</code> by the scripts in <code>scripts/</code>; the SQL behind each page is in <code>queries/</code>, read at build time rather than copied, so the recorded queries are the ones that ran. Data derived from Dove‚Äôs Guide, the CCCBR Methods Library and BellBoard ‚Äî <strong>CC BY-SA 4.0</strong>, see <code>data/LICENCE-DATA.md</code> before reusing it. The code is MIT.</p>
   <p class="site-note"><a href="https://github.com/nihilisticiconoclast/change-ringing">Repository</a></p>
 </footer>
 
@@ -4956,6 +4977,10 @@ section:last-of-type{border-bottom:none}
 ];
   let network = null;
   let activeIdx = 0;
+  
+  let animationTimer = null;
+  let visNodes = null;
+  let visEdges = null;
 
   function renderList() {
     const list = document.getElementById('comp-list');
@@ -4969,7 +4994,7 @@ section:last-of-type{border-bottom:none}
       
       el.innerHTML = `
         <div class="comp-score">Score: ${comp.score.toFixed(1)}${badge}</div>
-        <div class="comp-meta">${complete} ∑ ${comp.length_leads} leads</div>
+        <div class="comp-meta">${complete} ¬∑ ${comp.length_leads} leads</div>
         <div class="comp-calls">${comp.calls.join(' ')}</div>
       `;
       el.onclick = () => selectComp(idx);
@@ -4978,6 +5003,7 @@ section:last-of-type{border-bottom:none}
   }
 
   function selectComp(idx) {
+    if (animationTimer) clearInterval(animationTimer);
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
     document.getElementById('comp-' + idx).classList.add('active');
@@ -4993,6 +5019,7 @@ section:last-of-type{border-bottom:none}
   }
 
   function drawGraph(comp) {
+    if (animationTimer) clearInterval(animationTimer);
     const nodes = [];
     const edges = [];
     const nodeIds = new Set();
@@ -5034,7 +5061,9 @@ section:last-of-type{border-bottom:none}
     }
 
     const container = document.getElementById('mynetwork');
-    const data = { nodes: nodes, edges: edges };
+    visNodes = new vis.DataSet(nodes);
+    visEdges = new vis.DataSet(edges);
+    const data = { nodes: visNodes, edges: visEdges };
     const options = {
       physics: {
         solver: 'forceAtlas2Based',
@@ -5047,6 +5076,74 @@ section:last-of-type{border-bottom:none}
     
     if (network) network.destroy();
     network = new vis.Network(container, data, options);
+  }
+
+  function playAnimation() {
+    if (animationTimer) clearInterval(animationTimer);
+    
+    const comp = compositions[activeIdx];
+    
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
+    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
+    const hlColor = isDark ? "#C9974A" : "#8A5F22";
+    const rdColor = isDark ? "#63A579" : "#2F6D53";
+    
+    // Clear the datasets
+    visNodes.clear();
+    visEdges.clear();
+    
+    const nodeIds = new Set();
+    
+    // Add just the first node (rounds)
+    visNodes.add({
+      id: comp.path[0],
+      label: comp.path[0],
+      shape: 'box',
+      color: {
+        background: rdColor,
+        border: hlColor,
+        highlight: hlColor
+      },
+      font: { color: "#FFF", face: "monospace" }
+    });
+    nodeIds.add(comp.path[0]);
+    
+    let step = 0;
+    
+    animationTimer = setInterval(() => {
+      if (step >= comp.calls.length) {
+        clearInterval(animationTimer);
+        return;
+      }
+      
+      const nextNode = comp.path[step+1];
+      if (!nodeIds.has(nextNode)) {
+        visNodes.add({
+          id: nextNode,
+          label: nextNode,
+          shape: 'box',
+          color: {
+            background: bgColor,
+            border: hlColor,
+            highlight: hlColor
+          },
+          font: { color: fgColor, face: "monospace" }
+        });
+        nodeIds.add(nextNode);
+      }
+      
+      visEdges.add({
+        from: comp.path[step],
+        to: nextNode,
+        label: comp.calls[step].toUpperCase(),
+        arrows: 'to',
+        color: { color: fgColor },
+        font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
+      });
+      
+      step++;
+    }, 400); // add one step every 400ms
   }
 
   window.onload = () => {

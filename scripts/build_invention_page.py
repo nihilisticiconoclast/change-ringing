@@ -61,11 +61,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       flex: 1;
       display: flex;
       flex-direction: column;
+      height: 100%;
+      position: relative;
     }
     #mynetwork {
       flex: 1;
+      height: 100%;
+      width: 100%;
       background: var(--ground);
     }
+    .play-btn {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      z-index: 10;
+      background: var(--bronze);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .play-btn:hover { background: var(--accent); }
     .comp-card {
       padding: 16px;
       border-bottom: 1px solid var(--rule);
@@ -120,6 +140,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div id="comp-list"></div>
   </div>
   <div class="main-view">
+    <button class="play-btn" onclick="playAnimation()">▶ Play Animation</button>
     <div id="mynetwork"></div>
   </div>
 </div>
@@ -147,6 +168,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   const compositions = __DATA_JSON__;
   let network = null;
   let activeIdx = 0;
+  
+  let animationTimer = null;
+  let visNodes = null;
+  let visEdges = null;
 
   function renderList() {
     const list = document.getElementById('comp-list');
@@ -169,6 +194,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   }
 
   function selectComp(idx) {
+    if (animationTimer) clearInterval(animationTimer);
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
     document.getElementById('comp-' + idx).classList.add('active');
@@ -184,6 +210,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   }
 
   function drawGraph(comp) {
+    if (animationTimer) clearInterval(animationTimer);
     const nodes = [];
     const edges = [];
     const nodeIds = new Set();
@@ -225,7 +252,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     }
 
     const container = document.getElementById('mynetwork');
-    const data = { nodes: nodes, edges: edges };
+    visNodes = new vis.DataSet(nodes);
+    visEdges = new vis.DataSet(edges);
+    const data = { nodes: visNodes, edges: visEdges };
     const options = {
       physics: {
         solver: 'forceAtlas2Based',
@@ -238,6 +267,74 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     
     if (network) network.destroy();
     network = new vis.Network(container, data, options);
+  }
+
+  function playAnimation() {
+    if (animationTimer) clearInterval(animationTimer);
+    
+    const comp = compositions[activeIdx];
+    
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
+    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
+    const hlColor = isDark ? "#C9974A" : "#8A5F22";
+    const rdColor = isDark ? "#63A579" : "#2F6D53";
+    
+    // Clear the datasets
+    visNodes.clear();
+    visEdges.clear();
+    
+    const nodeIds = new Set();
+    
+    // Add just the first node (rounds)
+    visNodes.add({
+      id: comp.path[0],
+      label: comp.path[0],
+      shape: 'box',
+      color: {
+        background: rdColor,
+        border: hlColor,
+        highlight: hlColor
+      },
+      font: { color: "#FFF", face: "monospace" }
+    });
+    nodeIds.add(comp.path[0]);
+    
+    let step = 0;
+    
+    animationTimer = setInterval(() => {
+      if (step >= comp.calls.length) {
+        clearInterval(animationTimer);
+        return;
+      }
+      
+      const nextNode = comp.path[step+1];
+      if (!nodeIds.has(nextNode)) {
+        visNodes.add({
+          id: nextNode,
+          label: nextNode,
+          shape: 'box',
+          color: {
+            background: bgColor,
+            border: hlColor,
+            highlight: hlColor
+          },
+          font: { color: fgColor, face: "monospace" }
+        });
+        nodeIds.add(nextNode);
+      }
+      
+      visEdges.add({
+        from: comp.path[step],
+        to: nextNode,
+        label: comp.calls[step].toUpperCase(),
+        arrows: 'to',
+        color: { color: fgColor },
+        font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
+      });
+      
+      step++;
+    }, 400); // add one step every 400ms
   }
 
   window.onload = () => {
@@ -257,7 +354,7 @@ def main():
         print(f"Error: {JSON_PATH} not found. Run export_compositions.py first.")
         return 1
         
-    with open(JSON_PATH) as f:
+    with open(JSON_PATH, encoding="utf-8") as f:
         data_json = f.read()
         
     html = HTML_TEMPLATE.replace("__DATA_JSON__", data_json)
@@ -267,7 +364,7 @@ def main():
     
     print(f"Writing to {OUT_PATH}...")
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT_PATH, "w") as f:
+    with open(OUT_PATH, "w", encoding="utf-8") as f:
         f.write(html)
         
     print("Done!")
