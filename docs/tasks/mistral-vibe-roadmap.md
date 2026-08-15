@@ -11,7 +11,7 @@ ones find.
 | 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
 | 2 | CompLib ingestion | **Active** — full brief below |
 | 3 | Corpus integrity checker | Queued — sketch below |
-| 5 | Backfill completeness gate | **In review** — PR #5, one blocking change requested |
+| 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
@@ -125,25 +125,74 @@ cannot create or destroy a linked record, so anything else is wrong.
 
 ---
 
-## Task 5 — Backfill completeness gate *(in review — PR #5)*
+## Task 5 — Backfill completeness gate *(merged, with three fixes)*
 
-> **Reviewed 2026-08-15. The mechanism is right and the numbers check out** — I
-> re-queried `search.php` live and got 25,267 for 2024 and 1,792 for January 2024,
-> matching the PR exactly; the full range now reads 336,689, up 35 from the
-> 336,654 recorded on 9 August, because the corpus grows.
+> **Reviewed and merged 2026-08-15.** The mechanism is right and the external
+> claims check out: I re-queried `search.php` live and got 25,267 for 2024 and
+> 1,792 for January 2024, matching this write-up exactly. The full range now reads
+> 336,689 rather than 336,654 — not a discrepancy, the corpus grew by 35 in five
+> days, which is worth knowing about a denominator that moves.
 >
-> **One blocking bug.** `store_performances` returns `len(perf_rows)`, which has
-> duplicates appended to it, and the gate compares that against an `expected` that
-> counts unique performances. A window returning 1,000 unique records plus 800
-> duplicates of them measures as 1,800 against an expected 1,792, passes the gate,
-> and is checkpointed as complete while 792 records are missing from the database.
-> That is the exact pathology this PR's own size-signal investigation concludes was
-> happening. Return `len(seen_ids)` instead.
+> Three things were changed on merge; the account below is Vibe's and is otherwise
+> unedited.
 >
-> Two smaller points: the 5% tolerance has no measurement behind it (the one
-> window measured agrees exactly), and `fetch_expected_count` returning `None`
-> conflates "empty window" with "regex did not match", which `process_window`
-> treats as complete. Full review on the PR.
+> 1. **The gate measured completeness with a row count that included duplicates.**
+>    `store_performances` returned `len(perf_rows)`, and duplicates are appended to
+>    that list, so a window returning 1,000 unique records plus 800 duplicates of
+>    them measured 1,800 against an expected 1,792, passed, and was checkpointed
+>    complete with 792 records missing. That is the exact pathology this task's own
+>    size-signal investigation identifies. It now returns and gates on
+>    `len(seen_ids)`, and a window containing any duplicate at all fails rather
+>    than passing on its unique count.
+> 2. **The 5% tolerance had no measurement behind it.** Measured on merge across
+>    six windows: `search.php` and `export.php` agree exactly, every time. Default
+>    is now 0, with `--window-tolerance` to raise it and a comment recording the
+>    measurement rather than an assumption.
+> 3. **`None` meant two different things** — "no performances" and "the regex did
+>    not match". `process_window` treated both as complete, so a BellBoard template
+>    change would have turned every window into a silent pass.
+>    `fetch_expected_count` now raises on a body it cannot parse and reserves
+>    `None` for the page that actually says no performances match.
+
+### Vibe's account, as submitted
+
+**Done.** `scripts/bellboard_common.py` gained `fetch_expected_count`,
+which parses the "Found N performances" count BellBoard's `search.php`
+renders in HTML (verified: 25,267 for 2024, 1,792 for Jan 2024, None
+for an empty window). `scripts/backfill_bellboard.py` now:
+
+1. Asks `search.php` for each window's expected count before fetching,
+   and refuses to checkpoint a window whose fetched total falls more
+   than 5% short (retrying with a longer cool-off, then failing).
+2. Compares the DB row count for the whole range against `search.php`'s
+   corpus count at the end, and exits non-zero on a material shortfall.
+3. Bumps the checkpoint to `version: 2`, so a checkpoint from the
+   broken run (which marked truncated windows complete) is discarded
+   rather than resumed. `--reset-checkpoint` discards explicitly.
+4. Counts duplicate `perf_id`s within a window to surface the
+   re-fetching that inflated the original run's raw artefact.
+
+Definition of done met: a bounded run over January 2024 loaded
+1,792 rows (matching `search.php` exactly) and exited 0; an
+artificially truncated window (one page, 1,000 of 1,792) was not
+checkpointed and exited 1. The full backfill is not run here — it is a
+long job and cannot reach production until 2026-09-01.
+
+**Size-signal investigation.** The broken run produced ~2.0 KB/row
+against Gemini's ~1.0 KB/row while holding fewer unique records. The
+committed `data/bellboard/` CSVs — the same export format — measure
+~0.5 KB/row even including ringers, footnotes and flags, so the
+discrepancy is not an artefact of the format. Clean `export.php`
+pagination is non-overlapping (Jan 2024: 1,792 unique IDs across two
+pages, zero duplicates), so pages do not overlap each other within a
+window under normal operation. That leaves overlapping *date windows*
+(the loop not advancing, or `changed_since` semantics leaking in) as
+the cause: the same performances re-fetched, collapsing via
+`INSERT OR REPLACE` in the DB but inflating the raw cache. The gate's
+per-window duplicate counter and final range count would both surface
+this.
+
+Original brief, retained for reference:
 
 The backfill runner is merged and the run it produced is **wrong**: 55,000 rows
 against a true corpus of **336,654**. It captured 16% and reported success.

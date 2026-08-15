@@ -6,6 +6,7 @@ This module provides importable functions for parsing BellBoard XML and
 inserting data into the database, used by both ingest_bellboard.py and
 backfill_bellboard.py.
 """
+import re
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -15,11 +16,33 @@ import time
 
 NS = "{http://bb.ringingworld.co.uk/NS/performances#}"
 EXPORT_URL = "https://bb.ringingworld.co.uk/export.php"
+SEARCH_URL = "https://bb.ringingworld.co.uk/search.php"
+# What search.php says instead of a count when nothing matches.
+EMPTY_RE = re.compile(r"no performances matching your search criteria", re.I)
 PAGE_SIZE = 1000  # BellBoard rejects >10000 with HTTP 413; 1000 keeps pages small
 PARAM_BUDGET = 16000
 USER_AGENT = (
     "change-ringing-corpus/0.1 (+https://github.com/nihilisticiconoclast/change-ringing)"
 )
+
+# A window whose unique row count falls below EXPECTED * (1 - WINDOW_TOLERANCE)
+# is treated as truncated, not complete.
+#
+# ZERO, and measured rather than assumed. This started at 0.05 on the reasoning
+# that a handful of records per window might appear in export.php but not
+# search.php. Measured on 2026-08-15 across six week-long windows spread over
+# 2021-2024 -- 2,588 performances in total -- the two endpoints agree EXACTLY,
+# every window, difference of zero:
+#
+#   2024-02-01..07  409/409     2022-03-01..07  464/464
+#   2024-06-10..16  420/420     2021-09-01..07  324/324
+#   2023-11-01..07  454/454     2024-12-20..26  517/517
+#
+# So there is no discrepancy for a tolerance to absorb, and a 5% allowance on a
+# 30-day window silently forgives around a hundred records. Transient shortfalls
+# are what the retry loop is for. Raise it with --window-tolerance if a real
+# discrepancy is ever measured, and record the measurement here when you do.
+WINDOW_TOLERANCE = 0.0
 
 
 def text_of(elem):
@@ -57,6 +80,52 @@ def fetch_page(url, retries: int = 4) -> bytes:
             time.sleep(delay)
             delay *= 2
     raise RuntimeError("unreachable")
+
+
+def fetch_expected_count(date_from, date_to, retries=4):
+    """Ask BellBoard's search page how many performances a date window holds.
+
+    search.php renders the count in its HTML ("Found N performances ..."),
+    which is the cheap, independent ground truth that export.php lacks: the
+    XML root carries no total attribute, and a truncated export page looks
+    identical to the last page of a complete window. This is the signal the
+    backfill uses to refuse checkpointing a short window.
+
+    Args:
+        date_from: start date (YYYY-MM-DD)
+        date_to: end date (YYYY-MM-DD)
+        retries: number of fetch attempts
+
+    Returns:
+        int or None: the reported count, or None ONLY when search.php positively
+        states the window is empty. An unparseable body raises.
+
+    Raises:
+        RuntimeError: if the page neither reports a count nor says the window is
+        empty. This distinction matters more than it looks: the caller treats
+        None as "empty, therefore complete", so a BellBoard template change that
+        broke the pattern would otherwise turn every window into a silent pass --
+        the exact failure mode this whole gate exists to prevent. An unrecognised
+        page is a reason to stop, not to proceed.
+    """
+    url = f"{SEARCH_URL}?from={date_from}&to={date_to}"
+    raw = fetch_page(url, retries)
+    body = raw.decode("utf-8", errors="replace")
+    # Verified against the live page on 2026-08-15. A non-empty window renders
+    #   <p>Found 25267 performances that match your search criteria
+    # (no thousands separator today, but [\d,]+ tolerates one if that changes).
+    m = re.search(r"Found\s+([\d,]+)\s+performances", body)
+    if m:
+        return int(m.group(1).replace(",", ""))
+    # An empty window renders "no performances matching your search criteria."
+    if EMPTY_RE.search(body):
+        return None
+    raise RuntimeError(
+        f"search.php returned a page for {date_from}..{date_to} that neither "
+        f"reports a count nor says the window is empty ({len(body)} bytes). "
+        f"The page format has probably changed; refusing to guess, because the "
+        f"caller would read a guess as 'window complete'."
+    )
 
 
 def fetch_performances(changed_since=None, date_from=None, date_to=None, page=1, pagesize=PAGE_SIZE, retries=4):

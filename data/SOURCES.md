@@ -36,6 +36,22 @@ attribution is owed if any output of this project is published.
   not inferred.
 - Deletions are not tracked: BellBoard does not record deletion dates, so a
   performance removed upstream persists locally until a full reload.
+- Completeness check: `export.php` carries no row count of its own, and a
+  truncated response page is indistinguishable from a genuine last page.
+  `search.php?from=...&to=...` renders an independent count ("Found N
+  performances") in its HTML, which `scripts/backfill_bellboard.py` uses as
+  a per-window expected count: a window fetched short of it is retried and
+  failed rather than checkpointed.
+- Counts measured 2026-08-09: 25,859 for 2023, 25,267 for 2024, 336,654 for
+  2012-01-01 to 2026-08-09. Re-measured 2026-08-15: 2024 still 25,267, and the
+  2012-onward range now reads **336,689**. The corpus grows retrospectively, so
+  any figure here is true of a date, not of the source.
+- **`search.php` and `export.php` agree exactly.** Measured 2026-08-15 across six
+  week-long windows spread over 2021-2024, 2,588 performances in total: zero
+  difference in every window. The gate's tolerance is therefore **0**, not the
+  5% first proposed -- there is no discrepancy for a tolerance to absorb, and 5%
+  of a 30-day window is around a hundred records. Transient shortfalls are the
+  retry loop's job.
 
 ## CCCBR Methods Library
 
