@@ -247,12 +247,21 @@ def build_page():
             "aliases": aliases
         })
 
+    # Derive the span from the data rather than writing it into the prose. The
+    # standfirst used to end with a literal "(2021-2024)", which stayed on the
+    # page after the corpus was backfilled to 2018 -- the figures beside it
+    # updated on rebuild and the window did not, so the sentence became false
+    # while looking freshly generated. Any date range stated on a page should be
+    # computed by the query that produced the figures next to it.
+    _dates = perf_df["perf_date"].dropna().astype(str)
     stats = {
         "total_ringers": len(perf_df),
         "total_raw_names": len(cand_df),
         "total_canonical": len(canon_ringers),
         "multi_clusters": int(cand_df.groupby("canonical_ringer_id").size().gt(1).sum()),
-        "total_peals": int(perf_df["perf_id"].nunique())
+        "total_peals": int(perf_df["perf_id"].nunique()),
+        "span": (f"{_dates.min()[:4]}–{_dates.max()[:4]}"
+                 if len(_dates) else "an unrecorded window"),
     }
 
     # Write HTML page
@@ -455,7 +464,7 @@ tr:hover td{{background:rgba(184,135,63,.04)}}
     <h1>The Ringer <em>Constellation</em></h1>
     <div class="standfirst">
       Interactive band co-occurrence networks and canonical entity resolution across
-      <strong>{stats['total_ringers']:,} ringer instances</strong> and <strong>{stats['total_peals']:,} historical peals</strong> (2021–2024).
+      <strong>{stats['total_ringers']:,} ringer instances</strong> and <strong>{stats['total_peals']:,} historical peals</strong> ({stats['span']}).
     </div>
     <div class="figures">
       <div class="fig"><div class="n">{stats['total_ringers']:,}</div><div class="l">Ringer Peal Records</div></div>

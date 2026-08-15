@@ -69,28 +69,34 @@ can be checked instead of taken on trust.
       counts and which of them have been re-checked since are in
       `data/SOURCES.md`.
 - [x] Performance -> method linkage (`schema/005`,
-      `scripts/resolve_performance_methods.py`) -- 69,368 of 96,067 performances
-      (72.5%) now carry at least one method link, 128,323 links in all. The hard
+      `scripts/resolve_performance_methods.py`) -- 116,862 of 156,513 performances
+      (74.7%) now carry at least one method link, 205,825 links in all. The hard
       part was the 15,497 performances naming several methods at once
       ("Spliced Surprise Major (8m)"), whose constituents are free text in
       `details`; the method string states how many to find, which makes every row
-      self-checking. 26,699 are recorded as unresolved with the reason and the
-      counts, of which 19,750 are not methods at all (tolling, call changes).
-      First question it answers: **81.6% of the 10,838 Major methods in the
-      library were not rung once in four years.**
+      self-checking. 39,651 are recorded as unresolved with the reason and the
+      counts, most of them not methods at all (tolling, call changes).
+      First question it answers: **70.6% of the 10,838 Major methods in the
+      library were not rung once in seven years** -- 3,188 of them were. Over the
+      four years 2021-24 alone the figure was 81.6%, so three more years of
+      corpus found roughly a thousand more Major methods in use, and the
+      "unrung" tail is smaller than a shorter window made it look.
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
       `dove-tower-id` (the handbell-in-a-private-house records are not
       resolvable in principle and are out of scope)
-- [ ] Decide join semantics for the 13 Dove towers holding more than one ring.
-      `dove.TowerID` is **not unique** (7,262 rows, 7,249 distinct TowerIDs) --
-      Farnham S Andrew, for instance, has both a full-circle and a lightweight
-      ring under TowerID 11301. Joining on `TowerID` alone therefore fans out
-      and silently inflates counts: `v_first_tower_peals` gains 11 rows this
-      way. Tower-level questions should join against a deduplicated tower list
-      or `towers`; ring-level questions should use `RingID`, which BellBoard
-      supplies as `dove_ring_id` but the Methods Library does not.
+- [x] Join semantics for towers holding more than one ring -- decided in
+      `docs/decisions/001-ring-vs-tower-joins.md` and **adopted**. Neither
+      `dove` (7,262 rows, 7,249 TowerIDs) nor `towers` (15,722 rows, 15,402
+      TowerIDs) is a tower register; both are installation registers, so joining
+      either on `TowerID` fans out, and joining `dove` also silently drops
+      everything outside its ringing subset. Both errors ran in the same query
+      and partly cancelled, which is why it went unnoticed. Tower-level
+      questions now join `v_towers_unique` (`schema/007`); ring-level questions
+      use `RingID`, which BellBoard supplies as `dove_ring_id` and the Methods
+      Library does not. Measured on adoption: `v_tower_performances` 80,231 ->
+      80,058, `v_first_tower_peals` 25,351 -> 25,340.
 - [ ] CompLib linkage -- CompLib's search payload carries free-text
       method titles only, but `/composition/{id}/rows` returns a `methodid`
       for single-method compositions that maps to the CCCBR `method_id` by
@@ -150,7 +156,7 @@ three things a steady-accumulation story would miss:
 And one finding that needed guarding: of the 7,645 methods first rung in 1975–99,
 the peak era, only **13.1%** were rung at all in 2021–24, against 72–82% for
 methods first rung before 1900. Both bounds are published (13.1% and 16.2% on a
-deliberately over-generous count) because the method linkage's own 72.5% coverage
+deliberately over-generous count) because the method linkage's own 74.7% coverage
 could otherwise have manufactured the result.
 
 ## The Rhythm of Ringing
@@ -164,13 +170,14 @@ text hundreds of bands filed independently.
 
 **https://nihilisticiconoclast.github.io/change-ringing/rhythm.html**
 
-24 days carry **21.0%** of four years of ringing. They are found by rule — 3.5×
+24 days carry **21.0%** of the four years 2021-24 — the window that page is
+still restricted to, while the corpus now runs 2018-24. They are found by rule — 3.5×
 the median of the same weekday nearby — and named by the corpus's own most-
 repeated footnotes, so no list of national events is hand-entered anywhere. Two
 further columns then separate them into celebration, remembrance, a death, and
 the funerals that are both: whether the bells were *tolling*, and whether the
 footnote says *half-muffled*. Remembrance Sunday's muffled rate is 73%, 74%,
-72%, 74% across four years against a 5.7% baseline. And "99 Tolling" records the
+72%, 74% across 2021-24 against a 5.7% baseline. And "99 Tolling" records the
 age of the person who died, in the field reserved for method names, in a corpus
 with no age column anywhere.
 
@@ -183,7 +190,7 @@ are checkable in `queries/findings/`.
 with measured feasibility, and each now annotated with what happened when it was
 built. Two of the three headline figures for option B were wrong, and the
 struck-through originals are left in place rather than edited away. Still
-standing: 70% of the 9,169 methods rung in four years were rung exactly once,
+standing: 70% of the 9,169 methods rung in 2021-24 were rung exactly once,
 and the ten busiest towers account for only 3.4% of activity, which is far less
 concentrated than expected.
 
@@ -202,7 +209,7 @@ Felstead database, which holds "over 360,000 towerbell peals" going back to the
 four-year window to a century and a half, for peals.
 
 The join needs no name matching and was already in our data: BellBoard publishes
-a `towerbase-id`, present on 79,918 of 96,067 performances across 5,600 towers,
+a `towerbase-id`, present on 132,034 of 156,513 performances across 5,891 towers,
 and Felstead's lookup takes exactly that identifier. Twelve sampled identifiers
 were probed by hand and all twelve resolved.
 

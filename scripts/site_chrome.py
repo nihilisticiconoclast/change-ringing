@@ -58,11 +58,11 @@ PAGES = [
     ("invention.html",  "First Rung",
      "Three centuries of method invention, 1684–2026"),
     ("rhythm.html",     "Rhythm of Ringing",
-     "The week, the year, and 24 days that carry a fifth of it"),
+     "The week, the year, and 24 days that carry a fifth of 2021–24"),
     ("ringers.html",    "Ringer Constellation",
-     "Who rings with whom, across 44,280 names"),
+     "Who rings with whom, across 54,674 names"),
     ("occasions.html",  "The Occasions Archive",
-     "Why bells are rung, from 113,894 footnotes"),
+     "Why bells are rung, from 183,315 footnotes"),
     ("nexus.html",      "The Temporal Nexus",
      "Towers, methods and ringers in one 3-D field"),
     ("geometry.html",   "Sacred Geometry",
@@ -118,6 +118,14 @@ NOTES = {
         "a different question — and did, in an earlier draft of this page.",
     ],
     "rhythm.html": [
+        "<strong>This page is deliberately restricted to 2021–24, while the corpus now "
+        "runs 2018–24.</strong> Every figure here — the 24 days, the 21%, the weekday "
+        "profile — is of that four-year window, which was the whole corpus when the "
+        "analysis was done. Widening it is real work rather than a rebuild: the anomaly "
+        "rule compares each day against its own neighbourhood, so a longer run changes "
+        "which days qualify, and 2020 in particular would enter as a year of almost no "
+        "ringing. Until that is done and checked, the window is stated rather than "
+        "quietly extended.",
         "The anomaly rule and both of its thresholds are command-line flags, and the "
         "build prints the days that fell just below the cut, so the boundary can be "
         "argued with rather than taken on trust.",
@@ -134,10 +142,10 @@ NOTES = {
         "who did not anticipate republication.",
     ],
     "ringers.html": [
-        "Ringer identity is resolved by name across 2021–24 only. Names are not unique "
-        "and the corpus has no person identifier, so two ringers sharing a name are one "
-        "node here. Treat the structure as indicative rather than as a register of "
-        "people.",
+        "Ringer identity is resolved by name across the whole corpus, 2018–24. Names are "
+        "not unique and the corpus has no person identifier, so two ringers sharing a "
+        "name are one node here. Treat the structure as indicative rather than as a "
+        "register of people.",
     ],
     "nexus.html": [
         "Positions are a force layout, not a map projection: distance between nodes "
