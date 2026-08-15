@@ -11,7 +11,7 @@ specified, because what they should ask depends on what the earlier ones find.
 | 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
 | 4 | Footnote occasion classification | **Partly done** — a page shipped, the dataset was never built. See below |
 | 5 | Measure the occasion classifier | **Still active** — PR #7 delivered the classifier but its measurement was circular; see below |
-| 6 | BellBoard historical backfill, one year per PR | **2020, 2019, 2018 done** — PRs #8, #9. Next: 2017 backwards to 2012 |
+| 6 | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php` |
 
 ---
 
@@ -48,7 +48,8 @@ your control:
 
 > **WORK OFFLINE. THE LIVE DATABASE IS FROZEN UNTIL 2026-09-01.** Build a
 > replica with `python scripts/build_local_db.py --out local_corpus.db`, or
-> query the committed snapshot at `data/change-ringing.db` directly. The
+> which takes about ninety seconds. **`data/change-ringing.db` is NOT committed** —
+> it is 285 MB and gitignored, so you must build it. The
 > scripts refuse a remote connection without
 > `CHANGE_RINGING_ALLOW_PRODUCTION=1`; do not set it.
 
@@ -80,7 +81,7 @@ towers hold two rings — so joining on it alone inflates counts.
 
 ---
 
-## Task 1 — Method extension lineage from place notation *(active)*
+## Task 1 — Method extension lineage from place notation *(done — PR #3)*
 
 Work out which methods are genuine extensions of a lower-stage member, and
 which merely share a name.
@@ -142,7 +143,7 @@ spelling variant from a distinct dedication, because conflating those is how
 
 Full brief when Task 1 lands, informed by what it finds.
 
-## Task 3 — Ringer identity resolution *(blocked)*
+## Task 3 — Ringer identity resolution *(done — candidate dataset delivered)*
 
 Matching ringers across performances — the same person appearing as
 "J A Boulton", "James Boulton", "James A Boulton". The natural large-context

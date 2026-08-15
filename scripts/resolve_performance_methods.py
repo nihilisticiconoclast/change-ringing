@@ -78,7 +78,7 @@ The three shapes of remaining failure:
   * badly short -- a performance citing a named collection rather than a list
     ("Standard 8"), which cannot be resolved from `details` in principle
 
-Result on the committed snapshot
+Result on the 2012-2024 corpus
 --------------------------------
   performances               293,471
   with >= 1 method link      228,478  (77.9%)

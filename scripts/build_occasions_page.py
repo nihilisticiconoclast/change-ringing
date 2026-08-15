@@ -83,7 +83,10 @@ def fetch_and_classify():
                 c = int(changes)
                 if 100 <= c <= 15000:
                     valid_changes = c
-            except:
+            except (TypeError, ValueError):
+                # `changes` is nullable and occasionally non-numeric; a length we
+                # cannot parse is left as None rather than guessed at. A bare
+                # `except:` here would also have swallowed KeyboardInterrupt.
                 pass
                 
         matched = []

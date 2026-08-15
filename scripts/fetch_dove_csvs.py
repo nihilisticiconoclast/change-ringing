@@ -16,6 +16,7 @@ data/SOURCES.md); treat the output directory as a scratch area.
 """
 import argparse
 import sys
+import time
 import urllib.request
 from pathlib import Path
 
@@ -39,10 +40,27 @@ def main() -> int:
         url = f"{BASE_URL}/{name}.csv"
         dest = out_dir / f"{name}.csv"
         print(f"Fetching {url} ...")
-        try:
-            urllib.request.urlretrieve(url, dest)
-        except OSError as exc:
-            print(f"ERROR: failed to fetch {url}: {exc}", file=sys.stderr)
+        # Retry with backoff. A single urlretrieve meant one transient network
+        # blip killed the whole replica build after several files had already
+        # downloaded -- and build_local_db.py runs this as its first step, so the
+        # cost of a failure here is the whole ninety-second build. Seven files,
+        # so being polite costs nothing.
+        delay, last = 2, None
+        for attempt in range(4):
+            try:
+                urllib.request.urlretrieve(url, dest)
+                last = None
+                break
+            except OSError as exc:
+                last = exc
+                if attempt < 3:
+                    print(f"  fetch failed ({exc}); retrying in {delay}s",
+                          file=sys.stderr)
+                    time.sleep(delay)
+                    delay *= 2
+        if last is not None:
+            print(f"ERROR: failed to fetch {url} after 4 attempts: {last}",
+                  file=sys.stderr)
             return 1
         # Row count excludes the header line.
         with open(dest, encoding="utf-8-sig") as f:

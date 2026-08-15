@@ -426,6 +426,7 @@ def main() -> int:
           f"({'all' if not args.max_pages else '--max-pages ' + str(args.max_pages)}).")
 
     page = 2
+    incomplete = None      # set to a reason string if the walk stops early
     while page <= page_limit:
         if args.max_compositions and len(comp_rows) >= args.max_compositions:
             print(f"  Reached --max-compositions {args.max_compositions}; stopping.")
@@ -434,8 +435,21 @@ def main() -> int:
         try:
             pdata = fetch_search_page(args.api_base, page, cache_dir, args.page_delay, use_cache)
         except RuntimeError as exc:
+            # Write what we have -- the cache and the loaded rows are worth
+            # keeping, and a resumed run reuses them -- but REMEMBER that the
+            # corpus is incomplete, and exit non-zero at the end.
+            #
+            # This used to break and `return 0`. A run that failed on page 40 of
+            # 3,442 reported success and left a partial CompLib load in the
+            # database, which is indistinguishable from a complete one to anyone
+            # querying it afterwards. That is the same shape as the backfill that
+            # captured 16% of BellBoard and exited clean (decision 002), and the
+            # reason bellboard_common has a completeness gate at all.
             print(f"  ERROR fetching page {page}: {exc}", file=sys.stderr)
-            print("  Stopping the run; loaded pages are still written.", file=sys.stderr)
+            print(f"  Stopping at page {page} of {full_pages}. Loaded pages are "
+                  f"still written, but THIS LOAD IS INCOMPLETE and the run will "
+                  f"exit non-zero.", file=sys.stderr)
+            incomplete = f"fetch failed on page {page} of {full_pages}: {exc}"
             break
         pages_fetched += 1
         comps = pdata.get("compositions") or []
@@ -543,6 +557,14 @@ def main() -> int:
             print(f"  {title:<35} {count:>6}")
 
     conn.close()
+
+    if incomplete:
+        print(f"\nINCOMPLETE LOAD: {incomplete}\n"
+              f"  {len(comp_rows):,} compositions were written and the page cache is\n"
+              f"  intact, so re-running resumes cheaply. Exiting non-zero so a\n"
+              f"  caller cannot mistake a partial corpus for a whole one.",
+              file=sys.stderr)
+        return 1
     return 0
 
 

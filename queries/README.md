@@ -3,15 +3,18 @@
 The SQL behind the corpus, kept as files rather than buried in scripts so the
 figures on the atlas can be traced back to the statement that produced them.
 
-Run any of them against the committed snapshot with no setup:
+**`data/change-ringing.db` is not in this repository.** It is 285 MB and
+gitignored, so build it first — about ninety seconds from public sources plus the
+CSVs that *are* committed:
 
 ```
+python scripts/build_local_db.py --out data/change-ringing.db
 sqlite3 data/change-ringing.db < queries/findings/rudhall_territory.sql
 ```
 
-or open `data/change-ringing.db` in DB Browser for SQLite, DBeaver, TablePlus,
-or a VS Code SQLite extension, and paste. Nothing here needs Turso — see
-`docs/CONNECTING.md` for why the live database is frozen until 2026-09-01.
+Or open the built file in DB Browser for SQLite, DBeaver, TablePlus, or a VS Code
+SQLite extension, and paste. Nothing here needs Turso — see `docs/CONNECTING.md`
+for why the live database is frozen until 2026-09-01.
 
 ## `atlas/` — what builds the page
 
@@ -88,7 +91,7 @@ what is written down is what executed.
 | `extract_method_families.sql` | `scripts/build_lineage_atlas.py` | Method definitions, notation, lead heads, classifications |
 | `extract_ringer_performances.sql` | `scripts/resolve_ringer_identities.py` | Every ringer appearance with its performance context |
 
-All four execute cleanly against the committed snapshot, checked on 2026-08-15.
+All four execute cleanly against a freshly built replica, checked on 2026-08-15.
 
 > **`extract_ringer_performances.sql` was not read by anything until that date.**
 > Its header said "Used by `scripts/resolve_ringer_identities.py`" and the script

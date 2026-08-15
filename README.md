@@ -109,7 +109,7 @@ can be checked instead of taken on trust.
       use `RingID`, which BellBoard supplies as `dove_ring_id` and the Methods
       Library does not. Measured on adoption: `v_tower_performances` 80,231 ->
       80,058, `v_first_tower_peals` 25,351 -> 25,340.
-- [ ] CompLib linkage -- CompLib's search payload carries free-text
+- [x] CompLib linkage, as far as the API allows -- CompLib's search payload carries free-text
       method titles only, but `/composition/{id}/rows` returns a `methodid`
       for single-method compositions that maps to the CCCBR `method_id` by
       `'m' || methodid` (opt-in via `--fetch-method-ids`); spliced
@@ -129,7 +129,11 @@ can be checked instead of taken on trust.
       `scripts/ingest_complib.py`): 86,039 compositions from the
       `api.complib.org` JSON API, with `perpage` capped at 25 (a max
       the OpenAPI spec omits). See `data/SOURCES.md`.
-- [ ] Ringer identity resolution (needs the backfill run first)
+- [x] Ringer identity resolution -- 70,032 raw names resolved to 55,326 canonical
+      entities over the full 2012-24 corpus (`data/ringer_identity_candidates.csv`,
+      `scripts/resolve_ringer_identities.py`). **A candidate dataset: its accuracy is
+      not measured**, and `docs/two_populations.md` shows what unresolved variants do
+      to a distribution. Validating it is the open half.
 
 ## Hypotheses and observations
 
@@ -359,8 +363,9 @@ attribution required if this project's outputs are ever published.
 
 ## BellBoard historical backfill
 
-The corpus currently holds only a small recent window of BellBoard performances.
-To load the full historical record back to 2012, use the resumable backfill runner:
+**The historical record is complete: 2012–2024, 293,471 performances**, committed
+as yearly CSVs under `data/bellboard/`. The runner below is what fetched them and
+what you would use to extend the corpus or reload a year:
 
 ```bash
 # Run a full backfill (resumable, checkpointed)

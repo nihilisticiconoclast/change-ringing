@@ -11,7 +11,7 @@ data inlined. One file, no external requests, no build step for a reader.
 
 It queries a local SQLite/libSQL file, never Turso -- the atlas is derived
 data, and rebuilding a published page is not worth spending a read budget on.
-Point --db at the committed snapshot or at a fresh build_local_db.py replica.
+Point --db at a replica built by build_local_db.py. The database is gitignored.
 
 The data is aggregated before it is embedded, which keeps the page near 320 KB
 rather than shipping 51,451 bell rows to the browser:

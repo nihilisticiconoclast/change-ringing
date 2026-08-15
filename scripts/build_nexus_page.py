@@ -135,7 +135,10 @@ def fetch_nexus_data():
             # Attempt to sort naturally by bell if possible (sometimes bell is a letter like 'T' or '0')
             def parse_bell(b):
                 try: return int(b)
-                except: return 999
+                except (TypeError, ValueError):
+                    # `bell` is not always a number: handbell pairs are '1-2' and
+                    # some rows carry 'T' or '0'. 999 sorts those last.
+                    return 999
             node["ringers"].sort(key=lambda x: parse_bell(x["bell"]))
 
     node_list = list(nodes.values())

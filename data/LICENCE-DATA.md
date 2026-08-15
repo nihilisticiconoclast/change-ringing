@@ -15,7 +15,8 @@ without running a build or holding Turso credentials. It contains:
   https://dove.cccbr.org.uk -- **CC BY-SA 4.0**
 - **CCCBR Methods Library** -- methods and first-performance records.
   https://methods.cccbr.org.uk -- © Central Council of Church Bell Ringers
-- **BellBoard** (empty in the committed snapshot; populated on request).
+- **BellBoard** — the 2012-2024 performance record, committed as CSVs under
+  `data/bellboard/`.
   https://bb.ringingworld.co.uk -- © The Ringing World
 
 Because Dove's data is CC BY-SA 4.0, **this database file and anything

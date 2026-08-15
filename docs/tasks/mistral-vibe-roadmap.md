@@ -60,8 +60,9 @@ your control:
 > Builds a full replica in ~90 seconds from public sources and committed
 > files: 7,262 towers, 63,894 bells, 25,055 methods, 30,734 first-performance
 > events, 22,111 adjudicated tower links. Every script takes `--local-db`.
-> Alternatively `data/change-ringing.db` is a committed snapshot you can query
-> directly. Verify against one of those and say so in the PR.
+> **`data/change-ringing.db` is NOT committed** — it is 285 MB and gitignored, so
+> build it rather than expecting to find it. Verify against your replica and say so
+> in the PR.
 
 **Constraints this codebase has already paid for.** Each cost real debugging
 time; none are hypothetical.
@@ -214,7 +215,7 @@ views, so a plan regression is caught before it costs a read budget again.
 
 Exit non-zero on failure so it can gate CI later. Full brief when Task 2 lands.
 
-## Task 4 — Ring-level join semantics *(unblocked)*
+## Task 4 — Ring-level join semantics *(done — decision 001 adopted)*
 
 Spec: `docs/decisions/001-ring-vs-tower-joins.md`. Implement to it.
 

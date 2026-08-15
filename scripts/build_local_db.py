@@ -21,7 +21,7 @@ that throttles by silently truncating responses, so it is not fetched unless
 you ask with --bellboard-since, and even then only for the window you name.
 A replica without it is still useful for anything touching Dove or the
 Methods Library; a replica with a recent window matches what production
-currently holds, which is a single window rather than the full history.
+holds: the complete 2012-2024 BellBoard record, 293,471 performances.
 
 The replica uses an embedded libSQL connection rather than the stdlib sqlite3
 module, deliberately. sqlite3 accepts SQL that libSQL rejects -- see the
