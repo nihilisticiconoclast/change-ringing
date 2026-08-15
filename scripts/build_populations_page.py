@@ -57,7 +57,10 @@ def collect(conn):
         "JOIN performances p ON p.perf_id = r.perf_id "
         "WHERE r.name IS NOT NULL AND p.changes IS NOT NULL"
     ):
-        peal = changes >= PEAL
+        try:
+            peal = int(changes) >= PEAL
+        except (ValueError, TypeError):
+            continue
         (raw_p if peal else raw_s)[name] += 1
         cid = ids.get(name)
         if cid:

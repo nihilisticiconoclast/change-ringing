@@ -11,7 +11,7 @@ data inlined. One file, no external requests, no build step for a reader.
 
 It queries a local SQLite/libSQL file, never Turso -- the atlas is derived
 data, and rebuilding a published page is not worth spending a read budget on.
-Point --db at a replica built by build_local_db.py. The database is gitignored.
+Point --db at the committed snapshot or at a fresh build_local_db.py replica.
 
 The data is aggregated before it is embedded, which keeps the page near 320 KB
 rather than shipping 51,451 bell rows to the browser:
@@ -152,14 +152,14 @@ def main() -> int:
         sys.exit(f"ERROR: {TEMPLATE} has no /*__DATA__*/ placeholder")
     html = html.replace("/*__DATA__*/", json.dumps(data, separators=(",", ":")))
 
-    out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
     # One nav bar and one footer for the whole site: scripts/site_chrome.py
-    html = apply_chrome(html)
-    out.write_text(html, encoding="utf-8")
+    final_html = apply_chrome(html)
+    out_path = Path("docs/atlas.html")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(final_html, encoding="utf-8")
 
     t = data["totals"]
-    print(f"Wrote {out}  ({out.stat().st_size / 1024:.0f} KB)")
+    print(f"Wrote {out_path} ({len(final_html):,} bytes)")
     print(f"  {t['bells']:,} attributed bells across {t['towers']:,} towers")
     print(f"  {len(data['groups']) - 1} named traditions + Other")
     print(f"  {t['linked']:,} tower-linked first-performance records")

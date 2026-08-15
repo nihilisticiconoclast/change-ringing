@@ -2,7 +2,9 @@
 --
 -- Every surviving bell whose founder is known, with the coordinates of the
 -- tower it hangs in and the foundry tradition its founder belongs to.
--- One row per bell: 51,451 of them across 12,635 towers.
+-- One row per bell: 51,523 of them across 12,635 towers on the current Dove
+-- snapshot. It was 51,451 when this was written; Dove is refreshed on every
+-- build, so the count drifts and the page now computes it rather than stating it.
 --
 -- Read by scripts/build_atlas.py, which aggregates these rows in Python into
 -- per-tower points (dominant tradition, bell count, earliest casting year) and
@@ -15,7 +17,7 @@
 -- from 1786 onward count as one house rather than thirteen.
 --
 -- 97% of bells join to a founder record; 81% of those carry a Group; 98.5% of
--- bells carry their own coordinates. The intersection is the 51,451 here.
+-- bells carry their own coordinates. That intersection is what this returns.
 
 SELECT
   b.Tower_ID,

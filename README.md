@@ -11,17 +11,26 @@ and no ground truth to validate against -- the value here is custodial and
 interpretive: a corpus a ringer, a tower captain, or a researcher could
 actually use.
 
-## The Founder Atlas
-
-The project's first analytical output: 51,451 attributed bells across 12,635
-towers, mapped by the foundry tradition that cast them, then joined to the
-methods first rung on them.
+## The site
 
 **https://nihilisticiconoclast.github.io/change-ringing/**
 
+Twelve pages served by GitHub Pages from `main` / `docs`, each a single
+self-contained file with no external requests. The root is a landing page; the
+navigation collapses to a hamburger below 900px, which it needed once the link
+list reached twelve.
+
+## The Founder Atlas
+
+The project's first analytical output: 51,523 attributed bells across 12,635
+towers, mapped by the foundry tradition that cast them, then joined to the
+methods first rung on them.
+
+**https://nihilisticiconoclast.github.io/change-ringing/atlas.html**
+
 Rebuild it with `python scripts/build_atlas.py`, which reads a local database
-(never Turso) and writes `docs/index.html` — one self-contained file, no
-external requests. The page is served by GitHub Pages from `main` / `docs`.
+(never Turso) and writes `docs/atlas.html`. It moved from `index.html` when the
+landing page took the root.
 
 The SQL behind it lives in `queries/` — and `build_atlas.py` reads those files
 rather than holding its own copies, so what is recorded is what actually ran.

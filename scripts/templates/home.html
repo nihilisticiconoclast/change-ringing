@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Change Ringing Corpus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --bar:#2F6D53; --bar-soft:#8AB289; --ghost:#B8873F; --warn:#9c3b2e;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+main{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em;margin:0 0 4px}
+section{padding:44px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:none}
+p{max-width:74ch;color:var(--ink-2)}
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 60vh;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 3rem;
+      border-radius: 8px;
+    }
+    /* The submitted version used a 1 MB JPEG here with no stated origin. This
+       repository documents the licence of every byte of its data, so an
+       unattributed binary is the one thing it should not ship. Replaced with a
+       ground of the site's own palette -- and the hero reads better for it,
+       since the type is now the subject rather than sitting on top of a
+       picture. Put the image back the moment its provenance can be written
+       down. */
+    .hero {
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(138,95,34,.20), transparent 55%),
+        radial-gradient(ellipse at 75% 70%, rgba(47,109,83,.18), transparent 55%),
+        var(--surface, #14161a);
+      border: 1px solid var(--rule, rgba(255,255,255,.14));
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      color: var(--ink, #f8fafc);
+      padding: 0 20px;
+      max-width: 800px;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-subtitle {
+      font-size: 1.5rem;
+      font-weight: 400;
+      opacity: 0.9;
+      margin: 0;
+      color: var(--ink-2, #cbd5e1);
+    }
+    .corpus-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+      text-align: center;
+    }
+    .stat-sub {
+      display: block;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .6;
+      margin-top: 4px;
+    }
+    .stat-box {
+      padding: 2rem;
+      background: var(--bg-surface, rgba(255,255,255,0.03));
+      border: 1px solid var(--rule, rgba(255,255,255,0.1));
+      border-radius: 8px;
+    }
+    .stat-value {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--bronze, #38bdf8);
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-2, #e2e8f0);
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .toc-card {
+      display: block;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--rule, rgba(255,255,255,0.1));
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      background: var(--bg-surface, transparent);
+    }
+    .toc-card:hover {
+      border-color: var(--bronze, #38bdf8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .toc-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--bronze, #38bdf8);
+    }
+    .toc-desc {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--ink-2, #e2e8f0);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<!--NAV:index.html-->
+
+<main>
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">The Change Ringing Corpus</h1>
+      <p class="hero-subtitle">Thirteen years of performances, resolved into a single relational dataset.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>A Complete Record</h2>
+    <p>
+      Change ringing is a highly structured mathematical performance art. For over three centuries, ringers have developed 
+      thousands of "methods" — complex permutations of ringing sequences — and maintained meticulous records of their performances.
+    </p>
+    <p>
+      This site explores a unified corpus built from three primary sources: BellBoard’s performance archive, Dove’s Guide for 
+      Church Bell Ringers, and the CCCBR Methods Library. By normalising and linking these distinct datasets, we can visualise 
+      the entire ringing ecosystem: from the lineage of method invention and the geographic spread of foundries, to the tightly 
+      connected social networks of the ringers themselves.
+    </p>
+    
+    <div class="corpus-stats">
+      <!--/*STATS*/-->
+    </div>
+  </section>
+
+  <section>
+    <h2>Explorations</h2>
+    <p>The corpus is explored through a series of visualisations, each focusing on a different dimension of the data.</p>
+    
+    <div class="toc-grid">
+      <!--/*TOC*/-->
+    </div>
+  </section>
+
+</main>
+
+<!--FOOTER:index.html-->
+<script>
+/* The same mechanism as every other page: data-theme on <html>, remembered in
+   localStorage. The submitted version toggled a `dark-mode` class on <body>,
+   which neither persisted nor matched the page a reader clicked through to. */
+const tb = document.getElementById('themeToggle');
+const setTheme = t => { document.documentElement.setAttribute('data-theme', t);
+  if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  try { localStorage.setItem('cr-theme', t); } catch (e) {} };
+if (tb) tb.onclick = () =>
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+(() => { let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
+  if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  setTheme(t); })();
+</script>
+</body>
+</html>

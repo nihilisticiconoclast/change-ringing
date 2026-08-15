@@ -1,6 +1,7 @@
 -- Atlas · the four headline figures
 --
--- 51,451 bells attributed · 12,635 towers · 1290-2026 · 22,111 peals linked.
+-- 51,523 bells attributed · 12,635 towers · 1290-2026 · 22,117 peals linked,
+-- on the current snapshot. All four drift with Dove; the page computes them.
 -- The first two come from 01_bells_by_founder_group.sql; these are the rest.
 
 SELECT COUNT(*) AS methods FROM methods;

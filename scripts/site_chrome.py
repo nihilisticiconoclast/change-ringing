@@ -49,8 +49,10 @@ the one difference worth keeping.
 # method pages, then the two about when and why ringing happens, then the three
 # exploratory 3-D views.
 PAGES = [
-    ("index.html",      "Founder Atlas",
-     "51,451 attributed bells mapped by the foundry that cast them"),
+    ("index.html",      "The Corpus",
+     "293,471 performances, 13 years, one complete record"),
+    ("atlas.html",      "Founder Atlas",
+     "51,523 attributed bells mapped by the foundry that cast them"),
     ("lineage.html",    "Method Lineage",
      "How methods extend from one stage to the next"),
     ("methods.html",    "Blue Line Atlas",
@@ -83,7 +85,7 @@ REPO = "https://github.com/nihilisticiconoclast/change-ringing"
 # hand-written footers with one generated footer could not quietly delete them,
 # which is exactly what the first attempt at this refactor did.
 NOTES = {
-    "index.html": [
+    "atlas.html": [
         "Built from Dove’s Guide for Church Bell Ringers "
         "(<a href='https://dove.cccbr.org.uk'>dove.cccbr.org.uk</a>) and the CCCBR "
         "Methods Library (<a href='https://methods.cccbr.org.uk'>methods.cccbr.org.uk</a>). "
@@ -212,11 +214,19 @@ def nav_html(active, dark=False, indent="  "):
         + f">{label}</a>"
         for href, label, _ in PAGES
     )
-    btn = (f'\n{indent}  <button class="theme-btn" id="themeToggle">Dark Mode</button>'
+    btn = (f'\n{indent}    <button class="theme-btn" id="themeToggle">Dark Mode</button>'
            if not dark else "")
-    return (f'{indent}<div class="nav-bar">\n'
-            f'{indent}  <div class="nav-links">\n{links}\n{indent}  </div>'
-            f'{btn}\n{indent}</div>')
+    return (f'{indent}<nav class="nav-bar">\n'
+            f'{indent}  <input type="checkbox" id="nav-toggle" class="nav-toggle">\n'
+            f'{indent}  <div class="nav-header">\n'
+            f'{indent}    <span class="nav-title">Change Ringing</span>\n'
+            f'{indent}    <label for="nav-toggle" class="nav-toggle-label"'
+            f' aria-label="Open navigation">\n'
+            f'{indent}      <span></span><span></span><span></span>\n'
+            f'{indent}    </label>\n'
+            f'{indent}  </div>\n'
+            f'{indent}  <div class="nav-links">\n{links}{btn}\n{indent}  </div>\n'
+            f'{indent}</nav>')
 
 
 def footer_html(active, dark=False, indent="  "):
@@ -269,6 +279,39 @@ section:last-of-type{border-bottom:none}
 .site-note{max-width:78ch;margin:12px 0 0;font-size:13px;line-height:1.6}
 .site-note a{color:var(--bronze,#38bdf8)}
 .site-note code{font-size:.92em}
+
+/* Hamburger Nav CSS */
+.nav-bar{position:relative;margin-bottom:2rem;z-index:100;font-family:var(--sans,-apple-system,system-ui,sans-serif)}
+.nav-toggle{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.nav-toggle:focus-visible ~ .nav-header .nav-toggle-label{outline:2px solid var(--bronze,#38bdf8);outline-offset:3px}
+.nav-header{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 24px;border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
+  background:var(--surface,#0f172a)}
+.nav-title{font-weight:600;font-size:13px;color:var(--ink-2,#e2e8f0);
+  letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono,ui-monospace,monospace)}
+.nav-toggle-label{display:block;cursor:pointer;width:30px;height:24px;position:relative;z-index:101}
+.nav-toggle-label span{display:block;width:100%;height:2px;background:var(--ink-2,#e2e8f0);
+  position:absolute;transition:all .3s ease;left:0}
+.nav-toggle-label span:nth-child(1){top:4px}
+.nav-toggle-label span:nth-child(2){top:11px}
+.nav-toggle-label span:nth-child(3){top:18px}
+.nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;
+  background:var(--surface,#0f172a);border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
+  padding:12px 24px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.nav-toggle:checked ~ .nav-links{display:flex}
+.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(1){top:11px;transform:rotate(45deg)}
+.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(2){opacity:0}
+.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(3){top:11px;transform:rotate(-45deg)}
+.nav-links a{padding:12px 0;color:var(--ink-2,#e2e8f0);text-decoration:none;font-size:15px;border-bottom:1px solid var(--rule,rgba(255,255,255,.05))}
+.nav-links a:last-child{border-bottom:none}
+.nav-links a.active{color:var(--bronze,#38bdf8);font-weight:600}
+.theme-btn{margin-top:12px;padding:8px 12px;align-self:flex-start}
+@media(min-width:900px){
+  .nav-header{display:none}
+  .nav-links{display:flex;flex-direction:row;position:static;background:transparent;border:none;padding:12px 24px;align-items:center;flex-wrap:wrap;gap:16px}
+  .nav-links a{padding:0;border:none}
+  .theme-btn{margin-top:0;margin-left:auto}
+}
 """
 
 NAV_MARK = "<!--NAV:"

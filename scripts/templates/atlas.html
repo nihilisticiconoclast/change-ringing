@@ -110,17 +110,17 @@ footer a{color:var(--bronze)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
-<body>
+<body class="dark-mode">
 
-<!--NAV:index.html-->
+<!--NAV:atlas.html-->
 <div class="wrap">
 <header>
   <p class="eyebrow">Change Ringing Corpus · First analytical output</p>
   <h1>Who cast the bells,<br>and <em>where</em></h1>
-  <p class="standfirst">Seven centuries of English bellfounding, mapped from 51,451 surviving bells whose founder is known — then joined to the methods first rung on them. Three separately maintained corpora, linked for the first time.</p>
+  <p class="standfirst">Seven centuries of English bellfounding, mapped from <span id="f-bells-inline">—</span> surviving bells whose founder is known — then joined to the methods first rung on them. Three separately maintained corpora, linked for the first time.</p>
   <div class="figures">
-    <div class="fig"><div class="n" id="f-bells">51,451</div><div class="l">bells attributed</div></div>
-    <div class="fig"><div class="n" id="f-towers">12,635</div><div class="l">towers</div></div>
+    <div class="fig"><div class="n" id="f-bells">—</div><div class="l">bells attributed</div></div>
+    <div class="fig"><div class="n" id="f-towers">—</div><div class="l">towers</div></div>
     <div class="fig"><div class="n">1290–2026</div><div class="l">casting years</div></div>
     <div class="fig"><div class="n" id="f-linked">22,111</div><div class="l">peals tower-linked</div></div>
   </div>
@@ -179,11 +179,23 @@ footer a{color:var(--bronze)}
   <div class="cards" id="cards"></div>
 </section>
 
-<!--FOOTER:index.html-->
+<!--FOOTER:atlas.html-->
 </div>
 
 <script>
 const DATA = /*__DATA__*/;
+
+/* The headline figures come from DATA.totals, which build_atlas.py has always
+   computed and this template never used -- `id="f-bells"` existed with a literal
+   51,451 sitting in it, so the tile looked generated and was not. Dove has since
+   drifted to 51,523 and three files still quote the old number. */
+(function fillTotals(){
+  const t = DATA.totals, n = x => x.toLocaleString('en-GB');
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  set('f-bells', n(t.bells));
+  set('f-bells-inline', n(t.bells));
+  set('f-towers', n(t.towers));
+})();
 const $ = s => document.querySelector(s);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const SERIES = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8','--s9'];
