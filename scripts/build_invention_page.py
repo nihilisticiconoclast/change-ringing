@@ -66,7 +66,7 @@ current, which is the opposite of what a naive reading of an invention curve
 suggests.
 
 That finding could have been manufactured by the schema/005 linkage, which only
-resolves 74.7% of performances -- and the rows it refuses are disproportionately
+resolves 77.9% of performances -- and the rows it refuses are disproportionately
 SPLICED peals, exactly where rare methods appear. So both bounds are computed and
 both are published: the strict set the resolver asserted, and a deliberately
 over-generous set that also counts every method merely NAMED in a refused row.

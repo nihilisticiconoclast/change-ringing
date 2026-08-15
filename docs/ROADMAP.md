@@ -12,9 +12,9 @@ gap was found.
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed, measurement still missing** — `data/footnote_occasions.csv`, 183,315 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
+| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed, measurement still missing** — `data/footnote_occasions.csv`, 337,946 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
 
-| 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 183,315-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
+| 19 | Measure the occasion classifier | **Gemini** | **Still active, and now the only thing blocking the dataset's use.** PR #7 delivered the classifier and the 337,946-row CSV but its accuracy check was circular — it scored itself against its own output and reported 100.00% |
 
 | 7 | Corpus integrity checker | Vibe | **Merged** 86a00c3 — PR #10, four changes on merge. 49 checks, exits non-zero, negative-tested. Found two live defects on its first run: 25,030 committed flag rows never loaded, and the replica a year behind the CSVs |
 | 20 | Load CompLib in full | Vibe | **Next for Vibe** — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
@@ -32,7 +32,7 @@ gap was found.
 
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
 | 8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
-| 13 | Performance → method linkage | Claude Code | `schema/005` — 74.7% of performances linked, 205,825 links (2018–24 corpus) |
+| 13 | Performance → method linkage | Claude Code | `schema/005` — 77.9% of performances linked, 379,176 links (2012–24 corpus) |
 | 16 | Spliced ellipsis expansion | Claude Code | Two resolver bugs fixed; oracle 68.0% → 69.7% |
 | 14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
 | 17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
@@ -106,7 +106,7 @@ that table — and it was not looked at.
 
 **The finding that needed a guard.** Of the 7,645 methods first rung in 1975–99,
 only 13.1% were rung at all in 2021–24; for pre-1900 methods it is 72–82%. That
-could have been an artefact of the schema/005 linkage, whose 74.7% coverage skews
+could have been an artefact of the schema/005 linkage, whose 77.9% coverage skews
 against exactly the spliced peals where rare methods appear. So both bounds are
 published — 13.1% strict, 16.2% counting every method merely *named* in a refused
 row — and the shape survives both. It is labelled **currency**, not survival: four
@@ -117,8 +117,8 @@ years is a short window, and the real question needs the backfill.
 ## What linkage 13 changed about what can be asked
 
 `performances.method` was free text with no link to the method library, so the
-two largest corpora could not be joined at all. 116,862 of 156,513 performances
-(74.7%) now carry at least one method link.
+two largest corpora could not be joined at all. 228,478 of 293,471 performances
+(77.9%) now carry at least one method link.
 
 The interesting part was the 15,497 performances that name several methods at
 once. "Spliced Surprise Major (8m)" is eight methods, listed in `details` as
@@ -129,9 +129,10 @@ them fail, and do not chase the remainder.
 
 First finding out of it, and it reframes item 8b: **81.6% of the 10,838 Major
 methods in the library were not rung once in 2021–24.** At Minor it is 77.2%, at
-Triples 85.1%. *(Re-measured on the 2018–24 corpus the Major figure is 70.6% —
-the direction holds, but roughly a thousand more Major methods turn out to be in
-use, so quote the window with the number.)* That is a stronger version of what `IDEAS.md` had as "70% of the
+Triples 85.1%. *(Re-measured as the corpus grew: 70.6% at seven years, **53.9%
+at thirteen**. The direction holds and the size does not — three thousand Major
+methods moved from "never rung" to "rung" on nothing but a wider window. Quote
+the window with the number.)* That is a stronger version of what `IDEAS.md` had as "70% of the
 9,169 methods rung in four years were rung exactly once" — the library is mostly
 a register of things nobody rings. Whether they are dead or merely dormant is
 exactly the survival question, and it still needs the backfill.
@@ -143,7 +144,7 @@ exactly the survival question, and it still needs the backfill.
 **The gate first (1).** Everything downstream of BellBoard is currently built
 on a corpus that presents as complete and is not. *(Resolved: the gate landed
 in PR #5, and every year since has been accepted only on an exact match with
-`search.php`. The committed files now cover 2018–2024 — 156,513 performances —
+`search.php`. The committed files now cover 2012–2024 — 293,471 performances —
 against a true 336,689 for 2012 onward.)* Until a run can prove its own
 completeness, loading more data just makes the gap bigger and harder to see.
 
@@ -151,7 +152,7 @@ completeness, loading more data just makes the gap bigger and harder to see.
 Atlas and the Rhythm of Ringing both draw only on data that is complete in
 itself: place notation for every method, and dates for every performance in the
 window. Neither claim depends on the backfill. The footnote work is the same —
-183,315 footnotes are all there is, and classifying them does not require more.
+337,946 footnotes are all there is, and classifying them does not require more.
 
 **What item 4 turned up, and why it changes how the rest should be read.** The
 Rhythm page was queued as the cheap one — "the findings are already in hand".
@@ -198,11 +199,10 @@ matching is far more powerful across thirty years than within four.
 range — one record, added upstream after 2022 was fetched. That is the whole of
 BellBoard's near-complete era, from an original single window of 1,401.
 
-The thing to carry forward is what the width bought. Findings that looked solid
-on four years moved once there were thirteen: "81.6% of Major methods were never
-rung" was already down to 70.6% at seven years. A window is a parameter of a
-finding, not a detail of its provenance, and this corpus is now wide enough that
-the parameter stops doing the work.
+The thing to carry forward is what the width bought. "81.6% of Major methods
+were never rung" became 70.6% at seven years and **53.9% at thirteen**. A window
+is a parameter of a finding, not a detail of its provenance, and this corpus is
+now wide enough that the parameter stops doing most of the work.
 
 ---
 

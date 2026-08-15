@@ -71,7 +71,7 @@ Getting this wrong put 946 methods in a virtual tower that in fact has 115.
 | --- | --- |
 | `01_footnotes_with_length.sql` | Every footnote with its date and performance length, plus the denominators the page needs to state its own coverage |
 
-One row per **footnote**, not per performance: 183,315 footnotes attach to 122,573
+One row per **footnote**, not per performance: 337,946 footnotes attach to 227,651
 performances. Calling those counts performances overstates by half, which the page
 did until it was corrected.
 
@@ -87,7 +87,7 @@ each can be checked rather than taken on trust.
 | `founder_reach_by_methods.sql` | Why the `Group` column matters: Taylor under two names |
 | `first_peals_by_decade.sql` | Post-war growth in new methods |
 | `unlinked_performances.sql` | The 8,623 records deliberately left unlinked, and why |
-| `most_rung_methods.sql` | Which methods are actually rung — and that 70.6% of Major methods were not rung once in 2018–24 (81.6% over 2021–24 alone, which is how much a narrow window flatters that claim) |
+| `most_rung_methods.sql` | Which methods are actually rung — and that 53.9% of Major methods were not rung once in 2012–24. The same query gave 70.6% over seven years and 81.6% over four, which is how much a narrow window flatters that claim |
 | `method_linkage_coverage.sql` | The coverage and confidence claims for `schema/005`, including the unresolved half |
 | `september_is_one_funeral.sql` | Why "September is the busiest ringing month" was wrong: 54% of the month is one fortnight of 2022 |
 | `remembrance_muffle_rate.sql` | 73% / 74% / 72% / 74% half-muffled on Remembrance Sunday, against a 5.7% baseline |

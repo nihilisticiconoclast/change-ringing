@@ -60,9 +60,9 @@ PAGES = [
     ("rhythm.html",     "Rhythm of Ringing",
      "The week, the year, and 24 days that carry a fifth of 2021–24"),
     ("ringers.html",    "Ringer Constellation",
-     "Who rings with whom, across 54,674 names"),
+     "Who rings with whom, across 70,351 names"),
     ("occasions.html",  "The Occasions Archive",
-     "Why bells are rung, from 183,315 footnotes"),
+     "Why bells are rung, from 337,946 footnotes"),
     ("nexus.html",      "The Temporal Nexus",
      "Towers, methods and ringers in one 3-D field"),
     ("geometry.html",   "Sacred Geometry",
@@ -119,13 +119,14 @@ NOTES = {
     ],
     "rhythm.html": [
         "<strong>This page is deliberately restricted to 2021–24, while the corpus now "
-        "runs 2018–24.</strong> Every figure here — the 24 days, the 21%, the weekday "
+        "runs 2012–24.</strong> Every figure here — the 24 days, the 21%, the weekday "
         "profile — is of that four-year window, which was the whole corpus when the "
         "analysis was done. Widening it is real work rather than a rebuild: the anomaly "
-        "rule compares each day against its own neighbourhood, so a longer run changes "
-        "which days qualify, and 2020 in particular would enter as a year of almost no "
-        "ringing. Until that is done and checked, the window is stated rather than "
-        "quietly extended.",
+        "rule compares each day against its own neighbourhood, so thirteen years changes "
+        "which days qualify, and 2020 would enter as a year of almost no ringing. There "
+        "is good reason to expect the answer to move — the same widening took “81.6% of "
+        "Major methods are never rung” down to 53.9% — which is exactly why the window "
+        "is stated rather than quietly extended.",
         "The anomaly rule and both of its thresholds are command-line flags, and the "
         "build prints the days that fell just below the cut, so the boundary can be "
         "argued with rather than taken on trust.",
@@ -138,14 +139,14 @@ NOTES = {
         "<strong>overlap and must not be summed</strong> — a large minority of footnotes "
         "match more than one, and a larger one matches none. Both figures are computed "
         "and stated on the page above; they are deliberately not repeated here, because "
-        "the version of this note that did repeat them said 27% after the corpus grew "
-        "and the real figure became 29%. The unit is footnotes, not performances.",
+        "an earlier version of this note kept its own copy of those percentages and "
+        "went wrong twice as the corpus grew. The unit is footnotes, not performances.",
         "Only aggregate counts leave the database. <strong>No footnote text and no names "
         "are published</strong> — many footnotes are funeral tributes written by people "
         "who did not anticipate republication.",
     ],
     "ringers.html": [
-        "Ringer identity is resolved by name across the whole corpus, 2018–24. Names are "
+        "Ringer identity is resolved by name across the whole corpus, 2012–24. Names are "
         "not unique and the corpus has no person identifier, so two ringers sharing a "
         "name are one node here. Treat the structure as indicative rather than as a "
         "register of people.",

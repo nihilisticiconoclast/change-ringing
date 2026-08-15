@@ -86,28 +86,43 @@ def build_page():
     perf_df["canon_id"] = perf_df["clean_name"].map(id_map)
     perf_df["canon_name"] = perf_df["clean_name"].map(canon_map)
 
-    # Compute top associations and top towers for each canonical ringer
-    ringer_assocs = collections.defaultdict(collections.Counter)
-    ringer_towers = collections.defaultdict(collections.Counter)
-    ringer_dates = collections.defaultdict(list)
-
-    for _, row in perf_df.iterrows():
-        c_id = row["canon_id"]
-        if not c_id:
-            continue
-        if pd.notna(row["association"]) and isinstance(row["association"], str) and row["association"].strip():
-            ringer_assocs[c_id][row["association"].strip()] += 1
-        if pd.notna(row["dove_tower_id"]):
-            try:
-                ringer_towers[c_id][int(row["dove_tower_id"])] += 1
-            except (ValueError, TypeError):
-                pass
-        if pd.notna(row["perf_date"]):
-            ringer_dates[c_id].append(str(row["perf_date"]))
-
-    # Select top 200 most active canonical ringers for network graph
+    # Select top 200 most active canonical ringers for the network graph.
+    # Chosen BEFORE the aggregation below, deliberately -- see the note there.
     top_200 = canon_ringers.sort_values(by="cluster_total_peals", ascending=False).head(200)
     top_200_ids = set(top_200["canonical_ringer_id"])
+
+    # Top associations and top towers, for the 200 ringers that get drawn.
+    #
+    # This was a `for _, row in perf_df.iterrows()` over every ringer instance in
+    # the corpus. At 615k rows it took about a minute; at 1,969,949 it had not
+    # finished after twenty, because `iterrows()` builds a Series per row and the
+    # cost is entirely per-row. Two things fix it and neither changes the output:
+    #
+    #   1. Only the top 200 are ever read back (the loops below index
+    #      ringer_assocs/ringer_towers by a top-200 id and nothing else does), so
+    #      aggregating all 55,326 canonical ringers was work thrown away. Filter
+    #      first: ~2M rows becomes ~370k.
+    #   2. groupby().size() instead of a Python loop over rows.
+    #
+    # A third structure, `ringer_dates`, is gone entirely: it appended a string
+    # per row into per-ringer lists -- two million appends -- and nothing ever
+    # read it. Active years come from the candidates CSV.
+    sub = perf_df[perf_df["canon_id"].isin(top_200_ids)]
+
+    ringer_assocs = collections.defaultdict(collections.Counter)
+    assoc = sub[sub["association"].notna()].copy()
+    assoc["association"] = assoc["association"].astype(str).str.strip()
+    assoc = assoc[assoc["association"] != ""]
+    for (cid, name), n in assoc.groupby(["canon_id", "association"]).size().items():
+        ringer_assocs[cid][name] = int(n)
+
+    ringer_towers = collections.defaultdict(collections.Counter)
+    tw = sub[sub["dove_tower_id"].notna()]
+    for (cid, tid), n in tw.groupby(["canon_id", "dove_tower_id"]).size().items():
+        try:
+            ringer_towers[cid][int(tid)] = int(n)
+        except (ValueError, TypeError):
+            pass
 
     # Compute pairwise co-occurrences
     perf_bands = perf_df.groupby("perf_id")["canon_id"].apply(lambda s: list(set(s.dropna()))).to_dict()

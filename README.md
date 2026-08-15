@@ -70,18 +70,29 @@ can be checked instead of taken on trust.
       when, are in `data/SOURCES.md`. Loading this to *production* still waits
       for the Turso freeze to lift on 2026-09-01.
 - [x] Performance -> method linkage (`schema/005`,
-      `scripts/resolve_performance_methods.py`) -- 116,862 of 156,513 performances
-      (74.7%) now carry at least one method link, 205,825 links in all. The hard
-      part was the 15,497 performances naming several methods at once
+      `scripts/resolve_performance_methods.py`) -- 228,478 of 293,471 performances
+      (77.9%) carry at least one method link, 379,176 links in all. The hard
+      part was the performances naming several methods at once
       ("Spliced Surprise Major (8m)"), whose constituents are free text in
       `details`; the method string states how many to find, which makes every row
-      self-checking. 39,651 are recorded as unresolved with the reason and the
-      counts, most of them not methods at all (tolling, call changes).
-      First question it answers: **70.6% of the 10,838 Major methods in the
-      library were not rung once in seven years** -- 3,188 of them were. Over the
-      four years 2021-24 alone the figure was 81.6%, so three more years of
-      corpus found roughly a thousand more Major methods in use, and the
-      "unrung" tail is smaller than a shorter window made it look.
+      self-checking. 64,993 are recorded as unresolved with the reason and the
+      counts, the largest group being records that are not methods at all
+      (tolling, call changes).
+      First question it answers, and **the clearest illustration in this project
+      of why a window is part of a finding**: how many of the library's 10,838
+      Major methods are never rung?
+
+      | Window | Never rung | Rung at least once |
+      | --- | ---: | ---: |
+      | 2021-24, four years | 81.6% | ~2,000 |
+      | 2018-24, seven years | 70.6% | 3,188 |
+      | **2012-24, thirteen years** | **53.9%** | **4,995** |
+
+      The claim "the library is mostly a register of things nobody rings" was
+      never false, but at four years it was half an artefact of the window. Nearly
+      five thousand Major methods have been rung this decade. What survives is
+      weaker and more interesting: about half the Major library goes thirteen
+      years without a single performance.
 - [ ] Method extension lineage from place notation -- `extension_construction`
       is populated for only 1,851 of 25,055 methods
 - [ ] Fallback resolution for the ~2% of *tower* performances with no
@@ -157,7 +168,7 @@ three things a steady-accumulation story would miss:
 And one finding that needed guarding: of the 7,645 methods first rung in 1975–99,
 the peak era, only **13.1%** were rung at all in 2021–24, against 72–82% for
 methods first rung before 1900. Both bounds are published (13.1% and 16.2% on a
-deliberately over-generous count) because the method linkage's own 74.7% coverage
+deliberately over-generous count) because the method linkage's own 77.9% coverage
 could otherwise have manufactured the result.
 
 ## The Rhythm of Ringing
@@ -210,7 +221,7 @@ Felstead database, which holds "over 360,000 towerbell peals" going back to the
 four-year window to a century and a half, for peals.
 
 The join needs no name matching and was already in our data: BellBoard publishes
-a `towerbase-id`, present on 132,034 of 156,513 performances across 5,891 towers,
+a `towerbase-id`, present on 258,257 of 293,471 performances across 6,101 towers,
 and Felstead's lookup takes exactly that identifier. Twelve sampled identifiers
 were probed by hand and all twelve resolved.
 

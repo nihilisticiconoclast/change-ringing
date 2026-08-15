@@ -2,7 +2,7 @@
 """
 Footnote Occasion and Subject-Type Classification Engine (Gemini Task 4).
 
-Classifies free-text footnotes (183,315 records in BellBoard, 2018-2024) into a closed
+Classifies free-text footnotes (337,946 records in BellBoard, 2012-2024) into a closed
 vocabulary of occasions and subject types, with held-out oracle calibration.
 
 Usage:
