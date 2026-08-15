@@ -26,17 +26,45 @@
     }
     body {
       margin: 0; padding: 0;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: var(--serif);
       background: var(--ground);
       color: var(--ink);
+      line-height: 1.62;
+      -webkit-font-smoothing: antialiased;
     }
+    
+    /* Typography from main site */
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+    .eyebrow {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--bronze); margin: 0 0 14px;
+    }
+    header { padding: 64px 0 44px; }
+    h1 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.04; font-weight: 400; letter-spacing: -.015em; }
+    h1 em { font-style: italic; color: var(--bronze); }
+    .standfirst { margin-top: 20px; font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
+    
+    .explainer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-top: 40px;
+      border-top: 1px solid var(--rule);
+      padding-top: 40px;
+      margin-bottom: 40px;
+    }
+    .explainer-grid h4 { font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; color: var(--bronze); }
+    .explainer-grid p { font-size: 0.95rem; color: var(--ink-2); margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+
+    /* Visualizer App Layout */
     .layout {
       display: flex;
-      height: calc(100vh - 52px); /* Minus nav bar */
+      height: 800px;
       max-width: 1200px;
-      margin: 0 auto;
-      border-left: 1px solid var(--rule);
-      border-right: 1px solid var(--rule);
+      margin: 0 auto 64px auto;
+      border: 1px solid var(--rule);
+      font-family: system-ui, -apple-system, sans-serif;
     }
     .sidebar {
       width: 350px;
@@ -106,9 +134,9 @@
       word-wrap: break-word;
       color: var(--ink-2);
     }
-    .header { padding: 16px; border-bottom: 1px solid var(--rule); }
-    h1 { margin: 0; font-size: 1.5em; font-weight: 400; color: var(--ink); }
-    p { margin: 8px 0 0; font-size: 0.9em; color: var(--ink-3); }
+    .sidebar-header { padding: 16px; border-bottom: 1px solid var(--rule); }
+    .sidebar-header h2 { font-family: system-ui, -apple-system, sans-serif; margin: 0; font-size: 1.5em; font-weight: 500; color: var(--ink); }
+    .sidebar-header p { font-family: system-ui, -apple-system, sans-serif; margin: 8px 0 0; font-size: 0.9em; color: var(--ink-3); }
   
 /* The last <section> on the typographic pages already draws a bottom rule, so
    the footer's own top rule made a doubled line with a dead 56px band between
@@ -216,11 +244,38 @@ section:last-of-type{border-bottom:none}
   </div>
 </nav>
 
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Beam Search Engine · Composition Discovery</p>
+    <h1>The <em>First Rung</em> Visualizer</h1>
+    <p class="standfirst">Instead of using legacy depth-first search that brute-forces millions of false combinations, this tool uses a heuristic <strong>beam search</strong> to discover highly musical, previously un-rung compositions.</p>
+    
+    <div class="explainer-grid">
+      <div>
+        <h4>How it Searches</h4>
+        <p>At every step, the engine evaluates all valid next calls and keeps only the branches with the highest musicality scores. Unmusical branches are aggressively pruned, letting the search reach deep into previously computationally prohibitive search spaces.</p>
+      </div>
+      <div>
+        <h4>Reading the Graph</h4>
+        <p>The numbers in the boxes represent <strong>course heads</strong>. The letters on the arrows denote the <strong>calls</strong> used to transition between them (<code>p</code> = plain, <code>b</code> = bob, <code>s</code> = single). The graph originates and terminates at Rounds (12345678).</p>
+      </div>
+      <div>
+        <h4>Scoring & Novelty</h4>
+        <p>The <strong>Score</strong> reflects musicality (e.g., counting 56s and 65s off the front and back). <strong>Likely Novel</strong> indicates that the exact sequence of calls was not found anywhere in the historical performance database.</p>
+      </div>
+      <div>
+        <h4>▶ Compose Animation</h4>
+        <p>Clicking "Compose" redraws the graph node-by-node in real time. It visually demonstrates exactly how the engine's beam search branches outwards from Rounds, evaluating the path until it finds a true block back to rounds.</p>
+      </div>
+    </div>
+  </header>
+</div>
+
 <div class="layout">
   <div class="sidebar">
-    <div class="header">
-      <h1>Composition Search</h1>
-      <p>Results from the Heuristic Beam Search Engine. Select a composition to visualize its directed path.</p>
+    <div class="sidebar-header">
+      <h2>Top Compositions</h2>
+      <p>Results ranked by musicality score. Select one to visualize its directed path.</p>
     </div>
     <div id="comp-list"></div>
   </div>
