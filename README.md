@@ -67,7 +67,7 @@ can be checked instead of taken on trust.
       production until the Turso freeze lifts on 2026-09-01.
 - [x] Performance -> method linkage (`schema/005`,
       `scripts/resolve_performance_methods.py`) -- 69,368 of 96,067 performances
-      (72.2%) now carry at least one method link, 126,973 links in all. The hard
+      (72.5%) now carry at least one method link, 128,323 links in all. The hard
       part was the 15,497 performances naming several methods at once
       ("Spliced Surprise Major (8m)"), whose constituents are free text in
       `details`; the method string states how many to find, which makes every row
@@ -138,9 +138,9 @@ three things a steady-accumulation story would miss:
   1,137 of those 1,138 events are 2020 or later.
 
 And one finding that needed guarding: of the 7,645 methods first rung in 1975–99,
-the peak era, only **13.0%** were rung at all in 2021–24, against 72–82% for
-methods first rung before 1900. Both bounds are published (13.0% and 16.4% on a
-deliberately over-generous count) because the method linkage's own 72.2% coverage
+the peak era, only **13.1%** were rung at all in 2021–24, against 72–82% for
+methods first rung before 1900. Both bounds are published (13.1% and 16.2% on a
+deliberately over-generous count) because the method linkage's own 72.5% coverage
 could otherwise have manufactured the result.
 
 ## The Rhythm of Ringing

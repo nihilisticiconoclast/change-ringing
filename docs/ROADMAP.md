@@ -17,7 +17,7 @@ gap was found.
 | 19 | Measure the occasion classifier | **Gemini** | **Active** — Gemini Task 5. Not a new task: it is Task 4's actual deliverable, which was never built |
 | 6 | CompLib ingestion | Vibe | Queued — but `data/SOURCES.md` now records that the "documented API" claim is unverified; establishing what the API offers is step one |
 | 7 | Corpus integrity checker | Vibe | Queued |
-| 16 | Spliced abbreviation expansion | Claude Code | Available, deliberately unqueued — see Held |
+| 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
 
 ### Done
 
@@ -28,7 +28,8 @@ gap was found.
 
 | 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
 | 8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
-| 13 | Performance → method linkage | Claude Code | `schema/005` — 72.2% of performances linked |
+| 13 | Performance → method linkage | Claude Code | `schema/005` — 72.5% of performances linked, 128,323 links |
+| 16 | Spliced ellipsis expansion | Claude Code | Two resolver bugs fixed; oracle 68.0% → 69.7% |
 | 14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
 | 17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
 | 18 | Document the orphan `dove_tower_id` values | Claude Code | `decisions/001` |
@@ -48,7 +49,7 @@ gap was found.
 | # | Item | Why held |
 | --- | --- | --- |
 | 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly. The r/bellringing post may produce one |
-| 16 | Spliced abbreviation expansion | The method resolver leaves 4,348 performances unresolved, 1,711 exactly one method short, almost all abbreviations — "Rev Court", "Cambridge SM". Two rounds took the oracle from 63.6% to 68.0% and the next is a third tuning parameter, so it was stopped deliberately. The rows are recorded with their counts, so it can be resumed on evidence rather than from scratch |
+| 16 | Spliced ellipsis expansion *(was "abbreviation expansion")* | **Worked on 2026-08-15 and stopped again, one rung further along.** The name was wrong: measuring the leftovers rather than guessing showed abbreviations are 2% of the shortfall. The two real causes were a bug (nine Little Bob methods absent from the index) and an *ellipsis* — "St Clement's" for "St Clement's College", 471 rows. The bug is fixed; the ellipsis needs prefix matching with a threshold, which is tuning, which is the line. 1,487 rows remain one method short, recorded with their counts |
 
 ## Item 19 — not a new task, the missing half of an old one
 
@@ -100,10 +101,10 @@ page was written — the event-type breakdown was in the very first query run ag
 that table — and it was not looked at.
 
 **The finding that needed a guard.** Of the 7,645 methods first rung in 1975–99,
-only 13.0% were rung at all in 2021–24; for pre-1900 methods it is 72–82%. That
-could have been an artefact of the schema/005 linkage, whose 72.2% coverage skews
+only 13.1% were rung at all in 2021–24; for pre-1900 methods it is 72–82%. That
+could have been an artefact of the schema/005 linkage, whose 72.5% coverage skews
 against exactly the spliced peals where rare methods appear. So both bounds are
-published — 13.0% strict, 16.4% counting every method merely *named* in a refused
+published — 13.1% strict, 16.2% counting every method merely *named* in a refused
 row — and the shape survives both. It is labelled **currency**, not survival: four
 years is a short window, and the real question needs the backfill.
 
@@ -113,13 +114,13 @@ years is a short window, and the real question needs the backfill.
 
 `performances.method` was free text with no link to the method library, so the
 two largest corpora could not be joined at all. 69,368 of 96,067 performances
-(72.2%) now carry at least one method link.
+(72.5%) now carry at least one method link.
 
 The interesting part was the 15,497 performances that name several methods at
 once. "Spliced Surprise Major (8m)" is eight methods, listed in `details` as
 prose — and the string states how many to find, so **every row checks itself**.
 Same shape as the notation parser's `lead_head` oracle, and the same conclusion:
-ship what the oracle proves (68.0%), record the rest with the numbers that made
+ship what the oracle proves (69.7%), record the rest with the numbers that made
 them fail, and do not chase the remainder.
 
 First finding out of it, and it reframes item 8b: **81.6% of the 10,838 Major

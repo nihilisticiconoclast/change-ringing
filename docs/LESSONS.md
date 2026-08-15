@@ -270,16 +270,21 @@ count of pairs, and the wrong denominator is one join away.
 
 ### 17. Publish the bound, not the estimate, when the pipeline could be the cause
 
-Of methods first rung in 1975–99, 13.0% were rung at all in 2021–24; for methods
+Of methods first rung in 1975–99, 13.1% were rung at all in 2021–24; for methods
 first rung before 1900 it is 72–82%. A real and surprising result — and one that the
 project's own method-linkage layer could have manufactured, because that layer
-resolves 72.2% of performances and the rows it refuses are disproportionately
+resolves 72.5% of performances and the rows it refuses are disproportionately
 *spliced* peals, which is precisely where rare methods appear.
 
 Rather than caveat it in prose, both bounds were computed and both are drawn: the
 strict set the resolver was willing to assert, and a deliberately over-generous set
-that also counts every method merely *named* in a row the resolver refused. 13.0%
-becomes 16.4%; the pre-1900 figure barely moves; the shape survives.
+that also counts every method merely *named* in a row the resolver refused. 13.1%
+becomes 16.2%; the pre-1900 figure barely moves; the shape survives.
+
+A postscript that makes the point better than the original: the resolver was later
+improved — two bugs fixed, coverage 72.2% → 72.5% — and the bounds moved to
+13.1%–16.2% from 13.0%–16.4%. A conclusion drawn from the point estimate would
+have needed rechecking; one drawn from the interval did not move at all.
 
 The habit: when a finding depends on a component whose error rate you know, compute
 the finding twice at the two extremes of that component's behaviour. If the

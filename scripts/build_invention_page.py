@@ -59,18 +59,18 @@ The four things the data turned out to say
 
 And the finding that needed guarding
 ------------------------------------
-Of methods first rung in 1975-99 -- the peak era, 7,645 of them -- only 13.0% were
+Of methods first rung in 1975-99 -- the peak era, 7,645 of them -- only 13.1% were
 rung at all in 2021-24. For methods first rung before 1900 the figure is 72-82%.
 The oldest methods are the ones still in use and the 1975-99 vintage is the least
 current, which is the opposite of what a naive reading of an invention curve
 suggests.
 
 That finding could have been manufactured by the schema/005 linkage, which only
-resolves 72.2% of performances -- and the rows it refuses are disproportionately
+resolves 72.5% of performances -- and the rows it refuses are disproportionately
 SPLICED peals, exactly where rare methods appear. So both bounds are computed and
 both are published: the strict set the resolver asserted, and a deliberately
 over-generous set that also counts every method merely NAMED in a refused row.
-1975-99 moves 13.0% -> 16.4%, pre-1900 stays above 72%, and the shape holds. A
+1975-99 moves 13.1% -> 16.2%, pre-1900 stays above 72%, and the shape holds. A
 single number there would have been indefensible.
 """
 import argparse
@@ -220,12 +220,18 @@ def build(db_path):
     # --- currency: two bounds ----------------------------------------------
     asserted = {r[0] for r in q(sql("03_currency.sql", 0))}
     sys.path.insert(0, str(ROOT / "scripts"))
+    # The resolver records, for each spliced row it REFUSED, the name-keys it did
+    # find. Those are unasserted, but they are still evidence a method was rung,
+    # and mapping them back gives the generous bound. Uses the resolver's own
+    # index so the two cannot disagree about what a key means; keys are stored
+    # space-free, so the index is flattened the same way.
+    import re as _re
     from resolve_performance_methods import build_indexes
-    _, squashed, _ = build_indexes(conn)
+    spaced, _attrs = build_indexes(conn)
     key_to_methods = {}
-    for stage_index in squashed.values():
+    for stage_index in spaced.values():
         for k, mids in stage_index.items():
-            key_to_methods.setdefault(k, set()).update(mids)
+            key_to_methods.setdefault(_re.sub(r"\s+", "", k), set()).update(mids)
     generous = set(asserted)
     for (cj,) in q(sql("03_currency.sql", 1)):
         for k in json.loads(cj):

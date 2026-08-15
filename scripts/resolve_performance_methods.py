@@ -36,35 +36,61 @@ against data the source supplied.
 
 What it achieves, and what it does not
 --------------------------------------
-The oracle passes on **68.0%** of the 15,497 spliced performances. It was not
-pushed further, and that is deliberate. Two rounds of work took it from 63.6% to
-68.0%; the next round would have been abbreviation expansion ("Rev Court" for
-"Reverse Court"), which is a third tuning parameter on an approach that had
-already had its two attempts. A resolver that reports precisely which rows it
-cannot do is more useful than one that claims everything, and the failures here
-are recorded row by row with the counts that produced them, so a later pass
-starts from evidence rather than from scratch.
+The oracle passes on **69.7%** of the 15,497 spliced performances, and is not
+pushed further. Getting there took four rounds, and which of them were legitimate
+is worth recording, because the distinction is the whole discipline:
 
-The three shapes of remaining failure, from the recorded rows:
+  63.6%  first attempt
+  68.0%  indexing name-plus-classification -- the library stores Plain Bob Minor
+         as name "Plain" + class "Bob", so "540 Plain Bob" was resolving as two
+         methods. A missing form, not a tuned threshold.
+  69.7%  two bugs, found by characterising the failures instead of guessing:
+         a dead matching path, and nine methods absent from the index entirely.
 
-  * one method short (the largest group) -- almost always an abbreviation
-  * one method over -- a name that is also a common word in the surrounding prose
+The stopping rule was "two attempts at TUNING, then stop", and it still holds. A
+bug fix is not an attempt. The test is whether the change adds a knob or removes
+a defect: a threshold, a weight or a fudge factor is tuning; a form the index
+never held and a regex that could not match are defects.
+
+WHY THE FAILURES WERE CHARACTERISED FIRST. The roadmap recorded, on my authority,
+that the remaining shortfall was "almost all abbreviations -- Rev Court, Cambridge
+SM". Measuring it instead of asserting it -- masking every matched span in the
+1,711 one-short rows and counting what text was left over -- says otherwise:
+
+  565  "little"      Little Bob, invisible to the index (see below)
+  471  "st"          } "St Clement's" for "St Clement's College"
+  264  "clements"    } an ellipsis, not an abbreviation
+  322  "bob"         "Little Bob" as a unit
+  219  "april day"   a Doubles method the library does not hold at all
+  104  "tb"          "Oxford TB" -- an actual abbreviation
+   49  "cb"          "C.B." for College Bob
+   35  "rev"         "Rev Court" -- the case the roadmap named, at 2% of the total
+
+Abbreviations are real but small. The two large causes were a bug and an
+ellipsis, and a round of work spent on "Rev" would have moved nothing.
+
+The three shapes of remaining failure:
+
+  * one method short (1,487) -- now mostly the "St Clement's" ellipsis, where a
+    footnote names a method by a prefix of its title. Handling it needs prefix
+    matching with a threshold, which IS tuning, which is where this stops.
+  * one method over (1,013) -- a name that is also a common word in the prose
   * badly short -- a performance citing a named collection rather than a list
     ("Standard 8"), which cannot be resolved from `details` in principle
 
 Result on the committed snapshot
 --------------------------------
   performances                96,067
-  with >= 1 method link       69,368  (72.2%)
-  method links written       126,973
+  with >= 1 method link       69,625  (72.5%)
+  method links written       128,323
 
-  high   106,643 links / 66,328 performances
-  low     20,081 links /  2,791 performances
+  high   107,377 links / 66,489 performances
+  low     20,697 links /  2,887 performances
   medium     249 links /    249 performances
 
-  unresolved                  26,699
+  unresolved                  26,442
     not_a_method              19,750   tolling, general ringing, call changes
-    spliced_count_mismatch     4,348   the oracle refused it
+    spliced_count_mismatch     4,091   the oracle refused it
     no_title_match             1,994   a method the library does not hold
     spliced_no_details           599   several methods claimed, none listed
     no_stage_word                  8
@@ -88,7 +114,7 @@ emits its bottom band is not a scale, and finding that out is worth more than th
 rows themselves. It is also checked for being too large -- the first version put
 6,613 of 10,542 spliced rows in `low` because it read the stage out of the method
 string and discarded the classification sitting next to it. Reading both cut it
-to 2,791 and moved 34,150 links from low to high. A crowded bottom band is
+to 2,887 and moved tens of thousands of links from low to high. A crowded bottom band is
 usually a defect in the resolver, not honesty about the data.
 
 Hand-checked
@@ -174,17 +200,6 @@ def base(s):
     return re.sub(r"\s+", " ", s).strip()
 
 
-def squash(s):
-    """Punctuation- and space-free form.
-
-    Needed because the same name is spaced inconsistently either side of an
-    apostrophe: the library writes "Sgurr a' Mhadaidh", a footnote writes
-    "Sgurr a'Mhadaidh", and after apostrophe removal those differ by a space.
-    This is an alias, not a threshold -- the oracle still has to pass.
-    """
-    return re.sub(r"[^a-z0-9]", "", base(s))
-
-
 def stage_of(text):
     """Last stage word in a method string wins: 'Spliced Surprise Major' -> 8."""
     for token in reversed(base(text).split()):
@@ -207,54 +222,101 @@ def class_filter_of(prefix):
     return None
 
 
-def build_indexes(conn):
-    """Per stage, map a normalised name to the methods it could mean.
+def title_minus_stage(title):
+    """'Little Bob Royal' -> 'little bob'. 'Cambridge Surprise Minor' -> 'cambridge surprise'.
 
-    Both the bare name and name-plus-classification are indexed, because the
-    library splits them: "Plain Bob Minor" is stored as name "Plain" with
-    classification "Bob", so a footnote saying "Plain Bob" matches nothing unless
-    the combined form is indexed too. Without this, "720 Oxford, 540 Plain Bob"
-    resolves to three methods -- Oxford, Plain and Bob -- and fails a two-method
-    oracle for the wrong reason.
+    The natural way a footnote refers to a method when the stage is already
+    established by the performance's own method string: you write "Little Bob",
+    not "Little Bob Royal", inside a Royal peal.
+
+    It also covers a gap that nothing else does. Nine methods -- the whole Little
+    Bob family, Minor through Twenty-Two -- have a NULL `name` in the library,
+    because their titles are entirely structural and there is no distinguishing
+    part to store. Indexing on `name` therefore made them invisible to the
+    resolver, and "Little" appears constantly in spliced Bob peals: those nine
+    methods accounted for 565 of the 1,711 windows that came up exactly one
+    method short.
+    """
+    tokens = base(title).split()
+    while tokens and tokens[-1] in STAGES:
+        tokens.pop()
+    return " ".join(tokens)
+
+
+def build_indexes(conn):
+    """Per stage, map a normalised key to the methods it could mean.
+
+    Three forms are indexed per method, because the library and the footnotes
+    name the same thing differently:
+
+      name                  "Cambridge"
+      name + classification "Plain Bob" -- the library stores Plain Bob Minor as
+                            name "Plain" with classification "Bob", so without
+                            this "720 Oxford, 540 Plain Bob" resolves to three
+                            methods (Oxford, Plain, Bob) and fails a two-method
+                            oracle for the wrong reason
+      title minus stage     "Little Bob" -- see title_minus_stage above
+
+    Returns one index, not two. An earlier version kept a second index of
+    punctuation- and space-free keys, to catch "Sgurr a'Mhadaidh" against the
+    library's "Sgurr a' Mhadaidh". IT NEVER MATCHED ANYTHING. The pattern carried
+    the same (?<![a-z0-9]) guards as the spaced one, and after squashing a string
+    there are no non-alphanumeric characters left for those guards to find, so it
+    could only ever match at position 0. Dead code that looked like coverage.
+
+    What it was trying to do is now done properly: each key's internal spaces
+    become `\s*` in the pattern, so "st nicholas" matches both "St Nicholas" and
+    the "stnicholas" that base() produces from "St.Nicholas", while the word
+    boundaries around the whole match stay meaningful.
     """
     spaced = collections.defaultdict(lambda: collections.defaultdict(set))
-    squashed = collections.defaultdict(lambda: collections.defaultdict(set))
     rows = conn.execute(
-        "SELECT method_id, name, stage, classification, cls_plain, "
-        "cls_little, cls_treble_dodging FROM methods "
-        "WHERE name IS NOT NULL AND name <> ''"
+        "SELECT method_id, name, title, stage, classification, cls_plain, "
+        "cls_little, cls_treble_dodging FROM methods"
     ).fetchall()
-    attrs = {}
-    for mid, name, stage, cls, plain, little, td in rows:
-        attrs[mid] = {"classification": cls, "cls_plain": plain,
-                      "cls_little": little, "cls_treble_dodging": td}
-    for mid, name, stage, cls, plain, little, td in rows:
+    attrs = {
+        mid: {"classification": cls, "cls_plain": plain,
+              "cls_little": little, "cls_treble_dodging": td}
+        for mid, name, title, stage, cls, plain, little, td in rows
+    }
+    for mid, name, title, stage, cls, plain, little, td in rows:
         if not stage:
             continue
-        forms = {name} | ({f"{name} {cls}"} if cls else set())
+        forms = set()
+        if name:
+            forms.add(name)
+            if cls:
+                forms.add(f"{name} {cls}")
+        stripped = title_minus_stage(title or "")
+        if stripped:
+            forms.add(stripped)
         for form in forms:
             k = base(form)
             if len(k) >= 3:
                 spaced[stage][k].add(mid)
-            k2 = squash(form)
-            if len(k2) >= 4:
-                squashed[stage][k2].add(mid)
-    return spaced, squashed, attrs
+    return spaced, attrs
 
 
 def compile_patterns(index):
     """One alternation per stage, longest alternative first so it wins.
 
     Compiled once. Matching 15,497 rows against 9,680 separately-compiled names
-    took over two minutes; one alternation per stage takes 4.5 seconds.
+    took over two minutes; one alternation per stage takes seconds.
+
+    Internal spaces become `\s*` so a key matches whether or not the source kept
+    the space -- see build_indexes. Returns the pattern and a lookup from the
+    space-free form of a match back to the index key, since the match text may
+    have lost its spaces.
     """
-    out = {}
+    out, keyof = {}, {}
     for stage, names in index.items():
         keys = sorted(names, key=len, reverse=True)
+        alts = [r"\s*".join(re.escape(w) for w in k.split()) for k in keys]
         out[stage] = re.compile(
-            r"(?<![a-z0-9])(?:" + "|".join(re.escape(k) for k in keys) + r")(?![a-z0-9])"
+            r"(?<![a-z0-9])(?:" + "|".join(alts) + r")(?![a-z0-9])"
         )
-    return out
+        keyof[stage] = {re.sub(r"\s+", "", k): k for k in keys}
+    return out, keyof
 
 
 def resolve(conn):
@@ -263,9 +325,8 @@ def resolve(conn):
     for mid, title in conn.execute("SELECT method_id, title FROM methods"):
         norm_titles[base(title)].add(mid)
 
-    spaced, squashed, attrs = build_indexes(conn)
-    pat_spaced = compile_patterns(spaced)
-    pat_squash = compile_patterns(squashed)
+    spaced, attrs = build_indexes(conn)
+    pat_spaced, key_of = compile_patterns(spaced)
 
     links = []          # (perf_id, method_id, ord, kind, confidence, matched_on)
     unresolved = []     # (perf_id, method_text, reason, expected, found, candidates)
@@ -318,11 +379,14 @@ def resolve(conn):
             tally["spliced_no_details"] += 1
             continue
 
-        hits = collections.defaultdict(set)   # squashed key -> candidate method_ids
-        for k in set(pat_spaced[stage].findall(base(details))):
-            hits[squash(k)] |= spaced[stage][k]
-        for k in set(pat_squash[stage].findall(squash(details))):
-            hits[k] |= squashed[stage][k]
+        # squashed match text -> candidate method_ids. Keyed on the space-free
+        # form so "St Nicholas" and "St.Nicholas" count as one method, not two.
+        hits = collections.defaultdict(set)
+        for found in set(pat_spaced[stage].findall(base(details))):
+            flat = re.sub(r"\s+", "", found)
+            key = key_of[stage].get(flat)
+            if key:
+                hits[flat] |= spaced[stage][key]
 
         # Narrow each name to the classification the performance itself declares.
         # Only applied when it leaves something: a prefix saying "Surprise" beside
