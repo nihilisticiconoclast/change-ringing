@@ -67,6 +67,7 @@ def steps(db, skip_inference):
         ("Blue Line Atlas        -> docs/methods.html",   ["build_method_atlas.py"], "pages"),
         ("First Rung             -> docs/invention.html", ["build_invention_page.py"], "pages"),
         ("Rhythm of Ringing      -> docs/rhythm.html",    ["build_rhythm_page.py"], "pages"),
+        ("Practice Nights        -> docs/practice.html",  ["build_practice_page.py"], "pages"),
         ("Ringer Constellation   -> docs/ringers.html",   ["build_ringers_page.py"], "pages"),
         ("The Occasions Archive  -> docs/occasions.html", ["build_occasions_page.py"], "pages"),
         ("The Temporal Nexus     -> docs/nexus.html",     ["build_nexus_page.py"], "pages"),

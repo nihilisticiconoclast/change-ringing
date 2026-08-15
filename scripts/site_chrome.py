@@ -59,6 +59,8 @@ PAGES = [
      "Three centuries of method invention, 1684–2026"),
     ("rhythm.html",     "Rhythm of Ringing",
      "The week, the year, and 24 days that carry a fifth of 2021–24"),
+    ("practice.html",   "Practice Nights",
+     "Where 293,471 performances happen vs Dove’s stated night"),
     ("ringers.html",    "Ringer Constellation",
      "Who rings with whom, across 70,351 names"),
     ("occasions.html",  "The Occasions Archive",
@@ -133,6 +135,15 @@ NOTES = {
         "Footnote text is quoted only where the same words were written independently by "
         "many bands on the same day. <strong>No individual is named anywhere on this "
         "page.</strong>",
+    ],
+    "practice.html": [
+        "Practice nights are parsed from Dove’s Guide (3,515 populated towers). "
+        "<strong>BellBoard records reported performances (mostly quarter peals and peals), "
+        "not routine practices</strong> — so this measures where quarter peal ringing "
+        "clusters as a proxy for practice activity, not the accuracy of Dove’s records.",
+        "<strong>Sunday service ringing is excluded.</strong> Sunday accounts for the majority "
+        "of short performances across almost every tower; excluding it reveals true weekday "
+        "practice concentration (44.0% alignment on Mon–Fri vs 20.0% by chance).",
     ],
     "occasions.html": [
         "Occasions are keyword patterns over footnote text, so the categories "
