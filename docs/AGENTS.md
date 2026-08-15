@@ -93,23 +93,30 @@ Adjudication and merges, as below, plus the work that is neither a bounded
 coding task nor a large-context sweep -- schema semantics, and any decision
 where being wrong is worse than being slow.
 
-1. **Ring-level join semantics** *(next)*. `dove.TowerID` is not unique: 13
-   towers hold more than one ring, so joining on it fans out and silently
-   inflates counts -- `v_first_tower_peals` gains 11 rows this way. Deciding
-   whether each view means a tower or a ring is a semantics call, not a bug
-   fix, which is why it has not been delegated. Vibe's Task 4 implements it
-   once the spec exists.
+1. **Widen the Rhythm page beyond 2021-24** *(next)*. It is the one page still
+   restricted to a window narrower than the corpus, and widening it is analysis
+   rather than a rebuild: the anomaly rule compares each day against its own
+   neighbourhood, so thirteen years changes which days qualify, and 2020 enters
+   as a year of almost no ringing. Expect the answer to move -- the same widening
+   took "81.6% of Major methods are never rung" down to 53.9%.
 2. **Consolidate the data-quality caveats.** They are currently spread across
    `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, the schema
    headers and several commit messages. Anyone querying the corpus needs them
    in one place.
-3. **Run the BellBoard backfill.** The runner exists and is merged, but the
-   corpus still holds a single recent window. This is the largest remaining
-   data gap and it unblocks Gemini's Task 3. Waits for the freeze to lift on
-   2026-09-01.
+3. **Method survival, option C's second half.** Unblocked by the completed
+   backfill: currency is published on `invention.html`, and survival needs the
+   adoption history that thirteen years now provides.
+4. **Production load**, once the Turso freeze lifts on **2026-09-01**. Nothing
+   in this list touches the live database before then.
 
 Completed: the CCCBR Methods Library loader and location resolution (PR #1),
-the location adjudication, the read-cost fixes, and the Founder Atlas.
+the location adjudication, the read-cost fixes, the Founder Atlas, method
+extension lineage (PR #3), the dedication and place lexicon (PR #4), the
+backfill completeness gate (PR #5), CompLib ingestion (PR #6), footnote
+occasions as an explicitly unvalidated candidate (PR #7), the corpus integrity
+checker (PR #10), ring-level join semantics (decision 001, adopted), and the
+**BellBoard historical backfill in full** -- 2012-2024, 293,471 performances,
+across PRs #8, #9 and a direct push for 2012-2017.
 
 ## In practice
 

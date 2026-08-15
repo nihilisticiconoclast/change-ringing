@@ -1,6 +1,24 @@
 #!/usr/bin/env python3
 """
-BellBoard historical backfill runner.
+BellBoard historical backfill runner -- loads INTO A DATABASE.
+
+There are two BellBoard fetchers and choosing the wrong one wastes a long run,
+so: this one loads into a database; `fetch_and_export_bellboard.py` writes the
+yearly CSVs under `data/bellboard/` that the repository actually commits and
+that `build_local_db.py` reads. **The 2012-2024 corpus in this repository was
+produced by the exporter, not by this script.**
+
+Both use the same completeness gate -- `bellboard_common.fetch_expected_count`
+and `WINDOW_TOLERANCE` -- so neither is more trustworthy than the other about
+whether a window came back whole. What this one adds is resumability: a
+checkpoint file, `--resume`, `--reset-checkpoint` and `--window-tolerance`, for
+a run long enough that it may be interrupted. Reach for it when loading directly
+to a database, which cannot happen before the Turso freeze lifts on 2026-09-01.
+
+An audit PR proposed labelling this file a "prototype" and pointing readers at
+the exporter. That has it backwards -- this is the more capable of the two -- but
+the confusion it came from is real, which is why the distinction is now written
+here rather than left to be inferred from two similar filenames.
 
 A resumable, checkpointed, politeness-aware runner that walks the BellBoard
 corpus back through time and loads it using the existing ingestion logic.

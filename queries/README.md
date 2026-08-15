@@ -75,6 +75,31 @@ One row per **footnote**, not per performance: 337,946 footnotes attach to 227,6
 performances. Calling those counts performances overstates by half, which the page
 did until it was corrected.
 
+## Root `queries/*.sql` — what the offline resolvers read
+
+Not page-builders: these are the extraction queries the inference scripts run,
+recorded here for the same reason as the rest — the script reads the file, so
+what is written down is what executed.
+
+| File | Read by | Extracts |
+| --- | --- | --- |
+| `extract_dedications_and_places.sql` | `scripts/build_name_lexicon.py` | Distinct tower places, dedications and dioceses |
+| `extract_lineage_stats.sql` | `scripts/build_lineage_atlas.py` | Stage, classification and extension counts |
+| `extract_method_families.sql` | `scripts/build_lineage_atlas.py` | Method definitions, notation, lead heads, classifications |
+| `extract_ringer_performances.sql` | `scripts/resolve_ringer_identities.py` | Every ringer appearance with its performance context |
+
+All four execute cleanly against the committed snapshot, checked on 2026-08-15.
+
+> **`extract_ringer_performances.sql` was not read by anything until that date.**
+> Its header said "Used by `scripts/resolve_ringer_identities.py`" and the script
+> ran a *different* query inline — six fewer columns and no `ORDER BY` over
+> 1,969,949 rows. A repository audit documented the file as authoritative without
+> running it. The file now holds exactly the statement the resolver executes, and
+> the resolver reads it; output verified byte-identical by SHA-256 across the
+> change. Two other attributions in the same audit were wrong:
+> `extract_method_families.sql` is read by `build_lineage_atlas.py`, not
+> `resolve_method_extensions.py`.
+
 ## `findings/` — the claims in the prose
 
 One file per assertion made on the atlas page or in the commit history, so

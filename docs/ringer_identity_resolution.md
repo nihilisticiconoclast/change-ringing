@@ -1,10 +1,10 @@
 # Ringer Identity Resolution
 
-**Deliverable for Gemini Task 3:** Ringer identity resolution and co-occurrence clustering across **355,550 ringer performance instances** (51,126 peals in 2023–2024).
+**Deliverable for Gemini Task 3:** Ringer identity resolution and co-occurrence clustering across **1,969,949 ringer performance instances** — the complete 2012–2024 corpus, 293,471 performances.
 
-- **Candidate Dataset:** [`data/ringer_identity_candidates.csv`](file:///c:/Users/james/Documents/Projects/change-ringing/data/ringer_identity_candidates.csv) (35,090 ringer name records mapped to 29,446 canonical entities)
-- **Extraction Query:** [`queries/extract_ringer_performances.sql`](file:///c:/Users/james/Documents/Projects/change-ringing/queries/extract_ringer_performances.sql)
-- **Resolution Script:** [`scripts/resolve_ringer_identities.py`](file:///c:/Users/james/Documents/Projects/change-ringing/scripts/resolve_ringer_identities.py)
+- **Candidate Dataset:** [`data/ringer_identity_candidates.csv`](../data/ringer_identity_candidates.csv) (70,032 ringer name records mapped to 55,326 canonical entities)
+- **Extraction Query:** [`queries/extract_ringer_performances.sql`](../queries/extract_ringer_performances.sql) — read by the script at run time, not a copy of it
+- **Resolution Script:** [`scripts/resolve_ringer_identities.py`](../scripts/resolve_ringer_identities.py)
 
 ---
 
@@ -26,12 +26,12 @@ The resolution engine combines four orthogonal signals to establish canonical ri
 
 ```mermaid
 graph TD
-    A["Raw Performance Records (355,550 rows)"] --> B["Orthographic Normalization & Title Stripping"]
+    A["Raw Performance Records (1,969,949 rows)"] --> B["Orthographic Normalization & Title Stripping"]
     B --> C["English Diminutive Expansion (Bob -> Robert, Sue -> Susan)"]
     C --> D["Surname Cohort Partitioning (10,226 Cohorts)"]
     D --> E["Pairwise Band Co-Occurrence & Tower Jaccard Similarity"]
     E --> F["Anti-Conflation Conflict-Checked Disjoint Set Clustering"]
-    F --> G["data/ringer_identity_candidates.csv (29,446 Canonical Ringers)"]
+    F --> G["data/ringer_identity_candidates.csv (55,326 Canonical Ringers)"]
 ```
 
 ### Signal Weights & Thresholds
@@ -42,17 +42,21 @@ graph TD
 
 ---
 
-## 3. Key Dataset Statistics
+## 3. Key Dataset Statistics (Full 2012–2024 Archive)
+
+Measured on the rebuilt replica, 2026-08-15. The four-year figures this table
+carried before the backfill — 355,550 instances, 35,090 names, 29,446 canonical
+ringers — are the same quantities over 2021–24, not different quantities.
 
 | Metric | Count |
 | --- | --- |
-| Total Ringer Performance Instances | **355,550** |
-| Distinct Cleaned Ringer Name Strings | **35,090** |
-| Surname Cohorts Partitioned | **10,226** |
-| Candidate Pairs Evaluated | **410,959** |
-| Resolved Canonical Ringers | **29,446** |
-| Multi-Name Variant Clusters Unified | **4,835** |
-| Single-Name Canonical Ringers | **24,611** |
+| Total Ringer Performance Instances | **1,969,949** |
+| Distinct Cleaned Ringer Name Strings | **70,032** |
+| Surname Cohorts Partitioned | **16,812** |
+| Candidate Pairs Evaluated | **1,389,639** |
+| Resolved Canonical Ringers | **55,326** |
+| Multi-Name Variant Clusters Unified | **11,146** |
+| Single-Name Canonical Ringers | **44,180** |
 
 ---
 

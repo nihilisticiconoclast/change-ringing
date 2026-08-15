@@ -171,14 +171,14 @@ def resolve_identities(db_path: Path, out_path: Path):
     print(f"Reading ringer performance records from {db_path} ...", flush=True)
     conn = sqlite3.connect(db_path)
 
-    # 1. Fetch performances and bands
+    # 1. Fetch performances and bands.
+    # The SQL is read from queries/, not held here: a recorded query that is only
+    # a copy of the real one drifts, and this pair had already drifted (see the
+    # header of that file).
+    sql = (Path(__file__).resolve().parent.parent / "queries"
+           / "extract_ringer_performances.sql").read_text()
     cursor = conn.cursor()
-    records = cursor.execute("""
-        SELECT r.perf_id, r.position, TRIM(r.name) as name, p.perf_date, p.association, p.dove_tower_id, p.place
-        FROM performance_ringers r
-        JOIN performances p ON p.perf_id = r.perf_id
-        WHERE r.name IS NOT NULL AND TRIM(r.name) != ''
-    """).fetchall()
+    records = cursor.execute(sql).fetchall()
     conn.close()
 
     print(f"  Loaded {len(records):,} ringer performance instances.", flush=True)

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """
+Writes the yearly CSVs this repository commits. THIS is what produced the
+2012-2024 corpus; `backfill_bellboard.py` is the other BellBoard fetcher and
+loads into a database instead. Both share the same completeness gate.
+
 Fetch BellBoard performances in yearly partitions and export clean CSVs for Git version control.
 
 Outputs partitioned CSVs in data/bellboard/:

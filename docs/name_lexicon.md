@@ -2,9 +2,9 @@
 
 **Deliverable for Gemini Task 2:** Canonical lexicon mapping across 7,262 Dove towers, 15,720 towers records, and 30,734 method performances.
 
-- **Lexicon Dataset:** [`data/name_lexicon.csv`](file:///c:/Users/james/Documents/Projects/change-ringing/data/name_lexicon.csv) (15,322 canonical mapping entries)
-- **Extraction Query:** [`queries/extract_dedications_and_places.sql`](file:///c:/Users/james/Documents/Projects/change-ringing/queries/extract_dedications_and_places.sql)
-- **Builder Script:** [`scripts/build_name_lexicon.py`](file:///c:/Users/james/Documents/Projects/change-ringing/scripts/build_name_lexicon.py)
+- **Lexicon Dataset:** [`data/name_lexicon.csv`](../data/name_lexicon.csv) (15,322 canonical mapping entries)
+- **Extraction Query:** [`queries/extract_dedications_and_places.sql`](../queries/extract_dedications_and_places.sql)
+- **Builder Script:** [`scripts/build_name_lexicon.py`](../scripts/build_name_lexicon.py)
 
 ---
 
