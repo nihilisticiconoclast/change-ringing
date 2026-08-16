@@ -36,6 +36,13 @@ Every item now carries a prefixed ID that is unique across all three:
 Agent tasks state which R- item they deliver, so the mapping is written down
 rather than reconstructed. This file asserts that IDs are unique within each
 register and that every cross-reference resolves to an ID that exists.
+
+An ID may legitimately appear more than once -- an item listed under "Now" and
+again under "Held" where the detail lives, or a task in a summary table and again
+as its full brief. So the test is that one ID never names two different items,
+plus the narrower rule that an ID never appears twice in the SAME table. That
+second rule exists because a duplicate row can carry the same title and different
+figures, which the title test waves through.
 """
 import re
 import sys
@@ -134,13 +141,27 @@ def check_ids():
         if not path.exists():
             fails.append(f"{path.relative_to(ROOT)}: missing")
             continue
-        seen = {}
+        seen, in_table = {}, {}
         for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            # A non-row line ends the current table.
+            if not line.lstrip().startswith("|"):
+                in_table = {}
             # A definition is an ID in the first cell of a table row, or in a heading.
             m = (re.match(rf"^\|\s*({prefix}-\d+[a-z]?)\s*\|", line)
                  or re.match(rf"^#{{2,3}} ({prefix}-\d+[a-z]?)\s+—", line))
             if m:
                 key, title = m.group(1), _title(line, m.group(1))
+                # Twice in ONE table is always wrong, even with the same title:
+                # PR #26 added a second R-20 row with different figures, and the
+                # title check waved it through because both rows were called
+                # "Load CompLib in full". Listing an item in "Now" and again
+                # under "Held" is fine -- that is two tables.
+                if line.lstrip().startswith("|"):
+                    if key in in_table:
+                        fails.append(f"{path.relative_to(ROOT)}:{n}: {key} appears "
+                                     f"twice in the same table (line {in_table[key]})")
+                    else:
+                        in_table[key] = n
                 prev = seen.get(key)
                 if prev and title and prev[1] and title != prev[1]:
                     fails.append(
