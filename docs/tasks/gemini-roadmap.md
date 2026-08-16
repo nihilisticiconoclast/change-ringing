@@ -4,16 +4,42 @@ A queue rather than a single task. **One pull request per task**, in order,
 stopping at the end of each for review. Later tasks are sketched rather than
 specified, because what they should ask depends on what the earlier ones find.
 
+## How items are referenced
+
+Every item has an ID that is unique across all three roadmaps:
+
+| Prefix | Register | Holds |
+| --- | --- | --- |
+| `R-nn` | `docs/ROADMAP.md` | the central register of work — what the project is doing |
+| `G-nn` | `docs/tasks/gemini-roadmap.md` | Gemini's briefs |
+| `V-nn` | `docs/tasks/mistral-vibe-roadmap.md` | Mistral Vibe's briefs |
+
+All three registers used to number from 1, so "item 9" named three different
+pieces of work and a report that "item 9 was committed to main" could not be
+checked without first asking which document was meant. It also hid a real defect:
+Gemini's summary table had numbered the backfill as its task 6, which pushed
+every task below it one out of step with its own briefs — so the table said task
+7 was practice night while the brief said task 7 was the method column.
+
+**Always write the prefix.** An agent brief states which `R-` item it delivers;
+`scripts/verify_docs.py` asserts that IDs are unique, that no ID names two
+different items, and that every reference resolves.
+
+Numbers were kept as they were rather than renumbered, so every existing
+reference in a commit message or pull request still points at the same work.
+
+
 | # | Task | State |
 | --- | --- | --- |
-| 1 | Method extension lineage from place notation | **Done** — PR #3, merged |
-| 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
-| 3 | Ringer identity resolution | **Done** — candidate dataset delivered across full 2012–24 corpus |
-| 4 | Footnote occasion classification | **Done** — dataset and visualisations shipped |
-| 5 | Measure the occasion classifier | **Done** — PR #14, 400-footnote oracle measured at 75.5% in `docs/footnote_occasion_accuracy.md` |
-| 6 | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php` |
-| 7 | Practice night: Dove vs BellBoard | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html` |
-| 8 | Shared CSS deduplication (Item 31) | **Done** — centralized in `site_chrome.py`, verified in `verify_chrome.py` |
+| G-1 | Method extension lineage from place notation | **Done** — PR #3, merged |
+| G-2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
+| G-3 | Ringer identity resolution | **Done** — candidate dataset delivered across full 2012–24 corpus |
+| G-4 | Footnote occasion classification | **Done** — dataset and visualisations shipped |
+| G-5 | Measure the occasion classifier | **Done** — PR #14, 400-footnote oracle measured at 75.5% in `docs/footnote_occasion_accuracy.md` |
+| G-6 | Practice night: Dove vs BellBoard | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html` |
+| G-7 | Normalise the free-text `method` column | **Done** — PR #21, `docs/regional_traditions.md` |
+| G-8 | Shared CSS deduplication | **Done** — PR #23, centralised in `site_chrome.py`, enforced by `verify_chrome.py`. Delivers [R-31](../ROADMAP.md) |
+| [R-10](../ROADMAP.md) | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php`. Owned by Gemini but never a numbered brief task, which is why this row carries its central ID: numbering it G-6 shifted every task below it out of step with its own brief |
 
 ---
 
@@ -83,7 +109,9 @@ towers hold two rings — so joining on it alone inflates counts.
 
 ---
 
-## Task 1 — Method extension lineage from place notation *(done — PR #3)*
+## G-1 — Method extension lineage from place notation *(done — PR #3)*
+
+**Delivers roadmap item [R-14](../ROADMAP.md).**
 
 Work out which methods are genuine extensions of a lower-stage member, and
 which merely share a name.
@@ -127,7 +155,9 @@ plainly, the structural patterns found, and what you could not resolve.
 
 ---
 
-## Task 2 — A canonical dedication and place-name lexicon *(queued)*
+## G-2 — A canonical dedication and place-name lexicon *(queued)*
+
+**Delivers roadmap item [R-17](../ROADMAP.md).**
 
 Every name-matching problem in this project keeps re-solving the same
 vocabulary from scratch. Dove abbreviates dedications hard — `S Paul`,
@@ -145,7 +175,9 @@ spelling variant from a distinct dedication, because conflating those is how
 
 Full brief when Task 1 lands, informed by what it finds.
 
-## Task 3 — Ringer identity resolution *(done — candidate dataset delivered)*
+## G-3 — Ringer identity resolution *(done — candidate dataset delivered)*
+
+**Delivers roadmap item [R-9](../ROADMAP.md).**
 
 Matching ringers across performances — the same person appearing as
 "J A Boulton", "James Boulton", "James A Boulton". The natural large-context
@@ -158,7 +190,9 @@ been run. Do not start it until this row says otherwise.
 
 ---
 
-## Task 4 — Footnote occasion classification *(partly done)*
+## G-4 — Footnote occasion classification *(partly done)*
+
+**Delivers roadmap item [R-3](../ROADMAP.md).**
 
 > **Reviewed 2026-08-15.** `docs/occasions.html` shipped and it is a good page —
 > the violin plot of length-by-occasion is a genuinely nice idea, its eight
@@ -230,7 +264,9 @@ Out of scope: visualising it, and touching any file under `schema/` or
 
 ---
 
-## Task 5 — Measure the occasion classifier *(still active)*
+## G-5 — Measure the occasion classifier *(still active)*
+
+**Delivers roadmap item [R-19](../ROADMAP.md).**
 
 > **PR #7, reviewed and partly merged 2026-08-15.** The classifier and the
 > 113,895-row dataset are in `main` as an explicitly unvalidated candidate — they
@@ -365,7 +401,9 @@ come off the page", that is a better one.
 
 ---
 
-## Task 6 — Practice night: what Dove claims against what BellBoard records *(next)*
+## G-6 — Practice night: Dove vs BellBoard *(next)*
+
+**Delivers roadmap item [R-21](../ROADMAP.md).**
 
 The cheapest cross-source check in this repository, and nobody has run it. Dove
 records a practice night for 3,515 towers. BellBoard records 293,471
@@ -421,7 +459,9 @@ if it holds and a real non-finding if it does not — report either.
 **Branch fresh from `main`.** `scripts/check_branch_safety.py` now runs on every
 pull request and will fail a branch cut from a stale base.
 
-## Task 7 — Normalise the free-text `method` column *(after Task 6)*
+## G-7 — Normalise the free-text `method` column *(after Task 6)*
+
+**Delivers roadmap item [R-25](../ROADMAP.md).**
 
 `queries/findings/regional_traditions.sql` finds Devon Call Changes at 85% in
 Devon and Quick Tolling at 99% in Lincolnshire, but it groups on raw strings

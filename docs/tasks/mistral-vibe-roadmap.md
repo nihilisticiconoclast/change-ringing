@@ -6,13 +6,38 @@ the end of each for review — the later tasks are deliberately sketched rather
 than fully specified, because what they should say depends on what the earlier
 ones find.
 
+## How items are referenced
+
+Every item has an ID that is unique across all three roadmaps:
+
+| Prefix | Register | Holds |
+| --- | --- | --- |
+| `R-nn` | `docs/ROADMAP.md` | the central register of work — what the project is doing |
+| `G-nn` | `docs/tasks/gemini-roadmap.md` | Gemini's briefs |
+| `V-nn` | `docs/tasks/mistral-vibe-roadmap.md` | Mistral Vibe's briefs |
+
+All three registers used to number from 1, so "item 9" named three different
+pieces of work and a report that "item 9 was committed to main" could not be
+checked without first asking which document was meant. It also hid a real defect:
+Gemini's summary table had numbered the backfill as its task 6, which pushed
+every task below it one out of step with its own briefs — so the table said task
+7 was practice night while the brief said task 7 was the method column.
+
+**Always write the prefix.** An agent brief states which `R-` item it delivers;
+`scripts/verify_docs.py` asserts that IDs are unique, that no ID names two
+different items, and that every reference resolves.
+
+Numbers were kept as they were rather than renumbered, so every existing
+reference in a commit message or pull request still points at the same work.
+
+
 | # | Task | State |
 | --- | --- | --- |
-| 1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
-| 2 | CompLib ingestion | **Done** — see brief below |
-| 3 | Corpus integrity checker | **Done** — PR #10, merged with four changes; see below |
-| 5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
-| 4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
+| V-1 | BellBoard historical backfill runner | Merged, but **the run failed** — see Task 5 |
+| V-2 | CompLib ingestion | **Done** — see brief below |
+| V-3 | Corpus integrity checker | **Done** — PR #10, merged with four changes; see below |
+| V-5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
+| V-4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 
 ---
 
@@ -89,7 +114,9 @@ time; none are hypothetical.
 
 ---
 
-## Task 2 — CompLib ingestion *(done)*
+## V-2 — CompLib ingestion *(done)*
+
+**Delivers roadmap item [R-6](../ROADMAP.md).**
 
 **Done.** The API the brief was unsure about exists and is well
 documented: `https://api.complib.org`, with an OpenAPI 3.0 spec at
@@ -166,7 +193,9 @@ take on the Gemini roadmap.
 
 ---
 
-## Task 3 — Corpus integrity checker *(done — PR #10)*
+## V-3 — Corpus integrity checker *(done — PR #10)*
+
+**Delivers roadmap item [R-7](../ROADMAP.md).**
 
 **Merged 2026-08-15** as `scripts/verify_corpus.py`, with four changes made on
 merge. The submission was good: it covered everything the sketch asked for, it
@@ -215,7 +244,9 @@ views, so a plan regression is caught before it costs a read budget again.
 
 Exit non-zero on failure so it can gate CI later. Full brief when Task 2 lands.
 
-## Task 4 — Ring-level join semantics *(done — decision 001 adopted)*
+## V-4 — Ring-level join semantics *(done — decision 001 adopted)*
+
+**Delivers roadmap item [R-18](../ROADMAP.md).**
 
 Spec: `docs/decisions/001-ring-vs-tower-joins.md`. Implement to it.
 
@@ -230,7 +261,9 @@ cannot create or destroy a linked record, so anything else is wrong.
 
 ---
 
-## Task 5 — Backfill completeness gate *(merged, with three fixes)*
+## V-5 — Backfill completeness gate *(merged, with three fixes)*
+
+**Delivers roadmap item [R-5](../ROADMAP.md).**
 
 > **Reviewed and merged 2026-08-15.** The mechanism is right and the external
 > claims check out: I re-queried `search.php` live and got 25,267 for 2024 and
@@ -345,7 +378,7 @@ means it cannot reach production until 2026-09-01 regardless.
 
 ---
 
-## Task 6 — Place-notation parser *(withdrawn — already built)*
+## V-6 — Place-notation parser *(withdrawn — already built)*
 
 Claude Code needed this for the Blue Line Atlas and wrote it:
 `scripts/notation.py`, verified on 24,404 of 25,066 methods against the
@@ -354,7 +387,9 @@ deleted so nobody wonders where the task went.
 
 ---
 
-## Task 7 — A ringing career, from the bell people stand behind *(after item 20)*
+## V-7 — A ringing career, from the bell people stand behind *(after item 20)*
+
+**Delivers roadmap item [R-22](../ROADMAP.md).**
 
 **Done.** `scripts/analyse_ringing_careers.py` resolves identities through
 `data/ringer_identity_candidates.csv` (the resolution lives in a CSV, not a

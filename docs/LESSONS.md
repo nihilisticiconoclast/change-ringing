@@ -650,7 +650,7 @@ The generalisation is uncomfortable, because this project has several other
 "single source of truth" modules: **a single source of truth that governs only
 part of the thing it names is a liability, and the part it does not govern is
 exactly where nobody will look.** The palette and page-body CSS are still copied
-into every template here — roadmap item 31 — and they have already drifted.
+into every template here — roadmap item R-31 — and they have already drifted.
 
 ---
 

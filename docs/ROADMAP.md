@@ -8,66 +8,88 @@ things that make it interesting**, because an analysis built on a corpus with a
 silent gap has to be redone. Two of the items below exist only because a silent
 gap was found.
 
+## How items are referenced
+
+Every item has an ID that is unique across all three roadmaps:
+
+| Prefix | Register | Holds |
+| --- | --- | --- |
+| `R-nn` | `docs/ROADMAP.md` | the central register of work — what the project is doing |
+| `G-nn` | `docs/tasks/gemini-roadmap.md` | Gemini's briefs |
+| `V-nn` | `docs/tasks/mistral-vibe-roadmap.md` | Mistral Vibe's briefs |
+
+All three registers used to number from 1, so "item 9" named three different
+pieces of work and a report that "item 9 was committed to main" could not be
+checked without first asking which document was meant. It also hid a real defect:
+Gemini's summary table had numbered the backfill as its task 6, which pushed
+every task below it one out of step with its own briefs — so the table said task
+7 was practice night while the brief said task 7 was the method column.
+
+**Always write the prefix.** An agent brief states which `R-` item it delivers;
+`scripts/verify_docs.py` asserts that IDs are unique, that no ID names two
+different items, and that every reference resolves.
+
+Numbers were kept as they were rather than renumbered, so every existing
+reference in a commit message or pull request still points at the same work.
+
+
 ## Now
 
 | # | Item | Owner | State |
 | --- | --- | --- | --- |
-| 3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed and now measured at 75.5% (item 19)** — `data/footnote_occasions.csv`, 337,946 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
-
-| 19 | Measure the occasion classifier | **Gemini** | **Done** — PR #14, `docs/footnote_occasion_accuracy.md`. A genuinely independent 400-footnote oracle: **overall accuracy 75.5%**, and every per-class figure reproduced exactly on merge. `civic` precision is 38.8%, confirming the royal-death patterns swallow memorial and funeral. Open: the oracle itself is ~93% accurate and systematically mislabels terse milestone forms |
-
-| 7 | Corpus integrity checker | Vibe | **Merged** 86a00c3 — PR #10, four changes on merge. 49 checks, exits non-zero, negative-tested. Found two live defects on its first run: 25,030 committed flag rows never loaded, and the replica a year behind the CSVs |
-| 20 | Load CompLib in full | Vibe | **Next for Vibe** — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
-| 16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
-| 21 | Practice night: Dove's claim vs BellBoard's record | **Gemini** | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html`. 43.9% of 1,054 towers ring most on their stated night Mon–Fri, against 20.0% by chance; 27.3% Mon–Sat. Excluding Saturday is what makes the signal visible. Merged with every figure re-derived from the recorded query |
-| 22 | A ringing career, from `performance_ringers.bell` | **Vibe** | **Done** — PR #19, `docs/careers.html` and `docs/ringing_careers.md`. **The folk progression is not there.** Mean normalised bell position 0.551 early career, 0.547 late: no upward drift — and no settling either, the median ringer's range across a career is 0.889 of the ring. Every figure reproduced exactly on merge. One correction: "72.5% conduct a peal" was 72.5% conducting *anything*; peals are 19.8% and a median wait of 37 rather than 11. The result is unchanged by PR #22 resplitting 1,898 identity clusters, which is now stated on the page. Three near-identical PRs were submitted (#17, #18, #19). **Open half, both taken from #18, which did them better:** a most-used-bell share as a direct specialisation measure, and attrition at a fixed horizon from each ringer's own first appearance rather than against one calendar line — a fixed 2020 line gives a 2013 cohort seven years to disappear and a 2019 cohort one, so part of the trend down that column is the construction |
-| 23 | Quarter ringers vs peal ringers — are they two populations? | **Claude Code** | **Done** — `docs/two_populations.md`. **No.** A single steep decay, median peal share 3.0%, no second mode; same for towers; no growth with experience. 72% of active ringers have rung a peal. The framing had to change first: ordinary service ringing is not in the corpus at all |
-| 24 | Conductor speed, controlled for bell weight | **Claude Code** | Landed as `queries/findings/conductor_speed_signature.sql` from Gemini's `feature/data-insights`, bug fixed. Between-conductor variation is **half** within-conductor variation. Open half: separate band, tower and method from the conductor |
-| 25 | Normalise the free-text `method` column for regional traditions | **Gemini** | **Done** — PR #21, `docs/regional_traditions.md`. **The practice is Cornwall's; only the name is Devon's.** A quarter of everything Cornwall reports — 25.45% — is call changes, 3.3× the next county; Devon is fourth at 5.37%. Merged with three corrections: the 400-row "hand-labelled" oracle was bootstrapped from the classifier and disagreed with it on **1 row in 400**, so its F1 = 1.00 measured nothing (replaced with 200 genuinely independent labels, 98.5%); the denominator divided by the national total, which ranks counties by how much they report rather than by tradition, and correcting it *reversed* the tolling result — Northamptonshire, not Lincolnshire; and the recorded SQL joined a table that existed nowhere, so it could not be run at all |
-| 26 | A real test suite | **Vibe** | From the Cursor audit (PR #16). There is no pytest suite at all: `notation.py` is validated by a 99.7% agreement figure with no test file, the resolvers have an oracle that CI never runs, and the page builders have no golden-file test. Start with `notation.py` — it is pure, deterministic, and the library's own `lead_head` is the oracle |
-| 27 | Make CI able to catch a stale replica | **Claude Code** | Mine. `check_csv_agreement` is the check that found a year-old replica, and CI cannot run it because building the database needs network and ~15 minutes. A small committed fixture database, or a CSV-only row-count assertion, would close the gap without the build |
-| 28 | One database access path | **Vibe** | After item 26. `classify_footnote_occasions.py` and `fetch_and_export_bellboard.py` use stdlib `sqlite3` while ingestion uses `db.py`/libsql — and sqlite3 accepts SQL that libSQL rejects, so a script tested one way is not tested for the other. `db.py`'s docstring already explains why this matters |
-| 30 | Landing page, and one nav for the whole site | **Claude Code** | **Done.** From Gemini's PR #20. The nav bar is now styled in `site_chrome.py` and nowhere else, and `verify_chrome.py` fails any template or builder that declares a nav rule — see the note below on why the first version of that module was only half a fix. The landing page is rebuilt in the site's own idiom, with a hero drawn from the corpus |
-| 31 | The rest of the page CSS is still copied eleven times | **Gemini** | **Done.** Base design tokens, typography, `.wrap` (1200px), `.eyebrow`, `header`, `h1`, `.figures` and `section` rules consolidated into `site_chrome.py` (`BASE_CSS`), enforced across all 13 pages by `verify_chrome.py` (`SHARED_SELECTORS`), and removed from all templates/builders |
-| 9 | Ringer identity across decades | Gemini | **Done — moved out of Blocked.** Delivered as PR #22 and merged in `ff1b67d`: 70,032 raw names over the full 2012–24 corpus resolved to **56,340** canonical entities, with a middle-initial anti-conflation guard that resplit 1,898 clusters and dropped the largest from 9 names to 7. Accuracy is still **not measured** — that remains the open half — but the resplit doubles as a robustness test, and the careers finding is unchanged by it to three decimals, which is on `docs/careers.html` |
-| 32 | `invention.html` is the only page that phones out | **Gemini** | **Next for Gemini.** The composition visualiser loads `vis-network` from `unpkg.com`. Every other page on this site is a single self-contained file with no external requests, which is stated in the README and is the reason the site works offline, in an archive, and behind a proxy. **This is not hypothetical — it already fails.** Loaded in Chromium in the build environment, the request returns `ERR_CONNECTION_RESET`, `vis` is undefined, and no graph is drawn: the prose, the nav and the compositions list render, and the thing the page exists for does not. It is the only failed request and the only console error across all thirteen pages, in both themes at both widths. A public visitor on a permissive network probably does see the graph — the point is that whether this page works is now a property of someone else's CDN and the reader's network, which is true of nothing else here. Either vendor the library into the page or draw the graph with the same inline-SVG approach the other twelve use. Whichever, the page should also say something when the library is missing rather than leaving a blank |
-| 33 | CI does not run on a push to `main` | **Claude Code** | **Done.** `pr-checks.yml` triggered on pull requests only, so a direct push skips `check_branch_safety.py`, the compile step, the schema and query parse, and the credential scan. A direct push then landed `build_invention_page.py` with `from scripts.site_chrome import ...`, which cannot resolve under `python scripts/<name>.py` — `rebuild_all.py` died at step 5 and the committed page could not be regenerated by its own documented command. The compile step would have caught it. It now also runs `on: push: branches: [main]`; `branch-safety` is skipped there, since there is no branch to compare against main when the push IS main |
-| 34 | Three large artefacts committed at the repository root | **Claude Code** | Mine, pending a decision. `temp.js` (1.2 MB) and `data/search_results.json` (1.2 MB) are near-duplicates of each other, and `docs/invention.html` embeds the same payload a third time; `test.py` is empty; `screenshot.png` and `screenshot2.png` sit at the root. `.git` is now 149 MB. Nothing has been deleted — see lesson 19, commit the recipe not the output, and `export_compositions.py` is the recipe |
-| 29 | `scratch/` is mistakable for the real pipeline | **Claude Code** | **Done.** All five deleted — throwaways superseded by `verify_corpus.py` and the recorded queries, and one (`patch.py`) hand-edited a page's nav bar, which is exactly what `site_chrome.py` exists to prevent and would now fail `verify_chrome.py`. `scratch/` is gitignored, so future ones stay untracked |
+| R-3 | Footnote occasion classification (option D) | **Gemini** | **Dataset landed and now measured at 75.5% (item 19)** — `data/footnote_occasions.csv`, 337,946 rows, 11 classes with `subject_type`. Merged as an explicitly unvalidated candidate |
+| R-19 | Measure the occasion classifier | **Gemini** | **Done** — PR #14, `docs/footnote_occasion_accuracy.md`. A genuinely independent 400-footnote oracle: **overall accuracy 75.5%**, and every per-class figure reproduced exactly on merge. `civic` precision is 38.8%, confirming the royal-death patterns swallow memorial and funeral. Open: the oracle itself is ~93% accurate and systematically mislabels terse milestone forms |
+| R-7 | Corpus integrity checker | Vibe | **Merged** 86a00c3 — PR #10, four changes on merge. 49 checks, exits non-zero, negative-tested. Found two live defects on its first run: 25,030 committed flag rows never loaded, and the replica a year behind the CSVs |
+| R-20 | Load CompLib in full | Vibe | **Next for Vibe** — 86,040 compositions at 25/page is ~3,442 requests; the loader caches, so it is a long job not a risky one |
+| R-16 | Spliced ellipsis expansion | Claude Code | **Done as far as it honestly goes** — 69.7%, two bugs fixed; the remainder needs a tuned threshold. See Held |
+| R-21 | Practice night: Dove's claim vs BellBoard's record | **Gemini** | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html`. 43.9% of 1,054 towers ring most on their stated night Mon–Fri, against 20.0% by chance; 27.3% Mon–Sat. Excluding Saturday is what makes the signal visible. Merged with every figure re-derived from the recorded query |
+| R-22 | A ringing career, from `performance_ringers.bell` | **Vibe** | **Done** — PR #19, `docs/careers.html` and `docs/ringing_careers.md`. **The folk progression is not there.** Mean normalised bell position 0.551 early career, 0.547 late: no upward drift — and no settling either, the median ringer's range across a career is 0.889 of the ring. Every figure reproduced exactly on merge. One correction: "72.5% conduct a peal" was 72.5% conducting *anything*; peals are 19.8% and a median wait of 37 rather than 11. The result is unchanged by PR #22 resplitting 1,898 identity clusters, which is now stated on the page. Three near-identical PRs were submitted (#17, #18, #19). **Open half, both taken from #18, which did them better:** a most-used-bell share as a direct specialisation measure, and attrition at a fixed horizon from each ringer's own first appearance rather than against one calendar line — a fixed 2020 line gives a 2013 cohort seven years to disappear and a 2019 cohort one, so part of the trend down that column is the construction |
+| R-23 | Quarter ringers vs peal ringers — are they two populations? | **Claude Code** | **Done** — `docs/two_populations.md`. **No.** A single steep decay, median peal share 3.0%, no second mode; same for towers; no growth with experience. 72% of active ringers have rung a peal. The framing had to change first: ordinary service ringing is not in the corpus at all |
+| R-24 | Conductor speed, controlled for bell weight | **Claude Code** | Landed as `queries/findings/conductor_speed_signature.sql` from Gemini's `feature/data-insights`, bug fixed. Between-conductor variation is **half** within-conductor variation. Open half: separate band, tower and method from the conductor |
+| R-25 | Normalise the free-text `method` column for regional traditions | **Gemini** | **Done** — PR #21, `docs/regional_traditions.md`. **The practice is Cornwall's; only the name is Devon's.** A quarter of everything Cornwall reports — 25.45% — is call changes, 3.3× the next county; Devon is fourth at 5.37%. Merged with three corrections: the 400-row "hand-labelled" oracle was bootstrapped from the classifier and disagreed with it on **1 row in 400**, so its F1 = 1.00 measured nothing (replaced with 200 genuinely independent labels, 98.5%); the denominator divided by the national total, which ranks counties by how much they report rather than by tradition, and correcting it *reversed* the tolling result — Northamptonshire, not Lincolnshire; and the recorded SQL joined a table that existed nowhere, so it could not be run at all |
+| R-26 | A real test suite | **Vibe** | From the Cursor audit (PR #16). There is no pytest suite at all: `notation.py` is validated by a 99.7% agreement figure with no test file, the resolvers have an oracle that CI never runs, and the page builders have no golden-file test. Start with `notation.py` — it is pure, deterministic, and the library's own `lead_head` is the oracle |
+| R-27 | Make CI able to catch a stale replica | **Claude Code** | Mine. `check_csv_agreement` is the check that found a year-old replica, and CI cannot run it because building the database needs network and ~15 minutes. A small committed fixture database, or a CSV-only row-count assertion, would close the gap without the build |
+| R-28 | One database access path | **Vibe** | After item 26. `classify_footnote_occasions.py` and `fetch_and_export_bellboard.py` use stdlib `sqlite3` while ingestion uses `db.py`/libsql — and sqlite3 accepts SQL that libSQL rejects, so a script tested one way is not tested for the other. `db.py`'s docstring already explains why this matters |
+| R-30 | Landing page, and one nav for the whole site | **Claude Code** | **Done.** From Gemini's PR #20. The nav bar is now styled in `site_chrome.py` and nowhere else, and `verify_chrome.py` fails any template or builder that declares a nav rule — see the note below on why the first version of that module was only half a fix. The landing page is rebuilt in the site's own idiom, with a hero drawn from the corpus |
+| R-31 | The rest of the page CSS is still copied eleven times | **Gemini** | **Done.** Base design tokens, typography, `.wrap` (1200px), `.eyebrow`, `header`, `h1`, `.figures` and `section` rules consolidated into `site_chrome.py` (`BASE_CSS`), enforced across all 13 pages by `verify_chrome.py` (`SHARED_SELECTORS`), and removed from all templates/builders |
+| R-9 | Ringer identity across decades | Gemini | **Done — moved out of Blocked.** Delivered as PR #22 and merged in `ff1b67d`: 70,032 raw names over the full 2012–24 corpus resolved to **56,340** canonical entities, with a middle-initial anti-conflation guard that resplit 1,898 clusters and dropped the largest from 9 names to 7. Accuracy is still **not measured** — that remains the open half — but the resplit doubles as a robustness test, and the careers finding is unchanged by it to three decimals, which is on `docs/careers.html` |
+| R-32 | `invention.html` is the only page that phones out | **Gemini** | **Next for Gemini.** The composition visualiser loads `vis-network` from `unpkg.com`. Every other page on this site is a single self-contained file with no external requests, which is stated in the README and is the reason the site works offline, in an archive, and behind a proxy. **This is not hypothetical — it already fails.** Loaded in Chromium in the build environment, the request returns `ERR_CONNECTION_RESET`, `vis` is undefined, and no graph is drawn: the prose, the nav and the compositions list render, and the thing the page exists for does not. It is the only failed request and the only console error across all thirteen pages, in both themes at both widths. A public visitor on a permissive network probably does see the graph — the point is that whether this page works is now a property of someone else's CDN and the reader's network, which is true of nothing else here. Either vendor the library into the page or draw the graph with the same inline-SVG approach the other twelve use. Whichever, the page should also say something when the library is missing rather than leaving a blank |
+| R-33 | CI does not run on a push to `main` | **Claude Code** | **Done.** `pr-checks.yml` triggered on pull requests only, so a direct push skips `check_branch_safety.py`, the compile step, the schema and query parse, and the credential scan. A direct push then landed `build_invention_page.py` with `from scripts.site_chrome import ...`, which cannot resolve under `python scripts/<name>.py` — `rebuild_all.py` died at step 5 and the committed page could not be regenerated by its own documented command. The compile step would have caught it. It now also runs `on: push: branches: [main]`; `branch-safety` is skipped there, since there is no branch to compare against main when the push IS main |
+| R-34 | Three large artefacts committed at the repository root | **Claude Code** | Mine, pending a decision. `temp.js` (1.2 MB) and `data/search_results.json` (1.2 MB) are near-duplicates of each other, and `docs/invention.html` embeds the same payload a third time; `test.py` is empty; `screenshot.png` and `screenshot2.png` sit at the root. `.git` is now 149 MB. Nothing has been deleted — see lesson 19, commit the recipe not the output, and `export_compositions.py` is the recipe |
+| R-29 | `scratch/` is mistakable for the real pipeline | **Claude Code** | **Done.** All five deleted — throwaways superseded by `verify_corpus.py` and the recorded queries, and one (`patch.py`) hand-edited a page's nav bar, which is exactly what `site_chrome.py` exists to prevent and would now fail `verify_chrome.py`. `scratch/` is gitignored, so future ones stay untracked |
 
 ### Done
 
 | # | Item | Owner | Where |
 | --- | --- | --- | --- |
-| 1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
-| 5 | Ring-level join semantics | Gemini (was Vibe's) | **Merged** — `schema/007_init_tower_views.sql`. Verified against the decisions/001 acceptance test |
-| 6 | CompLib ingestion | Vibe | **Merged** 4d84c62 — PR #6, no amendments needed. 86,040 compositions available; the `m + methodid` join verified 8/8 |
-| 10 | BellBoard historical backfill | Gemini | **Complete** — PRs #8, #9 and the 2012–2017 push. Thirteen years, 2012–2024, **293,471 performances**. Twelve years match `search.php` to the record; 2022 is one short of a count taken today, which is retrospective upstream growth, not a gate failure |
-| 2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
-
-| 4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
-| 8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
-| 13 | Performance → method linkage | Claude Code | `schema/005` — 77.9% of performances linked, 379,176 links (2012–24 corpus) |
-| 16 | Spliced ellipsis expansion | Claude Code | Two resolver bugs fixed; oracle 68.0% → 69.7% |
-| 14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
-| 17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
-| 18 | Document the orphan `dove_tower_id` values | Claude Code | `decisions/001` |
+| R-1 | Backfill completeness gate | Vibe | **Merged** 25e2677 — PR #5, three fixes applied on merge |
+| R-5 | Ring-level join semantics | Gemini (was Vibe's) | **Merged** — `schema/007_init_tower_views.sql`. Verified against the decisions/001 acceptance test |
+| R-6 | CompLib ingestion | Vibe | **Merged** 4d84c62 — PR #6, no amendments needed. 86,040 compositions available; the `m + methodid` join verified 8/8 |
+| R-10 | Run the backfill to completion | Gemini | **Complete** — PRs #8, #9 and the 2012–2017 push. Thirteen years, 2012–2024, **293,471 performances**. Twelve years match `search.php` to the record; 2022 is one short of a count taken today, which is retrospective upstream growth, not a gate failure |
+| R-2 | Blue Line Atlas (option A) | Claude Code | `docs/methods.html` |
+| R-4 | Rhythm of Ringing (option B) | Claude Code | `docs/rhythm.html` — corrected two IDEAS figures |
+| R-8a | Method invention timeline (option C, first half) | Claude Code | `docs/invention.html` |
+| R-13 | Performance → method linkage | Claude Code | `schema/005` — 77.9% of performances linked, 379,176 links (2012–24 corpus) |
+| R-16 | Spliced ellipsis expansion | Claude Code | Two resolver bugs fixed; oracle 68.0% → 69.7% |
+| R-14 | Vendor the CDN libraries | Claude Code | `docs/vendor/` — fixed two live bugs it was hiding |
+| R-17 | Provenance and caveats on every page | Claude Code | `scripts/site_chrome.py`, checked by `scripts/verify_chrome.py` |
+| R-18 | Document the orphan `dove_tower_id` values | Claude Code | `decisions/001` |
 
 ## Blocked, and on what
 
 | # | Item | Owner | Blocked on |
 | --- | --- | --- | --- |
-| 10 | Run the backfill to completion | Gemini | **Done** — 2012–2024 committed and verified. Only *production* loading remains, and that waits for the freeze on **2026-09-01** |
-| 8b | Method survival — adoption over time (option C, second half) | Claude Code | Item 10. Currency is published on `invention.html`; survival needs adoption history |
-| 15 | Felstead — 360,000 peals back to the 1800s | Claude Code | **A reply from the CCCBR.** Enquiry sent 2026-08-15; `docs/felstead-enquiry.md`. The join is verified and the job is ~5,600 requests, so this starts the day there is an answer |
-| 12 | Consolidate data-quality caveats | Claude Code | Item 7, so the doc and the check agree |
+| R-10 | Run the backfill to completion | Gemini | **Done** — 2012–2024 committed and verified. Only *production* loading remains, and that waits for the freeze on **2026-09-01** |
+| R-8b | Method survival — adoption over time (option C, second half) | Claude Code | Item 10. Currency is published on `invention.html`; survival needs adoption history |
+| R-15 | Felstead — 360,000 peals back to the 1800s | Claude Code | **A reply from the CCCBR.** Enquiry sent 2026-08-15; `docs/felstead-enquiry.md`. The join is verified and the job is ~5,600 requests, so this starts the day there is an answer |
+| R-12 | Consolidate data-quality caveats | Claude Code | Item 7, so the doc and the check agree |
 
 ## Held
 
 | # | Item | Why held |
 | --- | --- | --- |
-| 11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly. The r/bellringing post may produce one |
-| 16 | Spliced ellipsis expansion *(was "abbreviation expansion")* | **Worked on 2026-08-15 and stopped again, one rung further along.** The name was wrong: measuring the leftovers rather than guessing showed abbreviations are 2% of the shortfall. The two real causes were a bug (nine Little Bob methods absent from the index) and an *ellipsis* — "St Clement's" for "St Clement's College", 471 rows. The bug is fixed; the ellipsis needs prefix matching with a threshold, which is tuning, which is the line. 1,487 rows remain one method short, recorded with their counts |
+| R-11 | Acoustic Landscape (option E) | Needs a ringer's review; getting bell acoustics wrong in public would be spotted instantly. The r/bellringing post may produce one |
+| R-16 | Spliced ellipsis expansion *(was "abbreviation expansion")* | **Worked on 2026-08-15 and stopped again, one rung further along.** The name was wrong: measuring the leftovers rather than guessing showed abbreviations are 2% of the shortfall. The two real causes were a bug (nine Little Bob methods absent from the index) and an *ellipsis* — "St Clement's" for "St Clement's College", 471 rows. The bug is fixed; the ellipsis needs prefix matching with a threshold, which is tuning, which is the line. 1,487 rows remain one method short, recorded with their counts |
 
 ## Item 19 — not a new task, the missing half of an old one
 
@@ -168,7 +190,7 @@ itself: place notation for every method, and dates for every performance in the
 window. Neither claim depends on the backfill. The footnote work is the same —
 337,946 footnotes are all there is, and classifying them does not require more.
 
-**What item 4 turned up, and why it changes how the rest should be read.** The
+**What R-4 turned up, and why it changes how the rest should be read.** The
 Rhythm page was queued as the cheap one — "the findings are already in hand".
 Two of the three were wrong. September was not the busiest ringing month for any
 reason to do with September: 49% of its performances fall in the eleven days

@@ -60,9 +60,16 @@ jobs:
       - name: Every script compiles
         run: python3 -m compileall -q scripts/
 
-      - name: Nav and footer are identical on all nine pages
+      - name: Nav, footer and shared CSS are identical on every page
         # Reads docs/*.html and scripts/site_chrome.py only -- no database.
         run: python3 scripts/verify_chrome.py
+
+      - name: Markdown tables render, and item IDs are unambiguous
+        # A blank line inside a table splits it, and the rows below render as a
+        # second headerless table -- invisible in the source, obvious on the
+        # rendered page. Also asserts no ID names two different items, which is
+        # how three roadmaps numbering from 1 produced three different "item 9".
+        run: python3 scripts/verify_docs.py
 
       - name: Every schema file and recorded query parses
         # Applies the schema to an empty in-memory database and prepares each

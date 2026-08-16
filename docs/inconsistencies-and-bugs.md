@@ -32,7 +32,7 @@
 2. **`docs\tasks\gemini-roadmap.md` header table** says Task 6 backfill is *"Next: 2017 backwards to 2012"* — backfill is finished per `ROADMAP.md`, `SOURCES.md`, and `README` Status.
    ✅ **Fixed.** Table row now reads Done.
 
-3. **Same file, Task 3 section** still marked *"blocked"* on thin data, but the summary table says **Done** and `ROADMAP.md` item 9 says ringer identity is **unblocked**.
+3. **Same file, Task 3 section** still marked *"blocked"* on thin data, but the summary table says **Done** and `ROADMAP.md` R-9 says ringer identity is **unblocked**. *(Resolved: G-3 and R-9 are both Done; R-9 moved out of Blocked.)*
    ✅ **Fixed.** Section heading now reads *(done — candidate dataset delivered)*.
 
 4. **Same file, Task 1 section** still titled *"active"* though the table marks it Done.4. **Same file, Task 1 section** still titled *"active"* though the table marks it Done.
@@ -199,7 +199,7 @@ There is no pytest/unittest suite in the repo. Testing is ad hoc and operational
 - **Caveats scattered:** Roadmap item 12: consolidate across `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, schema headers, commit messages. Partially addressed by `site_chrome.py` but not complete.
 - **Rhythm page window lag:** Still 2021–24 while corpus is 2012–24; widening changes anomaly detection materially (`AGENTS.md` queue item #1).
 - **Production frozen:** Turso load of full 2012–24 backfill blocked until 2026-09-01; local replica is the only trustworthy build path.
-- **CompLib not fully loaded:** Schema exists; 86k compositions available but full ingestion is Vibe roadmap item 20. Three sample JSON pages in `data/complib/` are untracked scratch.
+- **CompLib not fully loaded:** Schema exists; 86k compositions available but full ingestion is R-20. Three sample JSON pages in `data/complib/` are untracked scratch.
 - **Method extension lineage incomplete:** `extension_construction` populated for only 1,851 of 25,055 methods.
 - **Performance→method linkage gaps:** 22.1% unresolved; spliced ellipsis expansion stuck at 69.7% (1,487 rows one method short).
 - **Footnote classifier unvalidated:** Dataset merged without precision/recall oracle; occasions page uses keyword patterns, classifier CSV unused for measurement.

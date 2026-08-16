@@ -80,6 +80,8 @@ def steps(db, skip_inference):
         # the pages were just built against that should not have been trusted.
         ("Verify chrome: same nav and footer on all thirteen, one source for its CSS",
          ["verify_chrome.py"], "pages"),
+        ("Verify docs: tables render and item IDs name one item each",
+         ["verify_docs.py"], "pages"),
         ("Verify corpus integrity",
          ["verify_corpus.py", "--local-db", db], "pages"),
     ]
