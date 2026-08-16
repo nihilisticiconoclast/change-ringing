@@ -3,9 +3,18 @@
 Builds the 'invention.html' interactive composition visualizer.
 """
 
+import sys
 import json
 from pathlib import Path
-from scripts.site_chrome import apply_chrome
+
+# `from scripts.site_chrome import ...` only resolves when the repository root is
+# on sys.path -- i.e. under `python -m scripts.build_invention_page`. Every other
+# builder here is invoked as `python scripts/<name>.py`, which puts scripts/ on
+# the path and not the root, so that form raised ModuleNotFoundError and
+# rebuild_all.py stopped at this step. This shim works under both invocations,
+# and matches the convention the other twelve builders already use.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from site_chrome import apply_chrome  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 JSON_PATH = ROOT / "data" / "search_results.json"
