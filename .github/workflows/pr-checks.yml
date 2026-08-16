@@ -95,6 +95,13 @@ jobs:
                   conn.executescript(f.read_text())
               except sqlite3.Error as e:
                   bad.append(f"{f}: {e}")
+          # One recorded query (regional_traditions_normalised.sql) joins a TEMP
+          # table that scripts/classify_regional_traditions.py creates at runtime
+          # from a CSV -- it is not in the schema by design. Pre-create its shape
+          # here so EXPLAIN can validate the query's syntax and column references,
+          # the same way the script does before running it for real.
+          conn.execute('CREATE TEMP TABLE regional_traditions_classified '
+                       '(perf_id INTEGER, method_text TEXT, label TEXT)')
           for f in sorted(pathlib.Path("queries").rglob("*.sql")):
               for stmt in sqlfile.statements(f):
                   try:
