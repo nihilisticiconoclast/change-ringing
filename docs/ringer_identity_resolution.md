@@ -11,11 +11,11 @@
 ## 1. Problem Overview & Rationale
 
 Across the **293,471 historical performances** in the BellBoard corpus (2012–2024), ringers appear under diverse naming variations:
-1. **Initials vs Full Given Names**: e.g., `J A Boulton` vs `James A Boulton` vs `James Boulton`.
-2. **Common English Diminutives / Nicknames**: e.g., `Susan M Sawyer` (1,729 appearances) vs `Sue Sawyer` (2,724 appearances), `Mike Seagrave` vs `Michael J Seagrave`.
+1. **Initials vs Full Given Names**: e.g., `J A Larkspur` vs `James A Larkspur` vs `James Larkspur`.
+2. **Common English Diminutives / Nicknames**: e.g., `Susan M Quillfeather` vs `Sue Quillfeather`, `Mike Mallowby` vs `Michael J Mallowby`.
 3. **Punctuation & Character Encoding**: e.g., `Björn E Bradstock` vs `Bjrn Bradstock`.
 4. **The Ambiguous Pivot Bridge Trap**:
-   - In entity resolution, an initial or un-initialized variant (like `Susan Sawyer` or `Ian Campbell`) can erroneously bridge distinct people (`Susan M Sawyer` vs `Susan E Sawyer`, or `Ian G Campbell` vs `Ian L C Campbell`).
+   - In entity resolution, an initial or un-initialized variant (like `Susan Quillfeather` or `Ian Netherfold`) can erroneously bridge distinct people (`Susan M Quillfeather` vs `Susan E Quillfeather`, or `Ian G Netherfold` vs `Ian L C Netherfold`).
    - The engine implements strict **Anti-Conflation Guards**:
      - **First-Name Conflict Guard**: An ambiguous initial is prevented from bridging mutually incompatible full first names into the same cluster.
      - **Middle-Initial Contradiction Guard**: Clusters with contradictory middle initials (e.g. `['M']` vs `['E']` or `['G']` vs `['L']`) are strictly forbidden from merging.
@@ -62,26 +62,43 @@ Measured on the rebuilt replica, 2026-08-15.
 
 ---
 
-## 4. Top Resolved Multi-Variant Ringer Clusters
+## 4. The variant topologies the engine resolves
 
-| Canonical Ringer ID | Canonical Name | Unified Aliases | Total Peals / Quarters | Active Years |
-| --- | --- | --- | --- | --- |
-| `RINGER_000001` | **Susan M Sawyer** | `Susan M Sawyer` (1,729), `Sue Sawyer` (2,724), `Susan Sawyer` (53), `Sue M Sawyer` (6) | **4,512** | 2012–2024 |
-| `RINGER_000002` | **Claire C Nicholson** | `Claire C Nicholson` (3,890), `Claire Nicholson` (145) | **4,035** | 2012–2024 |
-| `RINGER_000005` | **Louise G Pink** | `Louise G Pink` (2,927), `Louise Pink` (485) | **3,412** | 2012–2024 |
-| `RINGER_000006` | **Alan D Pink** | `Alan D Pink` (3,036), `Alan Pink` (294), `Alan D, Pink` (1) | **3,331** | 2012–2024 |
-| `RINGER_000007` | **Janet C Garnett** | `Janet Garnett` (2,939), `Janet C Garnett` (203) | **3,142** | 2012–2024 |
-| `RINGER_000008` | **Adrian C Malton** | `Adrian Malton` (2,804), `Adrian C Malton` (292) | **3,096** | 2012–2024 |
-| `RINGER_000010` | **Björn E Bradstock** | `Björn E Bradstock` (2,907), `Björn Bradstock` (88) | **2,995** | 2012–2024 |
-| `RINGER_000011` | **David A C Matthews** | `David A C Matthews` (2,651), `David Matthews` (185), `Dave Matthews` (112) | **2,948** | 2012–2024 |
-| `RINGER_000012` | **Reg C Hitchings** | `Reg Hitchings` (2,544), `Reg C Hitchings` (25) | **2,569** | 2012–2024 |
-| `RINGER_000013` | **Andrew H Ball** | `Andrew H Ball` (2,453), `Andrew Ball` (48) | **2,501** | 2012–2024 |
-| `RINGER_000017` | **Simon A Rudd** | `Simon A Rudd` (2,343), `Simon Rudd` (57) | **2,400** | 2012–2024 |
-| `RINGER_000021` | **Jack E Page** | `Jack E Page` (1,930), `Jack Page` (383) | **2,313** | 2012–2024 |
-| `RINGER_000022` | **Simon D G Webb** | `Simon D G Webb` (1,926), `Simon Webb` (370) | **2,296** | 2012–2024 |
-| `RINGER_000023` | **Sandra M Titherly** | `Sandra M Titherly` (1,935), `Sandra Titherly` (331) | **2,266** | 2012–2024 |
+What this table is for is the *shapes* of name variation the clustering handles.
+It does not need real people to show that, and it should not use them — see the
+note below.
 
----
+| Archetype | Variant topology resolved | Cluster size |
+| --- | --- | --- |
+| Diminutive + middle initial | `Sue Quillfeather`, `Susan Quillfeather`, `Susan M Quillfeather`, `Sue M Quillfeather` | 4 |
+| Base vs initialised | `Claire Brambleworth`, `Claire C Brambleworth` | 2 |
+| Initialised variant is the minority form | `Janet Rooksby-Vane`, `Janet C Rooksby-Vane` | 2 |
+| Punctuation typo absorbed | `Alan Thistlewood`, `Alan D Thistlewood`, `Alan D, Thistlewood` | 3 |
+| Diacritic normalisation | `Björn Wrenfield`, `Bjorn Wrenfield`, `Bjrn Wrenfield` | 3 |
+| Multi-middle initial + nickname | `David Oakhampstead`, `Dave Oakhampstead`, `David A C Oakhampstead` | 3 |
+| Nickname is the primary form | `Reg Pellworthy`, `Reg C Pellworthy` | 2 |
+| **Blocked** — first names incompatible | `D J Grindlestone` will NOT bridge `Derek J Grindlestone` and `Dylan J Grindlestone` | — |
+| **Blocked** — middle initials contradict | `Ian Ashenhurst` will NOT bridge `Ian G Ashenhurst` and `Ian L C Ashenhurst` | — |
+
+**These names are invented.** Every topology above is one the engine really
+resolves, and the two blocked cases are the anti-conflation guards working, but
+the surnames are fabricated and the counts and date spans are gone.
+
+An earlier version of this table listed fourteen real ringers with their exact
+appearance totals and active years. Replacing the surnames with archetype labels
+— which is what the audit that produced this section did — is not enough, and it
+is worth being precise about why. The row still carried a forename, an exact
+appearance count and a date span, and `data/ringer_identity_candidates.csv` is in
+this repository. Searching that CSV for a ringer whose forename is *Susan* and
+whose appearances total *4,512* returns **exactly one person**. So does *Reg* at
+*2,569*. The redaction removed the surname and left the key.
+
+This project's rule elsewhere is aggregate-only, with no searchable index of
+named individuals. That rule has to bind on what a row makes *recoverable*, not
+on whether a surname is printed. `scripts/audit_privacy_and_licences.py` now
+tests exactly that: for every number in a documentation table, it asks whether
+that number plus a name-shaped token in the same row identifies a unique person
+in the identity CSV.
 
 ## 5. Usage in Downstream Analytics
 
@@ -96,7 +113,7 @@ ringer_map = dict(zip(ringers_df["raw_name"], ringers_df["canonical_name"]))
 id_map = dict(zip(ringers_df["raw_name"], ringers_df["canonical_ringer_id"]))
 
 # Query canonical ringer
-raw_input = "Sue Sawyer"
-canonical = ringer_map.get(raw_input, raw_input)     # -> "Susan M Sawyer"
+raw_input = "Sue Quillfeather"
+canonical = ringer_map.get(raw_input, raw_input)     # -> "Susan M Quillfeather"
 canonical_id = id_map.get(raw_input, "UNKNOWN")      # -> "RINGER_000001"
 ```
