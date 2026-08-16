@@ -11,6 +11,7 @@ carries its own licence, recorded below.
 | `three-0.160.0.min.js` | [three.js](https://threejs.org) | 0.160.0 | MIT | `170c6789…ee1d49fa` |
 | `d3-7.9.0.min.js` | [D3](https://d3js.org) | 7.9.0 | ISC | `f2094bbf…ceb86539` |
 | `chart-4.5.1.min.js` | [Chart.js](https://www.chartjs.org) | 4.5.1 | MIT | `48444a82…05c9f54a` |
+| `vis-network-10.1.1.min.js` | [vis-network](https://visjs.github.io/vis-network/) | 10.1.1 | MIT / Apache-2.0 | `d844963a…be5faf2fe` |
 
 Verify with `sha256sum docs/vendor/*.js`.
 
