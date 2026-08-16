@@ -113,8 +113,11 @@ attribution is owed if any output of this project is published.
 - Ingested via `scripts/ingest_complib.py` into the tables defined in
   `schema/006_init_complib.sql` (`compositions`, `composition_methods`, and
   view `v_composition_methods`).
-- Coverage: 86,039 compositions (measured 2026-08-15 via the search
-  endpoint's `count`). The loader walks `/composition/search` page by page.
+- Coverage: **86,054 compositions loaded in full** (measured 2026-08-16).
+  The loader walked all 3,443 pages of `/composition/search` at `perpage=25`,
+  and the loaded row count matched the API's `count` exactly. The corpus grows
+  over time -- 86,039 when first measured on 2026-08-15, 86,054 on the full run
+  a day later -- so any total here is true of a moment.
 - Licence: none stated beyond site terms (`https://complib.org/terms`).
   CompLib is a community-maintained, freely-browsable public database; treat
   this corpus as public data with attribution to Composition Library if any
@@ -144,15 +147,16 @@ attribution is owed if any output of this project is published.
   and publishes no rate-limit headers. The loader assumes it throttles
   until shown otherwise, as the brief required.
 
-### CompLib API, as measured 2026-08-15
+### CompLib API, as measured 2026-08-15 (full walk 2026-08-16)
 
 - `GET https://api.complib.org/composition/search?page=N&perpage=25` returns
   `{count, page, perpage, compositions[]}`. **`count` was 86,039 when Vibe
-  measured and 86,040 an hour later** -- the corpus grows, so treat any total
-  here as true of a moment.
+  first measured and 86,040 an hour later; the full walk on 2026-08-16 loaded
+  86,054 across 3,443 pages** -- the corpus grows, so treat any total here as
+  true of a moment. The loaded row count matched `count` to the record.
 - **`perpage` is capped at 25 and the spec does not say so.** Anything larger
   returns HTTP 400 with the body `perpage maximum 25`. A full walk is therefore
-  ~3,442 pages, not the handful a larger page size would allow.
+  3,443 pages, not the handful a larger page size would allow.
 - **Paging is 1-indexed.** `page=0` returns HTTP 500, not an empty result.
 - `methodDefinitions[]` carries free-text method titles and place notation, **not**
   a CCCBR identifier. No fuzzy matching is attempted: the text is loaded and
