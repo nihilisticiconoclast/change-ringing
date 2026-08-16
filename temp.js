@@ -1,453 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>First Rung: Composition Visualizer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <style>
-    :root {
-      --ground: #EFEDE7; --surface: #F7F6F2; --surface-2: #E4E2DA;
-      --ink: #1C1E1C; --ink-2: #4A4C48; --ink-3: #7C7E78;
-      --rule: #CFCCC2; --bronze: #8A5F22; --accent: #38bdf8;
-      --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --ground: #131312; --surface: #1a1a19; --surface-2: #242422;
-        --ink: #F0EDE6; --ink-2: #B5B1A7; --ink-3: #85817A;
-        --rule: #302F2C; --bronze: #C9974A; --accent: #38bdf8;
-      }
-    }
-    :root[data-theme="dark"] {
-      --ground: #131312; --surface: #1a1a19; --surface-2: #242422;
-      --ink: #F0EDE6; --ink-2: #B5B1A7; --ink-3: #85817A;
-      --rule: #302F2C; --bronze: #C9974A; --accent: #38bdf8;
-    }
-    body {
-      margin: 0; padding: 0;
-      font-family: var(--serif);
-      background: var(--ground);
-      color: var(--ink);
-      line-height: 1.62;
-      -webkit-font-smoothing: antialiased;
-    }
-    
-    /* Typography from main site */
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
-    .eyebrow {
-      font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--bronze); margin: 0 0 14px;
-    }
-    header { padding: 64px 0 44px; }
-    h1 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.04; font-weight: 400; letter-spacing: -.015em; }
-    h1 em { font-style: italic; color: var(--bronze); }
-    .standfirst { margin-top: 20px; font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
-    
-    .explainer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
-      margin-top: 40px;
-      border-top: 1px solid var(--rule);
-      padding-top: 40px;
-      margin-bottom: 40px;
-    }
-    .explainer-grid h4 { font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; color: var(--bronze); }
-    .explainer-grid p { font-size: 0.95rem; color: var(--ink-2); margin: 0; font-family: system-ui, -apple-system, sans-serif; }
 
-    /* Visualizer App Layout */
-    .layout {
-      display: flex;
-      height: 900px;
-      max-width: 1200px;
-      margin: 0 auto 64px auto;
-      border: 1px solid var(--rule);
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .sidebar {
-      width: 350px;
-      border-right: 1px solid var(--rule);
-      overflow-y: auto;
-      background: var(--surface);
-    }
-    .main-view {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      min-width: 0;
-    }
-    
-    #blank-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 32px;
-      color: var(--ink-2);
-    }
-    #blank-state h3 { color: var(--bronze); font-weight: 500; font-size: 1.5rem; margin-bottom: 8px; }
-    
-    #viz-container {
-      flex: 1;
-      display: none;
-      flex-direction: column;
-      min-width: 0;
-    }
-    
-    #mynetwork-wrapper {
-      flex: 1;
-      position: relative;
-      border-bottom: 1px solid var(--rule);
-    }
-    #mynetwork {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: var(--ground);
-    }
-    
-    .bottom-panels {
-      height: 380px;
-      display: flex;
-      background: var(--surface);
-      min-width: 0;
-    }
-    .text-panel {
-      width: 250px;
-      border-right: 1px solid var(--rule);
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-    .svg-panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-    .panel-header {
-      padding: 8px 16px;
-      border-bottom: 1px solid var(--rule);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--surface-2);
-      flex: none;
-    }
-    .panel-header h4 { margin: 0; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--bronze); }
-    .copy-btn {
-      background: transparent; border: 1px solid var(--rule); color: var(--ink); border-radius: 4px; cursor: pointer; font-size: 11px; padding: 2px 6px;
-    }
-    .copy-btn:hover { background: var(--rule); }
-    
-    #text-output {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    #text-output table { width: 100%; border-collapse: collapse; }
-    #text-output th, #text-output td { padding: 4px; text-align: left; border-bottom: 1px dashed var(--rule); }
-    #text-output th { color: var(--bronze); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: normal; }
-    
-    #svg-container {
-      flex: 1;
-      overflow: auto;
-      padding: 16px;
-    }
-    
-    .control-select {
-      background: var(--surface);
-      color: var(--ink);
-      border: 1px solid var(--rule);
-      border-radius: 4px;
-      padding: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      cursor: pointer;
-    }
-    .control-select:hover { border-color: var(--bronze); }
-    
-    #controls {
-      position: absolute;
-      top: 16px;
-      right: 24px;
-      z-index: 10;
-      display: flex;
-      gap: 8px;
-    }
-    
-    .play-btn {
-      background: var(--bronze);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .play-btn:hover { background: var(--bronze-soft, #B8873F); }
-    .comp-card {
-      padding: 16px;
-      border-bottom: 1px solid var(--rule);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .comp-card:hover { background: var(--surface-2); }
-    .comp-card.active { background: var(--surface-2); border-left: 4px solid var(--bronze); }
-    .comp-score { font-size: 1.2em; font-weight: bold; color: var(--bronze); }
-    .comp-meta { font-size: 0.85em; color: var(--ink-2); margin-top: 4px; }
-    .novel-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75em;
-      font-weight: bold;
-      background: #22c55e;
-      color: #000;
-      margin-left: 8px;
-    }
-    .not-novel-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75em;
-      font-weight: bold;
-      background: #64748b;
-      color: #fff;
-      margin-left: 8px;
-    }
-    .comp-calls {
-      margin-top: 8px;
-      font-family: var(--mono);
-      font-size: 0.85em;
-      word-wrap: break-word;
-      color: var(--ink-2);
-    }
-    .sidebar-header { padding: 16px; border-bottom: 1px solid var(--rule); }
-    .sidebar-header h2 { font-family: system-ui, -apple-system, sans-serif; margin: 0; font-size: 1.5em; font-weight: 500; color: var(--ink); }
-    .sidebar-header p { font-family: system-ui, -apple-system, sans-serif; margin: 8px 0 0; font-size: 0.9em; color: var(--ink-3); }
-  
-/* The last <section> on the typographic pages already draws a bottom rule, so
-   the footer's own top rule made a doubled line with a dead 56px band between
-   them. Suppress the section's, keep the footer's, and every page gets exactly
-   one separator whether or not it has sections at all. */
-section:last-of-type{border-bottom:none}
-.site-footer{border-top:1px solid var(--rule,rgba(255,255,255,.14));
-  margin-top:24px;padding:36px 24px 72px;font-size:14px;
-  color:var(--ink-3,#8b93a3);max-width:1200px;margin-left:auto;margin-right:auto}
-.site-map{list-style:none;margin:0 0 22px;padding:0;display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 28px}
-.site-map li{padding:5px 0;line-height:1.45}
-.site-map a{color:var(--bronze,#38bdf8);text-decoration:none;font-weight:500}
-.site-map a:hover{text-decoration:underline}
-.site-map a[aria-current="page"]{color:var(--ink-2,#e2e8f0);font-weight:600}
-.site-map a[aria-current="page"]::after{content:" — you are here";
-  font-size:11px;font-weight:400;opacity:.7}
-.site-map span{display:block;font-size:12.5px;opacity:.78}
-.site-note{max-width:78ch;margin:12px 0 0;font-size:13px;line-height:1.6}
-.site-note a{color:var(--bronze,#38bdf8)}
-.site-note code{font-size:.92em}
-
-/* ---- Navigation -------------------------------------------------------- */
-/* Collapsed at every width. See the module docstring for why. */
-.nav-bar{position:relative;z-index:100;background:var(--surface,#0f172a);
-  border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
-  font-family:var(--mono,ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace)}
-
-/* Off-screen rather than display:none -- display:none takes the checkbox out of
-   the tab order, which left the menu openable by pointer only. */
-.nav-toggle{position:absolute;opacity:0;width:1px;height:1px;margin:0}
-.nav-toggle:focus-visible ~ .nav-header .nav-toggle-label{
-  outline:2px solid var(--bronze,#38bdf8);outline-offset:5px}
-
-.nav-header{display:flex;justify-content:space-between;align-items:center;
-  gap:20px;height:52px;padding-inline:max(24px,(100% - 1200px)/2)}
-.nav-title{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-2,#e2e8f0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.nav-toggle-label{display:block;cursor:pointer;width:22px;height:14px;
-  position:relative;flex:none}
-.nav-toggle-label span{display:block;width:100%;height:1.5px;left:0;position:absolute;
-  background:var(--ink-2,#e2e8f0);transition:transform .22s ease,opacity .22s ease,top .22s ease}
-.nav-toggle-label span:nth-child(1){top:0}
-.nav-toggle-label span:nth-child(2){top:6.25px}
-.nav-toggle-label span:nth-child(3){top:12.5px}
-.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(1){
-  top:6.25px;transform:rotate(45deg)}
-.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(2){opacity:0}
-.nav-toggle:checked ~ .nav-header .nav-toggle-label span:nth-child(3){
-  top:6.25px;transform:rotate(-45deg)}
-
-/* The dropped panel. Full-bleed ground, contents on the 1200px column. */
-.nav-links{display:none;position:absolute;top:100%;left:0;right:0;
-  background:var(--surface,#0f172a);
-  border-bottom:1px solid var(--rule,rgba(255,255,255,.14));
-  box-shadow:0 14px 28px rgba(0,0,0,.10);
-  padding-block:14px 20px;padding-inline:max(24px,(100% - 1200px)/2);
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));column-gap:32px}
-.nav-toggle:checked ~ .nav-links{display:grid}
-.nav-links a{display:block;padding:9px 0;font-size:12px;letter-spacing:.08em;
-  text-transform:uppercase;text-decoration:none;color:var(--ink-2,#e2e8f0);
-  border-bottom:1px solid var(--rule,rgba(255,255,255,.10))}
-.nav-links a:hover{color:var(--ink,#fff)}
-.nav-links a.active{color:var(--bronze,#38bdf8);font-weight:600}
-.nav-links a.active::after{content:" ·";opacity:.7}
-.theme-btn{grid-column:1/-1;justify-self:start;margin-top:18px;
-  font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  background:var(--surface-2,rgba(255,255,255,.06));color:var(--ink-2,#e2e8f0);
-  border:1px solid var(--rule,rgba(255,255,255,.14));
-  padding:7px 13px;border-radius:2px;cursor:pointer}
-.theme-btn:hover{color:var(--ink,#fff);border-color:var(--bronze-soft,#38bdf8)}
-
-/* Overlay variant, for the full-screen 3-D pages. The bar is translucent over
-   the canvas; the dropped panel is NOT -- at .97 the page's own h1 was still
-   legible through the menu items behind it. */
-.nav-over{position:absolute;top:0;left:0;right:0;background:rgba(5,8,20,.9);
-  backdrop-filter:blur(12px)}
-.nav-over .nav-links{background:#070b18}
-</style>
-</head>
-<body>
-<nav class="nav-bar">
-  <input type="checkbox" id="nav-toggle" class="nav-toggle">
-  <div class="nav-header">
-    <span class="nav-title">The Change Ringing Corpus</span>
-    <label for="nav-toggle" class="nav-toggle-label" aria-label="Open navigation">
-      <span></span><span></span><span></span>
-    </label>
-  </div>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="atlas.html">Founder Atlas</a>
-    <a href="lineage.html">Method Lineage</a>
-    <a href="methods.html">Blue Line Atlas</a>
-    <a href="invention.html" class="active">First Rung: Composition Visualizer</a>
-    <a href="rhythm.html">Rhythm of Ringing</a>
-    <a href="ringers.html">Ringer Constellation</a>
-    <a href="occasions.html">The Occasions Archive</a>
-    <a href="practice.html">Practice Nights</a>
-    <a href="populations.html">Two Populations</a>
-    <a href="careers.html">A Ringing Career</a>
-    <a href="nexus.html">The Temporal Nexus</a>
-    <a href="geometry.html">Sacred Geometry</a>
-    <button class="theme-btn" id="themeToggle">Dark Mode</button>
-  </div>
-</nav>
-
-<div class="wrap">
-  <header>
-    <p class="eyebrow">Beam Search Engine · Composition Discovery</p>
-    <h1>The <em>First Rung</em> Visualizer</h1>
-    <p class="standfirst">Instead of using legacy depth-first search that brute-forces millions of false combinations, this tool uses a heuristic <strong>beam search</strong> to discover highly musical, previously un-rung compositions.</p>
-    
-    <div class="explainer-grid">
-      <div>
-        <h4>How it Searches</h4>
-        <p>At every step, the engine evaluates all valid next calls and keeps only the branches with the highest musicality scores. Unmusical branches are aggressively pruned, letting the search reach deep into previously computationally prohibitive search spaces.</p>
-      </div>
-      <div>
-        <h4>Reading the Graph</h4>
-        <p>The numbers in the boxes represent <strong>course heads</strong>. The letters on the arrows denote the <strong>calls</strong> used to transition between them (<code>p</code> = plain, <code>b</code> = bob, <code>s</code> = single). The graph originates and terminates at Rounds (12345678).</p>
-      </div>
-      <div>
-        <h4>Scoring & Novelty</h4>
-        <p>The <strong>Score</strong> reflects musicality (e.g., counting 56s and 65s off the front and back). <strong>Likely Novel</strong> indicates that the exact sequence of calls was not found anywhere in the historical performance database.</p>
-      </div>
-      <div>
-        <h4>▶ Compose Animation</h4>
-        <p>Clicking "Compose" redraws the graph node-by-node in real time. It visually demonstrates exactly how the engine's beam search branches outwards from Rounds, evaluating the path until it finds a true block back to rounds.</p>
-      </div>
-    </div>
-  </header>
-</div>
-
-<div class="layout">
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <h2>Top Compositions</h2>
-      <p>Results ranked by musicality score. Select one to visualize its directed path.</p>
-    </div>
-    <div id="comp-list"></div>
-  </div>
-  <div class="main-view">
-    <div id="controls">
-      <select id="speed-select" class="control-select">
-        <option value="fast">Fast-Forward</option>
-        <option value="realtime">Real-Time (Audio)</option>
-      </select>
-      <button class="play-btn" onclick="toggleAnimation()">▶ Compose</button>
-    </div>
-    
-    <div id="blank-state">
-      <h3>Visualizer Ready</h3>
-      <p>Select a composition from the sidebar and click <strong>▶ Compose</strong> to begin the visualization.</p>
-    </div>
-    
-    <div id="viz-container">
-      <div id="mynetwork-wrapper">
-        <div id="mynetwork"></div>
-      </div>
-      
-      <div class="bottom-panels">
-        <div class="text-panel">
-          <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <h4>Composition Output</h4>
-              <button class="copy-btn" onclick="copyText()">📋 Copy</button>
-            </div>
-            <div style="font-size: 11px; color: var(--ink-3); line-height: 1.3;">
-              The sequence of calls applied, and the resulting course heads.
-            </div>
-          </div>
-          <div id="text-output"></div>
-        </div>
-        <div class="svg-panel">
-          <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <h4>Blue Line (Treble & Tenor)</h4>
-            </div>
-            <div style="font-size: 11px; color: var(--ink-3); line-height: 1.3;">
-              While the graph above shows the high-level transitions between Course Heads, this diagram traces the physical path of the bells row-by-row as they sound. The vertical axis is time (each row), and the horizontal axis is the bell's place (1st to 8th). The <strong>Treble (1)</strong> is traced in green, and the <strong>Tenor (8)</strong> in bronze.
-            </div>
-          </div>
-          <div id="svg-container"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <ul class="site-map">
-    <li><a href="index.html">Home</a> <span>293,471 performances, 13 years, one complete record</span></li>
-    <li><a href="atlas.html">Founder Atlas</a> <span>51,523 attributed bells mapped by the foundry that cast them</span></li>
-    <li><a href="lineage.html">Method Lineage</a> <span>How methods extend from one stage to the next</span></li>
-    <li><a href="methods.html">Blue Line Atlas</a> <span>20,679 methods drawn as the path a bell traces</span></li>
-    <li><a href="invention.html" aria-current="page">First Rung: Composition Visualizer</a> <span>Heuristic search engine for novel compositions</span></li>
-    <li><a href="rhythm.html">Rhythm of Ringing</a> <span>The week, the year, and 24 days that carry a fifth of 2021–24</span></li>
-    <li><a href="ringers.html">Ringer Constellation</a> <span>Who rings with whom, across 70,351 names</span></li>
-    <li><a href="occasions.html">The Occasions Archive</a> <span>Why bells are rung, from 337,946 footnotes</span></li>
-    <li><a href="practice.html">Practice Nights</a> <span>Dove says the tower rings on Tuesday. Does it?</span></li>
-    <li><a href="populations.html">Two Populations</a> <span>The split every ringer describes, which the data does not contain</span></li>
-    <li><a href="careers.html">A Ringing Career</a> <span>Ringers rotate through the bells, but they do not work up them</span></li>
-    <li><a href="nexus.html">The Temporal Nexus</a> <span>Towers, methods and ringers in one 3-D field</span></li>
-    <li><a href="geometry.html">Sacred Geometry</a> <span>Method symmetries arranged on a phyllotaxis sphere</span></li>
-  </ul>
-  <p class="site-note"><strong>“First rung”, not “invented”.</strong> No column in any of the four corpora records who devised a method. What the CCCBR library records is the first performance, and a method enters the collection by being rung and named, so that is the date used here. A method can be worked out on paper years before a band attempts it, and that gap is invisible in this data.</p>
-  <p class="site-note">Each method is counted <strong>once</strong>, at its own earliest dated performance. <code>method_performances</code> holds up to fifteen first-performance event types per method, so counting rows instead would answer a different question — and did, in an earlier draft of this page.</p>
-  <p class="site-note">Built from <code>data/change-ringing.db</code> by the scripts in <code>scripts/</code>; the SQL behind each page is in <code>queries/</code>, read at build time rather than copied, so the recorded queries are the ones that ran. Data derived from Dove’s Guide, the CCCBR Methods Library and BellBoard — <strong>CC BY-SA 4.0</strong>, see <code>data/LICENCE-DATA.md</code> before reusing it. The code is MIT.</p>
-  <p class="site-note"><a href="https://github.com/nihilisticiconoclast/change-ringing">Repository</a></p>
-</footer>
-<script>
   // Global state
   const compositions = [
   {
@@ -70901,103 +70452,27 @@ section:last-of-type{border-bottom:none}
     ]
   }
 ];
-  let activeIdx = 0;
-  
-  let animationState = {
-    timer: null,
-    step: 0,
-    currentRowIdx: 0,
-    isPlaying: false
-  };
-
   let network = null;
+  let activeIdx = 0;
+  let animationTimer = null;
   let visNodes = null;
   let visEdges = null;
-
-  // Web Audio Context & Synthesizer
-  let audioCtx = null;
-  
-  function initAudio() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-  }
-
-  // Frequencies for a C Major scale
-  const bellFrequencies = {
-    '8': 261.63, // C4
-    '7': 293.66, // D4
-    '6': 329.63, // E4
-    '5': 349.23, // F4
-    '4': 392.00, // G4
-    '3': 440.00, // A4
-    '2': 493.88, // B4
-    '1': 523.25  // C5
-  };
-
-  function playBell(bellChar, time) {
-    if (!audioCtx) return;
-    const baseFreq = bellFrequencies[bellChar];
-    if (!baseFreq) return;
-
-    // Additive synthesis partials for a bell
-    const partials = [
-      { ratio: 0.5, gain: 0.6, decay: 4.0 },  // Hum
-      { ratio: 1.0, gain: 1.0, decay: 2.0 },  // Prime
-      { ratio: 1.2, gain: 0.7, decay: 1.5 },  // Tierce (minor 3rd)
-      { ratio: 1.5, gain: 0.5, decay: 1.0 },  // Quint
-      { ratio: 2.0, gain: 0.8, decay: 0.8 },  // Nominal
-      { ratio: 2.6, gain: 0.4, decay: 0.5 }   // Extra metallic brightness
-    ];
-
-    const masterGain = audioCtx.createGain();
-    masterGain.connect(audioCtx.destination);
-    masterGain.gain.value = 0.4; // Global volume
-
-    partials.forEach(p => {
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      osc.type = 'sine';
-      osc.frequency.value = baseFreq * p.ratio;
-      
-      osc.connect(gainNode);
-      gainNode.connect(masterGain);
-      
-      // Smooth attack
-      gainNode.gain.setValueAtTime(0, time);
-      gainNode.gain.linearRampToValueAtTime(p.gain, time + 0.02);
-      
-      // Smooth asymptotic exponential decay to avoid any clipping/rasping
-      // The time constant (decay / 5) means it decays by ~63% every interval
-      gainNode.gain.setTargetAtTime(0.00001, time + 0.02, p.decay / 5);
-      
-      osc.start(time);
-      // Wait a generous amount of time after the decay before stopping the oscillator
-      osc.stop(time + p.decay + 1.0);
-    });
-  }
-
-  function setPlayButtonState(isPlaying) {
-    const btn = document.querySelector('.play-btn');
-    if (btn) btn.innerHTML = isPlaying ? '⏹ Stop' : '▶ Compose';
-  }
 
   // Theme toggler
   const tb = document.getElementById('themeToggle');
   const setTheme = t => { 
-    document.documentElement.setAttribute('data-theme', t); 
-    localStorage.setItem('cr-theme', t); 
+    document.documentElement.setAttribute('data-theme', t);
+    if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+    try { localStorage.setItem('cr-theme', t); } catch (e) {}
+    if (network) redrawGraph(); // Redraw graph to update colors
   };
   if (tb) tb.onclick = () =>
     setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  else {
+  (() => { 
     let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
-    if (t) setTheme(t);
-  }
+    if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    setTheme(t); 
+  })();
 
   function renderList() {
     const list = document.getElementById('comp-list');
@@ -71020,10 +70495,7 @@ section:last-of-type{border-bottom:none}
   }
 
   function selectComp(idx) {
-    animationState.isPlaying = false;
-    if (animationState.timer) clearTimeout(animationState.timer);
-    setPlayButtonState(false);
-    
+    if (animationTimer) clearInterval(animationTimer);
     activeIdx = idx;
     document.querySelectorAll('.comp-card').forEach(el => el.classList.remove('active'));
     document.getElementById('comp-' + idx).classList.add('active');
@@ -71039,13 +70511,15 @@ section:last-of-type{border-bottom:none}
   function copyText() {
     const comp = compositions[activeIdx];
     if (!comp) return;
-    let txt = `Score: ${comp.score.toFixed(1)}
-Call	Course Head
--	${comp.path[0]}
-`;
+    let txt = "Score: " + comp.score.toFixed(1) + "
+";
+    txt += "Call	Course Head
+";
+    txt += "-	" + comp.path[0] + "
+";
     for(let i=0; i<comp.calls.length; i++) {
-      txt += `${comp.calls[i]}	${comp.path[i+1]}
-`;
+      txt += comp.calls[i] + "	" + comp.path[i+1] + "
+";
     }
     navigator.clipboard.writeText(txt).then(() => {
       const btn = document.querySelector('.copy-btn');
@@ -71065,19 +70539,19 @@ Call	Course Head
     
     for (let i = 0; i < rowsSubset.length; i += 32) {
       let x = pad + i * dx;
-      svg += `<line x1="${x}" y1="${pad-6}" x2="${x}" y2="${h-pad+6}" stroke="var(--rule, #ccc)" stroke-width="1" opacity=".7"/>`;
+      svg += `<line x1="${x}" y1="${pad-6}" x2="${x}" y2="${h-pad+6}" stroke="var(--rule)" stroke-width="1" opacity=".7"/>`;
     }
     
     const bells = rowsSubset[0].split('');
     const highlight = { 
-      '1': { color: 'var(--bar, #2F6D53)', width: 2.4 }, 
-      '8': { color: 'var(--bronze, #8A5F22)', width: 2.4 } 
+      '1': { color: 'var(--bar)', width: 2.4 }, 
+      '8': { color: 'var(--bronze)', width: 2.4 } 
     };
     
     bells.forEach(b => {
       if (!highlight[b]) {
         let pts = rowsSubset.map((row, i) => `${pad + i*dx},${pad + row.indexOf(b)*dy}`).join(' ');
-        svg += `<polyline points="${pts}" fill="none" stroke="var(--ink-3, #aaa)" stroke-width="1" opacity=".38" stroke-linejoin="round"/>`;
+        svg += `<polyline points="${pts}" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".38" stroke-linejoin="round"/>`;
       }
     });
     
@@ -71092,15 +70566,19 @@ Call	Course Head
     return svg;
   }
 
-  function setupVisuals() {
-    const comp = compositions[activeIdx];
+  function playAnimation() {
+    if (animationTimer) clearInterval(animationTimer);
     
     document.getElementById('blank-state').style.display = 'none';
     document.getElementById('viz-container').style.display = 'flex';
     
+    const comp = compositions[activeIdx];
+    
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const rdColor = isDark ? "#63A579" : "#2F6D53";
+    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
+    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
     const hlColor = isDark ? "#C9974A" : "#8A5F22";
+    const rdColor = isDark ? "#63A579" : "#2F6D53";
     
     const container = document.getElementById('mynetwork');
     visNodes = new vis.DataSet([]);
@@ -71115,159 +70593,75 @@ Call	Course Head
     if (network) network.destroy();
     network = new vis.Network(container, data, options);
     
-    animationState.nodeIds = new Set();
+    const nodeIds = new Set();
     visNodes.add({
       id: comp.path[0], label: comp.path[0], shape: 'box',
       color: { background: rdColor, border: hlColor, highlight: hlColor },
       font: { color: "#FFF", face: "monospace" }
     });
-    animationState.nodeIds.add(comp.path[0]);
+    nodeIds.add(comp.path[0]);
     
     const textOut = document.getElementById('text-output');
     textOut.innerHTML = `<table><tr><th>Call</th><th>Course Head</th></tr><tr><td>-</td><td>${comp.path[0]}</td></tr></table>`;
-    
-    const svgCont = document.getElementById('svg-container');
-    svgCont.innerHTML = generateSVG(comp.rows.slice(0, 1));
-  }
-
-  function advanceGraph(step) {
-    const comp = compositions[activeIdx];
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const bgColor = isDark ? "#1a1a19" : "#F7F6F2";
-    const fgColor = isDark ? "#F0EDE6" : "#1C1E1C";
-    const hlColor = isDark ? "#C9974A" : "#8A5F22";
-    
-    const call = comp.calls[step].toUpperCase();
-    const nextNode = comp.path[step+1];
-    
-    if (!animationState.nodeIds.has(nextNode)) {
-      visNodes.add({
-        id: nextNode, label: nextNode, shape: 'box',
-        color: { background: bgColor, border: hlColor, highlight: hlColor },
-        font: { color: fgColor, face: "monospace" }
-      });
-      animationState.nodeIds.add(nextNode);
-    }
-    visEdges.add({
-      from: comp.path[step], to: nextNode, label: call, arrows: 'to',
-      color: { color: fgColor }, font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
-    });
-    network.fit({ animation: true });
-    
-    const textOut = document.getElementById('text-output');
     const table = textOut.querySelector('table');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${call}</td><td>${nextNode}</td>`;
-    table.appendChild(tr);
-    textOut.scrollTop = textOut.scrollHeight;
-  }
-
-  function playRealTimeLoop() {
-    if (!animationState.isPlaying) return;
-    const comp = compositions[activeIdx];
     
-    if (animationState.currentRowIdx >= comp.rows.length) {
-      animationState.isPlaying = false;
-      network.fit({ animation: true });
-      setPlayButtonState(false);
-      return;
-    }
-    
-    const row = comp.rows[animationState.currentRowIdx];
-    const isHandstroke = (animationState.currentRowIdx % 2 === 0);
-    const strikeInterval = 0.25; // 250ms per strike
-    const rowDuration = 8 * strikeInterval;
-    const gap = isHandstroke ? 0 : strikeInterval; 
-    
-    // Schedule Audio
-    const now = audioCtx.currentTime;
-    const bells = row.split('');
-    bells.forEach((b, i) => {
-      playBell(b, now + (i * strikeInterval));
-    });
-    
-    // Update SVG row-by-row
     const svgCont = document.getElementById('svg-container');
-    svgCont.innerHTML = generateSVG(comp.rows.slice(0, animationState.currentRowIdx + 1));
-    svgCont.scrollLeft = svgCont.scrollWidth;
-    
-    // Check if we hit a course head boundary
-    if (animationState.step < comp.calls.length && row === comp.path[animationState.step + 1]) {
-      advanceGraph(animationState.step);
-      animationState.step++;
-    }
-    
-    animationState.currentRowIdx++;
-    
-    const timeUntilNextRow = (rowDuration + gap) * 1000;
-    animationState.timer = setTimeout(playRealTimeLoop, timeUntilNextRow);
-  }
-
-  function playFastForwardLoop() {
-    if (!animationState.isPlaying) return;
-    const comp = compositions[activeIdx];
-    
-    if (animationState.step >= comp.calls.length) {
-      animationState.isPlaying = false;
-      network.fit({ animation: true });
-      setPlayButtonState(false);
-      return;
-    }
-    
-    const nextNode = comp.path[animationState.step+1];
-    advanceGraph(animationState.step);
-    
-    // Update SVG in chunks
-    let currentRows = animationState.currentRowIdx;
+    let currentRows = 1;
     if (comp.rows && comp.rows.length > 0) {
-      let nextIndex = comp.rows.indexOf(nextNode, currentRows + 1);
-      if (nextIndex !== -1) currentRows = nextIndex;
-      else currentRows += 32;
-      
-      const svgCont = document.getElementById('svg-container');
-      svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows + 1));
-      svgCont.scrollLeft = svgCont.scrollWidth;
-      animationState.currentRowIdx = currentRows;
+      svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
+    } else {
+      svgCont.innerHTML = "<p><em>No row data available for this composition.</em></p>";
     }
     
-    animationState.step++;
-    animationState.timer = setTimeout(playFastForwardLoop, 400);
-  }
-
-  function toggleAnimation() {
-    if (animationState.isPlaying) {
-      // Stop
-      animationState.isPlaying = false;
-      if (animationState.timer) clearTimeout(animationState.timer);
-      setPlayButtonState(false);
-    } else {
-      // Play
-      if (animationState.timer) clearTimeout(animationState.timer);
-      animationState.isPlaying = true;
-      setPlayButtonState(true);
-      
-      setupVisuals();
-      
-      const speedMode = document.getElementById('speed-select').value;
-      if (speedMode === 'realtime') {
-        initAudio();
-        animationState.currentRowIdx = 0;
-        animationState.step = 0;
-        playRealTimeLoop();
-      } else {
-        animationState.currentRowIdx = 0;
-        animationState.step = 0;
-        playFastForwardLoop();
+    let step = 0;
+    
+    animationTimer = setInterval(() => {
+      if (step >= comp.calls.length) {
+        clearInterval(animationTimer);
+        network.fit({ animation: true });
+        return;
       }
-    }
+      
+      const call = comp.calls[step].toUpperCase();
+      const nextNode = comp.path[step+1];
+      
+      if (!nodeIds.has(nextNode)) {
+        visNodes.add({
+          id: nextNode, label: nextNode, shape: 'box',
+          color: { background: bgColor, border: hlColor, highlight: hlColor },
+          font: { color: fgColor, face: "monospace" }
+        });
+        nodeIds.add(nextNode);
+      }
+      visEdges.add({
+        from: comp.path[step], to: nextNode, label: call, arrows: 'to',
+        color: { color: fgColor }, font: { color: fgColor, strokeWidth: 0, size: 12, face: "monospace" }
+      });
+      network.fit({ animation: true });
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${call}</td><td>${nextNode}</td>`;
+      table.appendChild(tr);
+      textOut.scrollTop = textOut.scrollHeight;
+      
+      if (comp.rows && comp.rows.length > 0) {
+        let nextIndex = comp.rows.indexOf(nextNode, currentRows);
+        if (nextIndex !== -1) {
+          currentRows = nextIndex + 1;
+        } else {
+          currentRows += 32;
+        }
+        svgCont.innerHTML = generateSVG(comp.rows.slice(0, currentRows));
+        svgCont.scrollLeft = svgCont.scrollWidth;
+      }
+      
+      step++;
+    }, 400);
   }
 
   window.onload = () => {
-    if (compositions && compositions.length > 0) {
+    if (compositions.length > 0) {
       renderList();
       selectComp(0);
     }
   };
-</script>
-</body>
-</html>
