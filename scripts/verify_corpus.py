@@ -380,6 +380,39 @@ def check_csv_agreement(conn, rep):
                        f"missing; the replica is stale, rebuild it with "
                        f"scripts/rebuild_all.py")
 
+    # CompLib: same property for the fourth corpus. The CSVs are single files
+    # per table (not split by year like BellBoard), so the check is a direct
+    # one-to-one comparison. The API walk that produced them is
+    # scripts/ingest_complib.py; scripts/load_complib_csv.py rebuilds from
+    # them. Without this, a CompLib load from the API that is not committed
+    # looks complete in every other check, exactly as the year-old BellBoard
+    # replica once did.
+    cl = Path(__file__).resolve().parent.parent / "data" / "complib"
+    for csv_name, table in (("compositions.csv", "compositions"),
+                            ("composition_methods.csv", "composition_methods")):
+        path = cl / csv_name
+        if not path.exists():
+            rep.report(f"csv agreement {table}", Result.SKIP, "no CSV committed")
+            continue
+        if not table_exists(conn, table):
+            rep.report(f"csv agreement {table}", Result.SKIP, "table absent")
+            continue
+        expected = rows(path)
+        actual = count(conn, f'SELECT COUNT(*) FROM "{table}"')
+        if actual == expected:
+            rep.report(f"csv agreement {table}", Result.PASS,
+                       f"{actual:,} == {expected:,} against committed CSV")
+        elif actual > expected:
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{actual:,} rows in the database but only {expected:,} "
+                       f"in the committed CSV -- {actual - expected:,} rows came "
+                       f"from somewhere not in this repository")
+        else:
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{actual:,} rows in the database but {expected:,} in the "
+                       f"committed CSV -- {expected - actual:,} missing; rebuild "
+                       f"with scripts/load_complib_csv.py")
+
 
 def check_towerid_fanout(conn, rep):
     """Neither dove nor towers is a tower register: both repeat TowerID, so a

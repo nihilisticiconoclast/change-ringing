@@ -113,6 +113,12 @@ attribution is owed if any output of this project is published.
 - Ingested via `scripts/ingest_complib.py` into the tables defined in
   `schema/006_init_complib.sql` (`compositions`, `composition_methods`, and
   view `v_composition_methods`).
+- **Committed CSVs:** `data/complib/compositions.csv` and
+  `data/complib/composition_methods.csv` are the corpus snapshot; the database
+  is a build product of them. `scripts/load_complib_csv.py` rebuilds the tables
+  from the CSVs offline, and `build_local_db.py` calls it, so a local replica is
+  reproducible from the repository without hitting the API. `verify_corpus.py`
+  asserts the database matches the CSVs exactly.
 - Coverage: **86,054 compositions loaded in full** (measured 2026-08-16).
   The loader walked all 3,443 pages of `/composition/search` at `perpage=25`,
   and the loaded row count matched the API's `count` exactly. The corpus grows
