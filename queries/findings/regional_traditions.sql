@@ -1,3 +1,16 @@
+-- SUPERSEDED by regional_traditions_normalised.sql. Kept because it is the query
+-- the earlier claims came from, and because the way it is wrong is instructive.
+--
+-- Two faults, both of which its successor fixes:
+--   1. It groups RAW STRINGS, so one practice fragments across spellings. Its
+--      headline "Devon Call Changes is 85.4% concentrated in Devon" is 82 of 96
+--      records; normalising the variants finds 6,455 call-change performances.
+--   2. It divides by the practice's NATIONAL total, which ranks counties by how
+--      much they report overall rather than by how distinctive the practice is
+--      there. Dividing by each county's own output instead moves the answer:
+--      Cornwall rings call changes as 25.45% of everything it reports, against
+--      Devon's 5.37%, and the tolling result reverses entirely.
+--
 -- The other half of method_regionalism.sql: what IS regional, once you stop
 -- insisting it be a method.
 --

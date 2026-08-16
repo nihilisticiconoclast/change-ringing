@@ -36,7 +36,7 @@ same sociological question with an honest name, and everything below is about it
 
 ## The answer: one population, not two
 
-Peal share per canonical ringer, for the 5,874 ringers with at least 50
+Peal share per canonical ringer, for the 5,934 ringers with at least 50
 appearances:
 
 ```
@@ -114,7 +114,7 @@ is that most committed ringers ring a few.
 
 **Identity.** Ringers are resolved through
 [`data/ringer_identity_candidates.csv`](../data/ringer_identity_candidates.csv),
-55,326 canonical entities, **accuracy unmeasured**. This is a candidate dataset
+56,340 canonical entities, **accuracy unmeasured**. This is a candidate dataset
 and the same warning applies as to the footnote classifier.
 
 The direction of the bias is worth stating because it is not the obvious one. An

@@ -238,7 +238,9 @@ rather than graduate up the ring.
 no settling. The up / down / stayed split is roughly even (32% / 35% / 33%),
 and the median ringer rings across nearly the whole ring over a career
 (within-ringer range 0.889). Ringers move around without moving up. Measured
-on 5,641 canonical ringers with 50+ tower appearances spanning 5+ years.
+on 5,696 canonical ringers with 50+ tower appearances spanning 5+ years. The
+result is unchanged when 1,898 identity clusters are resplit (PR #22): drift and
+median within-ringer range are identical to three decimals.
 **❌ Wrong.** Both the strong model (progression to the tenor) and the weaker
 bet (settle on one bell) fail. The replacement -- a band that rings everywhere
 and conducts early -- is the sharper finding.

@@ -2,7 +2,7 @@
 
 **Mistral Vibe Task 7.** Measured on the 2012–2024 corpus, 293,471 performances
 and 1,969,949 ringer appearances, against canonical identities from
-`data/ringer_identity_candidates.csv` (55,326 entities, a candidate dataset with
+`data/ringer_identity_candidates.csv` (56,340 entities, a candidate dataset with
 unmeasured accuracy — see `docs/ringer_identity_resolution.md`).
 Reproduce with `python scripts/analyse_ringing_careers.py --local-db <replica>`;
 the database-only approximation, which groups raw names, is
@@ -16,7 +16,7 @@ real people.
 
 ## The cohort
 
-**5,641 canonical ringers** have 50 or more single-bell tower appearances,
+**5,696 canonical ringers** have 50 or more single-bell tower appearances,
 spanning five or more years — enough to trace an individual arc. (The brief's
 6,563 was measured on a slightly earlier snapshot; the corpus and the identity
 CSV are both moving targets, and this figure is what the committed replica
@@ -41,7 +41,7 @@ quarter peals and they answer different questions:
 | Conducting… | Ever do it | Median wait | Mean | p25 | p75 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | any performance | **72.5%** | **11** appearances | 34 | 2 | 40 |
-| a **peal** (≥5,000 changes) | **20.0%** | **37** appearances | 87 | 7 | 113 |
+| a **peal** (≥5,000 changes) | **19.8%** | **37** appearances | 86 | 7 | 112 |
 
 Conducting *something* is common and happens early — most who ever conduct do so
 within their first dozen appearances. Conducting a **peal** is a different and
@@ -50,7 +50,7 @@ much smaller thing: a fifth of the cohort, reached three times later in a career
 This distinction matters enough to say plainly that the first draft of this
 document got it wrong. It measured the first row and described it as the second
 — "72.5% of the cohort ever conduct a peal" — which overstates peal conducting
-by a factor of 3.6 and understates the apprenticeship by a factor of 3.4. The
+by a factor of 3.7 and understates the apprenticeship by a factor of 3.4. The
 error was not in the code, which never mentioned peals; it was in the prose
 written over it. It sits alongside the two-populations finding, where 72% of
 active ringers have *rung* a peal: about a fifth of those go on to call one.
@@ -64,8 +64,8 @@ Mean normalised bell position, first tenth of a career against the last:
 
 | | Mean position |
 | --- | ---: |
-| Early career (first 10%) | 0.550 |
-| Late career (last 10%) | 0.546 |
+| Early career (first 10%) | 0.551 |
+| Late career (last 10%) | 0.547 |
 | **Drift** | **−0.004** |
 
 No upward drift — essentially zero, if anything slightly down. Split three ways
@@ -74,9 +74,9 @@ their early position:
 
 | Direction | Ringers | Share |
 | --- | ---: | ---: |
-| Moved up | 1,801 | 31.9% |
-| Moved down | 1,979 | 35.1% |
-| Stayed (±0.05) | 1,861 | 33.0% |
+| Moved up | 1,823 | 32.0% |
+| Moved down | 2,004 | 35.2% |
+| Stayed (±0.05) | 1,869 | 32.8% |
 
 Roughly even, with no bias toward the tenor. **Ringers do not graduate up the
 bells.** But neither do they find a bell and stay on it for twenty years: the
@@ -100,26 +100,26 @@ Of ringers first seen in year Y, the share with no appearance after 2020:
 
 | First seen | Ringers | None after 2020 | % gone |
 | ---: | ---: | ---: | ---: |
-| 2012 | 14,447 | 5,747 | 39.8% |
-| 2013 | 3,750 | 2,232 | 59.5% |
-| 2014 | 2,720 | 1,711 | 62.9% |
-| 2015 | 2,270 | 1,383 | 60.9% |
-| 2016 | 2,152 | 1,251 | 58.1% |
-| 2017 | 2,059 | 1,139 | 55.3% |
-| 2018 | 5,878 | 3,169 | 53.9% |
-| 2019 | 2,233 | 1,201 | 53.8% |
-| 2020 | 1,527 | 860 | 56.3% |
+| 2012 | 14,725 | 5,903 | 40.1% |
+| 2013 | 3,892 | 2,356 | 60.5% |
+| 2014 | 2,805 | 1,772 | 63.2% |
+| 2015 | 2,327 | 1,430 | 61.5% |
+| 2016 | 2,220 | 1,305 | 58.8% |
+| 2017 | 2,105 | 1,171 | 55.6% |
+| 2018 | 5,946 | 3,216 | 54.1% |
+| 2019 | 2,272 | 1,231 | 54.2% |
+| 2020 | 1,541 | 870 | 56.5% |
 
 For the active cohort (50+ appearances) attrition is far lower:
 
 | First seen | Ringers (50+) | None after 2020 | % gone |
 | ---: | ---: | ---: | ---: |
-| 2012 | 4,985 | 439 | 8.8% |
-| 2013 | 291 | 26 | 8.9% |
-| 2014 | 175 | 9 | 5.1% |
-| 2015 | 151 | 7 | 4.6% |
-| 2016 | 129 | 2 | 1.6% |
-| 2017 | 127 | 2 | 1.6% |
+| 2012 | 4,724 | 313 | 6.6% |
+| 2013 | 259 | 21 | 8.1% |
+| 2014 | 161 | 6 | 3.7% |
+| 2015 | 140 | 3 | 2.1% |
+| 2016 | 123 | 0 | 0.0% |
+| 2017 | 114 | 0 | 0.0% |
 
 The 2020 line is the example the brief asked for, and it crosses the COVID
 discontinuity: ringing stopped almost entirely for a year from March 2020, so
@@ -137,11 +137,31 @@ which is what makes the rest of this document possible at all.
   Sunday service band — is invisible here, and it is plausibly the place where
   bell progression is real. This rules the model out for *reported* ringing,
   not for ringing as a whole.
-- **Better identity resolution.** The candidate dataset's accuracy is
-  unmeasured. Splitting one ringer into variants shortens each fragment's
-  apparent career and narrows its slice of the ring, which would manufacture
-  both more "specialists" and more "early leavers". The raw-name SQL cohort is
-  6,234 against the canonical 5,641 — fatter, as fragmentation would predict.
+- **Better identity resolution — but this has now been tested.** The candidate
+  dataset's accuracy is still unmeasured, and splitting one ringer into variants
+  would shorten each fragment's apparent career and narrow its slice of the ring,
+  manufacturing both more "specialists" and more "early leavers". So the obvious
+  worry is that this whole result is an artefact of the resolver.
+
+  PR #22 rebuilt the identities with a middle-initial anti-conflation guard,
+  which resplit **1,898 clusters** — 55,326 canonical entities became 56,340, and
+  the largest cluster went from 9 names to 7. Running the identical analysis
+  across both versions:
+
+  | | Cohort | Early | Late | Drift | Median range | Ever conduct |
+  | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+  | 55,326 entities | 5,641 | 0.550 | 0.546 | −0.004 | 0.889 | 72.5% |
+  | 56,340 entities | 5,696 | 0.551 | 0.547 | −0.004 | 0.889 | 72.5% |
+
+  **The finding does not move.** Drift identical, median within-ringer range
+  identical to three decimals, conducting share identical, and the three-way
+  split shifts by at most 0.2 points. A thousand clusters can be resplit without
+  touching the answer, which is a much stronger statement than "the resolver
+  looks reasonable". It does not prove the resolver is right — it shows this
+  result does not depend on it being right.
+
+  The raw-name SQL cohort is 6,234 against the canonical 5,696 — fatter, as
+  fragmentation would predict, and the same conclusion holds there too.
 - **A longer corpus.** Thirteen years is enough to see no progression; it is not
   enough to see a full lifetime arc. The 2024 edge is still open: ringers last
   seen in 2024 have not left, they are just at the end of the window.

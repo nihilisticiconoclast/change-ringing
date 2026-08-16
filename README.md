@@ -146,7 +146,7 @@ can be checked instead of taken on trust.
       `scripts/ingest_complib.py`): 86,039 compositions from the
       `api.complib.org` JSON API, with `perpage` capped at 25 (a max
       the OpenAPI spec omits). See `data/SOURCES.md`.
-- [x] Ringer identity resolution -- 70,032 raw names resolved to 55,326 canonical
+- [x] Ringer identity resolution -- 70,032 raw names resolved to 56,340 canonical
       entities over the full 2012-24 corpus (`data/ringer_identity_candidates.csv`,
       `scripts/resolve_ringer_identities.py`). **A candidate dataset: its accuracy is
       not measured**, and `docs/two_populations.md` shows what unresolved variants do
@@ -160,7 +160,7 @@ can be checked instead of taken on trust.
       last: no upward drift, and no settling on one bell either -- the median
       ringer rings across nearly the whole ring over a career. Of ringers with
       50+ appearances, 72.5% ever conduct and the median waits 11 appearances
-      before the first; restricted to *peals*, 20.0% and a median of 37. ~60%
+      before the first; restricted to *peals*, 19.8% and a median of 37. ~60%
       of a 2013 first-seen cohort have no appearance after 2020 (that line
       crosses COVID). `bell` had been populated on 1,897,741 rows and read by
       nothing.

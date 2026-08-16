@@ -198,7 +198,7 @@ NOTES = {
         "it was originally asked. The genuinely separate population, if there is one, is "
         "invisible here.",
         "Ringer identity comes from <code>data/ringer_identity_candidates.csv</code>, "
-        "55,326 canonical entities whose <strong>accuracy is not measured</strong>. The "
+        "56,340 canonical entities whose <strong>accuracy is not measured</strong>. The "
         "page shows what unresolved names do to the answer rather than hiding it. "
         "<strong>No individual is named anywhere.</strong>",
     ],
@@ -210,7 +210,7 @@ NOTES = {
         "statement about any individual. <strong>No individual is named anywhere on "
         "this page.</strong>",
         "Ringer identity comes from <code>data/ringer_identity_candidates.csv</code>, "
-        "55,326 canonical entities whose <strong>accuracy is not measured</strong>. "
+        "56,340 canonical entities whose <strong>accuracy is not measured</strong>. "
         "Fragmenting one ringer into variants would shorten apparent careers and narrow "
         "each fragment’s slice of the ring — manufacturing both the specialists and the "
         "early leavers this page reports not finding.",

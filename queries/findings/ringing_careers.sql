@@ -24,7 +24,7 @@
 --      those who do, the median ringer waits 11 appearances before the first.
 --      The mean is far higher (the distribution is long-tailed). Restricted to
 --      PEALS -- >= 5000 changes, the definition peal_and_quarter_populations.sql
---      uses -- it is 20.0% and a median of 37. The corpus is mostly quarters, so
+--      uses -- it is 19.8% and a median of 37. The corpus is mostly quarters, so
 --      the two are different claims: the first draft of this file measured
 --      conducting anything and called it conducting a peal.
 --   2. PROGRESSION. The folk model -- treble to inside to tenor -- is wrong in

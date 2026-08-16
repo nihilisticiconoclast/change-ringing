@@ -25,7 +25,7 @@
 --    70-79 % peals     108  #
 --    80-89 % peals     113  #
 --    90-99 % peals      73  #
---    n = 5,874, median peal share 3.0%
+--    n = 5,934, median peal share 3.0%
 --
 -- A steep monotonic decay with **no second mode**. Two populations would show two
 -- humps; there is one, and a long thin tail. Peal-exclusive ringers effectively
@@ -49,7 +49,7 @@
 -- CAVEAT ON IDENTITY, AND WHY THIS QUERY IS THE WEAKER OF TWO VIEWS.
 --
 -- The figures quoted above use canonical identities from
--- data/ringer_identity_candidates.csv -- 55,326 entities, accuracy unmeasured.
+-- data/ringer_identity_candidates.csv -- 56,340 entities, accuracy unmeasured.
 -- That resolution lives in a CSV rather than a table, so THIS query cannot use
 -- it: it groups raw names, and the two disagree in an instructive way.
 --

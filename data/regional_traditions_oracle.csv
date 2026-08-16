@@ -1,0 +1,201 @@
+perf_id,method_text,label
+1153959,"(2 method 1 variation)",multiple_methods
+1543636,"3m Doubles",multiple_methods
+1437455,"99 Single Bell Tolling",tolling
+1124583,"April Day Doubles",unclassified
+1278736,"April Day Doubles",unclassified
+1253610,"Armistice Doubles",unclassified
+972161,"Baptism Doubles Call Changes",call_changes
+1026113,"Bob and Grandsire Doubles",multiple_methods
+1488993,"Call Changes",call_changes
+1080692,"Call Changes",call_changes
+1519789,"Call Changes",call_changes
+1408958,"Call Changes",call_changes
+1626218,"Call Changes",call_changes
+1660074,"Call Changes",call_changes
+1623543,"Call Changes",call_changes
+1473768,"Call Changes",call_changes
+1543025,"Call Changes",call_changes
+1743744,"Call Changes",call_changes
+1602523,"Call Changes",call_changes
+1489366,"Call Changes",call_changes
+1257231,"Call Changes",call_changes
+1551579,"Call Changes and Rounds",rounds_and_call_changes
+1255604,"Call Changes on Twelve",call_changes
+1259052,"Call-Changes and Plain Bob Triples",call_changes
+1060479,"Cambridge and PB Minor",multiple_methods
+1617467,"Chiming",tolling
+1825796,"D-Day Doubles",unclassified
+1250883,"Darkest Peru Doubles",unclassified
+318034,"Doubles",unclassified
+1254595,"Doubles",unclassified
+122936,"Doubles",unclassified
+1070047,"Doubles",unclassified
+994849,"Doubles",unclassified
+122564,"Doubles",unclassified
+1201680,"Doubles",unclassified
+1275350,"Doubles",unclassified
+1005651,"Doubles",unclassified
+1080185,"Doubles",unclassified
+463723,"Doubles",unclassified
+1112715,"Doubles (11m)",multiple_methods
+1173103,"Doubles (15 M/V)",multiple_methods
+1693836,"Doubles (18m/v)",multiple_methods
+1773774,"Doubles (1m/5v)",multiple_methods
+1110591,"Doubles (1p, 3m and 4v)",multiple_methods
+1489953,"Doubles (1p/3m/2v)",multiple_methods
+1789433,"Doubles (1p/4m)",multiple_methods
+1054546,"Doubles (2 Principles, 4 Methods)",multiple_methods
+1155513,"Doubles (20 Methods)",multiple_methods
+1634558,"Doubles (2m)",multiple_methods
+1712852,"Doubles (2m)",multiple_methods
+405239,"Doubles (2m/1v)",multiple_methods
+1020367,"Doubles (3 M)",multiple_methods
+1149193,"Doubles (3 methods 6 variations)",multiple_methods
+415573,"Doubles (3 methods)",multiple_methods
+1703888,"Doubles (3m)",multiple_methods
+994622,"Doubles (3m)",multiple_methods
+1026118,"Doubles (4 M/V)",multiple_methods
+1090234,"Doubles (4 methods)",multiple_methods
+1595722,"Doubles (4m)",multiple_methods
+1452514,"Doubles (4m/4v)",multiple_methods
+1180696,"Doubles (4m/V)",multiple_methods
+1058598,"Doubles (5 Methods)",multiple_methods
+1034541,"Doubles (5 Methods)",multiple_methods
+1128775,"Doubles (5m)",multiple_methods
+1511798,"Doubles (5m)",multiple_methods
+1591872,"Doubles (6m)",multiple_methods
+1648119,"Doubles (6m/p)",multiple_methods
+1257869,"Doubles (9m/V)",multiple_methods
+1743148,"Doubles and Call Changes",call_changes
+973399,"Doubles and Minor",multiple_methods
+1430233,"Doubles and Minor (21m/p)",multiple_methods
+1004999,"Four Doubles",multiple_methods
+1550491,"General Ringing",general
+1654457,"General Ringing",general
+1619982,"General Ringing",general
+1736053,"General Ringing",general
+1546763,"General Ringing",general
+1621480,"General Ringing",general
+1621764,"General Ringing",general
+1814008,"General Ringing",general
+1648304,"General Ringing",general
+1622531,"General Ringing",general
+1676439,"General Ringing",general
+1622221,"General Ringing",general
+1541422,"General Ringing",general
+1541634,"General Ringing",general
+441516,"Grandsire and Plain Bob Doubles",multiple_methods
+1902656,"Grandsire Caters and Rounds on 12",multiple_methods
+1198972,"Grandsire Doubles and Plain Bob Doubles",multiple_methods
+1743247,"Grandsire Doubles and Rounds and Call Changes",rounds_and_call_changes
+1471608,"Half Muffled Rounds",rounds
+1260077,"Half-Muffled Call Changes",call_changes
+1028573,"Julie McDonnell Bob Doubles",unclassified
+1630217,"May Day Doubles",unclassified
+1106345,"Minor (3m)",multiple_methods
+1205211,"Minor (4 Methods)",multiple_methods
+1491589,"Minor (6m)",multiple_methods
+393036,"Minor (6m)",multiple_methods
+1167743,"Mixed Doubles",multiple_methods
+977251,"Mixed Doubles",multiple_methods
+1265897,"Mixed Doubles (4m)",multiple_methods
+999264,"Mixed Minor",multiple_methods
+1765712,"Multi Doubles",multiple_methods
+988363,"Oxford Bob Triples",unclassified
+1663931,"Plain Bob and Original Doubles",multiple_methods
+1048088,"Plain Bob Minimus - With A Cover",unclassified
+135891,"Plain Bob Minor All Singles",unclassified
+424317,"Plain Bob Singles",unclassified
+1544332,"Plain Hunt Caters",unclassified
+1742769,"Plain Hunt Doubles",unclassified
+1527397,"Plain Hunt Triples",unclassified
+396531,"Plain Minimus (11m)",multiple_methods
+316973,"Plain Minor",unclassified
+384339,"Reverse Canterbury Doubles",unclassified
+280204,"Reverse Peal No. 1 Doubles Call Changes",call_changes
+1355440,"Rounds",rounds
+1619391,"Rounds",rounds
+1309602,"Rounds",rounds
+1257918,"Rounds - Whole Pull and Stand",rounds
+1257140,"Rounds and Call Changes",rounds_and_call_changes
+1257832,"Rounds and Call Changes",rounds_and_call_changes
+1685651,"Rounds and Call Changes",rounds_and_call_changes
+1450322,"Rounds and Call Changes",rounds_and_call_changes
+1497937,"Rounds and Call Changes",rounds_and_call_changes
+1384285,"Rounds and Call Changes",rounds_and_call_changes
+1629154,"Rounds and Call Changes",rounds_and_call_changes
+1743395,"Rounds and Call Changes",rounds_and_call_changes
+1283255,"Rounds and Call Changes",rounds_and_call_changes
+1520590,"Rounds and Call Changes",rounds_and_call_changes
+1258586,"Rounds and Call Changes on 6",rounds_and_call_changes
+1761527,"Rounds and Call Changes on Ten",rounds_and_call_changes
+1521312,"Rounds and General Ringing",rounds
+1437213,"Rounds on 5",rounds
+1547961,"Rounds, Call Changes and Grandsire Doubles",rounds_and_call_changes
+1206430,"Rounds, Call Changes and Plain Hunt",rounds_and_call_changes
+1302874,"Rounds, Singles",rounds
+467752,"Saint Simon's Bob Doubles",unclassified
+1798444,"Single Court Minimus",unclassified
+1828107,"Spliced (4m)",multiple_methods
+1187276,"Spliced Bob Minor (9m)",multiple_methods
+1059246,"Spliced Plain Bob Minor and Grandsire Doubles",multiple_methods
+1555444,"Spliced Plain Royal (9m)",multiple_methods
+1242992,"Spliced Royal (6m)",multiple_methods
+333413,"Spliced Surprise Major",multiple_methods
+1064513,"Spliced Surprise Major",multiple_methods
+1147373,"Spliced Surprise Major",multiple_methods
+1034725,"Spliced Surprise Major",multiple_methods
+1185134,"Spliced Surprise Major",multiple_methods
+1213402,"Spliced Surprise Major (10 Methods)",multiple_methods
+1481183,"Spliced Surprise Major (14m)",multiple_methods
+1703595,"Spliced Surprise Major (20m)",multiple_methods
+1267881,"Spliced Surprise Major (23 Methods)",multiple_methods
+1526354,"Spliced Surprise Major (27m)",multiple_methods
+1002433,"Spliced Surprise Major (2m: Ipswich, Cray)",multiple_methods
+1205789,"Spliced Surprise Major (4 Methods)",multiple_methods
+1059388,"Spliced Surprise Major (4 Methods)",multiple_methods
+1048982,"Spliced Surprise Major (4 Methods)",multiple_methods
+1730596,"Spliced Surprise Major (4m)",multiple_methods
+1238797,"Spliced Surprise Major (6 Methods)",multiple_methods
+1543283,"Spliced Surprise Major (8m)",multiple_methods
+1279150,"Spliced Surprise Minor",multiple_methods
+1291981,"Spliced Surprise Minor",multiple_methods
+1048974,"Spliced Surprise Minor (3 Methods)",multiple_methods
+1819016,"Spliced Surprise Minor (3m)",multiple_methods
+1096593,"Spliced Surprise Minor (7 Methods)",multiple_methods
+1243410,"Spliced Surprise Minor (8 Methods)",multiple_methods
+1110846,"Spliced Surprise Minor (lightfoot 6)",multiple_methods
+1144811,"Spliced Surprise Royal",multiple_methods
+1414219,"Spliced Surprise Royal (3m)",multiple_methods
+999966,"Spliced Twin Hunt Triples (2 Methods)",multiple_methods
+1105808,"St Clements CB Minor",unclassified
+978706,"St Clements Triples",unclassified
+1289607,"St Helen Doubles",unclassified
+150748,"Stedman and Grandsire Doubles",multiple_methods
+1190137,"Surprise Minor",unclassified
+200423,"Surprise Minor",unclassified
+1133344,"Surprise Minor",unclassified
+1032377,"Surprise Minor",unclassified
+1167947,"Surprise Minor",unclassified
+1234067,"Surprise Minor (3 M)",multiple_methods
+1007369,"Surprise Minor (7 Methods)",multiple_methods
+410098,"Surprise Minor (7 Methods)",multiple_methods
+1755045,"Surprise Minor (7m)",multiple_methods
+1546298,"Tellers+99 Half Muffled Tolling",tolling
+1541994,"Tolling",tolling
+1434097,"Tolling",tolling
+1436987,"Tolling",tolling
+1400284,"Tolling",tolling
+1426866,"Tolling",tolling
+1548508,"Tolling",tolling
+1439659,"Tolling",tolling
+1437124,"Tolling",tolling
+1426650,"Tolling",tolling
+1384281,"Tolling",tolling
+1436933,"Tolling",tolling
+1426453,"Tolling",tolling
+1426850,"Tolling",tolling
+1628057,"Tolling",tolling
+1256676,"Tolling Tenor Rounds on One",tolling
+1539937,"Tolling, Half Muffled",tolling

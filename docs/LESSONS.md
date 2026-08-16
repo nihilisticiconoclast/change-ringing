@@ -663,8 +663,8 @@ Task 7 shipped with this line:
 
 The script behind it never mentions peals. It reads `performance_ringers.conductor`
 and stops — and this corpus is overwhelmingly quarter peals, not peals. Restricted
-to peals proper, it is 20.0% and a median wait of 37: peal conducting overstated
-3.6×, the apprenticeship understated 3.4×.
+to peals proper, it is 19.8% and a median wait of 37: peal conducting overstated
+3.7×, the apprenticeship understated 3.4×.
 
 Nothing in the code was wrong. Every number it printed was correct and correctly
 labelled *in the code's own terms*. The defect was entirely in the prose written

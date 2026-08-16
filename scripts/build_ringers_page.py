@@ -99,7 +99,7 @@ def build_page():
     #
     #   1. Only the top 200 are ever read back (the loops below index
     #      ringer_assocs/ringer_towers by a top-200 id and nothing else does), so
-    #      aggregating all 55,326 canonical ringers was work thrown away. Filter
+    #      aggregating all 56,340 canonical ringers was work thrown away. Filter
     #      first: ~2M rows becomes ~370k.
     #   2. groupby().size() instead of a Python loop over rows.
     #

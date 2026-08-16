@@ -120,7 +120,7 @@ Measured on the full corpus:
 
 **Sunday is 91% short performances; Saturday is the peal day.** Ringers know
 these are largely different activities and substantially different people. The
-corpus can now test the second half: with 55,326 canonical identities, do the
+corpus can now test the second half: with 56,340 canonical identities, do the
 Sunday population and the peal population overlap, or is the exercise two
 communities sharing a set of buildings? That is a structural claim about a
 hobby that nobody has been able to check.
