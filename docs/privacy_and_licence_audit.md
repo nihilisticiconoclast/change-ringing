@@ -13,34 +13,65 @@ This audit reviews repository compliance with all upstream data licences (**Dove
 ### Audit result
 
 - **Licence obligations: satisfied.** All four CC BY-SA 4.0 obligations —
-  attribution, licence link, share-alike derivative notice, and indication of
+  attribution, licence link, share-alike derivative notice, indication of
   changes — hold across the data files, the documentation and all 13 published
-  HTML pages. Vendored third-party libraries are recorded in
-  `docs/vendor/README.md` with their licences.
+  pages. Vendored third-party libraries are recorded in `docs/vendor/README.md`.
 - **Footnote and memorial privacy: satisfied.** No individual's memorial or
-  personal-event footnote text is republished in prose or on any page. Only
-  aggregate counts leave the database.
-- **Ringer names: NOT satisfied when this audit first reported it was.** The
-  first pass replaced fourteen ringers' surnames in
-  `docs/ringer_identity_resolution.md` with archetype labels, and declared the
-  repository compliant. It was not. Each row still carried a forename, an exact
-  appearance total and a date span, and `data/ringer_identity_candidates.csv` is
-  in this repository — so a search for a ringer named *Susan* with *4,512*
-  appearances returns exactly one person, as does *Reg* with *2,569*. The
-  surname was the label; the count was the key.
+  personal-event footnote text is republished anywhere. Only aggregate counts
+  leave the database. This is the constraint that matters most and it holds.
+- **Ringer names: a deliberate decision, not an oversight.**
 
-  The table now uses invented names, checked against the corpus so that no
-  surname in it belongs to a real ringer, and carries no totals or date spans.
+#### The decision on names
 
-> **The check was calibrated to the symptom.** The original automated test
-> searched for one literal string — a specific name beside a specific total — so
-> it went green the moment that row was reworded, while the table went on
-> identifying the same fourteen people. A test written against the wording of a
-> defect can only find that wording. `check_documentation_privacy` now tests the
-> hazard instead: for every number in a documentation table, does that number
-> plus a name-shaped token in the same row single out one person in the identity
-> CSV? Negative-tested against both the original table and the reworded one — it
-> fails on both.
+Ringer names are **public record**. BellBoard publishes every performance with
+its full band; the source data is open; anyone could reconstruct these
+aggregates from it in an afternoon. Withholding names here would protect nobody
+and would make `docs/ringer_identity_resolution.md` — a document *about*
+resolving names — unreadable.
+
+So the project names ringers where naming them is the point: in that document,
+on the Ringer Constellation, and on the Temporal Nexus.
+
+It does **not** name them where it has promised not to. Several pages rest on
+footnote text that includes funeral tributes and memorials, and those pages
+state plainly that no individual is named. Those promises are load-bearing, and
+a promise that quietly drifts out of true is worse than never having made one.
+
+`check_documentation_privacy` therefore runs the re-identification test against
+**exactly the documents that make the claim** and against nothing else: for
+every number in such a document, does that number plus a name-shaped token on
+the same line single out one person in `data/ringer_identity_candidates.csv`?
+
+#### Why the first version of this check was worthless
+
+It searched for one literal string — a specific name beside a specific total:
+
+```python
+if re.search(r"\|\s*\*\*Susan M Sawyer\*\*\s*\|.*\|\s*\*\*4,512\*\*", content):
+```
+
+The same commit that added it also reworded that row, so the check went green
+while the table went on identifying the same fourteen people. What it actually
+asserted was "this exact sentence is absent", not "no one is identifiable".
+
+That is worth keeping as a general caution, because it is the same shape as the
+circular oracle found in PR #21: **an instrument calibrated to one instance of a
+defect reports success at the moment it stops working.** A check should test the
+hazard, not the wording of the last example of it.
+
+It is also worth recording what the rewording actually achieved, because it
+looked like a fix: replacing the surnames while keeping a forename, an exact
+appearance total and a date span does not anonymise anything. Searching the
+committed CSV for a ringer named *Susan* with *4,512* appearances returns exactly
+one person; *Reg* with *2,569* likewise. Had the project decided names were
+sensitive, that redaction would have been a false comfort. It decided they are
+not — but the reasoning had to be the reason, rather than the redaction being
+mistaken for one.
+
+#### Right of removal
+
+Names being public is not the same as people having no say. A route for
+requesting removal or anonymisation is roadmap item **R-35**.
 
 ---
 

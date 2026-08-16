@@ -121,6 +121,14 @@ def check_privacy_disclaimed_pages():
     return failures
 
 
+# A document claiming nobody is named. Matched loosely on purpose: the phrasing
+# varies across pages and a claim that escapes this pattern is a claim nothing
+# checks.
+ANONYMITY_CLAIM = re.compile(
+    r"no (?:individual|one|name)[^.]{0,40}(?:is |are )?named|"
+    r"never as a list of names|no names are published", re.I)
+
+
 def _identity_index():
     """forename -> {total appearances -> {canonical names}} from the committed CSV.
 
@@ -151,7 +159,26 @@ def _identity_index():
 
 
 def check_documentation_privacy():
-    """Fail when a documentation table makes a real individual RECOVERABLE.
+    """Fail when a document that PROMISES anonymity makes an individual recoverable.
+
+    The project's decision, taken deliberately, is that ringer names are public
+    record: BellBoard publishes every performance with its band, the source data
+    is open, and anyone could reconstruct these aggregates from it in an
+    afternoon. So naming ringers is not in itself a breach, and
+    `docs/ringer_identity_resolution.md` names them freely -- resolving names is
+    what that document is about, and redacting them would make it unreadable.
+
+    What this checks is narrower and still worth having: several pages and
+    documents explicitly state that **no individual is named**. Those promises
+    are load-bearing -- occasions and rhythm rest on footnote text that includes
+    funeral tributes -- and a promise that drifts out of true is worse than no
+    promise. So the re-identification test runs against exactly the files that
+    make the claim, and against nothing else.
+
+    The original version of the check tested for one literal string, a specific
+    name beside a specific total. It went green the moment that row was reworded
+    while the table went on identifying the same people, so what it asserted was
+    "this exact sentence is absent", not "no one is identifiable".
 
     The first version of this check tested for one literal string -- a specific
     name beside a specific total. It passed the moment that row was reworded,
@@ -173,9 +200,11 @@ def check_documentation_privacy():
     failures = []
     index = _identity_index()
 
-    for doc in sorted(DOCS.rglob("*.md")):
-        if doc.name == "privacy_and_licence_audit.md":
-            continue      # this file quotes the violation in order to explain it
+    # Only the documents that promise anonymity. Everything else may name people.
+    promises = [d for d in sorted(DOCS.rglob("*.md"))
+                if ANONYMITY_CLAIM.search(d.read_text(encoding="utf-8", errors="ignore"))
+                and d.name != "privacy_and_licence_audit.md"]
+    for doc in promises:
         for n, line in enumerate(doc.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             # Every line, not only table rows. The exposure that this check was
             # written for lived in a table, but an identical one -- a forename
