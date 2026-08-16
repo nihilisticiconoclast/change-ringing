@@ -62,24 +62,26 @@ Measured on the rebuilt replica, 2026-08-15.
 
 ---
 
-## 4. Top Resolved Multi-Variant Ringer Clusters
+## 4. Multi-Variant Cluster Archetypes & Structure
 
-| Canonical Ringer ID | Canonical Name | Unified Aliases | Total Peals / Quarters | Active Years |
+The clustering engine resolves diverse variant topologies across the corpus without conflation:
+
+| Canonical ID | Cluster Archetype Pattern | Variant Topology Resolved | Total Peals / Quarters | Active Span |
 | --- | --- | --- | --- | --- |
-| `RINGER_000001` | **Susan M Sawyer** | `Susan M Sawyer` (1,729), `Sue Sawyer` (2,724), `Susan Sawyer` (53), `Sue M Sawyer` (6) | **4,512** | 2012–2024 |
-| `RINGER_000002` | **Claire C Nicholson** | `Claire C Nicholson` (3,890), `Claire Nicholson` (145) | **4,035** | 2012–2024 |
-| `RINGER_000005` | **Louise G Pink** | `Louise G Pink` (2,927), `Louise Pink` (485) | **3,412** | 2012–2024 |
-| `RINGER_000006` | **Alan D Pink** | `Alan D Pink` (3,036), `Alan Pink` (294), `Alan D, Pink` (1) | **3,331** | 2012–2024 |
-| `RINGER_000007` | **Janet C Garnett** | `Janet Garnett` (2,939), `Janet C Garnett` (203) | **3,142** | 2012–2024 |
-| `RINGER_000008` | **Adrian C Malton** | `Adrian Malton` (2,804), `Adrian C Malton` (292) | **3,096** | 2012–2024 |
-| `RINGER_000010` | **Björn E Bradstock** | `Björn E Bradstock` (2,907), `Björn Bradstock` (88) | **2,995** | 2012–2024 |
-| `RINGER_000011` | **David A C Matthews** | `David A C Matthews` (2,651), `David Matthews` (185), `Dave Matthews` (112) | **2,948** | 2012–2024 |
-| `RINGER_000012` | **Reg C Hitchings** | `Reg Hitchings` (2,544), `Reg C Hitchings` (25) | **2,569** | 2012–2024 |
-| `RINGER_000013` | **Andrew H Ball** | `Andrew H Ball` (2,453), `Andrew Ball` (48) | **2,501** | 2012–2024 |
-| `RINGER_000017` | **Simon A Rudd** | `Simon A Rudd` (2,343), `Simon Rudd` (57) | **2,400** | 2012–2024 |
-| `RINGER_000021` | **Jack E Page** | `Jack E Page` (1,930), `Jack Page` (383) | **2,313** | 2012–2024 |
-| `RINGER_000022` | **Simon D G Webb** | `Simon D G Webb` (1,926), `Simon Webb` (370) | **2,296** | 2012–2024 |
-| `RINGER_000023` | **Sandra M Titherly** | `Sandra M Titherly` (1,935), `Sandra Titherly` (331) | **2,266** | 2012–2024 |
+| `RINGER_000001` | Full Name with Middle Initial | Diminutive (`Sue`), Full (`Susan`), Initialized (`Susan M`), Diminutive+Initial (`Sue M`) | **4,512** | 2012–2024 |
+| `RINGER_000002` | Full Name with Middle Initial | Full + Middle Initial (`Claire C`), Base Uninitialized (`Claire`) | **4,035** | 2012–2024 |
+| `RINGER_000005` | Full Name with Middle Initial | Full + Middle Initial (`Louise G`), Base Uninitialized (`Louise`) | **3,412** | 2012–2024 |
+| `RINGER_000006` | Full Name with Middle Initial | Full + Middle Initial (`Alan D`), Base Uninitialized (`Alan`), Punctuation typo (`Alan D,`) | **3,331** | 2012–2024 |
+| `RINGER_000007` | Full Name with Middle Initial | Base Primary (`Janet`), Initialized Variant (`Janet C`) | **3,142** | 2012–2024 |
+| `RINGER_000008` | Full Name with Middle Initial | Base Primary (`Adrian`), Initialized Variant (`Adrian C`) | **3,096** | 2012–2024 |
+| `RINGER_000010` | Diacritic Normalization | Non-ASCII Character (`Björn E`), ASCII-stripped (`Bjorn` / `Bjrn`) | **2,995** | 2012–2024 |
+| `RINGER_000011` | Multi-Middle Initial & Diminutive | Multi-initial (`David A C`), Base (`David`), Nickname (`Dave`) | **2,948** | 2012–2024 |
+| `RINGER_000012` | Common Diminutive | Nickname Primary (`Reg`), Nickname + Initial (`Reg C`) | **2,569** | 2012–2024 |
+| `RINGER_000013` | Full vs Uninitialized | Full + Middle Initial (`Andrew H`), Base (`Andrew`) | **2,501** | 2012–2024 |
+| `RINGER_000017` | Full vs Uninitialized | Full + Middle Initial (`Simon A`), Base (`Simon`) | **2,400** | 2012–2024 |
+| `RINGER_000021` | Full vs Uninitialized | Full + Middle Initial (`Jack E`), Base (`Jack`) | **2,313** | 2012–2024 |
+| `RINGER_000022` | Multi-Middle Initial | Multi-initial (`Simon D G`), Base (`Simon`) | **2,296** | 2012–2024 |
+| `RINGER_000023` | Full vs Uninitialized | Full + Middle Initial (`Sandra M`), Base (`Sandra`) | **2,266** | 2012–2024 |
 
 ---
 

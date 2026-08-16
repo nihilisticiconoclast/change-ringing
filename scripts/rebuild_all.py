@@ -75,13 +75,16 @@ def steps(db, skip_inference):
         ("A Ringing Career       -> docs/careers.html",   ["build_careers_page.py"], "pages"),
         ("The Temporal Nexus     -> docs/nexus.html",     ["build_nexus_page.py"], "pages"),
         ("Sacred Geometry        -> docs/geometry.html",  ["build_geometry_page.py"], "pages"),
-        # Both verifiers run last and both can fail the build. verify_chrome
+        # Verifiers run last and can fail the build. verify_chrome
         # catches a nav or footer that drifted; verify_corpus catches a database
-        # the pages were just built against that should not have been trusted.
+        # the pages were just built against that should not have been trusted;
+        # audit_privacy_and_licences catches licence or privacy regressions.
         ("Verify chrome: same nav and footer on all thirteen, one source for its CSS",
          ["verify_chrome.py"], "pages"),
         ("Verify corpus integrity",
          ["verify_corpus.py", "--local-db", db], "pages"),
+        ("Audit privacy and licence compliance",
+         ["audit_privacy_and_licences.py"], "pages"),
     ]
     return out
 
