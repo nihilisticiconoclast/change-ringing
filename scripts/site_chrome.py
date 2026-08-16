@@ -304,6 +304,62 @@ def footer_html(active, dark=False, indent="  "):
             f'{indent}</footer>')
 
 
+# The site's base design tokens and typography CSS, prepended by apply_chrome
+# on non-dark pages.
+#
+# Unified across all twelve pages so that fonts, palettes, max-widths, and
+# headings never drift between builders or templates.
+BASE_CSS = """
+/* ---- Base design tokens & typography ----------------------------------- */
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --bar:#2F6D53; --bar-soft:#8AB289; --ghost:#B8873F; --warn:#9c3b2e;
+  --dim:#C9C6BC;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+    --dim:#33322F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+  --dim:#33322F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px;max-width:none}
+header{padding:64px 0 44px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch;line-height:1.6}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:34px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+.fig .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);
+  opacity:.72;margin-top:2px}
+section{padding:52px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:none}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em}
+.lede{margin:16px 0 0;max-width:70ch;color:var(--ink-2)}
+p{max-width:70ch;color:var(--ink-2)}
+"""
+
 # The site's entire chrome CSS -- nav and footer -- appended by apply_chrome.
 #
 # Appended LAST, after each page's own <style>, so these rules win on specificity
@@ -422,10 +478,9 @@ def _one(html, mark, render, dark):
 
 
 def apply_chrome(html, dark=False):
-    """Expand the NAV and FOOTER markers. Raises unless both are present exactly once.
+    """Expand the NAV and FOOTER markers and apply unified base & chrome CSS.
 
-    Strict on purpose. A page that silently builds without a footer is how the
-    inconsistency happened the first time.
+    Raises unless both markers are present exactly once.
     """
     html, n_nav = _one(html, NAV_MARK, nav_html, dark)
     html, n_foot = _one(html, FOOTER_MARK, footer_html, dark)
@@ -433,10 +488,14 @@ def apply_chrome(html, dark=False):
         raise ValueError(f"expected exactly one {NAV_MARK}...--> marker, found {n_nav}")
     if n_foot != 1:
         raise ValueError(f"expected exactly one {FOOTER_MARK}...--> marker, found {n_foot}")
+    
     if "</style>" in html:
-        html = html.replace("</style>", CHROME_CSS + "</style>", 1)
+        if not dark:
+            html = html.replace("<style>", f"<style>\n{BASE_CSS}\n", 1)
+        html = html.replace("</style>", f"\n{CHROME_CSS}\n</style>", 1)
     else:
-        html = html.replace("</head>", f"<style>{CHROME_CSS}</style></head>", 1)
+        full_css = (BASE_CSS + "\n" if not dark else "") + CHROME_CSS
+        html = html.replace("</head>", f"<style>\n{full_css}\n</style></head>", 1)
     return html
 
 

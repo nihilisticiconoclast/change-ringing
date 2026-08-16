@@ -174,7 +174,8 @@ def build(db_path, out_path):
     print(f"  cohort {data['cohort']:,}; early {data['earlyMean']}, late {data['lateMean']}, "
           f"drift {data['drift']}")
     for r in data["apprenticeship"]:
-        print(f"  conduct {r['label']:26s} {r['pct']:>5}%  median wait {r['median']}")
+        lbl = r['label'].replace('≥', '>=')
+        print(f"  conduct {lbl:26s} {r['pct']:>5}%  median wait {r['median']}")
 
 
 def main():

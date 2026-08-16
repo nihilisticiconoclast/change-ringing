@@ -74,45 +74,16 @@ TEMPLATE = r"""<!doctype html>
 <title>The Blue Line Atlas — Every Method as a Shape</title>
 <style>
 :root{
-  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
-  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
-  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
   --line:#2a78d6; --treble:#c2410c;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
     --line:#3987e5; --treble:#e07a4f;
   }
 }
 :root[data-theme="dark"]{
-  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
   --line:#3987e5; --treble:#e07a4f;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);
-  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
-h1,h2,h3{text-wrap:balance;margin:0}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--bronze);margin:0 0 14px}
-header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
-h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
-h1 em{font-style:italic;color:var(--bronze)}
-.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:62ch}
-.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
-.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
-.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-3);margin-top:4px}
-section{padding:48px 0;border-bottom:1px solid var(--rule)}
-h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400}
-.lede{color:var(--ink-2);margin-top:12px;max-width:64ch}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:26px 0 6px}
 .controls label{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ink-3);margin-right:2px}

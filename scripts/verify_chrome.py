@@ -44,22 +44,27 @@ SCRIPTS = Path(__file__).parent
 # Selectors that belong to scripts/site_chrome.py and to nothing else.
 NAV_SELECTORS = ("nav-bar", "nav-links", "nav-title", "nav-header",
                  "nav-toggle", "nav-over", "theme-btn")
+SHARED_SELECTORS = NAV_SELECTORS + (
+    "site-footer", "site-map", "site-note",
+    "eyebrow", "standfirst", "figures", "wrap"
+)
 # A rule opener: something ending in `.<selector>...{`, not inside a comment.
-NAV_RULE = re.compile(
-    r"^[^/*\n]*\.(?:" + "|".join(NAV_SELECTORS) + r")[^{}\n]*\{", re.M)
+SHARED_RULE = re.compile(
+    r"^[^/*\n]*\.(?:" + "|".join(SHARED_SELECTORS) + r")[^{}\n]*\{", re.M)
 
 
-def check_no_local_nav_css():
-    """No template and no builder may style the nav. Only site_chrome.py may."""
+def check_no_local_chrome_css():
+    """No template and no builder may style shared chrome or base layout rules.
+    Only site_chrome.py may."""
     fails = []
     sources = sorted((SCRIPTS / "templates").glob("*.html"))
     sources += [p for p in sorted(SCRIPTS.glob("*.py")) if p.name != "site_chrome.py"]
     for path in sources:
         text = path.read_text(encoding="utf-8")
-        for m in NAV_RULE.finditer(text):
+        for m in SHARED_RULE.finditer(text):
             line = text[:m.start()].count("\n") + 1
             fails.append(f"{path.relative_to(SCRIPTS.parent)}:{line}: "
-                         f"declares a nav rule — {m.group(0).strip()[:60]!r}")
+                         f"declares a shared rule — {m.group(0).strip()[:60]!r}")
     return fails
 
 
@@ -149,9 +154,9 @@ def main():
             for i, (_, pages) in enumerate(seen.items(), 1):
                 print(f"          variant {i}: {pages}")
 
-    css_fails = check_no_local_nav_css()
+    css_fails = check_no_local_chrome_css()
     all_fails += css_fails
-    print(f"\n  {'FAIL' if css_fails else 'ok  '}  nav CSS declared only in site_chrome.py")
+    print(f"\n  {'FAIL' if css_fails else 'ok  '}  chrome & base CSS declared only in site_chrome.py")
     for f in css_fails:
         print(f"          {f}")
 
