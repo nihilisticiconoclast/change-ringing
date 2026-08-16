@@ -86,6 +86,8 @@ PAGES = [
      "Dove says the tower rings on Tuesday. Does it?"),
     ("populations.html", "Two Populations",
      "The split every ringer describes, which the data does not contain"),
+    ("careers.html",    "A Ringing Career",
+     "Ringers rotate through the bells, but they do not work up them"),
     ("nexus.html",      "The Temporal Nexus",
      "Towers, methods and ringers in one 3-D field"),
     ("geometry.html",   "Sacred Geometry",
@@ -199,6 +201,22 @@ NOTES = {
         "55,326 canonical entities whose <strong>accuracy is not measured</strong>. The "
         "page shows what unresolved names do to the answer rather than hiding it. "
         "<strong>No individual is named anywhere.</strong>",
+    ],
+    "careers.html": [
+        "<strong>An absence is an absence.</strong> The corpus records a ringer’s last "
+        "appearance, not their retirement — someone who moved, changed their name, or "
+        "rings at a tower that does not report to BellBoard looks identical to someone "
+        "who stopped. Attrition here is a cohort rate and must not be read as a "
+        "statement about any individual. <strong>No individual is named anywhere on "
+        "this page.</strong>",
+        "Ringer identity comes from <code>data/ringer_identity_candidates.csv</code>, "
+        "55,326 canonical entities whose <strong>accuracy is not measured</strong>. "
+        "Fragmenting one ringer into variants would shorten apparent careers and narrow "
+        "each fragment’s slice of the ring — manufacturing both the specialists and the "
+        "early leavers this page reports not finding.",
+        "Bell position is normalised by the number of bells rung in that performance, "
+        "because bell number alone is not comparable across towers. Handbell pairs are "
+        "excluded: they are a different activity, not a ring position.",
     ],
     "nexus.html": [
         "Positions are a force layout, not a map projection: distance between nodes "

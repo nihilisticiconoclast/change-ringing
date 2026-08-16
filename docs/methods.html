@@ -156,10 +156,12 @@ section:last-of-type{border-bottom:none}
   padding:7px 13px;border-radius:2px;cursor:pointer}
 .theme-btn:hover{color:var(--ink,#fff);border-color:var(--bronze-soft,#38bdf8)}
 
-/* Overlay variant, for the full-screen 3-D pages. */
+/* Overlay variant, for the full-screen 3-D pages. The bar is translucent over
+   the canvas; the dropped panel is NOT -- at .97 the page's own h1 was still
+   legible through the menu items behind it. */
 .nav-over{position:absolute;top:0;left:0;right:0;background:rgba(5,8,20,.9);
   backdrop-filter:blur(12px)}
-.nav-over .nav-links{background:rgba(5,8,20,.97);backdrop-filter:blur(12px)}
+.nav-over .nav-links{background:#070b18}
 </style>
 </head>
 <body>
@@ -183,6 +185,7 @@ section:last-of-type{border-bottom:none}
     <a href="occasions.html">The Occasions Archive</a>
     <a href="practice.html">Practice Nights</a>
     <a href="populations.html">Two Populations</a>
+    <a href="careers.html">A Ringing Career</a>
     <a href="nexus.html">The Temporal Nexus</a>
     <a href="geometry.html">Sacred Geometry</a>
     <button class="theme-btn" id="themeToggle">Dark Mode</button>
@@ -241,6 +244,7 @@ section:last-of-type{border-bottom:none}
     <li><a href="occasions.html">The Occasions Archive</a> <span>Why bells are rung, from 337,946 footnotes</span></li>
     <li><a href="practice.html">Practice Nights</a> <span>Dove says the tower rings on Tuesday. Does it?</span></li>
     <li><a href="populations.html">Two Populations</a> <span>The split every ringer describes, which the data does not contain</span></li>
+    <li><a href="careers.html">A Ringing Career</a> <span>Ringers rotate through the bells, but they do not work up them</span></li>
     <li><a href="nexus.html">The Temporal Nexus</a> <span>Towers, methods and ringers in one 3-D field</span></li>
     <li><a href="geometry.html">Sacred Geometry</a> <span>Method symmetries arranged on a phyllotaxis sphere</span></li>
   </ul>

@@ -654,6 +654,45 @@ into every template here — roadmap item 31 — and they have already drifted.
 
 ---
 
+### 32. The code was right; the sentence written over it was wrong
+
+Task 7 shipped with this line:
+
+> 72.5% of the cohort ever conduct a peal recorded in this corpus. Among those
+> who do, the median wait is 11 appearances.
+
+The script behind it never mentions peals. It reads `performance_ringers.conductor`
+and stops — and this corpus is overwhelmingly quarter peals, not peals. Restricted
+to peals proper, it is 20.0% and a median wait of 37: peal conducting overstated
+3.6×, the apprenticeship understated 3.4×.
+
+Nothing in the code was wrong. Every number it printed was correct and correctly
+labelled *in the code's own terms*. The defect was entirely in the prose written
+over the top, which added a word the measurement did not support. That makes it a
+different animal from most of the errors in this file, and harder to catch:
+
+- **It survives every check we have.** The query is recorded and it is the query
+  that ran. The figures reproduce exactly — all of them did, on merge. A reviewer
+  re-running the analysis gets the same numbers and concludes the document is
+  sound, because the document *is* arithmetically sound. It is only wrong about
+  what it measured.
+- **Reproducibility is not the same as validity.** Committing the recipe (lesson
+  19) proves a number can be regenerated. It says nothing about whether the noun
+  attached to it is the right noun. Those need separate checks.
+- **The tell is a term of art appearing in prose that never appears in the code.**
+  "Peal" is a defined thing here — `changes >= 5000`, already written down in
+  `peal_and_quarter_populations.sql`. If a document uses a defined term and you
+  cannot point at the line that implements the definition, the term is decoration.
+  Grepping the script for the word would have caught this in one command.
+
+The structural fix is to stop restating results in a second place. `docs/careers.html`
+is built by `build_careers_page.py`, which *imports* the analysis module and calls
+it rather than transcribing its output, so the page and the document cannot come to
+different views about what "the cohort" or "the wait" means. Where a number must be
+written by hand, name the definition beside it.
+
+---
+
 ## Where the predictions are kept
 
 `docs/HYPOTHESES.md` records every claim this project has tested against what was

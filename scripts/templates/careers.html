@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A ringing career — the progression that isn't there</title>
+<style>
+:root{
+  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
+  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
+  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
+  --bar:#2F6D53; --bar-soft:#8AB289; --ghost:#B8873F; --warn:#9c3b2e;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+    --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
+  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
+  --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--bronze);margin:0 0 14px;max-width:none}
+header{padding:64px 0 36px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
+h1 em{font-style:italic;color:var(--bronze)}
+.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
+.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:32px}
+.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+section{padding:52px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:none}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em}
+h3{font-size:1.05rem;font-weight:600;margin:0 0 8px}
+.lede{margin:16px 0 0;max-width:70ch;color:var(--ink-2)}
+p{max-width:70ch;color:var(--ink-2)}
+svg{display:block;max-width:100%;height:auto}
+.chart{margin-top:28px}
+.chart svg{max-width:720px}
+.caption{font-size:13.5px;color:var(--ink-3);margin:10px 0 0;max-width:76ch;line-height:1.6}
+table{border-collapse:collapse;margin-top:24px;font-size:14.5px;width:auto}
+th,td{padding:7px 18px 7px 0;text-align:right;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;white-space:nowrap}
+td{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+td.k{font-family:var(--serif);color:var(--ink)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px;margin-top:8px}
+.key{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-3);margin-top:12px}
+.key i{font-style:normal;display:inline-block;width:22px;height:3px;vertical-align:middle;
+  margin-right:7px;border-radius:2px}
+.warn{border-left:2px solid var(--bronze);padding:2px 0 2px 18px;margin-top:26px}
+.warn p{margin:0;font-size:15px}
+</style>
+</head>
+<body>
+<!--NAV:careers.html-->
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · Roadmap item 22 · A negative result</p>
+  <h1>Ringers are supposed to<br>work up to the tenor.<br><em>They don’t work up at all.</em></h1>
+  <p class="standfirst" id="standfirst"></p>
+  <div class="figures" id="figs"></div>
+</header>
+
+<section>
+  <h2>The column nobody read</h2>
+  <p class="lede"><code>performance_ringers.bell</code> records which bell each person
+  stood behind. It is populated on <span id="bellrows"></span> rows and, until this
+  analysis, nothing in this project had ever read it. It is the most underused column
+  in the corpus, and it is the only one that can watch an individual ringer’s arc.</p>
+  <p class="lede">Every ringer knows the supposed shape of that arc: you learn on the
+  treble, you move to the inside bells, and the tenor — and the conducting — come later.
+  It is the kind of thing everybody says and nobody has checked at scale.</p>
+  <p class="lede">Bell number alone will not do it. The tenor of a six is the 6 and the
+  tenor of a twelve is the 12, so every appearance is normalised by the number of bells
+  rung in that performance: <strong>position = bell ÷ ring size</strong>. The treble is
+  near 0, the tenor is exactly 1. Handbell pairs (<code>'1-2'</code>) are a different
+  activity and are excluded throughout.</p>
+</section>
+
+<section>
+  <h2>The progression is not there</h2>
+  <p class="lede">If ringers worked up the ring, the difference between where a ringer
+  rings late in their career and where they rang early would be <strong>positive</strong>
+  — the whole distribution shifted right of zero. It is not. It is centred on zero and
+  very nearly symmetric.</p>
+  <div class="chart" id="drift"></div>
+  <p class="caption" id="driftcap"></p>
+
+  <table id="split"></table>
+
+  <p class="lede">So the strong folk model fails. The obvious weaker one — that ringers
+  find a bell and stay on it — fails too, and in the opposite direction.</p>
+  <div class="chart" id="range"></div>
+  <p class="caption" id="rangecap"></p>
+  <p class="lede">Over a career the median ringer covers <strong id="mr"></strong> of the
+  ring, and only <span id="sb"></span> spend their last stretch on a single bell. Ringers
+  <em>do</em> rotate through the bells, which is the grain of truth in the folk model —
+  but the rotation has no direction. <strong>They move around without moving up.</strong></p>
+</section>
+
+<section>
+  <h2>How long before you call one?</h2>
+  <p class="lede">The other half of the folk model is that conducting comes late. Whether
+  that is true depends entirely on what you mean by conducting, and the distinction is
+  large enough that getting it wrong changes the answer by a factor of three.</p>
+  <table id="appr"></table>
+  <div class="chart" id="curve"></div>
+  <p class="caption" id="curvecap"></p>
+  <p class="lede">Conducting <em>something</em> is ordinary and happens early — most who
+  ever conduct have done it within their first dozen appearances. Conducting a
+  <strong>peal</strong> is a different activity: a fifth of the cohort, reached three
+  times further into a career.</p>
+  <div class="warn">
+    <p><strong>This page’s source document got that wrong first time.</strong> It reported
+    the “any performance” row and described it as peals — 72.5% conducting a peal with a
+    median wait of 11 appearances, when the true peal figures are 20.0% and 37. The code
+    never mentioned peals; the prose written over it did. It is corrected here and in
+    <code>docs/ringing_careers.md</code>, which says so itself.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What leaving looks like</h2>
+  <p class="lede">A ringer’s last appearance is in the data. <strong>An absence is an
+  absence</strong> — not a death, not a resignation. The corpus cannot tell someone who
+  stopped ringing from someone who moved, changed their name, or rings at a tower that
+  does not report to BellBoard. These are cohort rates and nothing else; no individual is
+  named anywhere on this page.</p>
+  <div class="two">
+    <div>
+      <h3>Everyone first seen in that year</h3>
+      <table id="attr-all"></table>
+    </div>
+    <div>
+      <h3>The active cohort only</h3>
+      <table id="attr-active"></table>
+    </div>
+  </div>
+  <p class="lede">Roughly half of everyone who appears and is recorded here is not
+  recorded five to eight years later. Committed ringers attrite at under a tenth of that.
+  <strong>The 2020 line crosses COVID</strong>, when ringing stopped almost entirely for a
+  year, so these cohorts are partly a pandemic effect rather than a steady rate — and
+  cohorts first seen after 2020 cannot by construction have left before it, so they are
+  omitted rather than shown as zero.</p>
+</section>
+
+<section>
+  <h2>What would change this answer</h2>
+  <p class="lede"><strong>Ordinary service ringing, if it were ever recorded.</strong>
+  Exactly as in the <a href="populations.html">two populations</a> result, the ringing the
+  folk model is really about — the Sunday band working a learner up the ring — is not in
+  this corpus at all. This rules the progression out for <em>reported</em> ringing, which
+  is not the same as ruling it out for ringing.</p>
+  <p class="lede"><strong>Better identity resolution.</strong> The canonical identities are
+  a candidate dataset whose accuracy is unmeasured. Splitting one ringer into variants
+  shortens each fragment’s apparent career and narrows its slice of the ring — which would
+  manufacture both more specialists and more early leavers. The raw-name cohort is fatter
+  than the canonical one, exactly as fragmentation predicts.</p>
+  <p class="lede"><strong>A longer corpus.</strong> Thirteen years is enough to see no
+  progression. It is not enough to see a lifetime.</p>
+</section>
+
+</div>
+<!--FOOTER:careers.html-->
+<script>
+const D = /*__DATA__*/;
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a) => { const e = document.createElementNS(NS, n);
+  for (const k in a) e.setAttribute(k, a[k]); return e; };
+const fmt = n => n.toLocaleString('en-GB');
+
+$('#standfirst').textContent =
+  `Across ${fmt(D.cohort)} ringers with ${D.minAppearances} or more tower appearances `
+  + `spanning ${D.minSpanYears} or more years, the mean normalised bell position is `
+  + `${D.earlyMean} in the first tenth of a career and ${D.lateMean} in the last. `
+  + `No upward drift — and no settling on one bell either.`;
+$('#bellrows').textContent = fmt(D.bellRows);
+$('#mr').textContent = D.medianRange.toFixed(3);
+$('#sb').textContent = D.singleBellLatePct + '%';
+
+for (const [n, l] of [[D.earlyMean.toFixed(3), 'Early-career position'],
+                      [D.lateMean.toFixed(3), 'Late-career position'],
+                      [(D.drift > 0 ? '+' : '') + D.drift.toFixed(3), 'Drift over a career'],
+                      [fmt(D.cohort), 'Ringers measured']]) {
+  const d = document.createElement('div'); d.className = 'fig';
+  d.innerHTML = `<div class="n"></div><div class="l"></div>`;
+  d.querySelector('.n').textContent = n; d.querySelector('.l').textContent = l;
+  $('#figs').appendChild(d);
+}
+
+/* Vertical histogram with a marked zero line. The zero line is the point of the
+   chart: the claim is about which side of it the mass sits on. */
+function histogram(host, counts, labels, opts) {
+  opts = opts || {};
+  const W = 720, H = 250, L = 46, R = 12, T = 14, B = 52;
+  const n = counts.length, max = Math.max(...counts);
+  const bw = (W - L - R) / n;
+  const s = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img',
+                       'aria-label': opts.alt || ''});
+  const y = v => T + (H - T - B) * (1 - v / max);
+  for (let i = 0; i < n; i++) {
+    const h = (H - T - B) * counts[i] / max;
+    s.appendChild(el('rect', {x: L + i * bw + 2, y: y(counts[i]),
+      width: bw - 4, height: Math.max(h, counts[i] ? 1 : 0),
+      fill: (opts.mark && opts.mark(i)) ? 'var(--bronze)' : 'var(--bar-soft)'}));
+    if (labels[i] !== '') {
+      const t = el('text', {x: L + i * bw + bw / 2, y: H - B + 16,
+        'text-anchor': 'middle', fill: 'var(--ink-3)',
+        'font-family': 'var(--mono)', 'font-size': 9.5});
+      t.textContent = labels[i]; s.appendChild(t);
+    }
+  }
+  s.appendChild(el('line', {x1: L, y1: H - B, x2: W - R, y2: H - B,
+    stroke: 'var(--rule)', 'stroke-width': 1}));
+  if (opts.zeroAt != null) {
+    const zx = L + opts.zeroAt * bw;
+    s.appendChild(el('line', {x1: zx, y1: T, x2: zx, y2: H - B,
+      stroke: 'var(--ink)', 'stroke-width': 1.4, 'stroke-dasharray': '3 3'}));
+    const t = el('text', {x: zx, y: H - B + 34, 'text-anchor': 'middle',
+      fill: 'var(--ink)', 'font-family': 'var(--mono)', 'font-size': 10,
+      'letter-spacing': '.08em'});
+    t.textContent = opts.zeroLabel || 'NO CHANGE'; s.appendChild(t);
+  }
+  const yl = el('text', {x: 4, y: T + 10, fill: 'var(--ink-3)',
+    'font-family': 'var(--mono)', 'font-size': 9.5});
+  yl.textContent = fmt(max); s.appendChild(yl);
+  host.appendChild(s);
+}
+
+const dl = [];
+for (let i = 0; i <= D.driftEdges.length; i++) {
+  const lo = D.driftEdges[i - 1], hi = D.driftEdges[i];
+  dl.push(i === 0 ? '≤' + hi : (hi === undefined ? '>' + lo : (i % 2 ? '' : hi.toFixed(2))));
+}
+histogram($('#drift'), D.driftCounts, dl, {
+  zeroAt: D.driftEdges.indexOf(-0.05) + 1.5,
+  zeroLabel: 'ZERO DRIFT',
+  alt: 'Distribution of the change in normalised bell position from early to late career, '
+     + 'centred on zero and close to symmetric.'});
+$('#driftcap').textContent =
+  `Change in normalised bell position, first tenth of a career to last, for all `
+  + `${fmt(D.cohort)} ringers in the cohort. If the folk model held, this distribution `
+  + `would sit to the right of the dashed line. Its mean is ${D.drift.toFixed(3)}.`;
+
+const sp = $('#split');
+sp.innerHTML = '<tr><th>Direction over a career</th><th>Ringers</th><th>Share</th></tr>'
+  + `<tr><td class="k">Moved up, toward the tenor</td><td>${fmt(D.up)}</td><td>${D.upPct.toFixed(1)}%</td></tr>`
+  + `<tr><td class="k">Moved down, toward the treble</td><td>${fmt(D.down)}</td><td>${D.downPct.toFixed(1)}%</td></tr>`
+  + `<tr><td class="k">Stayed within ±0.05</td><td>${fmt(D.stayed)}</td><td>${D.stayedPct.toFixed(1)}%</td></tr>`;
+
+histogram($('#range'), D.rangeDeciles,
+  D.rangeDeciles.map((_, i) => i % 2 ? '' : (i / 10).toFixed(1)), {
+  alt: 'Distribution of how much of the ring each ringer covers over a career, '
+     + 'concentrated at the top of the range.'});
+$('#rangecap').textContent =
+  `How much of the ring each ringer covers across their whole career, from 0 (one bell, `
+  + `always) to 1 (treble to tenor). Median ${D.medianRange.toFixed(3)}. A population of `
+  + `specialists would pile up on the left; this piles up on the right.`;
+
+/* Two cumulative curves: share of the cohort who have conducted by their Nth appearance. */
+(function curve() {
+  const W = 720, H = 260, L = 46, R = 14, T = 14, B = 46;
+  const s = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img',
+    'aria-label': 'Cumulative share of the cohort who have conducted, by appearance number. '
+      + 'Conducting any performance rises steeply and early; conducting a peal rises slowly.'});
+  const maxY = 80;
+  const x = k => L + (W - L - R) * k / D.curveMax;
+  const y = v => T + (H - T - B) * (1 - v / maxY);
+  for (let g = 0; g <= maxY; g += 20) {
+    s.appendChild(el('line', {x1: L, y1: y(g), x2: W - R, y2: y(g),
+      stroke: 'var(--rule)', 'stroke-width': 1}));
+    const t = el('text', {x: 4, y: y(g) + 3.5, fill: 'var(--ink-3)',
+      'font-family': 'var(--mono)', 'font-size': 9.5});
+    t.textContent = g + '%'; s.appendChild(t);
+  }
+  for (const [series, colour] of [[D.curveAny, 'var(--bar)'], [D.curvePeal, 'var(--bronze)']]) {
+    s.appendChild(el('polyline', {fill: 'none', stroke: colour, 'stroke-width': 2.2,
+      'stroke-linejoin': 'round',
+      points: series.map((v, k) => `${x(k).toFixed(1)},${y(v).toFixed(1)}`).join(' ')}));
+  }
+  for (let k = 0; k <= D.curveMax; k += 20) {
+    const t = el('text', {x: x(k), y: H - B + 18, 'text-anchor': 'middle',
+      fill: 'var(--ink-3)', 'font-family': 'var(--mono)', 'font-size': 9.5});
+    t.textContent = k; s.appendChild(t);
+  }
+  const t = el('text', {x: (L + W - R) / 2, y: H - 8, 'text-anchor': 'middle',
+    fill: 'var(--ink-3)', 'font-family': 'var(--mono)', 'font-size': 9.5,
+    'letter-spacing': '.1em'});
+  t.textContent = 'APPEARANCES INTO A CAREER'; s.appendChild(t);
+  $('#curve').appendChild(s);
+  const k = document.createElement('p'); k.className = 'key';
+  k.innerHTML = '<i style="background:var(--bar)"></i>conducted any performance'
+    + '&nbsp;&nbsp;&nbsp;<i style="background:var(--bronze)"></i>conducted a peal';
+  $('#curve').appendChild(k);
+})();
+$('#curvecap').textContent =
+  `Share of the ${fmt(D.cohort)} cohort who have conducted at least once by their Nth `
+  + `appearance. The two curves are the same measurement over two different events, and `
+  + `they are the reason the distinction matters.`;
+
+const ap = $('#appr');
+ap.innerHTML = '<tr><th>Conducting…</th><th>Ever</th><th>Share</th><th>Median wait</th>'
+  + '<th>Mean</th><th>p25</th><th>p75</th></tr>'
+  + D.apprenticeship.map(r =>
+      `<tr><td class="k">${r.label}</td><td>${fmt(r.ever)}</td><td>${r.pct.toFixed(1)}%</td>`
+      + `<td>${r.median}</td><td>${r.mean}</td><td>${r.p25}</td><td>${r.p75}</td></tr>`).join('');
+
+for (const [id, rows] of [['#attr-all', D.attrition.all], ['#attr-active', D.attrition.active]]) {
+  $(id).innerHTML = `<tr><th>First seen</th><th>Ringers</th>`
+    + `<th>None after ${D.attritionLine}</th><th>%</th></tr>`
+    + rows.map(r => `<tr><td class="k">${r.year}</td><td>${fmt(r.n)}</td>`
+        + `<td>${fmt(r.gone)}</td><td>${r.pct.toFixed(1)}%</td></tr>`).join('');
+}
+
+const tb = document.getElementById('themeToggle');
+const setTheme = t => { document.documentElement.setAttribute('data-theme', t);
+  if (tb) tb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  try { localStorage.setItem('cr-theme', t); } catch (e) {} };
+if (tb) tb.onclick = () =>
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+(() => { let t = null; try { t = localStorage.getItem('cr-theme'); } catch (e) {}
+  if (!t) t = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  setTheme(t); })();
+</script>
+</body>
+</html>
