@@ -26,7 +26,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <meta charset="utf-8">
   <title>First Rung: Composition Visualizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="vendor/vis-network-10.1.1.min.js"></script>
   <style>
     :root {
       --accent: #38bdf8;
@@ -515,6 +515,10 @@ Call\tCourse Head
     const hlColor = isDark ? "#C9974A" : "#8A5F22";
     
     const container = document.getElementById('mynetwork');
+    if (typeof vis === 'undefined') {
+      container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--ink-2);font-family:var(--mono);font-size:13px;">Composition network graph requires <code>vendor/vis-network-10.1.1.min.js</code>.</div>';
+      return;
+    }
     visNodes = new vis.DataSet([]);
     visEdges = new vis.DataSet([]);
     const data = { nodes: visNodes, edges: visEdges };

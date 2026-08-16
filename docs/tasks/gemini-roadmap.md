@@ -39,6 +39,7 @@ reference in a commit message or pull request still points at the same work.
 | G-6 | Practice night: Dove vs BellBoard | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html` |
 | G-7 | Normalise the free-text `method` column | **Done** — PR #21, `docs/regional_traditions.md` |
 | G-8 | Shared CSS deduplication | **Done** — PR #23, centralised in `site_chrome.py`, enforced by `verify_chrome.py`. Delivers [R-31](../ROADMAP.md) |
+| G-9 | Vendor vis-network for invention.html | **Done** — vendored in `docs/vendor/`, delivers [R-32](../ROADMAP.md) |
 | [R-10](../ROADMAP.md) | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php`. Owned by Gemini but never a numbered brief task, which is why this row carries its central ID: numbering it G-6 shifted every task below it out of step with its own brief |
 
 ---
