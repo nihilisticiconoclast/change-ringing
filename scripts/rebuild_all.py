@@ -87,6 +87,8 @@ def steps(db, skip_inference):
          ["verify_corpus.py", "--local-db", db], "pages"),
         ("Audit privacy and licence compliance",
          ["audit_privacy_and_licences.py"], "pages"),
+        ("Run automated unit and oracle test suite",
+         ["run_tests.py"], "pages"),
     ]
     return out
 
