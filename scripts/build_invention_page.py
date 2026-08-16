@@ -3,8 +3,8 @@
 Builds the 'invention.html' interactive composition visualizer.
 """
 
-import sys
 import json
+import sys
 from pathlib import Path
 
 # `from scripts.site_chrome import ...` only resolves when the repository root is
