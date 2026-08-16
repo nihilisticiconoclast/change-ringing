@@ -124,6 +124,44 @@ def _title(line, key):
     return " ".join(raw.split()).rstrip(".").lower()
 
 
+# Sections of the central roadmap that describe LIVE work, against the archive.
+ACTIVE_SECTIONS = ("Now", "Blocked, and on what", "Held")
+
+
+def check_no_contradictory_sections():
+    """An item may not be filed as live and as archived at the same time.
+
+    The duplicate-row rule only fires within one table, which is right: the
+    roadmap deliberately lists an item under "Now" with a pointer to "Held" where
+    the detail lives. What that missed is the same ID appearing under "Done" AND
+    under an active heading -- not a cross-reference, but two answers to "is this
+    finished?".
+
+    Found three on its first run. R-10 was filed as Blocked and as Done. R-16 sat
+    in three sections at once. R-20 carried two Done rows with different figures,
+    which is how PR #26's duplicate survived the earlier checks. Each was
+    invisible to a reader of either section alone, which is why they lasted.
+    """
+    path = REGISTERS["R"]
+    if not path.exists():
+        return []
+    section, seen = "", {}
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if line.startswith("#"):
+            section = line.strip("# ").strip()
+        m = re.match(r"^\|\s*(R-\d+[a-z]?)\s*\|", line)
+        if m:
+            seen.setdefault(m.group(1), {})[section] = n
+    fails = []
+    for key, places in sorted(seen.items()):
+        if "Done" in places and any(s in places for s in ACTIVE_SECTIONS):
+            live = [s for s in places if s in ACTIVE_SECTIONS]
+            fails.append(f"{path.relative_to(ROOT)}:{places['Done']}: {key} is filed "
+                         f"under 'Done' and also under {live} — one item, two "
+                         f"answers to whether it is finished")
+    return fails
+
+
 def check_ids():
     """One ID means one item, and every reference resolves.
 
@@ -193,6 +231,7 @@ def main():
         print(f"          {f}")
 
     id_fails, defined = check_ids()
+    id_fails += check_no_contradictory_sections()
     fails += id_fails
     counts = " · ".join(f"{p}-nn: {len(v)}" for p, v in defined.items())
     print(f"  {'FAIL' if id_fails else 'ok  '}  item IDs unique and resolvable "

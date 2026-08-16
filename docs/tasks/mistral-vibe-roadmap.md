@@ -38,6 +38,7 @@ reference in a commit message or pull request still points at the same work.
 | V-3 | Corpus integrity checker | **Done** — PR #10, merged with four changes; see below |
 | V-5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | V-4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
+| V-8 | Load CompLib in full (R-20) | **Done** — 86,054 compositions across 3,443 pages; see note below |
 
 ---
 
@@ -452,3 +453,45 @@ justifies one.
 
 **Branch fresh from `main`.** `scripts/check_branch_safety.py` runs on every pull
 request and fails a branch cut from a stale base.
+
+
+---
+
+## Task 8 — Load CompLib in full (R-20) *(done)*
+
+**Done.** The loader (`scripts/ingest_complib.py`, merged in PR #6) was run to
+completion against the live `api.complib.org` API: all 3,443 pages of
+`/composition/search?page=N&perpage=25`, walking the full corpus from a local
+replica built by `build_local_db.py`.
+
+**Row counts from the real run** (local replica, 2026-08-16):
+
+- **86,054 compositions** loaded — matching the API's reported `count`
+  exactly, verified against a fresh live count taken after the run. The corpus
+  had grown from 86,039 (first measured 2026-08-15) to 86,054 on this run; the
+  denominator moves, as BellBoard's does.
+- **186,464 method-definition rows** across all 86,054 compositions (every
+  composition has at least one method definition; 23,675 are spliced/multi-method).
+- 12,690 distinct free-text `method_title` values.
+
+**Last-page coverage check.** Page 3,443 returned 4 compositions, the exact
+remainder of 86,054 − 3,442×25. The page walk terminated cleanly with
+exit 0 and no `INCOMPLETE` marker.
+
+**Integrity.** `scripts/verify_corpus.py` against the loaded replica: 49
+checks, 0 failures. The CompLib tables are idempotent (`INSERT OR REPLACE` on
+CompLib's composition id; child rows cleared before reinsert), so re-runs
+converge.
+
+**Not run: the `/rows` enrichment pass.** `--fetch-method-ids` adds one extra
+request per composition (~86,054 requests at 0.3s each ≈ 7 hours) to
+record CompLib's `methodid` and resolve the CCCBR `method_id` by the
+`'m'+methodid` rule. It is an optional enrichment on top of the search
+payload, not part of this item's definition of done ("load CompLib in full"),
+and the linkage it provides was already established on a bounded slice in
+PR #6 (8/8 resolved, verified on merge). It is left as a follow-up.
+
+**Standing constraint honoured.** The live Turso database is frozen until
+2026-09-01; this run wrote only to a local replica, never to production. The
+page cache (`complib-cache/`, gitignored) is intact, so a resumed or repeated
+run reuses it and does not re-hit the API.

@@ -143,9 +143,10 @@ can be checked instead of taken on trust.
       question had to be corrected first: ordinary service ringing is never
       reported to BellBoard and is absent from the corpus entirely.
 - [x] CompLib ingestion -- the fourth corpus (`schema/006`,
-      `scripts/ingest_complib.py`): 86,039 compositions from the
-      `api.complib.org` JSON API, with `perpage` capped at 25 (a max
-      the OpenAPI spec omits). See `data/SOURCES.md`.
+      `scripts/ingest_complib.py`): 86,054 compositions loaded in full from
+      the `api.complib.org` JSON API across 3,443 pages, with `perpage` capped
+      at 25 (a max the OpenAPI spec omits). Loaded row count matches the API's
+      `count` exactly. See `data/SOURCES.md`.
 - [x] Ringer identity resolution -- 70,032 raw names resolved to 56,340 canonical
       entities over the full 2012-24 corpus (`data/ringer_identity_candidates.csv`,
       `scripts/resolve_ringer_identities.py`). **A candidate dataset: its accuracy is

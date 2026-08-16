@@ -380,6 +380,54 @@ def check_csv_agreement(conn, rep):
                        f"missing; the replica is stale, rebuild it with "
                        f"scripts/rebuild_all.py")
 
+    # CompLib: same property for the fourth corpus. The CSVs are single files
+    # per table (not split by year like BellBoard), so the check is a direct
+    # one-to-one comparison. The API walk that produced them is
+    # scripts/ingest_complib.py; scripts/load_complib_csv.py rebuilds from
+    # them. Without this, a CompLib load from the API that is not committed
+    # looks complete in every other check, exactly as the year-old BellBoard
+    # replica once did.
+    cl = Path(__file__).resolve().parent.parent / "data" / "complib"
+    for csv_name, table in (("compositions.csv", "compositions"),
+                            ("composition_methods.csv", "composition_methods")):
+        path = cl / csv_name
+        if not path.exists():
+            # An absent CSV is only benign if the table is empty too. Rows in the
+            # database with nothing committed behind them is the exact condition
+            # this check exists to catch -- a load that happened on somebody's
+            # machine and cannot be reproduced from the repository -- and
+            # reporting SKIP there would announce success at the moment the check
+            # stopped being able to see anything. Measured: with the CSV moved
+            # aside and 86,054 rows still loaded, the first version skipped.
+            n = count(conn, f'SELECT COUNT(*) FROM "{table}"') \
+                if table_exists(conn, table) else 0
+            if n:
+                rep.report(f"csv agreement {table}", Result.FAIL,
+                           f"{n:,} rows in the database and no committed CSV -- "
+                           f"this data cannot be rebuilt from the repository")
+            else:
+                rep.report(f"csv agreement {table}", Result.SKIP,
+                           "no CSV committed, table empty")
+            continue
+        if not table_exists(conn, table):
+            rep.report(f"csv agreement {table}", Result.SKIP, "table absent")
+            continue
+        expected = rows(path)
+        actual = count(conn, f'SELECT COUNT(*) FROM "{table}"')
+        if actual == expected:
+            rep.report(f"csv agreement {table}", Result.PASS,
+                       f"{actual:,} == {expected:,} against committed CSV")
+        elif actual > expected:
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{actual:,} rows in the database but only {expected:,} "
+                       f"in the committed CSV -- {actual - expected:,} rows came "
+                       f"from somewhere not in this repository")
+        else:
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{actual:,} rows in the database but {expected:,} in the "
+                       f"committed CSV -- {expected - actual:,} missing; rebuild "
+                       f"with scripts/load_complib_csv.py")
+
 
 def check_towerid_fanout(conn, rep):
     """Neither dove nor towers is a tower register: both repeat TowerID, so a

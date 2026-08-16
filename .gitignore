@@ -18,8 +18,12 @@ local_corpus.db
 data/change-ringing.db
 *checkpoint*.json
 
-# from PR #13
-data/complib/
+# from PR #13: the API-walk scratch samples are not tracked, but the
+# committed corpus CSVs are (data/complib/compositions.csv,
+# composition_methods.csv). Ignore everything else under data/complib/.
+data/complib/*
+!data/complib/compositions.csv
+!data/complib/composition_methods.csv
 scratch/
 *_output.txt
 *.log
