@@ -194,6 +194,21 @@ def main() -> int:
     conn.executescript((SCHEMA_DIR / "007_init_tower_views.sql").read_text())
     conn.commit()
 
+    # CompLib compositions. Loaded from the committed CSVs in data/complib/ so
+    # the replica is reproducible from the repository without hitting the API.
+    # The API walk that produced those CSVs is scripts/ingest_complib.py; this
+    # is its offline mirror, the same shape as the BellBoard CSV load above.
+    complib_dir = ROOT / "data" / "complib"
+    if (complib_dir / "compositions.csv").exists():
+        run([SCRIPTS / "load_complib_csv.py", "--init", "--local-db", out])
+    else:
+        # Create the tables empty so schema checks behave the same as a full build.
+        conn = libsql.connect(str(out))
+        conn.executescript((SCHEMA_DIR / "006_init_complib.sql").read_text())
+        conn.commit()
+        print("\nCompLib tables created but left empty "
+              "(no committed CSVs in data/complib/).")
+
     if not args.skip_adjudication and ADJUDICATION.exists():
         accepted = [
             d for d in csv.DictReader(open(ADJUDICATION, encoding="utf-8"))
