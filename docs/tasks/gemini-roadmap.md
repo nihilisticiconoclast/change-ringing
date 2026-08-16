@@ -8,10 +8,12 @@ specified, because what they should ask depends on what the earlier ones find.
 | --- | --- | --- |
 | 1 | Method extension lineage from place notation | **Done** — PR #3, merged |
 | 2 | A canonical dedication and place-name lexicon | **Done** — PR #4, merged |
-| 3 | Ringer identity resolution | **Done** — candidate dataset delivered |
-| 4 | Footnote occasion classification | **Partly done** — a page shipped, the dataset was never built. See below |
-| 5 | Measure the occasion classifier | **Still active** — PR #7 delivered the classifier but its measurement was circular; see below |
+| 3 | Ringer identity resolution | **Done** — candidate dataset delivered across full 2012–24 corpus |
+| 4 | Footnote occasion classification | **Done** — dataset and visualisations shipped |
+| 5 | Measure the occasion classifier | **Done** — PR #14, 400-footnote oracle measured at 75.5% in `docs/footnote_occasion_accuracy.md` |
 | 6 | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php` |
+| 7 | Practice night: Dove vs BellBoard | **Done** — PR #15, `docs/practice_night.md` and `docs/practice.html` |
+| 8 | Shared CSS deduplication (Item 31) | **Done** — centralized in `site_chrome.py`, verified in `verify_chrome.py` |
 
 ---
 

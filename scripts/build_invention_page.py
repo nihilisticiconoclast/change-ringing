@@ -29,43 +29,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
     :root {
-      --ground: #EFEDE7; --surface: #F7F6F2; --surface-2: #E4E2DA;
-      --ink: #1C1E1C; --ink-2: #4A4C48; --ink-3: #7C7E78;
-      --rule: #CFCCC2; --bronze: #8A5F22; --accent: #38bdf8;
-      --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+      --accent: #38bdf8;
     }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --ground: #131312; --surface: #1a1a19; --surface-2: #242422;
-        --ink: #F0EDE6; --ink-2: #B5B1A7; --ink-3: #85817A;
-        --rule: #302F2C; --bronze: #C9974A; --accent: #38bdf8;
-      }
-    }
-    :root[data-theme="dark"] {
-      --ground: #131312; --surface: #1a1a19; --surface-2: #242422;
-      --ink: #F0EDE6; --ink-2: #B5B1A7; --ink-3: #85817A;
-      --rule: #302F2C; --bronze: #C9974A; --accent: #38bdf8;
-    }
-    body {
-      margin: 0; padding: 0;
-      font-family: var(--serif);
-      background: var(--ground);
-      color: var(--ink);
-      line-height: 1.62;
-      -webkit-font-smoothing: antialiased;
-    }
-    
-    /* Typography from main site */
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
-    .eyebrow {
-      font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--bronze); margin: 0 0 14px;
-    }
-    header { padding: 64px 0 44px; }
-    h1 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.04; font-weight: 400; letter-spacing: -.015em; }
-    h1 em { font-style: italic; color: var(--bronze); }
-    .standfirst { margin-top: 20px; font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
     
     .explainer-grid {
       display: grid;

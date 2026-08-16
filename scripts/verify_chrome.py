@@ -36,7 +36,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from site_chrome import PAGES, HREFS, REPO, NO_SITE_MAP  # noqa: E402
+from site_chrome import PAGES, HREFS, REPO, NO_SITE_MAP, BASE_CSS  # noqa: E402
 
 DOCS = Path(__file__).parent.parent / "docs"
 SCRIPTS = Path(__file__).parent
@@ -44,22 +44,64 @@ SCRIPTS = Path(__file__).parent
 # Selectors that belong to scripts/site_chrome.py and to nothing else.
 NAV_SELECTORS = ("nav-bar", "nav-links", "nav-title", "nav-header",
                  "nav-toggle", "nav-over", "theme-btn")
+SHARED_SELECTORS = NAV_SELECTORS + (
+    "site-footer", "site-map", "site-note",
+    "eyebrow", "standfirst", "figures", "wrap"
+)
 # A rule opener: something ending in `.<selector>...{`, not inside a comment.
-NAV_RULE = re.compile(
-    r"^[^/*\n]*\.(?:" + "|".join(NAV_SELECTORS) + r")[^{}\n]*\{", re.M)
+SHARED_RULE = re.compile(
+    r"^[^/*\n]*\.(?:" + "|".join(SHARED_SELECTORS) + r")[^{}\n]*\{", re.M)
 
 
-def check_no_local_nav_css():
-    """No template and no builder may style the nav. Only site_chrome.py may."""
+def check_no_local_chrome_css():
+    """No template and no builder may style shared chrome or base layout rules.
+    Only site_chrome.py may."""
     fails = []
     sources = sorted((SCRIPTS / "templates").glob("*.html"))
     sources += [p for p in sorted(SCRIPTS.glob("*.py")) if p.name != "site_chrome.py"]
     for path in sources:
         text = path.read_text(encoding="utf-8")
-        for m in NAV_RULE.finditer(text):
+        for m in SHARED_RULE.finditer(text):
             line = text[:m.start()].count("\n") + 1
             fails.append(f"{path.relative_to(SCRIPTS.parent)}:{line}: "
-                         f"declares a nav rule — {m.group(0).strip()[:60]!r}")
+                         f"declares a shared rule — {m.group(0).strip()[:60]!r}")
+    return fails
+
+
+# Custom properties BASE_CSS owns. Extracted from BASE_CSS rather than listed
+# here, so adding a token to the palette extends the check automatically.
+BASE_TOKENS = set(re.findall(r"(--[\w-]+)\s*:", BASE_CSS))
+ROOT_BLOCK = re.compile(r':root(?:\[[^\]]*\])?(?::not\([^)]*\))?\s*\{([^{}]*)\}')
+
+
+def check_no_shared_token_overrides():
+    """A page may EXTEND :root, but must not redefine a token BASE_CSS owns.
+
+    Pages legitimately add their own custom properties -- `--s1`..`--s9` for the
+    atlas colour scale, `--cal-0`..`--cal-6` for the calendar, `--match` and
+    `--mismatch` for practice night. Forbidding `:root` outright would be wrong
+    and would push those into worse places.
+
+    What must not happen is a page quietly redefining `--ink-2` or `--bronze`,
+    because BASE_CSS is PREPENDED: a later `:root` in the page's own <style>
+    silently wins, and the result is a site that is unified everywhere except
+    the one page somebody edited. That is the same shape as the nav-CSS problem
+    -- a single source of truth governing only part of what it names -- and this
+    is the check that closes it. Right now there are zero such overrides; the
+    point is to keep it that way.
+    """
+    fails = []
+    sources = sorted((SCRIPTS / "templates").glob("*.html"))
+    sources += [p for p in sorted(SCRIPTS.glob("*.py")) if p.name != "site_chrome.py"]
+    for path in sources:
+        text = path.read_text(encoding="utf-8")
+        for m in ROOT_BLOCK.finditer(text):
+            for decl in m.group(1).split(";"):
+                name = decl.split(":", 1)[0].strip()
+                if name in BASE_TOKENS:
+                    line = text[:m.start()].count("\n") + 1
+                    fails.append(f"{path.relative_to(SCRIPTS.parent)}:{line}: "
+                                 f"redefines {name}, which site_chrome.BASE_CSS owns")
     return fails
 
 
@@ -149,10 +191,17 @@ def main():
             for i, (_, pages) in enumerate(seen.items(), 1):
                 print(f"          variant {i}: {pages}")
 
-    css_fails = check_no_local_nav_css()
+    css_fails = check_no_local_chrome_css()
     all_fails += css_fails
-    print(f"\n  {'FAIL' if css_fails else 'ok  '}  nav CSS declared only in site_chrome.py")
+    print(f"\n  {'FAIL' if css_fails else 'ok  '}  chrome & base CSS declared only in site_chrome.py")
     for f in css_fails:
+        print(f"          {f}")
+
+    tok_fails = check_no_shared_token_overrides()
+    all_fails += tok_fails
+    print(f"  {'FAIL' if tok_fails else 'ok  '}  no page redefines a BASE_CSS palette token "
+          f"({len(BASE_TOKENS)} tokens)")
+    for f in tok_fails:
         print(f"          {f}")
 
     print(f"\n{len(PAGES)} pages · "

@@ -5,54 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Change Ringing Corpus</title>
 <style>
-:root{
-  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
-  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
-  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
-  --bar:#2F6D53; --bar-soft:#8AB289; --ghost:#B8873F; --warn:#9c3b2e;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
-    --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
-  --bar:#63A579; --bar-soft:#3A5C46; --ghost:#C9974A; --warn:#d4705e;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);
-  font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
-h1,h2,h3{text-wrap:balance;margin:0}
-/* max-width:none, because the `p{max-width:70ch}` below counts 70 characters of
-   the body serif and this line is set in mono at 11px with .18em of tracking --
-   which came to 455px and folded a six-word eyebrow onto two lines. */
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--bronze);margin:0 0 14px;max-width:none}
-header{padding:64px 0 44px;border-bottom:1px solid var(--rule)}
-h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.04;font-weight:400;letter-spacing:-.015em}
-h1 em{font-style:italic;color:var(--bronze)}
-.standfirst{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}
-.figures{display:flex;flex-wrap:wrap;gap:34px;margin-top:34px}
-.fig .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;letter-spacing:-.02em}
-.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-3);margin-top:4px}
-.fig .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);
-  opacity:.72;margin-top:2px}
-section{padding:52px 0;border-bottom:1px solid var(--rule)}
-section:last-of-type{border-bottom:none}
-h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.01em}
-.lede{margin:16px 0 0;max-width:70ch;color:var(--ink-2)}
-p{max-width:70ch;color:var(--ink-2)}
-
 /* The plain course drawn across the top. No fixed height: the SVG keeps its own
    aspect ratio so the lines never stretch, and the caption sits under it in the
    same mono the figures use. */

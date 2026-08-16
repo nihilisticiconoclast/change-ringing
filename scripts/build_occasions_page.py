@@ -163,43 +163,11 @@ def generate_html(stats, coverage):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Occasions Archive</title>
     <style>
-:root{
-  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
-  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
-  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
-  --dim:#C9C6BC;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
-    --dim:#33322F;
-  }
-}
-        /* This page had no box-sizing reset, so every padded element was wider
-           than its declared width -- .container at max-width:1120px plus 24px
-           padding each side really occupied 1168px. */
-        *, *::before, *::after { box-sizing: border-box; }
         /* Long file paths in <code> are single unbreakable tokens and were the last
            thing forcing the page 80px wider than a 390px viewport. */
         code { font-family: var(--mono); font-size: .88em; background: var(--surface-2);
                padding: 1px 5px; border-radius: 2px;
                overflow-wrap: anywhere; word-break: break-word; }
-        body { margin: 0; padding: 0; background: var(--ground); color: var(--ink); font-family: var(--serif); line-height: 1.62; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing:antialiased;}
-        
-        
-        .container {
-            width: 100%;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
         
         .header {
             max-width: 800px;
@@ -207,29 +175,13 @@ def generate_html(stats, coverage):
             padding: 48px 0 20px;
         }
         
-        .eyebrow{
-          font-family:var(--mono); font-size:11px; letter-spacing:.18em;
-          text-transform:uppercase; color:var(--bronze); margin:0 0 14px;
-        }
-        h1{margin:0; font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.03;font-weight:400;letter-spacing:-.015em}
-        h1 em{font-style:italic;color:var(--bronze)}
-        .standfirst{margin-top:22px;font-size:1.2rem;color:var(--ink-2);max-width:60ch; line-height:1.6;}
-        
         .visualizations {
             display: grid;
             grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 20px;
         }
-        /* Grid and flex children default to min-width:auto, which refuses to
-           shrink below their content and pushed the whole page to 898px wide on a
-           390px viewport. The charts get their own scroll container instead. */
-        /* .container is a flex item of body, so its default min-width:auto
-           refuses to shrink below its content -- which is how an 800px chart made
-           the whole page 519px wide in a 390px viewport. Every element on the
-           chain from body down to the chart needs min-width:0 for the scroll
-           container at the bottom to have anything to clip against. */
-        .container, .visualizations, .grid-2, .card { min-width: 0; }
+        .visualizations, .grid-2, .card { min-width: 0; }
         /* max-width is what makes overflow-x work here: without a definite width
            the container grows to fit the 800px-minimum violin SVG, pushes .card
            wider than the viewport, and the whole page scrolls sideways instead of
@@ -350,7 +302,7 @@ def generate_html(stats, coverage):
 </head>
 <body>
     <!--NAV:occasions.html-->
-    <div class="container">
+    <div class="wrap">
         <div class="header">
             <p class="eyebrow">Change Ringing Corpus · Second analytical output</p>
             <h1>Why people <em>ring</em></h1>

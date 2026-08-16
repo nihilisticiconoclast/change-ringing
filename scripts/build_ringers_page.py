@@ -306,48 +306,6 @@ def generate_html(nodes, edges, search_data, stats):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Ringer Constellation — Band Networks & Canonical Identity Resolution</title>
 <style>
-:root{{
-  --ground:#EFEDE7; --surface:#F7F6F2; --surface-2:#E4E2DA;
-  --ink:#1C1E1C; --ink-2:#4A4C48; --ink-3:#7C7E78;
-  --rule:#CFCCC2; --bronze:#8A5F22; --bronze-soft:#B8873F;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-}}
-@media (prefers-color-scheme:dark){{
-  :root:not([data-theme="light"]){{
-    --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-    --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-    --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
-  }}
-}}
-:root[data-theme="dark"]{{
-  --ground:#131312; --surface:#1a1a19; --surface-2:#242422;
-  --ink:#F0EDE6; --ink-2:#B5B1A7; --ink-3:#85817A;
-  --rule:#302F2C; --bronze:#C9974A; --bronze-soft:#B8873F;
-}}
-*{{box-sizing:border-box}}
-body{{
-  margin:0; background:var(--ground); color:var(--ink);
-  font-family:var(--serif); font-size:17px; line-height:1.62;
-  -webkit-font-smoothing:antialiased;
-}}
-.wrap{{max-width:1180px;margin:0 auto;padding:0 24px}}
-header{{padding:60px 0 40px;border-bottom:1px solid var(--rule)}}
-.eyebrow{{
-  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--bronze); margin:0 0 14px;
-}}
-h1{{font-size:clamp(2.3rem,5.5vw,3.8rem);line-height:1.06;font-weight:400;letter-spacing:-.015em;margin:0}}
-h1 em{{font-style:italic;color:var(--bronze)}}
-.standfirst{{margin-top:18px;font-size:1.15rem;color:var(--ink-2);max-width:64ch}}
-.figures{{display:flex;flex-wrap:wrap;gap:32px;margin-top:34px}}
-.fig .n{{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.75rem;color:var(--ink);letter-spacing:-.02em}}
-.fig .l{{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}}
-
-section{{padding:50px 0;border-bottom:1px solid var(--rule)}}
-h2{{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:400;letter-spacing:-.01em;margin:0}}
-.lede{{color:var(--ink-2);margin-top:12px;max-width:68ch}}
-
 /* Quick Ringer Chips */
 .chips-bar{{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 16px; align-items:center}}
 .chips-label{{font-family:var(--mono); font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.08em; margin-right:4px}}
