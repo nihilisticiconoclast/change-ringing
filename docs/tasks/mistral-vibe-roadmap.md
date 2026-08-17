@@ -39,6 +39,10 @@ reference in a commit message or pull request still points at the same work.
 | V-5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | V-4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 | V-8 | Load CompLib in full (R-20) | **Done** — 86,054 compositions across 3,443 pages; see note below |
+| V-9 | **TEST** — negative tests for all 51 integrity checks | **Next.** Delivers [R-44](../ROADMAP.md) |
+| V-10 | **FIX** — one database access path | After V-8. Delivers [R-45](../ROADMAP.md) |
+| V-11 | **JOIN** — method adoption over time | Delivers [R-46](../ROADMAP.md) |
+| V-12 | **INTERPRETATION** — the specialisation measures your PR #18 got right | Delivers [R-47](../ROADMAP.md) |
 
 ---
 
@@ -495,3 +499,87 @@ PR #6 (8/8 resolved, verified on merge). It is left as a follow-up.
 2026-09-01; this run wrote only to a local replica, never to production. The
 page cache (`complib-cache/`, gitignored) is intact, so a resumed or repeated
 run reuses it and does not re-hit the API.
+
+## V-9 — Negative tests for all 51 integrity checks *(next)*
+
+**Delivers roadmap item [R-44](../ROADMAP.md).**
+
+This follows directly from your PR #26, and it is worth being exact about why.
+Your CompLib CSV-agreement check reported `SKIP` when a CSV was absent without
+looking at the table — so with `compositions.csv` moved aside and 86,054 rows
+still loaded, it announced "no CSV committed" and passed. That is the precise
+condition the check existed to catch. I fixed that one.
+
+**The other 50 have never been tried against a database that should fail them.**
+`verify_corpus.py` is the most load-bearing file in the repository and its checks
+are, at present, assertions nobody has falsified.
+
+Break each one deliberately — delete rows, orphan a foreign key, skew a count,
+drop an index — confirm it fails, and **record which checks you could not make
+fail.** Those are the decorations, and knowing which they are is worth more than
+the ones that work.
+
+A check that cannot fail is worse than no check: it reports success and stops
+anyone looking. Three separate times now a check in this repository has gone
+green at the exact moment it stopped working (PR #21's circular oracle, PR #24's
+hardcoded name string, your SKIP).
+
+## V-10 — One database access path
+
+**Delivers roadmap item [R-45](../ROADMAP.md).**
+
+`classify_footnote_occasions.py` and `fetch_and_export_bellboard.py` use stdlib
+`sqlite3`; ingestion uses `db.py`/libsql. **sqlite3 accepts SQL that libSQL
+rejects**, so a script tested one way is not tested for the other — and two of
+the three production-only bugs in `docs/LESSONS.md` were exactly this: NaN stored
+as NULL locally but rejected by the server, and a double-quoted string literal
+that sqlite3 read as a string and libSQL as an identifier.
+
+`db.py`'s docstring already explains the reasoning. Route everything through it.
+
+Production is **frozen until 2026-09-01** and the scripts refuse a remote
+connection without `CHANGE_RINGING_ALLOW_PRODUCTION=1`. **Do not set it.** This
+is local work.
+
+## V-11 — Method adoption over time
+
+**Delivers roadmap item [R-46](../ROADMAP.md).**
+
+Unblocked: R-10 is done, so there are thirteen years of history rather than four.
+`invention.html` publishes when a method was **first rung**. This is the other
+half — what happens *after*. Does a method get taken up, spike and disappear, or
+never spread beyond the band that named it?
+
+**The window is part of the finding, and this item is the clearest case of it in
+the project.** "81.6% of Major methods are never rung" became **53.9%** when the
+corpus went from four years to thirteen. The claim was never false; it was half
+an artefact. Whatever you find, state the window in the same sentence as the
+number.
+
+Method linkage is 77.9% of performances, and 64,993 are recorded as unresolved
+with reasons — read `performance_method_unresolved` before treating the linked
+set as the whole.
+
+## V-12 — The specialisation measures your PR #18 got right
+
+**Delivers roadmap item [R-47](../ROADMAP.md).**
+
+Two things your PR #18 did better than the #19 that was merged, and they should
+land:
+
+1. **Most-used-bell share** as a direct specialisation measure — you had
+   `≥50% of appearances: 8.5%`, `≥70%: 1.8%`, mean share 0.317. The merged page
+   answers the same question with the within-ringer *range*, which shows ringers
+   cover nearly the whole ring, but your measure states "no, they do not have a
+   bell" far more directly.
+2. **Attrition at a fixed horizon from each ringer's own first appearance**,
+   rather than against one calendar line. This is the better construction and the
+   merged page uses the worse one: a fixed 2020 line gives a 2013 cohort seven
+   years to disappear and a 2019 cohort one, so part of the trend down that
+   column is the construction rather than the ringers.
+
+Both go on `docs/careers.html` via `build_careers_page.py`, which **imports**
+`analyse_ringing_careers` rather than restating its numbers — add the measures to
+the module and the page picks them up. That is deliberate: the page and
+`docs/ringing_careers.md` cannot then disagree, which is how "72.5% conduct a
+peal" got published when the code measured conducting anything.

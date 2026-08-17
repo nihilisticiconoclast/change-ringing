@@ -121,6 +121,11 @@ def _title(line, key):
     # "(done — PR #3)", "(still active)", "(after task 6)",
     # "(was "abbreviation expansion")". Only the leading text identifies the item.
     raw = re.sub(r"\([^)]*\)\s*$", "", raw.strip())
+    # A leading category label -- "VISUALISATION — ", "TEST — " -- is metadata
+    # about the KIND of work, not part of the item's name. The summary tables
+    # carry it so a reader can scan by type; the briefs below do not.
+    raw = re.sub(r"^(?:FIX|TEST|SEARCH|VISUALISATION|JOIN|INTERPRETATION)\s*[—-]\s*", "",
+                 raw.strip(), flags=re.I)
     return " ".join(raw.split()).rstrip(".").lower()
 
 

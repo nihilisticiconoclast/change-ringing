@@ -42,6 +42,10 @@ reference in a commit message or pull request still points at the same work.
 | G-9 | Vendor vis-network for invention.html | **Done** — vendored in `docs/vendor/`, delivers [R-32](../ROADMAP.md) |
 | G-10 | A real test suite | **Done** — 36 unit and oracle tests in `tests/`, delivers [R-26](../ROADMAP.md) |
 | [R-10](../ROADMAP.md) | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php`. Owned by Gemini but never a numbered brief task, which is why this row carries its central ID: numbering it G-6 shifted every task below it out of step with its own brief |
+| G-11 | **VISUALISATION** — what a composition asks of a band | **Next.** Delivers [R-40](../ROADMAP.md) |
+| G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-9. Delivers [R-41](../ROADMAP.md) |
+| G-13 | **TEST** — golden-file test for the page builders | Delivers [R-42](../ROADMAP.md) |
+| G-14 | **FIX** — `civic` precision is 38.8% | Delivers [R-43](../ROADMAP.md) |
 
 ---
 
@@ -479,3 +483,82 @@ regional query and report what changes.
 
 This is the same shape as Task 4, and Task 4's lesson applies: a classifier
 without a measured accuracy is a candidate dataset, not a finding.
+
+## G-11 — What a composition asks of a band *(next)*
+
+**Delivers roadmap item [R-40](../ROADMAP.md).**
+
+`compositions.calling` is populated on **85,684 of 86,054** rows (99.6%) and
+nothing in this project has ever read it. It is the literal call sequence — the
+thing a conductor actually shouts. `partheads` is on 41.3%, `coursehead_masks`
+on most rows.
+
+Measured, so you do not have to re-derive it: 86,054 compositions, stages
+concentrated at Major (44,040), Royal (10,089), Maximus (7,771).
+
+**The question:** what does a composition demand? Call density per lead, part
+structure, whether the work is evenly spread or lumped. Nobody knows, because
+nobody has looked.
+
+**Do not** reach for the CompLib API. Everything needed is in the committed CSVs.
+
+**State the limit up front.** `date_composed` is only **17.8%** populated, so any
+"compositions over time" view is mostly missing data — do not build it and then
+caveat it; rule it out in the question.
+
+Follow the house idiom: eyebrow, serif h1, standfirst, mono tabular figures,
+inline SVG. `BASE_CSS` and `CHROME_CSS` in `scripts/site_chrome.py` own the
+palette and the nav — `verify_chrome.py` will fail the build if a template
+declares either.
+
+## G-12 — Normalise composer names, with a measured error rate
+
+**Delivers roadmap item [R-41](../ROADMAP.md).**
+
+My R-36 bridge keys composers on first-initial-plus-surname. That collapses 2,542
+CompLib composers to 1,969 keys, and it is deliberately crude: `J J Parker` and
+`John Parker` merge, and so would two different J Parkers. **Its error rate is
+unmeasured**, which is exactly the criticism this project has levelled at the
+ringer-identity dataset.
+
+Do it properly. `docs/method_location_resolution.md` is the model: candidates
+with confidence bands, an adjudicated sample, and a written statement of where
+the resolver is wrong. **Emit the full confidence scale** — a run with no `low`
+band is a run that has not been calibrated (lesson 8).
+
+## G-13 — Golden-file test for the page builders
+
+**Delivers roadmap item [R-42](../ROADMAP.md).**
+
+Your own G-8 test suite covers `notation.py`, `sqlfile.py`, `site_chrome.py` and
+the oracles — 36 tests, and inverting one expansion rule fails 26 of them, so it
+genuinely bites. What it does not cover is the builders: **a page builder that
+silently changes its output passes everything.** That is the failure mode that
+has cost this project the most.
+
+Snapshot each page's *structure*, not its bytes — section count, chart presence,
+figure labels, nav and footer shape. The numbers change every time the corpus
+grows, so a byte comparison would fail constantly and be switched off within a
+week (lesson 22 territory).
+
+**Negative-test it before submitting.** Change a builder so a page loses a
+section, and show the test failing. A suite nobody has tried to break is a
+decoration.
+
+## G-14 — `civic` precision is 38.8%
+
+**Delivers roadmap item [R-43](../ROADMAP.md).**
+
+Your occasion classifier measures 75.5% overall on a genuinely independent
+400-row oracle — the best-verified thing in the repository. But `civic` precision
+is **38.8%**: the royal-death patterns swallow memorial and funeral records.
+`docs/footnote_occasion_accuracy.md` recommends `civic` and `practice` counts not
+be published, and that recommendation is still live while the page publishes them.
+
+Two honest routes. Fix the patterns and **re-measure against the same committed
+400-row oracle** — do not build a new one, or the comparison means nothing. Or
+suppress the two classes on the page and say why.
+
+**The oracle is the thing that makes this checkable.** Do not regenerate it, do
+not bootstrap it from the classifier — that is what made PR #21's measurement
+worthless, and it disagreed with its own classifier on 1 row in 400.

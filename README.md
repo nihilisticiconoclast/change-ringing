@@ -15,18 +15,49 @@ actually use.
 
 **https://nihilisticiconoclast.github.io/change-ringing/**
 
-Twelve pages served by GitHub Pages from `main` / `docs`, each a single
-self-contained file with no external requests. The root is a landing page, with
-a hero drawn from the corpus itself — one plain course of Cambridge Surprise
+**Thirteen pages** served by GitHub Pages from `main` / `docs`, each a single
+self-contained file. **No page makes an external request** — the last one that
+did, `invention.html`, loaded `vis-network` from unpkg and the graph simply did
+not draw when that request failed; the library is now vendored in
+`docs/vendor/` alongside four others, with its licence and SHA-256 recorded.
+
+The root is a landing page with a hero drawn from the corpus itself — one plain course of Cambridge Surprise
 Minor, generated from the place notation the CCCBR library publishes and checked
 against the library's own lead head before the page is written.
 
-The navigation is one collapsed bar at every width. Twelve links unrolled into a
-row wrapped onto two lines even on a wide display, so there is no width at which
-unrolling them helps. Both its markup and its CSS come from
+The navigation is one collapsed bar at every width. Thirteen links unrolled into
+a row wrapped onto two lines even on a wide display, so there is no width at
+which unrolling them helps. Both its markup and its CSS come from
 `scripts/site_chrome.py` and from nowhere else: `scripts/verify_chrome.py` fails
 any template or builder that declares a nav rule of its own, which is the check
 that was missing while the same markup was being styled eleven different ways.
+
+## What checks the work
+
+Five things run on every rebuild, and each exists because something went wrong
+that nobody noticed:
+
+| Check | Asserts |
+| --- | --- |
+| `scripts/verify_corpus.py` | **51 integrity checks** — the database agrees with the committed CSVs, joins resolve, no query does a full scan where an index exists. Found a replica a year out of date, and 25,030 committed rows that had never loaded |
+| `scripts/verify_chrome.py` | All 13 pages carry the same nav and footer, and **only `site_chrome.py` styles them**. Added after the site passed a markup-only check while eleven files styled the same nav eleven ways |
+| `scripts/verify_docs.py` | Markdown tables actually render, and no item ID names two different things. Added after a blank line split the roadmap into headerless fragments, and after "item 9" turned out to mean three different pieces of work |
+| `scripts/audit_privacy_and_licences.py` | Licence attribution on every page, and no document that promises anonymity makes an individual recoverable |
+| `scripts/run_tests.py` | **36 unit and oracle tests.** Negative-tested: inverting one expansion rule in `notation.py` fails 26 of them |
+
+`python scripts/rebuild_all.py` runs the whole pipeline in dependency order and
+**fails at the first broken step** — its first version printed errors and exited
+0, so a run in which every page failed looked identical to a clean one.
+
+CI runs on pull requests **and on pushes to `main`**, because a direct push once
+landed an import that made `rebuild_all.py` unable to regenerate its own page.
+
+## Roadmap and agent briefs
+
+Three registers, with IDs unique across all of them — `R-nn` central, `G-nn`
+Gemini, `V-nn` Mistral Vibe. Every agent brief states which `R-` item it
+delivers. See [`docs/ROADMAP.md`](docs/ROADMAP.md); the current wave is a mix of
+fixes, tests, searches, joins, visualisations and interpretations.
 
 ## The Founder Atlas
 
@@ -126,11 +157,26 @@ can be checked instead of taken on trust.
       use `RingID`, which BellBoard supplies as `dove_ring_id` and the Methods
       Library does not. Measured on adoption: `v_tower_performances` 80,231 ->
       80,058, `v_first_tower_peals` 25,351 -> 25,340.
-- [x] CompLib linkage, as far as the API allows -- CompLib's search payload carries free-text
-      method titles only, but `/composition/{id}/rows` returns a `methodid`
-      for single-method compositions that maps to the CCCBR `method_id` by
-      `'m' || methodid` (opt-in via `--fetch-method-ids`); spliced
-      compositions remain free-text for Gemini/Claude to resolve.
+- [x] CompLib loaded in full and **reproducible from the repository** (R-20) --
+      **86,054 compositions and 186,464 method-definition rows**, the whole walk
+      of all 3,443 pages of `/composition/search`, matching the API's own `count`
+      to the record. Committed as `data/complib/*.csv` (49 MB) and replayed by
+      `build_local_db.py`, so a fresh clone builds them; `verify_corpus.py`
+      checks the database against those CSVs, so a partial or uncommitted load
+      fails the build.
+
+      The `/rows` enrichment pass was deliberately not run -- one request per
+      composition, ~86k requests -- so `composition_methods.method_id` is empty.
+      **It is not needed:** `method_place_notation` is populated on 100% of rows,
+      and place notation is an exact key into the CCCBR library. Measured,
+      offline: **95.6% of the 186,464 method rows** and **98.4% of the 86,054
+      compositions** resolve to a library method that way.
+
+      What does *not* work, so nobody spends a day on it:
+      `performances.composition` is **0% populated**, so a performance can never
+      be tied to a specific composition. The usable bridge is the composer --
+      `performances.composer` is free text on 71,959 records and **92.0% of the
+      parseable ones name a composer CompLib also holds** (R-36).
 - [x] First analytical output -- the Founder Atlas (see above)
 - [x] The Rhythm of Ringing -- the week, the year, and the 24 days that carry
       21% of it; corrected the September and Wednesday claims made in
