@@ -215,10 +215,12 @@ Gemini's PR #15.
 
 ### H25. The occasion classifier is around 70% accurate
 **Expected:** ~70%, from a 25-footnote read-through, with `civic` the worst class.
-**Observed:** **75.5%** overall against a 400-footnote independent oracle, and
+**Observed:** **75.5%** overall against a 400-footnote independent oracle initially, and
 `civic` precision **38.8%** — the worst by a distance, with royal-death patterns
-swallowing 12 memorial and 5 funeral records.
-**✅ Held.** Both the figure and the named failure mode. PR #14.
+swallowing 12 memorial and 5 funeral records (PR #14). In PR delivering R-43 / G-14,
+scoping royal patterns to royal family terms and prioritizing life events (funerals/memorials)
+ahead of civic celebrations lifted **overall accuracy to 80.5%** and **civic precision to 80.0%**.
+**✅ Held.** Both the figure and the named failure mode.
 
 ### H26. The 400-footnote oracle is ground truth
 **Expected:** treat the labels as correct and report accuracy against them.

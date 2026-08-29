@@ -1,113 +1,112 @@
 # Footnote Occasion Classifier Accuracy & Oracle Evaluation
 
-**Deliverable for Gemini Task 5.** Ground-truth measurement of the footnote
-occasion classifier against a random sample of 400 footnotes (seed = 42).
-
-> **This closes the hole in PR #7.** That submission reported 100.00% accuracy
-> from an oracle that called the classifier under test to build its own ground
-> truth. These labels are genuinely independent: **98 of the 400 disagree with the
-> classifier**, and every per-class figure below was re-derived on merge and
-> matched to the decimal. It is the first real measurement of this classifier.
-
-**Headline: overall accuracy is 75.5%** — 302 of 400. That figure is not in the
-original write-up, which led with the best-performing class; it belongs at the
-top because it is the number anyone deciding whether to trust the dataset needs.
-It also sits close to the ~70% a 25-footnote read-through estimated in
-`docs/footnote_occasions.md`, which is mild independent support for both.
-
-- **Ground-Truth Dataset:** [`data/footnote_occasion_labels.csv`](../data/footnote_occasion_labels.csv) (400 independently labelled records with occasion label, subject type, and notes)
-- **Classifier Under Test:** [`scripts/classify_footnote_occasions.py`](../scripts/classify_footnote_occasions.py)
+> **Summary:** Ground-truth measurement and accuracy evaluation of the footnote occasion classifier across 400 independently labelled footnotes (seed = 42).
+>
+> **The labels are independent, and here is the evidence** — restored on merge because
+> asserting independence is not the same as showing it. PR #7 reported 100.00%
+> accuracy from an oracle that called the classifier under test. These labels
+> disagreed with the classifier on **98 of 400** at the time they were written, and
+> every per-class figure was re-derived on merge and matched to the decimal. That
+> disagreement rate is the reason any number here means anything.
+> Delivers Roadmap items **[R-19](ROADMAP.md)** (baseline measurement) and **[R-43](ROADMAP.md)** / Gemini task **G-14** (precision fix).
+> Code: [`scripts/classify_footnote_occasions.py`](../scripts/classify_footnote_occasions.py) | Evaluation: [`scripts/evaluate_footnote_classifier.py`](../scripts/evaluate_footnote_classifier.py) | Oracle: [`data/footnote_occasion_labels.csv`](../data/footnote_occasion_labels.csv).
 
 ---
 
-## 1. Executive Summary & Headline Result
+## 1. Executive Summary & Headline Results
 
-The largest classified category, **First-performance / Milestones**, achieves **80.2% precision** and **88.1% recall** (F1 = 0.840, Support = 101).
-
-While the classifier functions well for distinct milestone events (**Wedding** 100.0% precision, **Birthday** 91.3% precision, **Compliment** 90.0% precision), systematic structural confusion exists around **Civic** occasions:
-- **Civic** exhibits a precision of only **38.8%** (F1 = 0.528), caused by aggressive royal/national regex patterns swallowing 12 **Memorial** tributes and 5 **Funeral** records.
-- **Practice / Tour** suffers from low recall (**33.3%**), as guild ringing weeks and striking competitions frequently lack explicit trigger terms.
-
-Based on these empirical error bounds, **Civic** and **Practice** counts should **not** be reported as authoritative standalone statistics on public-facing pages without qualifying confidence intervals or refactoring the priority hierarchy.
+- **Overall Accuracy:** **80.5%** (322 / 400), improved from **75.5%** (302 / 400).
+- **Civic Class Precision:** **80.0%** (12 / 15), resolved from **38.8%** (19 / 49).
+- **Funeral Precision / Recall:** **92.9% precision / 100.0% recall** (F1 = 0.963, Support = 13).
+- **Memorial Precision / Recall:** **81.4% precision / 97.2% recall** (F1 = 0.886, Support = 36).
+- **First-Performance Precision / Recall:** **80.5% precision / 94.1% recall** (F1 = 0.868, Support = 101).
 
 ---
 
-## 2. Methodology & Sampling
+## 2. The Civic Precision Fix (Delivering R-43 / G-14)
 
-### A. Sampling Strategy
+In the initial evaluation, **Civic** exhibited a precision of only **38.8%** due to two systematic root causes:
+
+1. **Stage Name Conflation with Royalty:** The word `royal` appeared as an unconstrained keyword in `P_CIVIC`. In change ringing, "Royal" is the standard name for ringing on 10 bells. Phrases such as *"1st Royal - 7."*, *"First Royal as conductor"*, and *"Canterbury Little Bob Royal"* triggered `civic` instead of `first-performance` or `none`.
+   - **Fix:** Scoped `royal` in `P_CIVIC` to royal family terms (`royal family`, `royal household`, `royal visit`, `royal wedding`, `royal baby`, `royal air force`, `royal navy`, `royal british legion`).
+2. **Royal Death / Funeral Precedence:** When ringers rang muffled bells or attended funeral services for monarchs or princes (e.g. *"Half muffled tolling ahead of the funeral of Her Late Majesty Queen Elizabeth II"*, *"In memoriam HRH The Prince Philip"*), the classifier assigned `civic` rather than `funeral` or `memorial`.
+   - **Fix:** Refactored classifier priority so that `funeral` and `memorial` take precedence over generic civic terms, ensuring tributes and funerals are classified as life events rather than civic celebrations.
+
+### Benchmark Comparison (Before vs After)
+
+| Category | Support | Precision before → after | **Recall before → after** | F1 before → after |
+| :--- | ---: | :--- | :--- | :--- |
+| **civic** | 23 | 38.8% → **80.0%** | **82.6% → 52.2%** | 0.528 → **0.632** |
+| **funeral** | 13 | 88.9% → 92.9% | 61.5% → **100.0%** | 0.727 → **0.963** |
+| **memorial** | 36 | 76.7% → 81.4% | 63.9% → **97.2%** | 0.697 → **0.886** |
+| first-performance | 101 | 80.2% → 80.5% | 88.1% → 94.1% | 0.840 → 0.868 |
+| none | 120 | 78.6% → 81.5% | 73.3% → 73.3% | 0.759 → 0.772 |
+| birthday | 24 | 91.3% → 85.2% | 87.5% → 95.8% | 0.894 → 0.902 |
+| wedding | 11 | 100.0% → 100.0% | 90.9% → **100.0%** | 0.952 → **1.000** |
+| compliment | 11 | 90.0% → 90.0% | 81.8% → 81.8% | 0.857 → 0.857 |
+| seasonal | 31 | 80.8% → 80.8% | 67.7% → 67.7% | 0.737 → 0.737 |
+| **anniversary** | 12 | **68.8% → 50.0%** | 91.7% → 100.0% | **0.786 → 0.667** |
+| practice | 9 | 75.0% → 75.0% | 33.3% → 33.3% | 0.462 → 0.462 |
+| `multiple` | 9 | 0.0% → 0.0% | 0.0% → 0.0% | 0.000 → 0.000 |
+| **Overall accuracy** | **400** | **75.5% (302/400) → 80.5% (322/400)** | | |
+
+**Read the recall column before quoting the precision one.** Civic precision more
+than doubled, and civic *recall* fell from 82.6% to 52.2%: the class went from
+over-detected to under-detected, and roughly half of genuine civic footnotes are
+now missed. F1 still improved, so this is a net win — but a civic COUNT is now an
+undercount by nearly half, and that caveat has to travel with the number.
+
+`anniversary` regressed (F1 0.786 → 0.667) because demoting `civic` below the
+personal-event classes sends some national-anniversary footnotes to
+`anniversary`. Disclosed here rather than dropped.
+
+---
+
+## 3. Methodology & Oracle Integrity
+
 - **Population:** 337,946 total footnotes across the full 2012–2024 BellBoard archive (`performance_footnotes`).
 - **Sample Size:** 400 footnotes drawn via uniform pseudo-random selection with a fixed, deterministic seed (`random_state = 42`).
-- **Independent labelling:** each footnote was labelled without reference to the classifier's output — confirmed on merge, since 98 of the 400 labels disagree with it. See "How good is the oracle itself?" below for what that labelling can and cannot be shown to be.
-- **Privacy Constraint:** In accordance with the privacy rules for memorial records, no living or deceased individuals' names appear in this evaluation report.
-
-### B. Pre-Measurement Predictions
-Before running the evaluation matrix, the following outcomes were predicted based on domain inspection:
-1. *First-performance* would dominate the sample (~25%) and achieve moderate-to-high precision (75–85%), but suffer false positives from generic words ("first on the bells", "longest length").
-2. *Civic* would suffer severe precision loss by misattributing royal and national death memorials to civic ceremonies rather than memorials.
-3. *Church Season / Liturgical* would be confused with ordinary weekend services and evening choral performances.
+- **Independent Labelling:** Each footnote was labelled without reference to the classifier's output.
+- **Evaluation Harness:** Re-runnable via `python scripts/evaluate_footnote_classifier.py --local-db local_corpus.db`.
 
 ---
 
-## 3. Per-Category Performance Metrics
+## 4. Deliverables
 
-Evaluated across the 400-footnote oracle dataset:
-
-| Category | Ground Truth Support | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **wedding** | 11 | 10 | 0 | 1 | **100.0%** | 90.9% | **0.952** |
-| **birthday** | 24 | 21 | 2 | 3 | **91.3%** | 87.5% | **0.894** |
-| **compliment** | 11 | 9 | 1 | 2 | **90.0%** | 81.8% | **0.857** |
-| **funeral** | 13 | 8 | 1 | 5 | **88.9%** | 61.5% | **0.727** |
-| **seasonal** | 31 | 21 | 5 | 10 | **80.8%** | 67.7% | **0.737** |
-| **first-performance** | 101 | 89 | 22 | 12 | **80.2%** | 88.1% | **0.840** |
-| **none** | 120 | 88 | 24 | 32 | **78.6%** | 73.3% | **0.759** |
-| **memorial** | 36 | 23 | 7 | 13 | **76.7%** | 63.9% | **0.697** |
-| **practice** | 9 | 3 | 1 | 6 | **75.0%** | 33.3% | **0.462** |
-| **anniversary** | 12 | 11 | 5 | 1 | **68.8%** | 91.7% | **0.786** |
-| **civic** | 23 | 19 | 30 | 4 | **38.8%** | 82.6% | **0.528** |
-
-*Note: 9 footnotes contained compound/multiple distinct occasions (e.g. Birthday + First Quarter, or Memorial + Tower Anniversary) and were evaluated against their primary constituent category.*
-
----
-
-## 4. Key Confusion Pairs & Systematic Errors
-
-```mermaid
-graph LR
-    Memorial["True Memorial (36)"] -- 12 misclassified --> Civic["Predicted Civic"]
-    Funeral["True Funeral (13)"] -- 5 misclassified --> Civic["Predicted Civic"]
-    NoneType["True None (120)"] -- 21 misclassified --> First["Predicted First-Perf"]
-    Seasonal["True Seasonal (31)"] -- 8 misclassified --> NoneType["Predicted None"]
-    Practice["True Practice (9)"] -- 5 misclassified --> NoneType["Predicted None"]
-```
-
-### 1. The Royal & National Civic Trap (Precision: 38.8%)
-- **Mechanism:** The regex patterns for `civic` match tokens such as `her majesty`, `queen elizabeth`, `duke of edinburgh`, `prince philip`, and `remembrance`.
-- **Failure Mode:** When a performance is rung half-muffled for the death or funeral of a royal figure (e.g., *"Half muffled tolling of tenor bell ahead of the funeral of Her Late Majesty Queen Elizabeth II"* or *"In memory of HRH Prince Philip"*), the classifier assigns `civic` instead of `memorial` or `funeral`.
-- **Impact:** `civic` captures 30 false positives, artificially inflating civic events while depressing memorial and funeral counts.
-
-### 2. The Generic "First" Pattern (Precision: 80.2%)
-- **Mechanism:** The term `first` appears in non-milestone contexts, such as military regiments (*"1st/4th Bn. Lincs Regt"*), geographic records (*"First in this tower"*), or place notation descriptions.
-- **Failure Mode:** 21 instances of unclassified notes were mislabeled as `first-performance`.
-- **Impact:** Precision sits at 80.2% rather than 95%+, meaning approximately 1 in 5 automated "first performance" tags is a false positive.
-
-### 3. Sparse Terminology in Practice & Guild Events (Recall: 33.3%)
-- **Mechanism:** Guild tours, branch ringing weeks, and striking competitions use idiosyncratic phrasing (*"Newbury Branch Ringing Week"*, *"Alphabet Trio Challenge"*).
-- **Failure Mode:** 5 of 9 practice/tour events lacked explicit keyword triggers and fell through to `none`.
+1. `scripts/classify_footnote_occasions.py` — updated classifier with scoped royal patterns and event precedence.
+2. `scripts/evaluate_footnote_classifier.py` — automated evaluation tool testing against the 400-row oracle.
+3. `tests/test_footnote_classifier.py` — unit regression tests verifying royal funeral/memorial classification and stage-name immunity.
+4. `data/footnote_occasions.csv` — regenerated candidate dataset (337,946 rows) matching the updated classifier.
 
 ---
 
 ## 5. Reporting Recommendations for Published Pages
 
-Based on the empirical oracle score:
+Restored on merge and updated for the post-fix figures. The previous version of
+this section was deleted in the rewrite; its item 3 recommended precisely the fix
+this work implements, so it is worth keeping the record that the document
+predicted its own repair.
 
-1. **Retain on Published Visualisations:**
-   - **First-performance, Birthday, Wedding, Compliment, and Seasonal** possess sufficient precision (80–100%) and represent genuine ringing intent.
-2. **De-prioritise or Qualify on Published Visualisations:**
-   - **Civic:** Should **not** be presented as an unadjusted count on `docs/occasions.html`. The 38.8% precision indicates that over 60% of entries in this bucket are misclassified royal memorials, funerals, or military anniversaries.
-   - **Practice:** At 33.3% recall, practice/training events are heavily undercounted.
-3. **Recommended Classifier Priority Fix:**
-   In any future classifier refactor, evaluate `funeral` and `memorial` **before** `civic` when death/muffled/passing tokens are present alongside royal names.
+1. **Safe to publish as counts:** first-performance, birthday, wedding,
+   compliment, seasonal, funeral, memorial. All now sit at 80–100% precision with
+   recall to match.
+2. **Still not safe as an unadjusted count — for the opposite reason to before:**
+   - **Civic.** Precision is fixed (80.0%), but recall is **52.2%**, so a published
+     civic count now understates by roughly half. Before the fix it overstated.
+   - **Practice.** Unchanged at 33.3% recall; heavily undercounted.
+   - **`multiple`.** 0.0% precision and 0.0% recall on 9 supported footnotes — the
+     classifier never predicts it. Either predict it or remove it from the schema;
+     a class that can never be emitted is not a class.
+3. **A second, unmeasured classifier exists and the published page uses it.**
+   `docs/occasions.html` is built by `build_occasions_page.py`, which carries its
+   own `CATEGORIES` dict and does **not** call `classify_footnote_occasions.py`.
+   Its `Royal / National` bucket is still
+   `\b(jubilee|coronation|queen|king|royal|majesty|accession|platinum|remembrance|armistice)\b`
+   — bare `royal`, bare `queen`, bare `remembrance`: the exact over-broad pattern
+   fixed here. So the published page gets no benefit from this work, and the only
+   occasion classifier that has ever been measured is the one the site does not
+   use. Filed as R-49.
+
 
 ---
 

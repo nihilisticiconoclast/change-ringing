@@ -45,7 +45,7 @@ reference in a commit message or pull request still points at the same work.
 | G-11 | **VISUALISATION** — what a composition asks of a band | **Next.** Delivers [R-40](../ROADMAP.md) |
 | G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-11, re-scoped: R-36 measured the crude key, so beat it. Delivers [R-41](../ROADMAP.md) |
 | G-13 | **TEST** — golden-file test for the page builders | Delivers [R-42](../ROADMAP.md) |
-| G-14 | **FIX** — `civic` precision is 38.8% | Delivers [R-43](../ROADMAP.md) |
+| G-14 | **FIX** — `civic` precision is 38.8% | **Done** — `scripts/classify_footnote_occasions.py`, `scripts/evaluate_footnote_classifier.py`, `docs/footnote_occasion_accuracy.md`, `tests/test_footnote_classifier.py`. Precision lifted to 80.0% (was 38.8%), overall accuracy 80.5% (was 75.5%). Recall fell 82.6% -> 52.2%, so civic is now under-detected rather than over-detected. Delivers [R-43](../ROADMAP.md) |
 
 ---
 
