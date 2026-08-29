@@ -1,0 +1,171 @@
+{
+  "title": "The Founder Atlas \u2014 Seven Centuries of English Bellfounding",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Who cast the bells#and where"
+    },
+    {
+      "level": "h2",
+      "text": "Foundries had catchment areas, and you can see them"
+    },
+    {
+      "level": "h2",
+      "text": "Two foundries outlived everyone else"
+    },
+    {
+      "level": "h2",
+      "text": "Where new methods get rung first"
+    },
+    {
+      "level": "h2",
+      "text": "Eight houses"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [
+    {
+      "id": "peals",
+      "class": "",
+      "headers": []
+    }
+  ],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    },
+    {
+      "tag": "input",
+      "id": "year",
+      "type": "range",
+      "name": null,
+      "class": ""
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "div",
+      "id": null,
+      "class": "mapwrap"
+    },
+    {
+      "tag": "canvas",
+      "id": "map",
+      "class": ""
+    },
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "f-bells-inline",
+    "f-bells",
+    "f-towers",
+    "f-linked",
+    "chips",
+    "map",
+    "tip",
+    "year",
+    "yearout",
+    "mapcap",
+    "timeline",
+    "legend",
+    "peals",
+    "cards"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://dove.cccbr.org.uk",
+    "https://methods.cccbr.org.uk",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

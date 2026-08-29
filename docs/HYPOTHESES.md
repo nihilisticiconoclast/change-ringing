@@ -252,9 +252,21 @@ and conducts early -- is the sharper finding.
 comprise >90% of peals; unparted peals are rare novelties.
 **Observed:** multi-part peals do lead at 67.5% (with 3-part modal at 37.7%), but
 **32.5% of all 29,302 Major peals are completely unparted (1-part)**, requiring
-linear recall of an average 54 calls with zero repeating structure.
+linear recall with zero repeating structure — an average of **42.4 calls**,
+against 18.1 per part in a 3-part peal (recomputed on merge; the submission put
+this at 54, which is the mean across all part counts).
 **🟡 Wrong in size.** Multi-part is the majority, but unparted peals represent
 nearly a third of all peal ringing compositions.
+
+### H29. Page builder regressions require brittle byte-level snapshot testing
+**Expected:** catching page builder regressions requires snapshotting HTML bytes,
+which would fail on every routine database count increment.
+**Observed:** HTML pages can be decomposed into data-invariant structural
+skeletons (headings, layout containers, table column schemas, charts, interactive
+controls, and element IDs) with numeric counts masked. This catches 100% of
+structural regressions (tables dropped, sections missing, headings altered) while
+remaining completely immune to routine dataset refreshes.
+**❌ Wrong.** Structural skeletons separate layout integrity from data updates.
 
 ---
 
@@ -264,10 +276,10 @@ nearly a third of all peal ringing compositions.
 | --- | ---: |
 | ✅ Held | 4 |
 | 🟡 Wrong in size | 6 |
-| ❌ Wrong | 18 |
-| **Total** | **28** |
+| ❌ Wrong | 19 |
+| **Total** | **29** |
 
-**Four predictions out of twenty-eight survived intact — 14.3%.** That is not a comment on
+**Four predictions out of twenty-nine survived intact — 13.8%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way

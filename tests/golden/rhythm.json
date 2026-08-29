@@ -1,0 +1,218 @@
+{
+  "title": "The Rhythm of Ringing \u2014 The Week, The Year, and Twenty-Four Days",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Ringing has a pulse#It also has a memory."
+    },
+    {
+      "level": "h2",
+      "text": "The only part that is actually a rhythm"
+    },
+    {
+      "level": "h3",
+      "text": "Does it hold every year?"
+    },
+    {
+      "level": "h2",
+      "text": "Every day of four years"
+    },
+    {
+      "level": "h2",
+      "text": "Twenty-four days, a fifth of the ringing"
+    },
+    {
+      "level": "h2",
+      "text": "You can tell what happened from what was rung"
+    },
+    {
+      "level": "h2",
+      "text": "\u201c# Tolling\u201d"
+    },
+    {
+      "level": "h2",
+      "text": "Remembrance Sunday, four years running"
+    },
+    {
+      "level": "h2",
+      "text": "September is not the busiest month"
+    },
+    {
+      "level": "h3",
+      "text": "What this repository previously recorded"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "figs",
+    "weekLede",
+    "weekChart",
+    "weekLegend",
+    "weekYears",
+    "weekNote",
+    "calendar",
+    "calLegend",
+    "readout",
+    "evHead",
+    "ruleTxt",
+    "eventTable",
+    "nearMiss",
+    "scatter",
+    "scatterLegend",
+    "grammarText",
+    "tolls",
+    "tollNote",
+    "remembrance",
+    "remNote",
+    "seasonChart",
+    "seasonLegend",
+    "seasonText"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "title": "The Occasions Archive",
+  "meta": [
+    {
+      "charset": "UTF-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width, initial-scale=1.0"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Why people ring"
+    },
+    {
+      "level": "h2",
+      "text": "Endurance of Intent"
+    },
+    {
+      "level": "h2",
+      "text": "Seasonality"
+    },
+    {
+      "level": "h2",
+      "text": "The Occasions Ledger"
+    },
+    {
+      "level": "h2",
+      "text": "How this was made, and where it is weak"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "canvas",
+      "id": "seasonalityChart",
+      "class": ""
+    },
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "violin-chart-container",
+    "violin-tooltip",
+    "line-chart-container",
+    "seasonalityChart",
+    "leaderboard-container"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

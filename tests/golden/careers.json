@@ -1,0 +1,200 @@
+{
+  "title": "A ringing career \u2014 the progression that isn't there",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Ringers are supposed towork up to the tenor#They don\u2019t work up at all."
+    },
+    {
+      "level": "h2",
+      "text": "The column nobody read"
+    },
+    {
+      "level": "h2",
+      "text": "The progression is not there"
+    },
+    {
+      "level": "h2",
+      "text": "How long before you call one?"
+    },
+    {
+      "level": "h2",
+      "text": "What leaving looks like"
+    },
+    {
+      "level": "h3",
+      "text": "Everyone first seen in that year"
+    },
+    {
+      "level": "h3",
+      "text": "The active cohort only"
+    },
+    {
+      "level": "h2",
+      "text": "What would change this answer"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [
+    {
+      "id": "split",
+      "class": "",
+      "headers": []
+    },
+    {
+      "id": "appr",
+      "class": "",
+      "headers": []
+    },
+    {
+      "id": "attr-all",
+      "class": "",
+      "headers": []
+    },
+    {
+      "id": "attr-active",
+      "class": "",
+      "headers": []
+    }
+  ],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "div",
+      "id": "drift",
+      "class": "chart"
+    },
+    {
+      "tag": "div",
+      "id": "range",
+      "class": "chart"
+    },
+    {
+      "tag": "div",
+      "id": "curve",
+      "class": "chart"
+    },
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "standfirst",
+    "figs",
+    "bellrows",
+    "drift",
+    "driftcap",
+    "split",
+    "range",
+    "rangecap",
+    "mr",
+    "sb",
+    "appr",
+    "curve",
+    "curvecap",
+    "attr-all",
+    "attr-active"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "calling.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}
