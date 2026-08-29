@@ -20,9 +20,9 @@ class TestSiteChrome(unittest.TestCase):
     """Test site chrome generation, CSS consolidation, and template expansion."""
 
     def test_pages_registry_integrity(self):
-        """PAGES defines exactly 13 pages with unique hrefs and valid metadata."""
-        self.assertEqual(len(PAGES), 13)
-        self.assertEqual(len(set(HREFS)), 13)
+        """PAGES defines exactly 14 pages with unique hrefs and valid metadata."""
+        self.assertEqual(len(PAGES), 14)
+        self.assertEqual(len(set(HREFS)), 14)
 
         for href, label, desc in PAGES:
             self.assertTrue(href.endswith(".html"), f"Invalid page href: {href}")

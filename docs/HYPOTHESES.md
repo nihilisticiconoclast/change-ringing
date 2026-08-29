@@ -5,9 +5,9 @@ what the measurement said, and whether the expectation survived.
 
 **The wrong ones are the point.** A record that only lists confirmed hypotheses
 is a marketing document: it tells you nothing about how often the guessing works,
-which is the only thing that calibrates the next guess. **Twenty-two of the
-twenty-six entries below are wrong or wrong in size**, which is worth knowing
-before trusting the twenty-fourth.
+which is the only thing that calibrates the next guess. **Twenty-four of the
+twenty-eight entries below are wrong or wrong in size**, which is worth knowing
+before trusting the next.
 
 The first version of this page's own tally was also wrong — it claimed 4 / 5 / 14
 against an actual 3 / 4 / 16, because the counts were written by hand rather than
@@ -245,6 +245,15 @@ median within-ringer range are identical to three decimals.
 bet (settle on one bell) fail. The replacement -- a band that rings everywhere
 and conducts early -- is the sharper finding.
 
+### H28. Multi-part symmetry dominates peal compositions to save conductor memory
+**Expected:** conductor cognitive load means multi-part peals (3-part, 5-part, 7-part)
+comprise >90% of peals; unparted peals are rare novelties.
+**Observed:** multi-part peals do lead at 67.5% (with 3-part modal at 37.7%), but
+**32.5% of all 29,302 Major peals are completely unparted (1-part)**, requiring
+linear recall of an average 54 calls with zero repeating structure.
+**🟡 Wrong in size.** Multi-part is the majority, but unparted peals represent
+nearly a third of all peal ringing compositions.
+
 ---
 
 ## The tally
@@ -252,11 +261,11 @@ and conducts early -- is the sharper finding.
 | | Count |
 | --- | ---: |
 | ✅ Held | 4 |
-| 🟡 Wrong in size | 5 |
+| 🟡 Wrong in size | 6 |
 | ❌ Wrong | 18 |
-| **Total** | **27** |
+| **Total** | **28** |
 
-**Four predictions out of twenty-seven survived intact — 15%.** That is not a comment on
+**Four predictions out of twenty-eight survived intact — 14.3%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way

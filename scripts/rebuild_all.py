@@ -67,6 +67,7 @@ def steps(db, skip_inference):
         ("Method Lineage         -> docs/lineage.html",   ["build_lineage_atlas.py"], "pages"),
         ("Blue Line Atlas        -> docs/methods.html",   ["build_method_atlas.py"], "pages"),
         ("First Rung             -> docs/invention.html", ["build_invention_page.py"], "pages"),
+        ("Composition Demands   -> docs/calling.html",   ["build_calling_page.py"], "pages"),
         ("Rhythm of Ringing      -> docs/rhythm.html",    ["build_rhythm_page.py"], "pages"),
         ("Ringer Constellation   -> docs/ringers.html",   ["build_ringers_page.py"], "pages"),
         ("The Occasions Archive  -> docs/occasions.html", ["build_occasions_page.py"], "pages"),
