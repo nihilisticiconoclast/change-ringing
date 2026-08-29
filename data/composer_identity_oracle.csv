@@ -1,0 +1,301 @@
+raw_composer,predicted_canonical,ground_truth_canonical,confidence,match_rule,frequency,notes
+Jack R Pease  ( no 160 ),Jack R Pease ( No 160 ),Jack R Pease ( No 160 ),medium,cleaned_name_fallback,1,Cleaned name preserved
+A G Reading (No.9),Alan G Reading,Alan G Reading,high,multi_initial_unique_match,4,Authority matched or standardized
+Frank Bennett,Frank Bennett,Frank Bennett,high,exact_authority_match,43,Authority matched or standardized
+R J Angrave arr O Austin,R J Angrave Arr O Austin,R J Angrave Arr O Austin,medium,cleaned_name_fallback,1,Cleaned name preserved
+"2H,W,WH,H,sW","2H,W,Wh,H,Sw","2H,W,Wh,H,Sw",low,unresolved_fragment,1,Unresolved fragment
+Richard E Price,Richard E Price,Richard E Price,medium,cleaned_name_fallback,2,Cleaned name preserved
+JM Goldthorpe,John Goldthorpe,John Goldthorpe,medium,multi_initial_unique_match,2,Authority matched or standardized
+D F Morrison (No 108),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,3,Authority matched or standardized
+R I Allton (no. 2752),Richard I Allton,Richard I Allton,high,multi_initial_unique_match,1,Authority matched or standardized
+J S Warboys (SU0308 SU0403),J S Warboys (Su0308 Su0403),J S Warboys (Su0308 Su0403),medium,cleaned_name_fallback,5,Cleaned name preserved
+M. Maughan,Michael Maughan,Michael Maughan,medium,multi_initial_unique_match,1,Authority matched or standardized
+R J Angrave (Op. 540),Richard J Angrave,Richard J Angrave,high,multi_initial_unique_match,1,Authority matched or standardized
+Donald F Morrison No 3542,Donald F Morrison No 3542,Donald F Morrison No 3542,medium,cleaned_name_fallback,1,Cleaned name preserved
+Arranged by John Pladdys (No 5),John Pladdys,John Pladdys,high,exact_authority_match,6,Authority matched or standardized
+Ian Butters no 386,Ian Butters No 386,Ian Butters No 386,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 586),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+Fred Bone,Fred Bone,Fred Bone,high,exact_authority_match,30,Authority matched or standardized
+TJ Barnes,TJ Barnes,TJ Barnes,high,exact_authority_match,33,Authority matched or standardized
+R. W. Pipe,Roderick W Pipe,Roderick W Pipe,high,multi_initial_unique_match,6,Authority matched or standardized
+J Higgins,James Higgins,James Higgins,medium,multi_initial_unique_match,2,Authority matched or standardized
+Matt Durham,Matthew Durham,Matthew Durham,medium,multi_initial_unique_match,2,Authority matched or standardized
+Donald F Morrison (No 2877),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Ian Butters no 782,Ian Butters No 782,Ian Butters No 782,medium,cleaned_name_fallback,1,Cleaned name preserved
+R A Pearce,Richard A Pearce,Richard A Pearce,high,multi_initial_unique_match,40,Authority matched or standardized
+Emma,Emma,Emma,low,unresolved_fragment,1,Unresolved fragment
+D Morrison 2372,D Morrison 2372,D Morrison 2372,medium,cleaned_name_fallback,2,Cleaned name preserved
+Paul M Mason (No.104a),Paul M Mason,Paul M Mason,high,exact_authority_match,1,Authority matched or standardized
+John N Hughes D’Aeth,John N Hughes D’Aeth,John N Hughes D’Aeth,medium,cleaned_name_fallback,1,Cleaned name preserved
+"P A B Saddleton (3 part, No 86 in CC Collection)","P A B Saddleton (3 Part, No 86 In Cc Collection)","P A B Saddleton (3 Part, No 86 In Cc Collection)",medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison 7977,Donald F Morrison 7977,Donald F Morrison 7977,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 337),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+J S Warboys (SU0501),J S Warboys (Su0501),J S Warboys (Su0501),medium,cleaned_name_fallback,2,Cleaned name preserved
+D G Hull (The Anagram Peal),D G Hull (The Anagram Peal),D G Hull (The Anagram Peal),medium,cleaned_name_fallback,1,Cleaned name preserved
+Ian Butters No 515,Ian Butters No 515,Ian Butters No 515,medium,cleaned_name_fallback,1,Cleaned name preserved
+540 and 720,540 And 720,540 And 720,medium,cleaned_name_fallback,1,Cleaned name preserved
+Thurstans arr David Wilson,Thurstans Arr David Wilson,Thurstans Arr David Wilson,medium,cleaned_name_fallback,1,Cleaned name preserved
+Peter Border,Peter Border,Peter Border,high,exact_authority_match,257,Authority matched or standardized
+Richard Ford,Richard Ford,Richard Ford,medium,cleaned_name_fallback,1,Cleaned name preserved
+Thomas A Winter (op.2),Thomas A Winter,Thomas A Winter,high,exact_authority_match,1,Authority matched or standardized
+Peter J W Sheppard,Peter J W Sheppard,Peter J W Sheppard,high,exact_authority_match,3,Authority matched or standardized
+Noel J Diserens and Stephen Bedford (arr),Noel J Diserens And Stephen Bedford,Noel J Diserens And Stephen Bedford,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 6403),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+BVFBHx3,Bvfbhx3,Bvfbhx3,low,unresolved_fragment,1,Unresolved fragment
+"4ths, 2W, (x3)","4Ths, 2W, (X3)","4Ths, 2W, (X3)",medium,cleaned_name_fallback,1,Cleaned name preserved
+Keith E Beale,Keith E Beale,Keith E Beale,high,exact_authority_match,3,Authority matched or standardized
+H J Poole,Harold J Poole,Harold J Poole,high,multi_initial_unique_match,2,Authority matched or standardized
+Richard J Angrave & Donald F Morrison,Richard J Angrave & Donald F Morrison,Richard J Angrave & Donald F Morrison,medium,cleaned_name_fallback,1,Cleaned name preserved
+B H Taylor (Trinity),B H Taylor (Trinity),B H Taylor (Trinity),medium,cleaned_name_fallback,1,Cleaned name preserved
+J M Jelley (No 26),John M Jelley,John M Jelley,high,multi_initial_unique_match,5,Authority matched or standardized
+Nigel Newton,Nigel Newton,Nigel Newton,high,exact_authority_match,6,Authority matched or standardized
+D F Morrison (970),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+Adam Beer (no. 1),Adam Beer,Adam Beer,high,exact_authority_match,5,Authority matched or standardized
+Charles Midddleton (Johnson's Variation),Charles Middleton (Johnson's variation),Charles Middleton (Johnson's variation),high,multi_initial_unique_match,1,Authority matched or standardized
+Edward Nicholls,Edward Nicholls,Edward Nicholls,high,exact_authority_match,1,Authority matched or standardized
+Brian Cook,Brian Cook,Brian Cook,medium,cleaned_name_fallback,1,Cleaned name preserved
+Ian Butters no 831,Ian Butters No 831,Ian Butters No 831,medium,cleaned_name_fallback,1,Cleaned name preserved
+James A Hodkin,James A Hodkin,James A Hodkin,high,exact_authority_match,2,Authority matched or standardized
+"Thomas Perrins, arr PGCE","Thomas Perrins, Arr Pgce","Thomas Perrins, Arr Pgce",medium,cleaned_name_fallback,1,Cleaned name preserved
+C L D Munday,Christopher L D Munday,Christopher L D Munday,high,multi_initial_unique_match,18,Authority matched or standardized
+R B Pullin (no. 8a),Richard B Pullin,Richard B Pullin,high,multi_initial_unique_match,1,Authority matched or standardized
+D. F. Morrison No. 6087,D F Morrison No. 6087,D F Morrison No. 6087,medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (no. 2676),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Parker's 12 part,Parker's 12 part,Parker's 12 part,high,exact_authority_match,4,Authority matched or standardized
+D F Morrison (3713),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+B J Woodruffe,Brian J Woodruffe,Brian J Woodruffe,high,multi_initial_unique_match,7,Authority matched or standardized
+Donald F Morrison op.2370,Donald F Morrison Op.2370,Donald F Morrison Op.2370,medium,cleaned_name_fallback,1,Cleaned name preserved
+A J Rawlinson and Trad,A J Rawlinson And Trad,A J Rawlinson And Trad,medium,cleaned_name_fallback,1,Cleaned name preserved
+arr. EJ Daniel (age 10),Arr. Ej Daniel (Age 10),Arr. Ej Daniel (Age 10),medium,cleaned_name_fallback,1,Cleaned name preserved
+J W Holdsworth (1a),J W Holdsworth (1A),J W Holdsworth (1A),medium,cleaned_name_fallback,1,Cleaned name preserved
+J Pigott,Joseph Pigott,Joseph Pigott,medium,multi_initial_unique_match,1,Authority matched or standardized
+Chris Munday,Christopher Munday,Chris Munday,low,multi_initial_collision,1,Initial collision across multiple distinct authority entities
+H Collings,H Collings,H Collings,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 1696),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,2,Authority matched or standardized
+P G C Ellis / A G Reading,P G C Ellis / A G Reading,P G C Ellis / A G Reading,medium,cleaned_name_fallback,1,Cleaned name preserved
+J S Warboys (SU0801),J S Warboys (Su0801),J S Warboys (Su0801),medium,cleaned_name_fallback,9,Cleaned name preserved
+MJS,Mjs,Mjs,low,unresolved_fragment,17,Unresolved fragment
+June Adams,June Adams,June Adams,medium,cleaned_name_fallback,1,Cleaned name preserved
+Jon Young,Jonathan Young,Jonathan Young,medium,multi_initial_unique_match,2,Authority matched or standardized
+Roger Bailey No. 3,Roger Bailey No. 3,Roger Bailey No. 3,medium,cleaned_name_fallback,1,Cleaned name preserved
+A Hathaway,A Hathaway,A Hathaway,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison(no565),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,7,Authority matched or standardized
+J G Holroyd,J G Holroyd,J G Holroyd,medium,cleaned_name_fallback,1,Cleaned name preserved
+Maurice Thurmott,Maurice J Thurmott,Maurice J Thurmott,high,forename_surname_unique_match,2,Authority matched or standardized
+E. M. Atkins,E M Atkins,E M Atkins,medium,cleaned_name_fallback,5,Cleaned name preserved
+D F Morrison (N0 4155),D F Morrison (N0 4155),D F Morrison (N0 4155),medium,cleaned_name_fallback,1,Cleaned name preserved
+5 Befores (two of them sbbs),5 Befores (Two Of Them Sbbs),5 Befores (Two Of Them Sbbs),medium,cleaned_name_fallback,1,Cleaned name preserved
+D J Pipe - cyclic 12 part,D J Pipe - Cyclic 12 Part,D J Pipe - Cyclic 12 Part,medium,cleaned_name_fallback,1,Cleaned name preserved
+JAV,Jav,Jav,low,unresolved_fragment,1,Unresolved fragment
+sH ssW sH,Sh Ssw Sh,Sh Ssw Sh,medium,cleaned_name_fallback,1,Cleaned name preserved
+Comp selected by AJB,Selected By Ajb,Selected By Ajb,medium,cleaned_name_fallback,1,Cleaned name preserved
+S J Ivin (reversed),S J Ivin (Reversed),S J Ivin (Reversed),medium,cleaned_name_fallback,3,Cleaned name preserved
+Cyclic 7 part,Cyclic 7 Part,Cyclic 7 Part,medium,cleaned_name_fallback,1,Cleaned name preserved
+C.H. Middleton,C H Middleton,C H Middleton,medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (no. 4127),Donald F Morrison,Donald F Morrison,high,exact_authority_match,2,Authority matched or standardized
+M B Davies (no 3),Mark B Davies,Mark B Davies,high,multi_initial_unique_match,1,Authority matched or standardized
+"(1-4) J S Warboys (TB0403), (5-6) A G Reading, (7) Trad","(1-4) J S Warboys (Tb0403), (5-6) A G Reading, (7) Trad","(1-4) J S Warboys (Tb0403), (5-6) A G Reading, (7) Trad",medium,cleaned_name_fallback,1,Cleaned name preserved
+"P A B Saddleton (singles only 2 part, No 84 in CC Collection)","P A B Saddleton (Singles Only 2 Part, No 84 In Cc Collection)","P A B Saddleton (Singles Only 2 Part, No 84 In Cc Collection)",medium,cleaned_name_fallback,1,Cleaned name preserved
+Mark B Davies No'5,Mark B Davies No'5,Mark B Davies No'5,medium,cleaned_name_fallback,1,Cleaned name preserved
+John H. Fieldon,John H Fieldon,John H Fieldon,medium,cleaned_name_fallback,1,Cleaned name preserved
+Thomas Brook,Thomas Brook,Thomas Brook,high,exact_authority_match,9,Authority matched or standardized
+J E Hawes,John E Hawes,John E Hawes,high,multi_initial_unique_match,1,Authority matched or standardized
+J.M. Goldthorpe,John M Goldthorpe,John M Goldthorpe,high,multi_initial_unique_match,1,Authority matched or standardized
+2H W 2B H W B H,2H W 2B H W B H,2H W 2B H W B H,medium,cleaned_name_fallback,2,Cleaned name preserved
+Donald F Morrison (no. 166),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+R B Pullin (No.2),Richard B Pullin,Richard B Pullin,high,multi_initial_unique_match,1,Authority matched or standardized
+Richard C. Offen,Richard C Offen,Richard C Offen,high,exact_authority_match,2,Authority matched or standardized
+Sgt Albert Wakely,Sgt Albert Wakely,Sgt Albert Wakely,high,exact_authority_match,3,Authority matched or standardized
+D.F. Morrison (no.6297),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+D F Morrison (6990),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+"(w, h, w) x 3","(W, H, W) X 3","(W, H, W) X 3",medium,cleaned_name_fallback,1,Cleaned name preserved
+Jack R Pease (no. 243),Jack R Pease,Jack R Pease,high,exact_authority_match,1,Authority matched or standardized
+Michael J Pomeroy (5088 adapted),Michael J Pomeroy (5088 Adapted),Michael J Pomeroy (5088 Adapted),medium,cleaned_name_fallback,1,Cleaned name preserved
+E J Gale,E J Gale,E J Gale,medium,cleaned_name_fallback,1,Cleaned name preserved
+J R Prichard,J R Prichard,J R Prichard,medium,cleaned_name_fallback,2,Cleaned name preserved
+Mark Liebenrood,Mark C Liebenrood,Mark C Liebenrood,medium,forename_surname_collision,1,Authority matched or standardized
+Arr. J E Page,Arr. J E Page,Arr. J E Page,medium,cleaned_name_fallback,1,Cleaned name preserved
+Susan E Marshall,Susan E Marshall,Susan E Marshall,high,exact_authority_match,1,Authority matched or standardized
+Robert D S Brown and Graham A C John,Robert D S Brown And Graham A C John,Robert D S Brown And Graham A C John,medium,cleaned_name_fallback,1,Cleaned name preserved
+S Bruerton arr AMH,S Bruerton Arr Amh,S Bruerton Arr Amh,medium,cleaned_name_fallback,1,Cleaned name preserved
+Alan F Scholfield,Alan F Scholfield,Alan F Scholfield,high,exact_authority_match,12,Authority matched or standardized
+LJW et al (ref 29 June 2013),Ljw Et Al (Ref 29 June 2013),Ljw Et Al (Ref 29 June 2013),medium,cleaned_name_fallback,2,Cleaned name preserved
+WBBBH;WMH;H;M;WBB,Wbbbh;Wmh;H;M;Wbb,Wbbbh;Wmh;H;M;Wbb,low,unresolved_fragment,1,Unresolved fragment
+Peter Hinton,Peter Hinton,Peter Hinton,high,exact_authority_match,30,Authority matched or standardized
+The Ringing World,The Ringing World,The Ringing World,medium,cleaned_name_fallback,1,Cleaned name preserved
+Anthony J Cox Arr Alan G Reading,Anthony J Cox Arr Alan G Reading,Anthony J Cox Arr Alan G Reading,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (No. 6894),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+"(2w, 2h, w, h) repeated","(2W, 2H, W, H) Repeated","(2W, 2H, W, H) Repeated",medium,cleaned_name_fallback,1,Cleaned name preserved
+WS Croft,WS Croft,WS Croft,high,exact_authority_match,10,Authority matched or standardized
+E A Barnett (arr jwb),E A Barnett (Arr Jwb),E A Barnett (Arr Jwb),medium,cleaned_name_fallback,2,Cleaned name preserved
+From R. Roan (3rd observation throughout),From R Roan (3Rd Observation Throughout),From R Roan (3Rd Observation Throughout),medium,cleaned_name_fallback,1,Cleaned name preserved
+Paul M Mason (No.312),Paul M Mason,Paul M Mason,high,exact_authority_match,1,Authority matched or standardized
+Anthony Carter,Anthony R Carter,Anthony R Carter,high,forename_surname_unique_match,1,Authority matched or standardized
+F H Dexter (#2),F H Dexter (#2),F H Dexter (#2),medium,cleaned_name_fallback,2,Cleaned name preserved
+John S Warboys (TD0702),John S Warboys (Td0702),John S Warboys (Td0702),medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (2293),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+D F Morrison (No 7723),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+James Clatworthy (shortened),James Clatworthy (Shortened),James Clatworthy (Shortened),medium,cleaned_name_fallback,1,Cleaned name preserved
+D. F. Morrison (No.565),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+D F Morrison (no.3215),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,3,Authority matched or standardized
+Graham J N Colborne,Graham J N Colborne,Graham J N Colborne,high,exact_authority_match,2,Authority matched or standardized
+D F Morrison (No 115),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,3,Authority matched or standardized
+Robert W Lee (No.4),Robert W Lee,Robert W Lee,high,exact_authority_match,2,Authority matched or standardized
+R Philip Graves from M Maughan,R Philip Graves From M Maughan,R Philip Graves From M Maughan,medium,cleaned_name_fallback,1,Cleaned name preserved
+Emma J Southerington #2a,Emma J Southerington #2A,Emma J Southerington #2A,medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (no. 4707),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+"David L Thomas, Robin O Hall, Simon A Bond","David L Thomas, Robin O Hall, Simon A Bond","David L Thomas, Robin O Hall, Simon A Bond",high,exact_authority_match,2,Authority matched or standardized
+R W Lee (arr. M B Davies),R W Lee (Arr. M B Davies),R W Lee (Arr. M B Davies),medium,cleaned_name_fallback,1,Cleaned name preserved
+I R Fielding (arr),Ian R Fielding,Ian R Fielding,high,multi_initial_unique_match,1,Authority matched or standardized
+D F Morrison (no.7088),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+I Butters (no. 356),Ian Butters,Ian Butters,medium,multi_initial_unique_match,1,Authority matched or standardized
+D F Morrison (No. 3043),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+Christian Peckham (Arr),Christian Peckham,Christian Peckham,high,exact_authority_match,1,Authority matched or standardized
+J O Lancashire (10 part),J O Lancashire (10 Part),J O Lancashire (10 Part),medium,cleaned_name_fallback,2,Cleaned name preserved
+C Ravencroft,C Ravencroft,C Ravencroft,medium,cleaned_name_fallback,3,Cleaned name preserved
+Donald F Morrison (No 6256),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Don Morrison No 3141,Don Morrison No 3141,Don Morrison No 3141,medium,cleaned_name_fallback,1,Cleaned name preserved
+John Holt (The Original One Part),John Holt (The Original One Part),John Holt (The Original One Part),high,exact_authority_match,6,Authority matched or standardized
+RWP (singles only) & A Johnson (bobs only),Rwp (Singles Only) & A Johnson (Bobs Only),Rwp (Singles Only) & A Johnson (Bobs Only),medium,cleaned_name_fallback,1,Cleaned name preserved
+Dennis A Chapman,Dennis A Chapman,Dennis A Chapman,high,exact_authority_match,16,Authority matched or standardized
+George Conyard,George Conyard,George Conyard,high,exact_authority_match,5,Authority matched or standardized
+J S Warboys (SUO722),J S Warboys (Suo722),J S Warboys (Suo722),medium,cleaned_name_fallback,3,Cleaned name preserved
+"J S Warboys, arr I V J Smith","J S Warboys, Arr I V J Smith","J S Warboys, Arr I V J Smith",medium,cleaned_name_fallback,1,Cleaned name preserved
+Price/Price/Morris,Price/Price/Morris,Price/Price/Morris,low,unresolved_fragment,3,Unresolved fragment
+Stan Dadfare,Stan Dadfare,Stan Dadfare,medium,cleaned_name_fallback,1,Cleaned name preserved
+Marcus C W Sherwood (shortened),Marcus C W Sherwood (Shortened),Marcus C W Sherwood (Shortened),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 6228),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+Ian Butters no 640,Ian Butters No 640,Ian Butters No 640,medium,cleaned_name_fallback,1,Cleaned name preserved
+Charles Middleton and Henry Johnson (arr),Charles Middleton and Henry Johnson,Charles Middleton and Henry Johnson,high,exact_authority_match,10,Authority matched or standardized
+D F Morrison (No 2832),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+D F Morrison (No 1744),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+Ian Butters no 629,Ian Butters No 629,Ian Butters No 629,medium,cleaned_name_fallback,1,Cleaned name preserved
+DG Hull (No. 2A),DG Hull,DG Hull,high,exact_authority_match,1,Authority matched or standardized
+Donald F Morrison (no 1699),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+T F Lawrance from J S Warboys' website,T F Lawrance From J S Warboys' Website,T F Lawrance From J S Warboys' Website,medium,cleaned_name_fallback,2,Cleaned name preserved
+"Donald F Morrison, Leslie W G Morris and Traditional","Donald F Morrison, Leslie W G Morris And Traditional","Donald F Morrison, Leslie W G Morris And Traditional",medium,cleaned_name_fallback,1,Cleaned name preserved
+J. White,James White,James White,medium,multi_initial_unique_match,132,Authority matched or standardized
+Malcolm Bunce,Malcolm Bunce,Malcolm Bunce,medium,cleaned_name_fallback,1,Cleaned name preserved
+Paul Neville (C),Paul Neville (C),Paul Neville (C),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (No 250),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,4,Authority matched or standardized
+Mark B Davies (5056 No.1),Mark B Davies (5056 No.1),Mark B Davies (5056 No.1),medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (no. 2939),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+R.D. Bailey,Roger D Bailey,Roger D Bailey,high,multi_initial_unique_match,1,Authority matched or standardized
+(1-4 J S Warboys SU0403),(1-4 J S Warboys Su0403),(1-4 J S Warboys Su0403),medium,cleaned_name_fallback,1,Cleaned name preserved
+"Robert D S Brown, arr Martin J Gentile","Robert D S Brown, Arr Martin J Gentile","Robert D S Brown, Arr Martin J Gentile",medium,cleaned_name_fallback,1,Cleaned name preserved
+Jack R Pease (no. 4),Jack R Pease,Jack R Pease,high,exact_authority_match,1,Authority matched or standardized
+BVFB,Bvfb,Bvfb,low,unresolved_fragment,1,Unresolved fragment
+A Knights,Arthur Knights,Arthur Knights,medium,multi_initial_unique_match,4,Authority matched or standardized
+"A Johnson (""Aston Martin"")","A Johnson (""Aston Martin"")","A Johnson (""Aston Martin"")",medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison No 45,D F Morrison No 45,D F Morrison No 45,medium,cleaned_name_fallback,1,Cleaned name preserved
+N J Pitstow & D F Morrison,N J Pitstow & D F Morrison,N J Pitstow & D F Morrison,medium,cleaned_name_fallback,3,Cleaned name preserved
+"D J Pipe, arr J P Gunning","D J Pipe, Arr J P Gunning","D J Pipe, Arr J P Gunning",medium,cleaned_name_fallback,1,Cleaned name preserved
+John H Fielden,John H Fielden,John H Fielden,high,exact_authority_match,472,Authority matched or standardized
+Peter J Sheppard,Peter W J Sheppard,Peter W J Sheppard,medium,forename_surname_collision,1,Authority matched or standardized
+Paul M Mason (Opus 250),Paul M Mason,Paul M Mason,high,exact_authority_match,1,Authority matched or standardized
+Bog Standard,Bog Standard,Bog Standard,high,exact_authority_match,2,Authority matched or standardized
+Donald F Morrison (6544),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+"Richard I Allton (no 1,749)",Richard I Allton,Richard I Allton,high,exact_authority_match,1,Authority matched or standardized
+Arr P.Q. Armitage,P Q Armitage,P Q Armitage,medium,cleaned_name_fallback,2,Cleaned name preserved
+Donald F Morrison (No 4227),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+R William Willians,R William Willians,R William Willians,medium,cleaned_name_fallback,5,Cleaned name preserved
+J S Warboys (TB0403 & TB0304),J S Warboys (Tb0403 & Tb0304),J S Warboys (Tb0403 & Tb0304),medium,cleaned_name_fallback,1,Cleaned name preserved
+A. J. House,Alfred J House,Alfred J House,high,multi_initial_unique_match,1,Authority matched or standardized
+Samuel Pinder,Samuel Pinder,Samuel Pinder,high,exact_authority_match,1,Authority matched or standardized
+"JW Moorhouse, arr RB Smith","Jw Moorhouse, Arr Rb Smith","Jw Moorhouse, Arr Rb Smith",medium,cleaned_name_fallback,1,Cleaned name preserved
+J E Burton (1264 reduced),J E Burton (1264 Reduced),J E Burton (1264 Reduced),medium,cleaned_name_fallback,1,Cleaned name preserved
+D Morrison no.565,D Morrison No.565,D Morrison No.565,medium,cleaned_name_fallback,2,Cleaned name preserved
+D F Morrison ( No 4051),D F Morrison ( No 4051),D F Morrison ( No 4051),medium,cleaned_name_fallback,1,Cleaned name preserved
+Richard I Allton No800,Richard I Allton No800,Richard I Allton No800,medium,cleaned_name_fallback,1,Cleaned name preserved
+Reg Radford/Elaine Radford,Reg Radford/Elaine Radford,Reg Radford/Elaine Radford,high,exact_authority_match,3,Authority matched or standardized
+Donald F Morrison (no. 6019),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+S J Ivin (No. 14),Stephen J Ivin,Stephen J Ivin,high,multi_initial_unique_match,1,Authority matched or standardized
+Donald F Morrison (no 2729),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Monument,Monument,Monument,low,unresolved_fragment,1470,Unresolved fragment
+Ian Butters no 701,Ian Butters No 701,Ian Butters No 701,medium,cleaned_name_fallback,1,Cleaned name preserved
+Arr. Fraser A Storie,Arr. Fraser A Storie,Arr. Fraser A Storie,medium,cleaned_name_fallback,1,Cleaned name preserved
+Diary p85.,Diary P85.,Diary P85.,medium,cleaned_name_fallback,1,Cleaned name preserved
+William Stafford,William Stafford,William Stafford,high,exact_authority_match,60,Authority matched or standardized
+Alan Baker,Alan Baker,Alan Baker,high,exact_authority_match,4,Authority matched or standardized
+Christopher Rainthorpe,Christopher Rainthorpe,Christopher Rainthorpe,medium,cleaned_name_fallback,1,Cleaned name preserved
+from Alfred J House,From Alfred J House,From Alfred J House,medium,cleaned_name_fallback,1,Cleaned name preserved
+Thomas M Perrins & Albert J Pitman,Thomas M Perrins & Albert J Pitman,Thomas M Perrins & Albert J Pitman,medium,cleaned_name_fallback,1,Cleaned name preserved
+"Albert M Tyler, arranged by A J Cox","Albert M Tyler, Arranged By A J Cox","Albert M Tyler, Arranged By A J Cox",medium,cleaned_name_fallback,1,Cleaned name preserved
+Peter G C Ellis (No 1006),Peter G C Ellis,Peter G C Ellis,high,exact_authority_match,2,Authority matched or standardized
+Maurice Hodgson,Maurice Hodgson,Maurice Hodgson,high,exact_authority_match,12,Authority matched or standardized
+"Quarter 500, pg 8 (No 2)","Quarter 500, Pg 8","Quarter 500, Pg 8",medium,cleaned_name_fallback,2,Cleaned name preserved
+From Thomas Hooley,From Thomas Hooley,From Thomas Hooley,medium,cleaned_name_fallback,1,Cleaned name preserved
+Arthur P Heywood,Arthur P Heywood,Arthur P Heywood,high,exact_authority_match,7,Authority matched or standardized
+Ann G Martin,Ann G Martin,Ann G Martin,high,exact_authority_match,7,Authority matched or standardized
+R D Bailey (No. 1),Roger D Bailey,Roger D Bailey,high,multi_initial_unique_match,1,Authority matched or standardized
+David W Friend (arranged),David W Friend (Arranged),David W Friend (Arranged),medium,cleaned_name_fallback,1,Cleaned name preserved
+"Traditional, 5-part","Traditional, 5-Part","Traditional, 5-Part",medium,cleaned_name_fallback,1,Cleaned name preserved
+J E Harrold,John E Harrold,John E Harrold,high,multi_initial_unique_match,9,Authority matched or standardized
+Richard I Allton (No 2049a),Richard I Allton,Richard I Allton,high,exact_authority_match,1,Authority matched or standardized
+Donald F Morrison (no 7126),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Richard Knights,Richard F Knights,Richard F Knights,high,forename_surname_unique_match,1,Authority matched or standardized
+R I Allton No.2702,R I Allton No.2702,R I Allton No.2702,medium,cleaned_name_fallback,4,Cleaned name preserved
+Tom Perrins,Tom Perrins,Tom Perrins,high,exact_authority_match,4,Authority matched or standardized
+Joseph J Parker (arr.),Joseph J Parker,Joseph J Parker,high,exact_authority_match,1,Authority matched or standardized
+"David G Hull, arranged Donald F Morrison","David G Hull, David J Pipe, Donald F Morrison","David G Hull, David J Pipe, Donald F Morrison",high,forename_surname_unique_match,1,Authority matched or standardized
+Donald F Morrison no 4345,Donald F Morrison No 4345,Donald F Morrison No 4345,medium,cleaned_name_fallback,1,Cleaned name preserved
+"Traditional, arr by Jack R Pease","Traditional, arr by Jack R Pease","Traditional, arr by Jack R Pease",high,exact_authority_match,3,Authority matched or standardized
+Nicholas J Davies,Nicholas J Davies,Nicholas J Davies,high,exact_authority_match,2,Authority matched or standardized
+Donald F Morrison (Op. 6661),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+"In Out In, x3","In Out In, X3","In Out In, X3",medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (no. 6734),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+E W Martin (arranged BVM),E W Martin (Arranged Bvm),E W Martin (Arranged Bvm),medium,cleaned_name_fallback,2,Cleaned name preserved
+Donald F Morrison (no. 6),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+RW Diary page 87,Rw Diary Page 87,Rw Diary Page 87,medium,cleaned_name_fallback,1,Cleaned name preserved
+R B Smith (adapted from),R B Smith (Adapted From),R B Smith (Adapted From),medium,cleaned_name_fallback,1,Cleaned name preserved
+Middleton's (arr Washbrook),Middleton'S (Arr Washbrook),Middleton'S (Arr Washbrook),medium,cleaned_name_fallback,1,Cleaned name preserved
+Daniel Brady (no 202),Daniel Brady,Daniel Brady,high,exact_authority_match,2,Authority matched or standardized
+Parker's Twelve-Part,Parker'S Twelve-Part,Parker'S Twelve-Part,medium,cleaned_name_fallback,1,Cleaned name preserved
+Andrew Hudson (arr ATW),Andrew Hudson (Arr Atw),Andrew Hudson (Arr Atw),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (No. 2551),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,1,Authority matched or standardized
+M B Winter,M B Winter,M B Winter,medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison ( No 1069),D F Morrison ( No 1069),D F Morrison ( No 1069),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison No 8391,D F Morrison No 8391,D F Morrison No 8391,medium,cleaned_name_fallback,1,Cleaned name preserved
+Donald F Morrison (No. 6164 reversed),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+D G Maynard (no 4),David G Maynard,David G Maynard,high,multi_initial_unique_match,1,Authority matched or standardized
+JDA,Jda,Jda,low,unresolved_fragment,4,Unresolved fragment
+S Beckingham,SJ Beckingham,S Beckingham,low,multi_initial_collision,2,Initial collision across multiple distinct authority entities
+John  M Goldthorpe,John M Goldthorpe,John M Goldthorpe,high,exact_authority_match,2,Authority matched or standardized
+David L Thomas (No. 561c),David L Thomas,David L Thomas,high,exact_authority_match,10,Authority matched or standardized
+B.D.Constant,Benjamin D Constant,Benjamin D Constant,high,multi_initial_unique_match,1,Authority matched or standardized
+Adrian M Moreton,Adrian M Moreton,Adrian M Moreton,high,exact_authority_match,54,Authority matched or standardized
+Ian Butters (no 567),Ian Butters,Ian Butters,high,exact_authority_match,1,Authority matched or standardized
+Donald F. Morrison (no 2314),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+M C Frost,Matthew C Frost,Matthew C Frost,high,multi_initial_unique_match,2,Authority matched or standardized
+Ian Butters (no 634),Ian Butters,Ian Butters,high,exact_authority_match,1,Authority matched or standardized
+"J S Warboys (SU0309, SU0404)","J S Warboys (Su0309, Su0404)","J S Warboys (Su0309, Su0404)",medium,cleaned_name_fallback,2,Cleaned name preserved
+John Carter,John Carter,John Carter,high,exact_authority_match,235,Authority matched or standardized
+Rules,Rules,Rules,low,unresolved_fragment,9,Unresolved fragment
+P M Mason (No 69),Paul M Mason,Paul M Mason,high,multi_initial_unique_match,1,Authority matched or standardized
+J W Wahbrook,J W Wahbrook,J W Wahbrook,medium,cleaned_name_fallback,1,Cleaned name preserved
+Harry J Andrews,Harry J Andrews,Harry J Andrews,high,exact_authority_match,12,Authority matched or standardized
+"L W G Morris, D F Morrison (No. 2157)","L W G Morris, D F Morrison","L W G Morris, D F Morrison",medium,cleaned_name_fallback,2,Cleaned name preserved
+C Middleton (Johnson's Var),C Middleton (Johnson'S Var),C Middleton (Johnson'S Var),medium,cleaned_name_fallback,9,Cleaned name preserved
+Revd H Earle Bulwer,Revd H Earle Bulwer,Revd H Earle Bulwer,high,exact_authority_match,31,Authority matched or standardized
+Arranged by Andrew J Watkins,Andrew J Watkins,Andrew J Watkins,high,exact_authority_match,1,Authority matched or standardized
+R D S Brown & D F Morrison,R D S Brown & D F Morrison,R D S Brown & D F Morrison,medium,cleaned_name_fallback,9,Cleaned name preserved
+Donald F Morrison (No 990a),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+Parker's 12-part (reduced),Parker'S 12-Part (Reduced),Parker'S 12-Part (Reduced),medium,cleaned_name_fallback,2,Cleaned name preserved
+"564-PSG, 720 Benjamin Annable","564-Psg, 720 Benjamin Annable","564-Psg, 720 Benjamin Annable",medium,cleaned_name_fallback,1,Cleaned name preserved
+M B Davies (5024 no. 4),M B Davies (5024 No. 4),M B Davies (5024 No. 4),medium,cleaned_name_fallback,1,Cleaned name preserved
+David Pipe,David J Pipe,David J Pipe,high,forename_surname_unique_match,1,Authority matched or standardized
+Gen SMC32,Gen. SMC32,Gen. SMC32,medium,multi_initial_unique_match,2,Authority matched or standardized
+Donald F Morrison (no. 572),Donald F Morrison,Donald F Morrison,high,exact_authority_match,1,Authority matched or standardized
+A G Reading (No. 20),Alan G Reading,Alan G Reading,high,multi_initial_unique_match,3,Authority matched or standardized
+Peter W J Sheppard Op. 3,Peter W J Sheppard Op. 3,Peter W J Sheppard Op. 3,medium,cleaned_name_fallback,1,Cleaned name preserved
+G. B. Thompson,Giles B Thompson,Giles B Thompson,high,multi_initial_unique_match,1,Authority matched or standardized
+"Graham A C John, Arr. Philip Graves","Graham A C John, Arr. Philip Graves","Graham A C John, Arr. Philip Graves",medium,cleaned_name_fallback,1,Cleaned name preserved
+David G Hull (2920),David G Hull,David G Hull,high,exact_authority_match,1,Authority matched or standardized
+R. Bailey No. 1,Roger Bailey No 1,Roger Bailey No 1,high,multi_initial_unique_match,2,Authority matched or standardized
+SLM,Slm,Slm,low,unresolved_fragment,1,Unresolved fragment
+David G Hull (5040 No.9),David G Hull (5040 No.9),David G Hull (5040 No.9),medium,cleaned_name_fallback,1,Cleaned name preserved
+Thomas Thurstans (4 part),Thomas Thurstans (4 Part),Thomas Thurstans (4 Part),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (No: 1948),D F Morrison (No: 1948),D F Morrison (No: 1948),medium,cleaned_name_fallback,1,Cleaned name preserved
+D F Morrison (No. 118),Donald F Morrison,Donald F Morrison,high,multi_initial_dominant_match,2,Authority matched or standardized
+S M Jones,Stephen M Jones,Stephen M Jones,high,multi_initial_unique_match,6,Authority matched or standardized
+Arr CK Lewis (DF Morrison's var),CK Lewis (DF Morrison's var),CK Lewis (DF Morrison's var),high,exact_authority_match,5,Authority matched or standardized
