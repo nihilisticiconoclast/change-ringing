@@ -58,7 +58,7 @@ P_MEMORIAL = re.compile(
     r'at the passing of|mark the passing|to mark the death|'
     r'half[- ]muffled|fully muffled|quarter muffled|muffled ringing|'
     r'muffled peal|muffled quarter|half muffled|with a heavy heart|'
-    r'lest we forget|their name liveth|we will remember them)\b',
+    r'lest we forget|their name liveth|we will remember them|remembrance (sunday|day))\b',
     re.IGNORECASE
 )
 
@@ -87,8 +87,8 @@ P_ANNIVERSARY = re.compile(
 )
 
 P_FIRST_PERF = re.compile(
-    r'\b(first (peal|quarter|qp|qp peal|inside|as conductor|in method|on handbells|online|in the method|on \d+ bells|tower peal|away from|since|at this address|on a dumbbell|blows|handbell)|'
-    r'1st (peal|quarter|qp|inside|as conductor|in method|on handbells|online|in the method|on \d+ bells|tower peal|blows|handbell)|'
+    r'\b(first (peal|quarter|qp|qp peal|inside|as conductor|in method|on handbells|online|in the method|on \d+ bells|tower peal|away from|since|at this address|on a dumbbell|blows|handbell|minimus|doubles|minor|triples|major|caters|royal|cinques|maximus)|'
+    r'1st (peal|quarter|qp|inside|as conductor|in method|on handbells|online|in the method|on \d+ bells|tower peal|blows|handbell|minimus|doubles|minor|triples|major|caters|royal|cinques|maximus)|'
     r'first on|1st on|first in|1st in|first as|1st as|first for|1st for|'
     r'circled the (tower|circle|composition)|circled|'
     r'most methods|most changes|first of|1st of|'
@@ -102,8 +102,9 @@ P_CIVIC = re.compile(
     r'\b(coronation|accession|proclamation|'
     r'(platinum|diamond|golden|silver)\s*jubilee|'
     r'her majesty|his majesty|h\.?m\.?\s+(the\s+)?(queen|king)|queen elizabeth|king charles|prince philip|'
-    r'duke of edinburgh|prince of wales|princess|royal|'
-    r'remembrance (sunday|day)|armistice|the fallen|war memorial|holocaust memorial|'
+    r'duke of edinburgh|prince of wales|princess|'
+    r'royal (family|household|visit|wedding|baby|birth|jubilee|tour|proclamation|air force|navy|british legion)|'
+    r'armistice|the fallen|war memorial|holocaust memorial|'
     r'mayor|lord mayor|civic|national day|national reflection|election|'
     r'olympic|commonwealth games|liberation day|d-day|ve day|vj day|'
     r'king\'s birthday|queen\'s birthday|yorkshire day|lincolnshire day|juneteenth|ukraine)\b',
@@ -203,26 +204,13 @@ def classify_footnote(footnote_text: str):
     m_practice = P_PRACTICE.search(text)
     m_comp = P_COMPLIMENT.search(text)
 
-    # 1. Occasion determination
+    # 1. Occasion determination (prioritizing true life events over generic civic matches)
     if m_funeral:
-        # Check if civic royal funeral
-        if m_civic and re.search(r'\b(queen|king|prince|duke|monarch|majesty|royal)\b', text, re.I):
-            occasion = "civic"
-            evidence = f"{m_civic.group(0)} / {m_funeral.group(0)}"
-        else:
-            occasion = "funeral"
-            evidence = m_funeral.group(0)
+        occasion = "funeral"
+        evidence = m_funeral.group(0)
     elif m_memorial:
-        # Check if civic memorial (e.g. Holocaust memorial, Armistice, war memorial)
-        if m_civic and re.search(r'\b(war|holocaust|armistice|the fallen|reflection|covid|remembrance|queen|king|prince|duke)\b', text, re.I):
-            occasion = "civic"
-            evidence = f"{m_civic.group(0)} ({m_memorial.group(0)})"
-        else:
-            occasion = "memorial"
-            evidence = m_memorial.group(0)
-    elif m_civic:
-        occasion = "civic"
-        evidence = m_civic.group(0)
+        occasion = "memorial"
+        evidence = m_memorial.group(0)
     elif m_birthday:
         occasion = "birthday"
         evidence = m_birthday.group(0)
@@ -232,6 +220,9 @@ def classify_footnote(footnote_text: str):
     elif m_anniv:
         occasion = "anniversary"
         evidence = m_anniv.group(0)
+    elif m_civic:
+        occasion = "civic"
+        evidence = m_civic.group(0)
     elif m_seasonal:
         occasion = "seasonal"
         evidence = m_seasonal.group(0)
