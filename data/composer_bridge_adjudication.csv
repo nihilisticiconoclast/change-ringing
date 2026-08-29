@@ -1,0 +1,70 @@
+performance_credit,complib_composer,key,performances,verdict,reason
+Mike Platt,Michael J Platt,m-platt,41,same,Mike is the standard diminutive of Michael
+Stephen D Chandler,Steven D Chandler,s-chandler,13,same,"Stephen/Steven spelling variant, middle initial D agrees"
+Lucy Woodward,Lucinda J Woodward,l-woodward,11,same,Lucy is the standard diminutive of Lucinda
+George Hayward,Graham R Hayward,g-hayward,8,different,"George and Graham are distinct forenames, not variants"
+Stephen H Wood,Samuel Wood,s-wood,7,different,Stephen and Samuel are distinct; middle initial H is absent from the CompLib name
+Chris Kippin,Charles H Kippin,c-kippin,6,same,Chris is the standard diminutive of Charles (also of Christopher; Charles H Kippin is the only C Kippin CompLib holds)
+Jim Clatworthy,James Clatworthy,j-clatworthy,6,same,Jim is the standard diminutive of James
+Derek J Jones,Daniel Jones,d-jones,5,different,Derek and Daniel are distinct forenames
+Johny Stokoe,Jonathan J F Stokoe,j-stokoe,5,same,"Johny/Jonathan, and CompLib holds only one J Stokoe"
+Tom Hinks,Thomas J Hinks,t-hinks,5,same,Tom is the standard diminutive of Thomas
+Tom Perrins,Thomas Perrins,t-perrins,4,same,Tom is the standard diminutive of Thomas
+Mike Hurst,Michael Hurst,m-hurst,3,same,Mike is the standard diminutive of Michael
+Chas Middleton,Charles Middleton,c-middleton,2,same,Chas is the archaic written abbreviation of Charles
+Marc Jones,Matthew J Jones,m-jones,2,different,Marc and Matthew are distinct forenames
+Richard Green,Roger G Green,r-green,2,different,Richard and Roger are distinct forenames
+Roy Williams,Robert Williams,r-williams,2,different,Roy and Robert are distinct forenames
+Thos B Worsley,Thomas B Worsley,t-worsley,2,same,Thos is the archaic written abbreviation of Thomas; middle initial B agrees
+Tom Griffiths,Thomas W Griffiths,t-griffiths,2,same,Tom/Thomas
+Tom Hooley,Thomas Hooley,t-hooley,2,same,Tom/Thomas
+Tom Lawrance,Thomas F Lawrance,t-lawrance,2,same,Tom/Thomas
+Trevor Morris,Thomas Morris,t-morris,2,different,Trevor and Thomas are distinct forenames
+Alan Tatlow,Alex W Tatlow,a-tatlow,1,different,Alan and Alex are distinct forenames
+Alexander Johnson,Andrew Johnson,a-johnson,1,different,Alexander and Andrew are distinct forenames
+Ander Holroyd,Alexander E Holroyd,a-holroyd,1,same,Ander is a truncation of Alexander; CompLib holds one A Holroyd
+Clare Davies,Charles D P Davies,c-davies,1,different,"Clare and Charles are distinct forenames, and of different genders"
+Colin Clark,Callum J Clark,c-clark,1,different,Colin and Callum are distinct forenames
+Comp. George Hayward,Graham R Hayward,g-hayward,1,different,as George Hayward above
+Composed by Micheal Hurst,Michael Hurst,m-hurst,1,same,Micheal is a common misspelling of Michael
+Dainel Brady,Daniel W Brady,d-brady,1,same,Dainel is a transposition typo for Daniel
+David Brady,Daniel W Brady,d-brady,1,different,David and Daniel are distinct forenames
+Derek Jones,Daniel Jones,d-jones,1,different,as Derek J Jones above
+Eric J Taylor,Edward Taylor,e-taylor,1,different,Eric and Edward are distinct forenames
+Jas E Groves (arr. jwb),James E Groves,j-groves,1,same,Jas is the archaic written abbreviation of James; middle initial E agrees
+Jeanne Mills,Jonathan C Mills,j-mills,1,different,"Jeanne and Jonathan are distinct forenames, and of different genders"
+Johnathon F Young,Jonathan F Young,j-young,1,same,"Johnathon/Jonathan spelling variant, middle initial F agrees"
+Lesley F Bailey,Leslie F Bailey,l-bailey,1,same,"Lesley/Leslie spelling variant, middle initial F agrees"
+Lucas Gary Groom,Luke G Groom,l-groom,1,same,Lucas and Luke are the same name; middle initial G agrees with Gary
+Malcolm Jones,Matthew J Jones,m-jones,1,different,Malcolm and Matthew are distinct forenames
+Martin Davies,Mark B Davies,m-davies,1,different,Martin and Mark are distinct forenames
+Mike Clay,Michael J Clay,m-clay,1,same,Mike/Michael
+Mike J Pomeroy,Michael J Pomeroy,m-pomeroy,1,same,as above
+Mike J Pomeroy Arr,Michael J Pomeroy,m-pomeroy,1,same,as above
+Mike J. Pomeroy (arr),Michael J Pomeroy,m-pomeroy,1,same,"Mike/Michael, middle initial J agrees"
+Mike Ovenden,Michael E Ovenden,m-ovenden,1,same,Mike/Michael
+Mike Palmer (method) and Richard Angrave,Michael Palmer,m-palmer,1,same,Mike/Michael; the joint credit is kept in parsed_people
+Nick Parkes,Nicholas J Parkes,n-parkes,1,same,Nick is the standard diminutive of Nicholas
+Peter J Flavell,Paul J Flavell,p-flavell,1,different,"Peter and Paul are distinct forenames; middle initial J agrees, which is why it matched"
+Philip Waterfield,Peter J Waterfield,p-waterfield,1,different,Philip and Peter are distinct forenames
+Ray Hutchings,Richard A Hutchings,r-hutchings,1,different,"Ray abbreviates Raymond, not Richard"
+Raymond A Hutchings,Richard A Hutchings,r-hutchings,1,different,"Raymond and Richard are distinct forenames; middle initial A agrees, which is why it matched"
+Richard Kilby No 4,Robert M Kilby,r-kilby,1,different,Richard and Robert are distinct forenames
+Ringers Diary,Ringing World Diary,r-diary,1,different,not a person at all; both sides are publication names
+Roddy R Horton,Roderick R Horton,r-horton,1,same,Roddy is the standard diminutive of Roderick; middle initial R agrees
+Roy K Williams,Robert Williams,r-williams,1,different,as Roy Williams above
+Roy K Williams (577) & Trad (2 x 720),Robert Williams,r-williams,1,different,as Roy Williams above
+Roy Williams (6ths place bobs),Robert Williams,r-williams,1,different,as Roy Williams above
+SMC32 on a plan by A Johnson and G A C John,Stella Johnson,s-johnson,1,different,"a series name and a plan credit, not an attribution to Stella Johnson"
+Selwyn Jones,Stephen M Jones,s-jones,1,different,Selwyn and Stephen are distinct forenames
+Selwyn Jones (arr.),Stephen M Jones,s-jones,1,different,as Selwyn Jones above
+Stephen Chandler,Steven D Chandler,s-chandler,1,same,Stephen/Steven spelling variant
+Stephen Wood,Samuel Wood,s-wood,1,different,as Stephen H Wood above
+Steven Bedford,Stephen J Bedford,s-bedford,1,same,Steven/Stephen spelling variant
+Steven J Ivin,Stephen J Ivin,s-ivin,1,same,"Steven/Stephen spelling variant, middle initial J agrees"
+Tiffany P Lynch,Timothy P Lynch,t-lynch,1,different,"Tiffany and Timothy are distinct forenames, and of different genders"
+Tom Hinks (arr),Thomas J Hinks,t-hinks,1,same,as Tom Hinks
+Tom J Hinks,Thomas J Hinks,t-hinks,1,same,"as Tom Hinks, middle initial J agrees"
+Wm Shipway,William Shipway,w-shipway,1,same,as Wm. Shipway
+Wm Willson (arr AMB),William Willson,w-willson,1,same,Wm/William
+Wm. Shipway,William Shipway,w-shipway,1,same,Wm is the archaic written abbreviation of William

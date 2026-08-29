@@ -174,9 +174,28 @@ can be checked instead of taken on trust.
 
       What does *not* work, so nobody spends a day on it:
       `performances.composition` is **0% populated**, so a performance can never
-      be tied to a specific composition. The usable bridge is the composer --
-      `performances.composer` is free text on 71,959 records and **92.0% of the
-      parseable ones name a composer CompLib also holds** (R-36).
+      be tied to a specific composition.
+- [x] The two corpora bridged by composer (R-36) -- `docs/composer_bridge.md`,
+      `scripts/resolve_composer_bridge.py`. **57,249 performances**, 19.5% of the
+      corpus and 79.6% of those carrying a composer, attached to a named CompLib
+      composer at a measured **99.80% precision** where checkable and an
+      estimated **99.5%** where not.
+
+      Two measurements, neither of them the matcher grading itself. A **held-out
+      subset** of 26,917 performances where both sides spell the forename out, so
+      the answer is available without the matcher: all 69 residual disagreements
+      read by hand into `data/composer_bridge_adjudication.csv`, where 127 of the
+      180 turned out to be one person under two spellings (`Mike`/`Michael`,
+      `Wm`/`William`, `Dainel`/`Daniel`). And **corroboration** against composer
+      repertoire, which carries no name at all: 94.3% against a 43.1% null. That
+      second instrument was itself checked against the hand labels before being
+      relied on -- it fires on 94.5% of known-right matches and 11.6% of
+      known-wrong -- and inverting it is what reaches the initial-only half no
+      other test can see.
+
+      Not resolved on purpose: 2,249 performances credit a composer by initials
+      alone (`BEW`, `MBD`). Expanding them is a guess, and a guess that happens
+      to be right is indistinguishable from one that is not.
 - [x] First analytical output -- the Founder Atlas (see above)
 - [x] The Rhythm of Ringing -- the week, the year, and the 24 days that carry
       21% of it; corrected the September and Wednesday claims made in
