@@ -14,7 +14,7 @@ sqlite3 data/change-ringing.db < queries/findings/rudhall_territory.sql
 
 Or open the built file in DB Browser for SQLite, DBeaver, TablePlus, or a VS Code
 SQLite extension, and paste. Nothing here needs Turso — see `docs/CONNECTING.md`
-for why the live database is frozen until 2026-09-01.
+for why the live database is dormant, with no date to return (R-51).
 
 ## `atlas/` — what builds the page
 

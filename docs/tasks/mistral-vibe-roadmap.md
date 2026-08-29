@@ -78,10 +78,16 @@ your control:
 
 ## Standing constraints — read before every task
 
-> **WORK OFFLINE. THE LIVE DATABASE IS FROZEN UNTIL 2026-09-01.** Turso
-> breached its daily row-read limit. The scripts enforce this: they refuse a
-> remote connection unless `CHANGE_RINGING_ALLOW_PRODUCTION=1`, and you should
-> not set it.
+> **WORK OFFLINE. THE LIVE DATABASE IS DORMANT — DO NOT USE IT.** Turso breached
+> its daily row-read limit at 591 million reads on 2026-08-09 and has not been
+> used since. **There is no scheduled date on which this lifts**: whether the
+> hosted database comes back at all is an open decision (R-51), the auth token
+> has been revoked, and both sync workflows run on manual dispatch only. The
+> scripts enforce it — they refuse a remote connection unless
+> `CHANGE_RINGING_ALLOW_PRODUCTION=1`, and you should not set it.
+>
+> This costs you nothing. Every corpus is committed and the replica rebuilds
+> from the repository:
 >
 > ```
 > pip install -r requirements.txt
@@ -320,7 +326,8 @@ Definition of done met: a bounded run over January 2024 loaded
 1,792 rows (matching `search.php` exactly) and exited 0; an
 artificially truncated window (one page, 1,000 of 1,792) was not
 checkpointed and exited 1. The full backfill is not run here — it is a
-long job and cannot reach production until 2026-09-01.
+long job and there is no production to reach — the hosted database is dormant
+with no date to return (R-51).
 
 **Size-signal investigation.** The broken run produced ~2.0 KB/row
 against Gemini's ~1.0 KB/row while holding fewer unique records. The
@@ -379,8 +386,8 @@ https://bb.ringingworld.co.uk/search.php?from=2023-01-01&to=2023-12-31
 **Definition of done:** a bounded run over one known window — 2024, say —
 loading a row count that matches 25,267, and a demonstration that an
 artificially truncated window causes a non-zero exit rather than a checkpoint.
-Do not attempt the full backfill in the PR; it is a long job and the freeze
-means it cannot reach production until 2026-09-01 regardless.
+Do not attempt the full backfill in the PR; it is a long job and there is no
+production for it to reach (R-51).
 
 ---
 
@@ -538,8 +545,17 @@ that sqlite3 read as a string and libSQL as an identifier.
 
 `db.py`'s docstring already explains the reasoning. Route everything through it.
 
-Production is **frozen until 2026-09-01** and the scripts refuse a remote
-connection without `CHANGE_RINGING_ALLOW_PRODUCTION=1`. **Do not set it.** This
+Production is **dormant with no date to return** and the scripts refuse a remote
+connection without `CHANGE_RINGING_ALLOW_PRODUCTION=1`. **Do not set it.**
+
+> **Read R-51 before starting this task.** Its whole rationale is that libSQL
+> rejects SQL stdlib `sqlite3` accepts, which matters *because* production is
+> libSQL. If the hosted database is retired, the right direction reverses —
+> consolidate onto stdlib `sqlite3` and delete the dual path, which is also the
+> smaller change (28 scripts already use `sqlite3`, 11 use `db.py`). Do not start
+> V-10 until R-51 is decided.
+
+This
 is local work.
 
 ## V-11 — Method adoption over time

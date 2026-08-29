@@ -13,7 +13,8 @@ and `WINDOW_TOLERANCE` -- so neither is more trustworthy than the other about
 whether a window came back whole. What this one adds is resumability: a
 checkpoint file, `--resume`, `--reset-checkpoint` and `--window-tolerance`, for
 a run long enough that it may be interrupted. Reach for it when loading directly
-to a database, which cannot happen before the Turso freeze lifts on 2026-09-01.
+to a database. The hosted database is dormant with no date to return (R-51),
+so this writes to a local replica.
 
 An audit PR proposed labelling this file a "prototype" and pointing readers at
 the exporter. That has it backwards -- this is the more capable of the two -- but

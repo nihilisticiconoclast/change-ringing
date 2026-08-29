@@ -94,8 +94,8 @@ def connect(args):
     if os.environ.get(ALLOW_ENV) != "1":
         print(
             f"REFUSING to connect to production.\n"
-            f"  This database is metered on rows read and is currently frozen "
-            f"(see README).\n"
+            f"  This database is metered on rows read and is dormant with no date "
+            f"to return (see README).\n"
             f"  Work offline:   --local-db local_corpus.db\n"
             f"  Build one with: python scripts/build_local_db.py\n"
             f"  To override deliberately: {ALLOW_ENV}=1",

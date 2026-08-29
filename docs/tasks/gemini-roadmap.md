@@ -80,7 +80,10 @@ your control:
 
 ## Standing constraints — read before every task
 
-> **WORK OFFLINE. THE LIVE DATABASE IS FROZEN UNTIL 2026-09-01.** Build a
+> **WORK OFFLINE. THE LIVE DATABASE IS DORMANT — DO NOT USE IT.** It breached
+> its row-read limit on 2026-08-09 and has not been used since; **there is no
+> date on which this lifts**, and whether it returns at all is an open decision
+> (R-51). Build a
 > replica with `python scripts/build_local_db.py --out local_corpus.db`, or
 > which takes about ninety seconds. **`data/change-ringing.db` is NOT committed** —
 > it is 285 MB and gitignored, so you must build it. The
@@ -391,8 +394,8 @@ and is better for it.
   `schema/`. If the measurement says the page should change, say so in the
   write-up and stop — the change is a separate task, and deciding it is not
   yours.
-- Offline. The corpus is at `data/change-ringing.db`; the freeze on the live
-  database holds until 2026-09-01.
+- Offline. The corpus is at `data/change-ringing.db`; the live database is
+  dormant with no date to return (R-51).
 
 ### Definition of done
 

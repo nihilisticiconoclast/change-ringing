@@ -47,8 +47,8 @@ The considered default in this project is **not** to commit built data: it is
 reproducible in about 90 seconds via `scripts/build_local_db.py`, and a 40 MB
 binary that changes wholesale on each rebuild sits in git history forever.
 
-It is committed here for a specific reason. The Turso database is frozen until
-2026-09-01 after a row-read overrun, and analytical work should not stall for
+It is committed here for a specific reason. The Turso database is dormant after
+a row-read overrun, with no date to return, and analytical work should not stall for
 three weeks waiting on it. The snapshot makes the corpus openable straight from
 a clone, in any SQLite tool, by someone who does not want to run Python.
 

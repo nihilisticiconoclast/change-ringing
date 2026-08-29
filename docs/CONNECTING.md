@@ -53,7 +53,8 @@ turso db shell change-ringing "SELECT COUNT(*) FROM dove"
 
 ## Work offline by default
 
-Production is metered on rows read and is currently frozen. The scripts refuse
+Production is metered on rows read and is dormant with no date to return (R-51).
+The scripts refuse
 to open a remote connection unless `CHANGE_RINGING_ALLOW_PRODUCTION=1` is set;
 the intended path is a local replica:
 

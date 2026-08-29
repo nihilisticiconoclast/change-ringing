@@ -115,8 +115,8 @@ can be checked instead of taken on trust.
       `search.php` to the record; 2022 is one performance short of a count taken
       today, because BellBoard grows retrospectively and that record was filed
       after 2022 was fetched. Per-year counts, and which years were re-checked
-      when, are in `data/SOURCES.md`. Loading this to *production* still waits
-      for the Turso freeze to lift on 2026-09-01.
+      when, are in `data/SOURCES.md`. Loading this to *production* is not
+      scheduled: the hosted database is dormant and may not return (R-51).
 - [x] Performance -> method linkage (`schema/005`,
       `scripts/resolve_performance_methods.py`) -- 228,478 of 293,471 performances
       (77.9%) carry at least one method link, 379,176 links in all. The hard
@@ -372,21 +372,36 @@ docs/vendor -- pinned third-party JS, so every page opens offline (see its READM
 scripts/site_chrome.py -- the one definition of the nav bar and footer
 ```
 
-## Database freeze (2026-08-09)
+## The hosted database is dormant (since 2026-08-09)
 
 The Turso database breached its daily row-read limit at 591 million reads.
-**Nothing now touches it unattended:** both scheduled workflows have had their
-`schedule:` triggers removed and run only on manual dispatch, and both agent
-task briefs carry a freeze notice telling them not to query production.
+**Nothing has touched it since, and nothing depends on it.** Both scheduled
+workflows have had their `schedule:` triggers removed and run only on manual
+dispatch, the auth token has been revoked, and all three agent briefs carry a
+notice telling them not to query production.
 
 The cause is understood and fixed -- two unindexed joins, see the read-cost
-section of `docs/CONNECTING.md` and `schema/004_read_cost_indexes.sql`. The
-freeze is about not spending anything further while the budget is reviewed,
-not about an unresolved fault.
+section of `docs/CONNECTING.md` and `schema/004_read_cost_indexes.sql`. Nothing
+here is waiting on a fault.
 
-To lift it: restore the `schedule:` blocks in `.github/workflows/` (the
-original cron lines are preserved in comments there) and remove the notices
-from `docs/tasks/`.
+**There is no date on which this lifts.** It was originally a freeze until
+2026-09-01; that date has been removed deliberately rather than allowed to
+expire, because the question is no longer *when* to resume but *whether* to.
+That is [R-51](docs/ROADMAP.md), and it is open.
+
+What the answer turns on, measured rather than assumed:
+
+- **Nothing published needs it.** The site is static GitHub Pages, all 14 pages
+  are built offline, and they make zero external requests at runtime.
+- **Nothing scheduled uses it.** Both sync workflows are dispatch-only.
+- **Every corpus is committed** -- `data/bellboard/` (149 MB, thirteen years),
+  `data/complib/` (49 MB), and every adjudication and oracle file. The replica
+  rebuilds from the repository.
+- **What it would buy** is the one real thing static files cannot: letting
+  somebody query the corpus without cloning ~200 MB and building a replica.
+  That is in this project's own framing, and it is the argument for keeping it.
+- **It is revivable.** `scripts/migrate_csv_to_turso.py` and the schema files
+  are all still here, so going back is a day's work rather than a rebuild.
 
 ### Just query it — one command, no credentials
 

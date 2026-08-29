@@ -198,7 +198,7 @@ There is no pytest/unittest suite in the repo. Testing is ad hoc and operational
 ### Active / documented:
 - **Caveats scattered:** Roadmap item 12: consolidate across `CONNECTING.md`, `SOURCES.md`, `method_location_resolution.md`, schema headers, commit messages. Partially addressed by `site_chrome.py` but not complete.
 - **Rhythm page window lag:** Still 2021–24 while corpus is 2012–24; widening changes anomaly detection materially (`AGENTS.md` queue item #1).
-- **Production frozen:** Turso load of full 2012–24 backfill blocked until 2026-09-01; local replica is the only trustworthy build path.
+- **Production dormant:** Turso load of full 2012–24 backfill will not happen on any known date (R-51); local replica is the only trustworthy build path.
 - **CompLib not fully loaded:** Schema exists; 86k compositions available but full ingestion is R-20. Three sample JSON pages in `data/complib/` are untracked scratch.
 - **Method extension lineage incomplete:** `extension_construction` populated for only 1,851 of 25,055 methods.
 - **Performance→method linkage gaps:** 22.1% unresolved; spliced ellipsis expansion stuck at 69.7% (1,487 rows one method short).

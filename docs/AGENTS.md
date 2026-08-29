@@ -106,7 +106,8 @@ where being wrong is worse than being slow.
 3. **Method survival, option C's second half.** Unblocked by the completed
    backfill: currency is published on `invention.html`, and survival needs the
    adoption history that thirteen years now provides.
-4. **Production load**, once the Turso freeze lifts on **2026-09-01**. Nothing
+4. **Production load** — **not scheduled.** The hosted database is dormant and
+   whether it returns is an open decision (R-51). Nothing
    in this list touches the live database before then.
 
 Completed: the CCCBR Methods Library loader and location resolution (PR #1),
