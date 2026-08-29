@@ -5,9 +5,9 @@ what the measurement said, and whether the expectation survived.
 
 **The wrong ones are the point.** A record that only lists confirmed hypotheses
 is a marketing document: it tells you nothing about how often the guessing works,
-which is the only thing that calibrates the next guess. **Twenty-two of the
-twenty-six entries below are wrong or wrong in size**, which is worth knowing
-before trusting the twenty-fourth.
+which is the only thing that calibrates the next guess. **Twenty-four of the
+twenty-eight entries below are wrong or wrong in size**, which is worth knowing
+before trusting the next.
 
 The first version of this page's own tally was also wrong — it claimed 4 / 5 / 14
 against an actual 3 / 4 / 16, because the counts were written by hand rather than
@@ -245,6 +245,17 @@ median within-ringer range are identical to three decimals.
 bet (settle on one bell) fail. The replacement -- a band that rings everywhere
 and conducts early -- is the sharper finding.
 
+### H28. First-initial-plus-surname is accurate enough to bridge composers
+**Expected:** keying composers on first-initial-plus-surname (`F_Surname`) will be
+unambiguous for >90% of composer matches across CompLib and BellBoard.
+**Observed:** first-initial-plus-surname collapses 2,542 CompLib composers down
+to 1,969 keys and silently conflates distinct historical figures (e.g. John Parker,
+James Parker, Joseph Parker, and J J Parker). Multi-tiered entity resolution with
+middle-initial preservation resolves 97.6% of all corpus appearances with high/medium
+confidence and achieves **99.3% accuracy on a 300-row oracle** (100% precision on
+high and medium bands).
+**❌ Wrong.** A naive initial join hides real collisions.
+
 ---
 
 ## The tally
@@ -253,10 +264,10 @@ and conducts early -- is the sharper finding.
 | --- | ---: |
 | ✅ Held | 4 |
 | 🟡 Wrong in size | 5 |
-| ❌ Wrong | 18 |
-| **Total** | **27** |
+| ❌ Wrong | 19 |
+| **Total** | **28** |
 
-**Four predictions out of twenty-seven survived intact — 15%.** That is not a comment on
+**Four predictions out of twenty-eight survived intact — 14.3%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way
