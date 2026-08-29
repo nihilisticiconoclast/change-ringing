@@ -1,0 +1,294 @@
+{
+  "title": "Practice Nights \u2014 Dove\u2019s Register vs BellBoard\u2019s # Performances",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Where Ringing Happens vs What Dove Claims"
+    },
+    {
+      "level": "h2",
+      "text": "#. The Two Confounds in the Measurement"
+    },
+    {
+      "level": "h3",
+      "text": "The Sunday Service Confound"
+    },
+    {
+      "level": "h3",
+      "text": "The Quarter Peal Proxy"
+    },
+    {
+      "level": "h2",
+      "text": "#. Weekday Concentration by Practice Night"
+    },
+    {
+      "level": "h3",
+      "text": "Ringing Distribution across the Week"
+    },
+    {
+      "level": "h2",
+      "text": "#. Activity Stratification: Busy Towers vs Quiet Towers"
+    },
+    {
+      "level": "h3",
+      "text": "Low Activity (#\u2013# perfs)"
+    },
+    {
+      "level": "h3",
+      "text": "Moderate Activity (#\u2013# perfs)"
+    },
+    {
+      "level": "h3",
+      "text": "High Activity (#\u2013# perfs)"
+    },
+    {
+      "level": "h3",
+      "text": "Very High Activity (#+ perfs)"
+    },
+    {
+      "level": "h2",
+      "text": "#. Interactive Tower Explorer"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [
+    {
+      "id": "tower-table",
+      "class": "",
+      "headers": [
+        "Place & Dedication",
+        "County",
+        "Dove Practice",
+        "Busiest Day",
+        "Non-Sun Perfs",
+        "On Practice Night",
+        "Status"
+      ]
+    }
+  ],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    },
+    {
+      "tag": "button",
+      "id": "btn-cohort-weekday",
+      "type": null,
+      "name": null,
+      "class": "chip-btn active"
+    },
+    {
+      "tag": "button",
+      "id": "btn-cohort-nonsun",
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "input",
+      "id": "tower-search",
+      "type": "text",
+      "name": null,
+      "class": "search-box"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn active"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn active"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    },
+    {
+      "tag": "button",
+      "id": null,
+      "type": null,
+      "name": null,
+      "class": "chip-btn"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "div",
+      "id": "day-bar-chart",
+      "class": "bar-chart"
+    },
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "t-practice-towers",
+    "fig-towers",
+    "fig-unambig",
+    "t-unambig-pct",
+    "fig-match-nonsun",
+    "t-nonsun-n",
+    "fig-match-weekday",
+    "fig-high-act",
+    "t-nonsun-rate",
+    "t-weekday-rate",
+    "t-weekday-n",
+    "view-mode-controls",
+    "btn-cohort-weekday",
+    "t-wd-n2",
+    "btn-cohort-nonsun",
+    "t-ns-n2",
+    "chart-title",
+    "day-bar-chart",
+    "chart-desc",
+    "tier-rate-0",
+    "tier-n-0",
+    "tier-rate-1",
+    "tier-n-1",
+    "tier-rate-2",
+    "tier-n-2",
+    "tier-rate-3",
+    "tier-n-3",
+    "t-explorer-n",
+    "tower-search",
+    "tower-table",
+    "tower-tbody",
+    "table-count",
+    "t-showing"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

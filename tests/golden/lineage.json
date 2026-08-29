@@ -1,0 +1,239 @@
+{
+  "title": "The Method Lineage Atlas \u2014 Structural Genealogy & Evolution of Change Ringing",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "The Method Lineage Atlas"
+    },
+    {
+      "level": "h2",
+      "text": "Interactive Method Tree & Speciation Cladogram"
+    },
+    {
+      "level": "h4",
+      "text": "Lead Diagram & Place Notation \"DNA\": Cambridge Surprise Major"
+    },
+    {
+      "level": "h4",
+      "text": "Parent-Child Lineage Relationships in Family:"
+    },
+    {
+      "level": "h2",
+      "text": "Three Centuries of Method Speciation (#\u2013#)"
+    },
+    {
+      "level": "h2",
+      "text": "Deepest Lineages & Calibration"
+    },
+    {
+      "level": "h3",
+      "text": "Deepest Extension Chains"
+    },
+    {
+      "level": "h3",
+      "text": "Calibration against Ground Truth"
+    },
+    {
+      "level": "h3",
+      "text": "Multi-Stage Distribution"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": "explorer",
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [
+    {
+      "id": null,
+      "class": "links-table",
+      "headers": [
+        "Parent Method (Lower Stage)",
+        "Child Method (Higher Stage)",
+        "Relationship",
+        "Confidence",
+        "Notation Evidence"
+      ]
+    }
+  ],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    },
+    {
+      "tag": "input",
+      "id": "search-input",
+      "type": "text",
+      "name": null,
+      "class": "search-box"
+    },
+    {
+      "tag": "button",
+      "id": "tab-tree",
+      "type": "button",
+      "name": null,
+      "class": "view-tab active"
+    },
+    {
+      "tag": "button",
+      "id": "tab-timeline",
+      "type": "button",
+      "name": null,
+      "class": "view-tab"
+    },
+    {
+      "tag": "button",
+      "id": "zoom-in",
+      "type": "button",
+      "name": null,
+      "class": "zoom-btn"
+    },
+    {
+      "tag": "button",
+      "id": "zoom-out",
+      "type": "button",
+      "name": null,
+      "class": "zoom-btn"
+    },
+    {
+      "tag": "button",
+      "id": "zoom-reset",
+      "type": "button",
+      "name": null,
+      "class": "zoom-btn"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "svg",
+      "id": "tree-svg",
+      "class": ""
+    },
+    {
+      "tag": "svg",
+      "id": "lead-svg",
+      "class": ""
+    },
+    {
+      "tag": "div",
+      "id": null,
+      "class": "timeline-chart-wrap"
+    },
+    {
+      "tag": "svg",
+      "id": "timeline-svg",
+      "class": ""
+    },
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle",
+    "top-figures",
+    "explorer",
+    "search-input",
+    "tab-tree",
+    "tab-timeline",
+    "quick-chips",
+    "family-title",
+    "family-subtitle",
+    "family-badges",
+    "tree-canvas-wrap",
+    "tree-svg",
+    "tree-viewport",
+    "zoom-in",
+    "zoom-out",
+    "zoom-reset",
+    "zoom-level",
+    "lead-diag-title",
+    "lead-panel",
+    "lead-svg",
+    "lead-single-meta",
+    "links-tbody",
+    "timeline-svg",
+    "longest-chains-list",
+    "stage-dist-list"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

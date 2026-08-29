@@ -1,0 +1,99 @@
+{
+  "title": "The Change Ringing Corpus",
+  "meta": [
+    {
+      "charset": "utf-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width,initial-scale=1"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Every reported performance#every method, every bell#In one queryable record."
+    },
+    {
+      "level": "h2",
+      "text": "What is in it"
+    },
+    {
+      "level": "h2",
+      "text": "The pages"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar"
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "section",
+      "id": null,
+      "class": ""
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "themeToggle",
+      "type": null,
+      "name": null,
+      "class": "theme-btn"
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "svg",
+      "id": null,
+      "class": ""
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "themeToggle"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "title": "The Temporal Nexus",
+  "meta": [
+    {
+      "charset": "UTF-8"
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width, initial-scale=1.0"
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "The Temporal Nexus"
+    }
+  ],
+  "sections": [
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "nav-bar nav-over"
+    },
+    {
+      "tag": "footer",
+      "id": null,
+      "class": "site-footer"
+    }
+  ],
+  "tables": [],
+  "interactive_controls": [
+    {
+      "tag": "input",
+      "id": "nav-toggle",
+      "type": "checkbox",
+      "name": null,
+      "class": "nav-toggle"
+    },
+    {
+      "tag": "button",
+      "id": "recenter-btn",
+      "type": null,
+      "name": null,
+      "class": ""
+    },
+    {
+      "tag": "input",
+      "id": "timeline-slider",
+      "type": "range",
+      "name": null,
+      "class": ""
+    }
+  ],
+  "visualisation_containers": [
+    {
+      "tag": "ul",
+      "id": null,
+      "class": "site-map"
+    }
+  ],
+  "all_ids": [
+    "nav-toggle",
+    "3d-graph",
+    "recenter-btn",
+    "side-panel",
+    "timeline-slider",
+    "date-display"
+  ],
+  "nav_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html"
+  ],
+  "footer_links": [
+    "index.html",
+    "atlas.html",
+    "lineage.html",
+    "methods.html",
+    "invention.html",
+    "rhythm.html",
+    "ringers.html",
+    "occasions.html",
+    "practice.html",
+    "populations.html",
+    "careers.html",
+    "nexus.html",
+    "geometry.html",
+    "https://github.com/nihilisticiconoclast/change-ringing"
+  ]
+}

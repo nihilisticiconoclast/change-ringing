@@ -42,10 +42,10 @@ reference in a commit message or pull request still points at the same work.
 | G-9 | Vendor vis-network for invention.html | **Done** — vendored in `docs/vendor/`, delivers [R-32](../ROADMAP.md) |
 | G-10 | A real test suite | **Done** — 39 unit and oracle tests in `tests/` (36 as delivered), delivers [R-26](../ROADMAP.md) |
 | [R-10](../ROADMAP.md) | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php`. Owned by Gemini but never a numbered brief task, which is why this row carries its central ID: numbering it G-6 shifted every task below it out of step with its own brief |
-| G-11 | **VISUALISATION** — what a composition asks of a band | **Next.** Delivers [R-40](../ROADMAP.md) |
-| G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-11. Delivers [R-41](../ROADMAP.md) |
-| G-13 | **TEST** — golden-file test for the page builders | Delivers [R-42](../ROADMAP.md) |
-| G-14 | **FIX** — `civic` precision is 38.8% | Delivers [R-43](../ROADMAP.md) |
+| G-11 | **VISUALISATION** — what a composition asks of a band | Next for Gemini. Delivers [R-40](../ROADMAP.md) |
+| G-12 | **JOIN** — normalise composer names, with a measured error rate | Delivers [R-41](../ROADMAP.md) |
+| G-13 | **TEST** — golden-file test for the page builders | **Done** — `scripts/page_structure.py`, `tests/test_page_builder_golden.py`, `docs/golden_page_builder_testing.md`. Delivers [R-42](../ROADMAP.md) |
+| G-14 | **FIX** — `civic` precision is 38.8% | **Next.** Delivers [R-43](../ROADMAP.md) |
 
 ---
 
