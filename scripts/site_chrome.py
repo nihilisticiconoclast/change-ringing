@@ -76,6 +76,8 @@ PAGES = [
      "20,679 methods drawn as the path a bell traces"),
     ("invention.html",  "First Rung: Composition Visualizer",
      "Heuristic search engine for novel compositions"),
+    ("calling.html",    "Composition Demands",
+     "What 86,054 compositions ask of a band and conductor"),
     ("rhythm.html",     "Rhythm of Ringing",
      "The week, the year, and 24 days that carry a fifth of 2021–24"),
     ("ringers.html",    "Ringer Constellation",

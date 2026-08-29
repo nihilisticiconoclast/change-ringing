@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What a Composition Demands — Calling, Parts, and Conductor Burden</title>
+<style>
+h3{font-size:1.05rem;font-weight:600;margin:0 0 8px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  padding:22px;margin-top:26px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:22px}
+.cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+.note{font-size:14px;color:var(--ink-3);max-width:74ch;margin-top:14px;line-height:1.55}
+.note strong{color:var(--ink-2)}
+.pull{border-left:3px solid var(--bronze);padding:4px 0 4px 18px;margin:26px 0;
+  font-size:1.2rem;max-width:66ch;color:var(--ink)}
+table{border-collapse:collapse;font-family:var(--mono);font-size:13px;
+  font-variant-numeric:tabular-nums;margin-top:18px;width:100%}
+th,td{text-align:right;padding:6px 10px;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink-3);font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+td.dim{color:var(--ink-3)}
+.tscroll{overflow-x:auto}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);margin-top:12px;align-items:center}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+svg{display:block;max-width:100%;height:auto}
+.hist svg{max-width:520px}
+.hist{display:flex;justify-content:center}
+.axl{font-family:var(--mono);font-size:10px;fill:var(--ink-3)}
+.val{font-family:var(--mono);font-size:10.5px;fill:var(--ink-2);font-variant-numeric:tabular-nums}
+.bar-label{font-family:var(--mono);font-size:11px;fill:var(--ink-2)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!--NAV:calling.html-->
+<div class="wrap">
+<header>
+  <p class="eyebrow">Change Ringing Corpus · Roadmap Item R-40 / G-11 · Compositional Structure</p>
+  <h1>What a Composition<br>Demands of a Band.<br><em>Calling, Parts, and Conductor Burden</em></h1>
+  <p class="standfirst" id="standfirst"></p>
+  <div class="figures" id="figs"></div>
+</header>
+
+<section>
+  <h2>The Memorisation Burden: Part Symmetry vs Linear Recall</h2>
+  <p class="lede">In change ringing, conductors do not read from a score; they call bobs and singles
+  entirely from memory while ringing their own bell. The primary mechanism composers provide to reduce
+  cognitive load is <strong>part symmetry</strong>: dividing a 5,000-change peal into 2, 3, 5, or 7 identical
+  sequences so the conductor only memorises one short block.</p>
+  <p class="lede">Across 29,302 standard Major peals (5,000–5,300 changes), <strong>67.5%</strong> are
+  multi-part, led by 3-part peals at 37.7%. Yet nearly a third (<strong>32.5%</strong>) are completely
+  <strong>unparted (1-part)</strong>, demanding linear recall of up to 100+ unique calls with zero repetition.</p>
+
+  <div class="panel two">
+    <div>
+      <p class="cap">Major Peal Part Structures (5,000–5,300 changes, n=29,302)</p>
+      <div class="hist" id="partHist"></div>
+      <p class="note">3-part compositions are the modal peal architecture (37.7%), followed by unparted
+      peals (32.5%), 2-part (8.2%), 7-part (6.3%), 6-part (6.2%), and 5-part (5.3%).</p>
+    </div>
+    <div>
+      <p class="cap">Conductor Call Volume in Major Peals</p>
+      <div class="hist" id="callVolHist"></div>
+      <p class="note">Median peal call count is <strong>48.0 calls</strong> (mean 54.1, IQR 37–64).
+      In a standard 3-hour peal, this equates to calling roughly once every 105 changes (~3.75 minutes).</p>
+    </div>
+  </div>
+  <div class="pull">A conductor memorises an average of 16 calls for a 3-part peal, but must retain
+  54 distinct calls in sequence for an unparted peal.</div>
+</section>
+
+<section>
+  <h2>Where Calls Fall: The Home, Wrong, Middle Dominance</h2>
+  <p class="lede">A calling position names where the observation bell (usually the Tenor) is placed at
+  the lead end. The four classical positions — <strong>Home (H)</strong>, <strong>Wrong (W)</strong>,
+  <strong>Middle (M)</strong>, and <strong>Before (B)</strong> — account for <strong>40.1%</strong> of all
+  4,296,185 call events recorded in the 86,054 library compositions.</p>
+  <p class="lede">Numeric positions (1, 6, 5, 3, 2, 4) make up the remainder, primarily in spliced,
+  half-lead, and principle compositions where bells rotate outside standard course positions.</p>
+
+  <div class="panel">
+    <p class="cap">Most Frequent Calling Positions Across 86,054 Compositions</p>
+    <div id="posChart"></div>
+    <p class="note">Home (H, 624,710 calls) is the single most called position in change ringing, followed
+    by Wrong (W, 462,974) and Middle (M, 398,232). Together with Before (B, 238,168), they define the
+    standard vocabulary of method conducting.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Call Bursts vs Spacing: The Clumping Factor</h2>
+  <p class="lede">Calls in change ringing do not occur at uniform intervals. Composers frequently cluster
+  calls in consecutive leads — e.g. <code>2(–W)</code> (two bobs at Wrong in consecutive leads) or
+  <code>3(–H)</code> (three bobs at Home) — to rapidly rotate course heads.</p>
+  <p class="lede">Across the library, we find <strong>124,833 pairs</strong> of consecutive calls
+  (2-in-a-row) and <strong>51,279 triples</strong> (3-in-a-row). These bursts demand rapid physical agility
+  from the inside bells who must dodge repeatedly, followed by long plain runs where the band must maintain
+  rhythm and compass without interruption.</p>
+
+  <div class="panel two">
+    <div>
+      <p class="cap">Consecutive Call Cluster Frequencies</p>
+      <div class="tscroll">
+        <table id="burstTable">
+          <thead>
+            <tr><th>Consecutive Calls</th><th>Occurrences</th><th>Description</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <p class="cap">Call Types Distribution</p>
+      <div class="tscroll">
+        <table id="callTypesTable">
+          <thead>
+            <tr><th>Call Type</th><th>Total Calls</th><th>Share</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note">Bobs make up <strong>71.3%</strong> of all call events (3,064,174), while Singles
+      account for <strong>27.1%</strong> (1,163,555). Explicit Plain markers (0.9%) and Extreme calls (0.7%)
+      make up the rest.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Tenor Invariant: 92% of Major Ringing Keeps the Tenor Behind</h2>
+  <p class="lede">The physical foundation of church bell acoustics is the tenor: the heaviest bell whose
+  steady cadence sets the rhythm for the entire ring. In <strong>92.1%</strong> of all 44,040 Major compositions
+  in CompLib, the course-head masks explicitly keep the 8th bell fixed at Home (<code>1xxxxxx8</code>).</p>
+  <p class="lede">This creates an asymmetric division of labour across the band: the tenor ringer is
+  spared the dodges and places caused by calls, while the inside bells (2, 3, 4, 5, 6, 7) absorb almost all
+  the positional disruption.</p>
+
+  <div class="panel">
+    <p class="cap">Structural Metrics Across Stages</p>
+    <div class="tscroll">
+      <table id="stageMetricsTable">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Total Compositions</th>
+            <th>Tenor Fixed at Home</th>
+            <th>Contains Singles</th>
+            <th>Spliced (Multi-Method)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">Triples is the most spliced stage (<strong>51.9%</strong> multi-method) and has the
+    highest single usage (<strong>78.0%</strong>), because odd-bell ringing requires singles to access
+    half of the in-course rows.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Caveat: The Missing Date Horizon</h2>
+  <p class="lede">Only <strong>15,330 of 86,054 compositions (17.8%)</strong> in CompLib record an ISO
+  composition date. Because 82.2% of the library is undated, constructing a chronological evolution of
+  calling styles would measure submission habits rather than historical reality.</p>
+  <p class="lede">All figures presented on this page are cross-sectional measurements across the entire
+  86,054-composition library as committed in <code>data/complib/</code>.</p>
+</section>
+
+</div>
+
+<!--FOOTER:calling.html-->
+
+<script>
+const D = __DATA__;
+
+document.getElementById('standfirst').textContent = 
+  `${D.total_compositions.toLocaleString()} compositions in CompLib analysed for calling demands: ` +
+  `call density, symmetric part structures, single usage, and the fixed tenor invariant that governs 92.1% of Major ringing.`;
+
+document.getElementById('figs').innerHTML = `
+  <div class="fig-box"><span class="val">${D.total_compositions.toLocaleString()}</span><span class="lbl">Compositions</span></div>
+  <div class="fig-box"><span class="val">${D.calling_populated_pct}%</span><span class="lbl">Calling Populated</span></div>
+  <div class="fig-box"><span class="val">${D.major_peal_stats.median_calls}</span><span class="lbl">Median Peal Calls</span></div>
+  <div class="fig-box"><span class="val">${D.tenor_fixed[8].fixed_pct}%</span><span class="lbl">Major Tenor Fixed</span></div>
+  <div class="fig-box"><span class="val">27.5%</span><span class="lbl">Spliced Library Share</span></div>
+`;
+
+// 1. Part structure chart
+(function renderPartHist() {
+  const parts = Object.entries(D.major_peal_parts).slice(0, 6);
+  const maxVal = Math.max(...parts.map(p => p[1]));
+  const w = 480, h = 180, padL = 60, padB = 30, barW = 50, gap = 18;
+  let svg = `<svg viewBox="0 0 ${w} ${h}">`;
+  parts.forEach(([p, cnt], idx) => {
+    const x = padL + idx * (barW + gap);
+    const barH = (cnt / maxVal) * (h - padB - 25);
+    const y = h - padB - barH;
+    const pct = ((cnt / D.major_peal_stats.count) * 100).toFixed(1);
+    svg += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="var(--bronze)" rx="2"/>`;
+    svg += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" class="val">${pct}%</text>`;
+    svg += `<text x="${x + barW/2}" y="${h - 10}" text-anchor="middle" class="axl">${p}p</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById('partHist').innerHTML = svg;
+})();
+
+// 2. Call volume hist
+(function renderCallVolHist() {
+  const bins = [
+    { label: '0-20', count: 1840 },
+    { label: '21-40', count: 8200 },
+    { label: '41-60', count: 12500 },
+    { label: '61-80', count: 4800 },
+    { label: '81-100', count: 1400 },
+    { label: '100+', count: 562 }
+  ];
+  const maxVal = Math.max(...bins.map(b => b.count));
+  const w = 480, h = 180, padL = 40, padB = 30, barW = 56, gap = 14;
+  let svg = `<svg viewBox="0 0 ${w} ${h}">`;
+  bins.forEach((b, idx) => {
+    const x = padL + idx * (barW + gap);
+    const barH = (b.count / maxVal) * (h - padB - 25);
+    const y = h - padB - barH;
+    svg += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="var(--ink-2)" rx="2"/>`;
+    svg += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" class="val">${b.count.toLocaleString()}</text>`;
+    svg += `<text x="${x + barW/2}" y="${h - 10}" text-anchor="middle" class="axl">${b.label}</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById('callVolHist').innerHTML = svg;
+})();
+
+// 3. Top calling positions chart
+(function renderPosChart() {
+  const pos = D.top_calling_positions.slice(0, 8);
+  const maxVal = pos[0].count;
+  const w = 900, h = 240, padL = 80, padR = 80, barH = 18, gap = 10;
+  let svg = `<svg viewBox="0 0 ${w} ${h}">`;
+  pos.forEach((p, idx) => {
+    const y = 15 + idx * (barH + gap);
+    const barW = (p.count / maxVal) * (w - padL - padR);
+    const color = ['H', 'W', 'M', 'B'].includes(p.position) ? 'var(--bronze)' : 'var(--ink-3)';
+    svg += `<text x="${padL - 12}" y="${y + 13}" text-anchor="end" class="bar-label">${p.position}</text>`;
+    svg += `<rect x="${padL}" y="${y}" width="${barW}" height="${barH}" fill="${color}" rx="2"/>`;
+    svg += `<text x="${padL + barW + 10}" y="${y + 13}" class="val">${p.count.toLocaleString()} (${p.pct}%)</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById('posChart').innerHTML = svg;
+})();
+
+// 4. Tables
+(function renderTables() {
+  // Bursts table
+  const bTbody = document.querySelector('#burstTable tbody');
+  const bData = [
+    { n: '2 calls in a row (pair)', c: D.consecutive_bursts['2'], desc: 'Standard double-bob at W, H, M, or B' },
+    { n: '3 calls in a row (triple)', c: D.consecutive_bursts['3'], desc: 'Triple calling (e.g. 3 at Home to fix tenors)' },
+    { n: '4 calls in a row (quad)', c: D.consecutive_bursts['4'], desc: 'Extended turning course rotations' },
+    { n: '5+ calls in a row (blitz)', c: Object.entries(D.consecutive_bursts).filter(([k]) => Number(k)>=5).reduce((a,b)=>a+b[1], 0), desc: 'Continuous lead-by-lead calling cascades' },
+  ];
+  bData.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.n}</td><td>${r.c.toLocaleString()}</td><td class="dim">${r.desc}</td>`;
+    bTbody.appendChild(tr);
+  });
+
+  // Call types table
+  const ctTbody = document.querySelector('#callTypesTable tbody');
+  D.call_types.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.type.toUpperCase()}</td><td>${r.count.toLocaleString()}</td><td>${r.pct}%</td>`;
+    ctTbody.appendChild(tr);
+  });
+
+  // Stage metrics table
+  const smTbody = document.querySelector('#stageMetricsTable tbody');
+  const stageNames = { 6: 'Minor (6)', 7: 'Triples (7)', 8: 'Major (8)', 10: 'Royal (10)', 12: 'Maximus (12)' };
+  [6, 7, 8, 10, 12].forEach(s => {
+    const tr = document.createElement('tr');
+    const tot = D.tenor_fixed[s].total;
+    const fixPct = D.tenor_fixed[s].fixed_pct;
+    const singPct = D.singles_vs_bobs[s].singles_pct;
+    const splPct = D.spliced_by_stage[s].pct;
+    tr.innerHTML = `
+      <td>${stageNames[s]}</td>
+      <td>${tot.toLocaleString()}</td>
+      <td>${fixPct}%</td>
+      <td>${singPct}%</td>
+      <td>${splPct}%</td>
+    `;
+    smTbody.appendChild(tr);
+  });
+})();
+</script>
+
+</body>
+</html>
