@@ -59,6 +59,9 @@ def steps(db, skip_inference):
             ("Classify footnote occasions",
              ["classify_footnote_occasions.py", "--local-db", db,
               "--out", "data/footnote_occasions.csv"], "data"),
+            ("Bridge CompLib to the performance record by composer",
+             ["resolve_composer_bridge.py", "--local-db", db,
+              "--out", "data/composer_bridge_candidates.csv"], "data"),
         ]
     # The thirteen published pages, in the order site_chrome.PAGES lists them.
     out += [

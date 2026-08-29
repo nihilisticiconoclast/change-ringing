@@ -356,7 +356,12 @@ def check_csv_agreement(conn, rep):
             rep.report(f"csv agreement {table}", Result.SKIP, "no CSVs committed")
             continue
         if not table_exists(conn, table):
-            rep.report(f"csv agreement {table}", Result.SKIP, "table absent")
+            # See the note on the CompLib arm below: a committed CSV with no
+            # table behind it is a stale replica, not an optional extra.
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{sum(rows(p) for p in paths):,} rows committed across "
+                       f"{len(paths)} CSVs and no {table} table in the replica -- "
+                       f"it is stale, rebuild it with scripts/rebuild_all.py")
             continue
         expected = sum(rows(p) for p in paths)
         actual = count(conn, f'SELECT COUNT(*) FROM "{table}"')
@@ -410,7 +415,17 @@ def check_csv_agreement(conn, rep):
                            "no CSV committed, table empty")
             continue
         if not table_exists(conn, table):
-            rep.report(f"csv agreement {table}", Result.SKIP, "table absent")
+            # The mirror of the branch above, skipping for the same bad reason.
+            # A committed CSV is the repository PROMISING those rows; a replica
+            # without the table is not "optional", it is incomplete, and a page
+            # built against it answers every CompLib question with nothing.
+            # Found by walking into it: data/change-ringing.db had no
+            # compositions table while 86,054 rows sat committed beside it, and
+            # this check reported 51 passes and 0 failures.
+            rep.report(f"csv agreement {table}", Result.FAIL,
+                       f"{rows(path):,} rows committed in data/complib/{csv_name} "
+                       f"and no {table} table in the replica -- it is stale, "
+                       f"rebuild with scripts/load_complib_csv.py --init")
             continue
         expected = rows(path)
         actual = count(conn, f'SELECT COUNT(*) FROM "{table}"')
