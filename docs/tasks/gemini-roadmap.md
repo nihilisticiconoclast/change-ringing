@@ -40,10 +40,10 @@ reference in a commit message or pull request still points at the same work.
 | G-7 | Normalise the free-text `method` column | **Done** — PR #21, `docs/regional_traditions.md` |
 | G-8 | Shared CSS deduplication | **Done** — PR #23, centralised in `site_chrome.py`, enforced by `verify_chrome.py`. Delivers [R-31](../ROADMAP.md) |
 | G-9 | Vendor vis-network for invention.html | **Done** — vendored in `docs/vendor/`, delivers [R-32](../ROADMAP.md) |
-| G-10 | A real test suite | **Done** — 36 unit and oracle tests in `tests/`, delivers [R-26](../ROADMAP.md) |
+| G-10 | A real test suite | **Done** — 39 unit and oracle tests in `tests/` (36 as delivered), delivers [R-26](../ROADMAP.md) |
 | [R-10](../ROADMAP.md) | BellBoard historical backfill | **Done** — 2012–2024 complete, 293,471 performances, every year matched against `search.php`. Owned by Gemini but never a numbered brief task, which is why this row carries its central ID: numbering it G-6 shifted every task below it out of step with its own brief |
 | G-11 | **VISUALISATION** — what a composition asks of a band | **Next.** Delivers [R-40](../ROADMAP.md) |
-| G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-9. Delivers [R-41](../ROADMAP.md) |
+| G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-11. Delivers [R-41](../ROADMAP.md) |
 | G-13 | **TEST** — golden-file test for the page builders | Delivers [R-42](../ROADMAP.md) |
 | G-14 | **FIX** — `civic` precision is 38.8% | Delivers [R-43](../ROADMAP.md) |
 
@@ -531,7 +531,7 @@ band is a run that has not been calibrated (lesson 8).
 **Delivers roadmap item [R-42](../ROADMAP.md).**
 
 Your own G-8 test suite covers `notation.py`, `sqlfile.py`, `site_chrome.py` and
-the oracles — 36 tests, and inverting one expansion rule fails 26 of them, so it
+the oracles — 39 tests, and inverting one expansion rule fails 26 of them, so it
 genuinely bites. What it does not cover is the builders: **a page builder that
 silently changes its output passes everything.** That is the failure mode that
 has cost this project the most.

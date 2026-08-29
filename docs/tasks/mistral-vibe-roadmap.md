@@ -40,9 +40,10 @@ reference in a commit message or pull request still points at the same work.
 | V-4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 | V-8 | Load CompLib in full (R-20) | **Done** — 86,054 compositions across 3,443 pages; see note below |
 | V-9 | **TEST** — negative tests for all 51 integrity checks | **Next.** Delivers [R-44](../ROADMAP.md) |
-| V-10 | **FIX** — one database access path | After V-8. Delivers [R-45](../ROADMAP.md) |
+| V-10 | **FIX** — one database access path | After V-9. Delivers [R-45](../ROADMAP.md) |
 | V-11 | **JOIN** — method adoption over time | Delivers [R-46](../ROADMAP.md) |
 | V-12 | **INTERPRETATION** — the specialisation measures your PR #18 got right | Delivers [R-47](../ROADMAP.md) |
+| V-13 | **FIX** — the methods table is not reproducible from committed inputs | Delivers [R-48](../ROADMAP.md) |
 
 ---
 
@@ -461,7 +462,7 @@ request and fails a branch cut from a stale base.
 
 ---
 
-## Task 8 — Load CompLib in full (R-20) *(done)*
+## V-8 — Load CompLib in full (R-20) *(done)*
 
 **Done.** The loader (`scripts/ingest_complib.py`, merged in PR #6) was run to
 completion against the live `api.complib.org` API: all 3,443 pages of
@@ -583,3 +584,43 @@ Both go on `docs/careers.html` via `build_careers_page.py`, which **imports**
 the module and the page picks them up. That is deliberate: the page and
 `docs/ringing_careers.md` cannot then disagree, which is how "72.5% conduct a
 peal" got published when the code measured conducting anything.
+
+## V-13 — The methods table is not reproducible from committed inputs
+
+**Delivers roadmap item [R-48](../ROADMAP.md).**
+
+You did this job once already, for CompLib, in V-8: the corpus was in a gitignored
+database and a fresh clone could not rebuild it, so you committed the CSVs and
+`build_local_db.py` now replays them. The methods table has the same gap and
+nobody noticed, because unlike CompLib it *appears* to work — `build_local_db.py`
+calls `ingest_methods.py`, which downloads
+`https://methods.cccbr.org.uk/xml/CCCBR_methods.xml.zip` fresh on every run.
+Nothing is committed. Nothing records which version was used.
+
+**How it surfaced.** A rebuild on 2026-08-29 from unchanged committed inputs gave
+25,066 methods where the published pages were built against 25,055, so
+`methods.html` moved from 20,668 blue lines drawn to 20,679. Neither number is
+wrong. The CCCBR library grew, which is what a living library does. What is wrong
+is that the repository cannot say which library any published figure refers to,
+and two people cloning a week apart get different answers with nothing in the
+history to explain the difference.
+
+**Deliver:**
+
+1. The archive committed, the way `data/complib/*.csv` is — or the parsed rows as
+   CSV if the zip is awkward. Record its **date fetched and SHA-256** in
+   `data/SOURCES.md` beside the other sources.
+2. `ingest_methods.py` reading the committed copy by default, with the live
+   download behind an explicit flag (it already has `--xml-path`; make the
+   committed file the default and the URL the opt-in).
+3. A check in `verify_corpus.py`, in the shape of the CSV-agreement checks you
+   wrote: the `methods` row count in the database against the committed source.
+   **Make it fail when the source is missing but the table is populated** — that
+   is the exact hole I fixed in your PR #26 version, where an absent CSV reported
+   SKIP while 86,054 uncommitted rows sat in the database.
+
+**Two things to get right.** Refreshing the committed archive must stay a
+deliberate, reviewable commit — that is the whole point, so do not add anything
+that auto-updates it. And be gentle with the CCCBR: one download, cached, while
+you develop. They answered nothing on the Felstead enquiry yet and we are not
+going to become a nuisance in the meantime.

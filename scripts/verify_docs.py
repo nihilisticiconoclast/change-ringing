@@ -43,6 +43,22 @@ as its full brief. So the test is that one ID never names two different items,
 plus the narrower rule that an ID never appears twice in the SAME table. That
 second rule exists because a duplicate row can carry the same title and different
 figures, which the title test waves through.
+
+"NOW" IS A QUEUE
+----------------
+The third check, and the one that needed no duplicate to hide behind. A row is
+delivered, whoever delivered it writes the outcome into the State cell, and the
+row stays where it is. Nothing contradicts anything -- the roadmap is simply no
+longer a list of what to do next. "Now" had reached 33 rows of which 15 were
+live, with two items (R-28, R-35) superseded by replacements sitting a few lines
+above them.
+
+That matters more here than it would elsewhere: this register is what three
+agents are pointed at to find their next task, and a brief is worth less for
+every finished row someone has to read past. So a row under "Now" may not OPEN
+its state by announcing it is finished. Only the opening, because live items
+routinely refer to finished work -- R-46 begins "Unblocked: R-10 is done" and is
+entirely live.
 """
 import re
 import sys
@@ -120,7 +136,15 @@ def _title(line, key):
     # Trailing parentheticals on a heading are status or history, not the name:
     # "(done — PR #3)", "(still active)", "(after task 6)",
     # "(was "abbreviation expansion")". Only the leading text identifies the item.
-    raw = re.sub(r"\([^)]*\)\s*$", "", raw.strip())
+    # Strip ALL of them, not one: a heading routinely carries the delivered item
+    # AND its status -- "Load CompLib in full (R-20) (done)" against a summary
+    # row reading "Load CompLib in full (R-20)". Stripping a single parenthetical
+    # left those two disagreeing about an item that is plainly the same one.
+    while True:
+        stripped = re.sub(r"\([^)]*\)\s*$", "", raw.strip())
+        if stripped == raw.strip():
+            break
+        raw = stripped
     # A leading category label -- "VISUALISATION — ", "TEST — " -- is metadata
     # about the KIND of work, not part of the item's name. The summary tables
     # carry it so a reader can scan by type; the briefs below do not.
@@ -164,6 +188,54 @@ def check_no_contradictory_sections():
             fails.append(f"{path.relative_to(ROOT)}:{places['Done']}: {key} is filed "
                          f"under 'Done' and also under {live} — one item, two "
                          f"answers to whether it is finished")
+    return fails
+
+
+# How a row announces, in its own State cell, that there is nothing left to do.
+# Only at the START of the cell: "After R-44. Your CSV check ... I fixed that one"
+# is a live item describing finished work, not a finished item.
+SETTLED = re.compile(
+    r"^\**(?:done|merged|superseded|landed|delivered|shipped)\b", re.I)
+
+
+def check_now_holds_only_live_work():
+    """A row in an active section may not open by saying it is finished.
+
+    The section rule above compares "Done" against the live headings, so it only
+    fires when an ID is written down twice. It cannot see the commoner drift,
+    which needs no duplicate at all: a row is delivered, someone writes the
+    outcome into its State cell, and the row stays where it was. Nothing
+    contradicts anything -- the table is simply no longer a queue.
+
+    Found seventeen on its first run. "Now" carried 33 rows of which 15 were
+    live: R-7, R-9, R-19..R-33 and others had been finished for a fortnight, and
+    two (R-28, R-35) had been superseded by rows sitting four lines above them.
+    A brief that says "here is what to do next" is worth less for every finished
+    row an agent has to read past, and this is the register all three agents are
+    pointed at.
+
+    The test is deliberately on the OPENING of the cell. Live items routinely
+    describe finished work in passing -- R-46 opens "Unblocked: R-10 is done" --
+    and that is the roadmap doing its job, not drift.
+    """
+    path = REGISTERS["R"]
+    if not path.exists():
+        return []
+    section, fails = "", []
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if line.startswith("#"):
+            section = line.strip("# ").strip()
+        if section != "Now":
+            continue
+        m = re.match(r"^\|\s*(R-\d+[a-z]?)\s*\|", line)
+        if not m:
+            continue
+        parts = re.split(r"(?<!\\)\|", line.strip())
+        state = parts[4].strip() if len(parts) > 4 else ""
+        if SETTLED.match(state):
+            fails.append(f"{path.relative_to(ROOT)}:{n}: {m.group(1)} is under "
+                         f"'Now' but its state opens {state[:40]!r} — finished "
+                         f"work belongs in 'Done', so 'Now' stays a queue")
     return fails
 
 
@@ -237,6 +309,7 @@ def main():
 
     id_fails, defined = check_ids()
     id_fails += check_no_contradictory_sections()
+    id_fails += check_now_holds_only_live_work()
     fails += id_fails
     counts = " · ".join(f"{p}-nn: {len(v)}" for p, v in defined.items())
     print(f"  {'FAIL' if id_fails else 'ok  '}  item IDs unique and resolvable "

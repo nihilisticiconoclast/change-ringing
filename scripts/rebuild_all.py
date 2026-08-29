@@ -81,7 +81,7 @@ def steps(db, skip_inference):
         # audit_privacy_and_licences catches licence or privacy regressions.
         ("Verify chrome: same nav and footer on all thirteen, one source for its CSS",
          ["verify_chrome.py"], "pages"),
-        ("Verify docs: tables render and item IDs name one item each",
+        ("Verify docs: tables render, IDs name one item, 'Now' is a queue",
          ["verify_docs.py"], "pages"),
         ("Verify corpus integrity",
          ["verify_corpus.py", "--local-db", db], "pages"),

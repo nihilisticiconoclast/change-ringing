@@ -41,9 +41,9 @@ that nobody noticed:
 | --- | --- |
 | `scripts/verify_corpus.py` | **51 integrity checks** — the database agrees with the committed CSVs, joins resolve, no query does a full scan where an index exists. Found a replica a year out of date, and 25,030 committed rows that had never loaded |
 | `scripts/verify_chrome.py` | All 13 pages carry the same nav and footer, and **only `site_chrome.py` styles them**. Added after the site passed a markup-only check while eleven files styled the same nav eleven ways |
-| `scripts/verify_docs.py` | Markdown tables actually render, and no item ID names two different things. Added after a blank line split the roadmap into headerless fragments, and after "item 9" turned out to mean three different pieces of work |
+| `scripts/verify_docs.py` | Markdown tables actually render, no item ID names two different things, and the roadmap's "Now" section holds only work still to do. Added after a blank line split the roadmap into headerless fragments, after "item 9" turned out to mean three different pieces of work, and after "Now" quietly filled up with seventeen finished rows |
 | `scripts/audit_privacy_and_licences.py` | Licence attribution on every page, and no document that promises anonymity makes an individual recoverable |
-| `scripts/run_tests.py` | **36 unit and oracle tests.** Negative-tested: inverting one expansion rule in `notation.py` fails 26 of them |
+| `scripts/run_tests.py` | **39 unit and oracle tests.** Negative-tested: inverting one expansion rule in `notation.py` fails 26 of them |
 
 `python scripts/rebuild_all.py` runs the whole pipeline in dependency order and
 **fails at the first broken step** — its first version printed errors and exited
