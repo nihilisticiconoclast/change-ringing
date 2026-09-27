@@ -62,6 +62,8 @@ def steps(db, skip_inference):
             ("Bridge CompLib to the performance record by composer",
              ["resolve_composer_bridge.py", "--local-db", db,
               "--out", "data/composer_bridge_candidates.csv"], "data"),
+            ("Measure the contentious definitions (R-52)",
+             ["measure_definitions.py", "--local-db", db], "data"),
         ]
     # The thirteen published pages, in the order site_chrome.PAGES lists them.
     out += [
