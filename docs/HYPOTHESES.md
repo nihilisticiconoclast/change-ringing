@@ -268,6 +268,31 @@ structural regressions (tables dropped, sections missing, headings altered) whil
 remaining completely immune to routine dataset refreshes.
 **❌ Wrong.** Structural skeletons separate layout integrity from data updates.
 
+### H30. Most of the 51 integrity checks will turn out to be decorations
+
+**Expected:** written before running the negative tests (R-44). Given how the
+checker grew — three checks already found reporting green at the exact moment
+they stopped working (PR #21's circular oracle, PR #24's hardcoded name
+string, PR #26's SKIP over 86,054 uncommitted rows) — a fair share of the
+remaining 51 arms would prove unable to FAIL, and the interesting output of
+the task would be the list of them.
+
+**Observed:** 45 of 51 arms FAIL cleanly when broken, each proven by a test.
+The six that cannot FAIL are the optional-corpus arms (four tables, two views)
+reporting SKIP on absence even when the rest of the database shows the
+migration was applied — for two of the four tables the loss is caught anyway
+by their csv-agreement siblings, and the remaining four arms guard objects
+with no committed artifact to compare against, so a SKIP is the only honest
+answer available to a checker that sees only the database. Six other breaks
+make a later check raise rather than report, so the run is loud but the
+report is truncated at the first one.
+
+**❌ Wrong, in the useful direction.** The checker is in better shape than
+its history suggested; the gaps that remain are structural — what a checker
+cannot know without provenance — not carelessness. Measured against a fixture
+built from the committed schema; the full account is in
+`docs/negative_testing_verify_corpus.md`.
+
 ---
 
 ## The tally
@@ -276,10 +301,10 @@ remaining completely immune to routine dataset refreshes.
 | --- | ---: |
 | ✅ Held | 4 |
 | 🟡 Wrong in size | 6 |
-| ❌ Wrong | 19 |
-| **Total** | **29** |
+| ❌ Wrong | 20 |
+| **Total** | **30** |
 
-**Four predictions out of twenty-nine survived intact — 13.8%.** That is not a comment on
+**Four predictions out of thirty survived intact — 13.3%.** That is not a comment on
 whoever made them — several are mine, several came from experienced ringers'
 received wisdom, and several were reasonable readings of a smaller corpus. It is
 a comment on how weak intuition is about a dataset nobody has looked at this way
