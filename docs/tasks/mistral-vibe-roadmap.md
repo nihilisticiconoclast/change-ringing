@@ -39,8 +39,8 @@ reference in a commit message or pull request still points at the same work.
 | V-5 | Backfill completeness gate | **Merged** — reviewed, three fixes applied on merge; see below |
 | V-4 | Ring-level join semantics | **Unblocked** — spec at `docs/decisions/001-ring-vs-tower-joins.md` |
 | V-8 | Load CompLib in full (R-20) | **Done** — 86,054 compositions across 3,443 pages; see note below |
-| V-9 | **TEST** — negative tests for all 51 integrity checks | **Next.** Delivers [R-44](../ROADMAP.md) |
-| V-10 | **FIX** — one database access path | After V-9. Delivers [R-45](../ROADMAP.md) |
+| V-9 | **TEST** — negative tests for all 51 integrity checks | **Done** — 45/51 arms FAIL cleanly, 6 are the optional-corpus SKIPs, 6 breaks crash a later check; see below and [the findings](../negative_testing_verify_corpus.md). Delivers [R-44](../ROADMAP.md) |
+| V-10 | **FIX** — one database access path | **Next.** After V-9 — and still blocked on R-51, which decides the direction. Delivers [R-45](../ROADMAP.md) |
 | V-11 | **JOIN** — method adoption over time | Delivers [R-46](../ROADMAP.md) |
 | V-12 | **INTERPRETATION** — the specialisation measures your PR #18 got right | Delivers [R-47](../ROADMAP.md) |
 | V-13 | **FIX** — the replica is not reproducible from committed inputs (methods **and Dove**) | Widened: a fresh rebuild now fails `verify_corpus.py` because Dove removed a tower an adjudication cites. Delivers [R-48](../ROADMAP.md) |
@@ -508,9 +508,41 @@ PR #6 (8/8 resolved, verified on merge). It is left as a follow-up.
 page cache (`complib-cache/`, gitignored) is intact, so a resumed or repeated
 run reuses it and does not re-hit the API.
 
-## V-9 — Negative tests for all 51 integrity checks *(next)*
+## V-9 — Negative tests for all 51 integrity checks *(done)*
 
 **Delivers roadmap item [R-44](../ROADMAP.md).**
+
+**Done.** 58 tests in `tests/test_verify_corpus_negative.py`, one break per
+check arm, each asserting the target check reports FAIL *and nothing
+unexpected does* — collateral is named per break, so a FAIL belonging to
+damage rather than the break fails the test. The healthy database each break
+starts from is `tests/verify_corpus_fixture.py`: the committed schema files
+applied as-is plus a handful of rows shaped around the checker's own
+invariants (fan-out, an adjudicated-link zero, a drift orphan under the
+ceiling, exact CSV counts), so the fixture cannot drift from schema/001..007
+and the whole suite runs in ~5 seconds with no network — which means it
+runs in CI, where the real replica cannot be built (R-27). The baseline is
+51 checks, 0 failures.
+
+**45 of the 51 arms FAIL cleanly.** The six that cannot are the
+optional-corpus arms (four tables, two views): their SKIP cannot tell
+"never applied" from "applied then lost", because a bare database carries no
+provenance. Two of the four tables are covered anyway by their csv-agreement
+siblings (the CompLib CSVs are committed); the remaining four guard objects
+with nothing committed to compare against, so the honest fix is R-48's
+provenance, not a stricter guess. Six other breaks (dropping `dove`,
+`towers`, `methods`, `method_performances`, `performances` or
+`v_towers_unique`) make a later check raise rather than report: the exit
+code is still non-zero, but the report truncates at the first traceback —
+recorded in the findings doc for review rather than silently fixed.
+
+The prediction was written down first (H30 in `docs/HYPOTHESES.md`): given
+the checker's history, a fair share of the 51 would be decorations. It was
+wrong in the useful direction — the decorations are six, and they are
+structural rather than careless. Full account, with the verification commands:
+[`docs/negative_testing_verify_corpus.md`](../negative_testing_verify_corpus.md).
+
+Original brief, retained:
 
 This follows directly from your PR #26, and it is worth being exact about why.
 Your CompLib CSV-agreement check reported `SKIP` when a CSV was absent without
