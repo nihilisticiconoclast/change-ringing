@@ -524,12 +524,27 @@ def check_orphan_soft_fks(conn, rep):
         # a broken reload.
         if tbl == "method_performances":
             if absent_both:
+                # The original wording here asserted this could only be
+                # corruption, "not upstream drift". That was wrong, and a fresh
+                # rebuild on 2026-09-27 proved it: 9 link rows cite TowerID
+                # 25219, which `data/method_location_adjudication.csv` resolved
+                # against Dove at adjudication time and which Dove has since
+                # REMOVED. `fetch_dove_csvs.py` downloads Dove live on every
+                # build, so an adjudication can be correct when made and orphaned
+                # later by a deletion nobody here controls. Diagnosing that as
+                # corruption sends the reader looking for a loader bug that does
+                # not exist. R-48 covers the underlying fault -- a live upstream
+                # with nothing committed to pin it.
                 rep.report(
                     f"orphans {tbl}.dove_tower_id", Result.FAIL,
                     f"{absent_both:,} of {total:,} adjudicated links cite a "
-                    f"TowerID in neither dove nor towers. These were resolved "
-                    f"against `towers` when they were adjudicated, so an orphan "
-                    f"here is corruption, not upstream drift",
+                    f"TowerID in neither dove nor towers. Two possible causes, "
+                    f"and they need different fixes: either the load went wrong, "
+                    f"or Dove has removed a tower since the adjudication was "
+                    f"committed -- Dove is fetched live, so that happens. Check "
+                    f"the IDs against data/method_location_adjudication.csv "
+                    f"first: if they are cited there, it is upstream drift (R-48) "
+                    f"and not a loader fault",
                 )
             else:
                 rep.report(f"orphans {tbl}.dove_tower_id", Result.PASS,

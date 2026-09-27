@@ -43,7 +43,7 @@ reference in a commit message or pull request still points at the same work.
 | V-10 | **FIX** — one database access path | After V-9. Delivers [R-45](../ROADMAP.md) |
 | V-11 | **JOIN** — method adoption over time | Delivers [R-46](../ROADMAP.md) |
 | V-12 | **INTERPRETATION** — the specialisation measures your PR #18 got right | Delivers [R-47](../ROADMAP.md) |
-| V-13 | **FIX** — the methods table is not reproducible from committed inputs | Delivers [R-48](../ROADMAP.md) |
+| V-13 | **FIX** — the replica is not reproducible from committed inputs (methods **and Dove**) | Widened: a fresh rebuild now fails `verify_corpus.py` because Dove removed a tower an adjudication cites. Delivers [R-48](../ROADMAP.md) |
 
 ---
 
@@ -601,7 +601,16 @@ the module and the page picks them up. That is deliberate: the page and
 `docs/ringing_careers.md` cannot then disagree, which is how "72.5% conduct a
 peal" got published when the code measured conducting anything.
 
-## V-13 — The methods table is not reproducible from committed inputs
+## V-13 — The replica is not reproducible from committed inputs
+
+> **Widened on 2026-09-27, and it is now urgent rather than tidy.** This brief
+> was about the methods XML. It applies equally to Dove, and the Dove half has
+> broken something: a fresh rebuild fails `verify_corpus.py` with 9 adjudicated
+> links citing TowerID 25219, which `data/method_location_adjudication.csv`
+> resolved against Dove at adjudication time and which Dove has since removed.
+> The adjudication was right when it was made. Do both sources, not just methods,
+> and make sure an adjudication stays resolvable against the snapshot it was made
+> against.
 
 **Delivers roadmap item [R-48](../ROADMAP.md).**
 

@@ -52,6 +52,36 @@ that nobody noticed:
 CI runs on pull requests **and on pushes to `main`**, because a direct push once
 landed an import that made `rebuild_all.py` unable to regenerate its own page.
 
+## The semantic layer, and why it is next
+
+A gap found by measuring rather than by reading: **there is no shared definition
+of a peal in this repository.** `is_peal` is a local variable inside one function,
+and 36 scripts query the database directly with their own literal thresholds.
+
+They disagree. `>= 5000` gives **52,499** peals; `> 5000` gives **51,651**. The
+difference is the **848 performances of exactly 5000 changes — 1.6% of the peal
+population** — and the `>` spelling belongs to
+`queries/findings/conductor_speed_signature.sql`, the query behind a published
+finding. Separately, **21,788 performances (7.4%) carry no length at all**, and
+the call sites disagree about whether those are excluded, counted as
+not-a-peal, or dropped from a numerator while remaining in a denominator.
+
+This class of error has cost a published figure here once already: PR #19's
+"72.5% conduct a peal" measured conducting *anything*, against a real figure of
+19.8%. A definition error, not a code error.
+
+`docs/semantic_layer_design.md` has the design and enumerates the definitions
+that are genuinely contentious in ringing — peal versus quarter, how a ringer's
+tally is attributed, the spliced method double-count, which of two date columns,
+tower versus ring, and what counts as a performance at all. R-52 measures them,
+R-53 puts them in one place, R-54 makes that binding the way `verify_chrome.py`
+made one nav binding, and R-55 is an MCP server over the result.
+
+The MCP server is the reason the ordering matters. A server that hands a model a
+SQL prompt hands it the job of defining "peal", and it will invent a threshold in
+prose indistinguishable from the reviewed figures. Tools that expose *measures*
+cannot.
+
 ## Roadmap and agent briefs
 
 Three registers, with IDs unique across all of them — `R-nn` central, `G-nn`

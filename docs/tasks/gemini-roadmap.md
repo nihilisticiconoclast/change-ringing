@@ -46,6 +46,7 @@ reference in a commit message or pull request still points at the same work.
 | G-12 | **JOIN** — normalise composer names, with a measured error rate | After G-11, re-scoped: R-36 measured the crude key, so beat it. Delivers [R-41](../ROADMAP.md) |
 | G-13 | **TEST** — golden-file test for the page builders | Delivers [R-42](../ROADMAP.md) |
 | G-14 | **FIX** — `civic` precision is 38.8% | **Done** — `scripts/classify_footnote_occasions.py`, `scripts/evaluate_footnote_classifier.py`, `docs/footnote_occasion_accuracy.md`, `tests/test_footnote_classifier.py`. Precision lifted to 80.0% (was 38.8%), overall accuracy 80.5% (was 75.5%). Recall fell 82.6% -> 52.2%, so civic is now under-detected rather than over-detected. Delivers [R-43](../ROADMAP.md) |
+| G-15 | **TEST** — make the definitions layer binding, and migrate the callers | After R-53 lands. Delivers [R-54](../ROADMAP.md) |
 
 ---
 
@@ -565,3 +566,47 @@ suppress the two classes on the page and say why.
 **The oracle is the thing that makes this checkable.** Do not regenerate it, do
 not bootstrap it from the classifier — that is what made PR #21's measurement
 worthless, and it disagreed with its own classifier on 1 row in 400.
+
+## G-15 — Make the definitions layer binding, and migrate the callers
+
+**Delivers roadmap item [R-54](../ROADMAP.md). Do not start until R-53 has
+landed** — there is nothing to enforce until `scripts/semantics.py` exists.
+
+You have done this shape before and it worked: G-8 centralised the page CSS into
+`site_chrome.py`, and `verify_chrome.py` now fails any page that declares its own
+nav rule. That check is the reason there is one nav across fourteen pages instead
+of fourteen variants. This is the same job for numbers instead of styling.
+
+**The problem, measured.** There is no shared definition of a peal in this
+repository. `is_peal` is a local variable inside one function of
+`analyse_ringing_careers.py`, and **36 scripts query the database directly**,
+fourteen of them hardcoding `5000`. They disagree:
+`conductor_speed_signature.sql` uses `> 5000` while five other call sites use
+`>= 5000`, which is **848 performances — 1.6% of the peal population** — and
+the divergent site is the one behind a published finding. Separately, **21,788
+performances (7.4%) have no `changes` value** and the call sites disagree about
+what that means.
+
+**Deliver two things, together, in one PR:**
+
+1. `scripts/verify_semantics.py` — fails any script or recorded query in
+   `scripts/` or `queries/` that carries a peal or quarter threshold outside
+   `semantics.py`. Report the file and line, the way `verify_chrome.py` does.
+   Wire it into `rebuild_all.py` and CI.
+2. **The migration of all 36 call sites**, in the same PR.
+
+**They must land together.** A definitions module that half the callers ignore is
+a second source of truth, and two sources are worse than the current fourteen
+because one of them looks authoritative. A check with no migration fails the
+build on day one; a migration with no check drifts back within a month.
+
+**Negative-test it**, as everything here is: reintroduce a literal `5000` into a
+migrated query, confirm the check fails and names the line, restore it, confirm
+it passes. Say in the PR that you did.
+
+**Two things to get right.** The check must allow `semantics.py` itself and must
+not fire on unrelated numbers — `5040` appears legitimately in composition
+lengths, `1260` in quarter-peal *data*, and `data/` files are not code. And
+**where migrating a call site changes its result, say so in the PR with the
+before and after** rather than quietly adopting the new number; R-56 depends on
+knowing which figures moved.
