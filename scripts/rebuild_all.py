@@ -64,6 +64,8 @@ def steps(db, skip_inference):
               "--out", "data/composer_bridge_candidates.csv"], "data"),
             ("Measure the contentious definitions (R-52)",
              ["measure_definitions.py", "--local-db", db], "data"),
+            ("Is the compositional corpus dead paper? (R-37)",
+             ["analyse_dead_paper.py", "--local-db", db], "data"),
         ]
     # The thirteen published pages, in the order site_chrome.PAGES lists them.
     out += [
