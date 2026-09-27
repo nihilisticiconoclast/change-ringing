@@ -67,7 +67,7 @@ class TestMeasuredDefinitions(unittest.TestCase):
         self.assertAlmostEqual(100 * peals / known, 19.32, places=2)
         self.assertAlmostEqual(100 * peals / known - 100 * peals / total, 1.43, places=2)
 
-    def test_stage_rule_affects_four_performances(self):
+    def test_stage_rule_affects_five_performances(self):
         """The rule is real; its reach is 4 rows.
 
         Pinned because the first draft of the design document led on the 7,001
@@ -77,12 +77,15 @@ class TestMeasuredDefinitions(unittest.TestCase):
         window = self.one("SELECT COUNT(*) FROM performances "
                           "WHERE changes >= 5000 AND changes < 5040")
         self.assertEqual(window, 7_001)
+        # Below SEVEN, not "five or six". The first version of this test filtered
+        # `stage IN (5, 6)` and asserted 4, missing the single stage-4 Minimus
+        # performance -- the same too-narrow filter that put 4 in the document.
         low = self.one("""
             SELECT COUNT(*) FROM performances p
             JOIN performance_methods pm ON pm.perf_id = p.perf_id AND pm.ord = 0
             JOIN methods m ON m.method_id = pm.method_id
-            WHERE p.changes >= 5000 AND p.changes < 5040 AND m.stage IN (5, 6)""")
-        self.assertEqual(low, 4)
+            WHERE p.changes >= 5000 AND p.changes < 5040 AND m.stage < 7""")
+        self.assertEqual(low, 5)
 
     def test_spliced_double_count_is_the_largest_choice(self):
         """+66.0%, and the reason two named measures are needed rather than one.

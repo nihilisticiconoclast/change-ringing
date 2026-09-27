@@ -28,7 +28,7 @@ turns out to be the smallest thing here by three orders of magnitude.
 | 8 | "Active ringer" threshold | 6,902 → 18,764 | **Live** |
 | 1 | Peal boundary `>` vs `>=` | **848** (1.62% of peals) | **Live** |
 | 7 | Ringer counted per row or per performance | 3,414 | **Live** |
-| 3 | Stage-dependent peal minimum | **4** | Latent |
+| 3 | Stage-dependent peal minimum | **5** | Latent |
 
 ## 1. The peal boundary — 848 performances
 
@@ -80,10 +80,20 @@ It is the smallest. Of the 6,166 with a resolved stage:
 
 ```
 stage  8: 3,518    stage 10:   892    stage 12:   191
-stage  9:   777    stage 11:   773    stage  6:     4   <- the only ones affected
+stage  9:   777    stage 11:   773    stage  6:     4   <- affected
+                                      stage  4:     1   <- affected
 ```
 
-**Four performances, all at Minor, none at Doubles.** Encode the rule anyway —
+**Five performances — four at Minor, one at Minimus, none at Doubles.**
+
+> **Corrected after R-53.** This section first said *four*, because the query
+> filtered `stage IN (5, 6)`. The rule is "seven or **more** bells", so every
+> stage below seven needs 5040 and Minimus counts too. The stage-4 row was
+> visible in the very first output and the narrow filter dropped it. Found by
+> `tests/test_semantics.py`, whose arithmetic did not reconcile — the semantic
+> layer catching an error in the document that argued for building it.
+
+Encode the rule anyway —
 it is the actual rule and costs one line — but it is not an argument for this
 work, and the first draft of the design document presented the 7,001 as though
 it were. Corrected there.

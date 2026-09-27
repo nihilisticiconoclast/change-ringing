@@ -85,6 +85,8 @@ def steps(db, skip_inference):
         # catches a nav or footer that drifted; verify_corpus catches a database
         # the pages were just built against that should not have been trusted;
         # audit_privacy_and_licences catches licence or privacy regressions.
+        ("Verify the semantic views match scripts/semantics.py",
+         ["build_semantic_views.py", "--check"], "pages"),
         ("Verify chrome: same nav and footer on all thirteen, one source for its CSS",
          ["verify_chrome.py"], "pages"),
         ("Verify docs: tables render, IDs name one item, 'Now' is a queue",

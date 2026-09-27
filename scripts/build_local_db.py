@@ -13,7 +13,7 @@ develop against it:
 
   Dove's Guide      -- public CSVs, https://dove.cccbr.org.uk
   CCCBR Methods     -- public XML,  https://methods.cccbr.org.uk
-  schema/001..007   -- in this repo
+  schema/001..008   -- in this repo
   location linkage  -- data/method_location_adjudication.csv, in this repo
 
 The one exception is BellBoard. Its corpus is only reachable through an API
@@ -265,6 +265,12 @@ def main() -> int:
             conn.commit()
             print("\nMethod-linkage tables created but left empty "
                   "(no BellBoard performances loaded).")
+
+    # The semantic views (R-53). Applied last because they read
+    # performance_methods, and generated from scripts/semantics.py rather than
+    # written by hand -- see scripts/build_semantic_views.py for why.
+    conn.executescript((SCHEMA_DIR / "008_init_semantic_views.sql").read_text())
+    conn.commit()
 
     print(f"\n{'='*60}\nOffline replica ready: {out}\n{'='*60}")
     for t in ("dove", "bells", "towers", "frames", "founders", "regions", "changes",

@@ -89,11 +89,15 @@ def measure_stage_rule(conn):
         WHERE p.changes >= 5000 AND p.changes < 5040 AND m.stage IS NOT NULL
         GROUP BY m.stage ORDER BY 2 DESC""").fetchall()
     resolved = sum(n for _, n in rows)
-    low = sum(n for s, n in rows if s in (5, 6))
+    # Below SEVEN bells, not 'five or six': the CCCBR rule is "seven or more",
+    # so Minimus needs 5040 too. The first version of this line filtered
+    # `s in (5, 6)` and lost the one stage-4 performance, which is how the
+    # published figure came to be 4 rather than 5.
+    low = sum(n for s, n in rows if s < 7)
     print(f"  of which {resolved:,} have a resolved stage:")
     for s, n in rows[:6]:
         print(f"    stage {s:>2}: {n:>6,}")
-    print(f"\n  affected by the rule (stage 5 or 6): {low}")
+    print(f"\n  affected by the rule (stage below 7): {low}")
     print("  -> it is not the big one. Encode the rule because it IS the rule and costs")
     print("     one line, but it is not an argument for this work. The first draft of")
     print("     docs/semantic_layer_design.md cited the window as the population at")
