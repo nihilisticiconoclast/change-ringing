@@ -27,16 +27,21 @@ def sql(name, index=0):
     """
     return sqlfile.statement(QUERIES / name, index)
 
-# Define regex patterns for classification
+from classify_footnote_occasions import (
+    P_FUNERAL, P_MEMORIAL, P_BIRTHDAY, P_WEDDING, P_ANNIVERSARY,
+    P_FIRST_PERF, P_CIVIC, P_SEASONAL, P_COMPLIMENT, P_PRACTICE
+)
+
+# Define regex patterns for classification, from the measured classifier
 CATEGORIES = {
-    "Memorial / Funeral": re.compile(r'\b(memory|memorial|funeral|life of|passed away|remembering|died|late|tribute|commemorating|requiem|thanksgiving for the life)\b', re.IGNORECASE),
-    "Birthday": re.compile(r'\b(birthday|b\'day|bday)\b', re.IGNORECASE),
-    "Wedding / Anniversary": re.compile(r'\b(wedding|anniversary|married|marriage|ruby|golden|diamond|silver)\b', re.IGNORECASE),
-    "Firsts / Milestones": re.compile(r'\b(first|1st|circled|milestone)\b', re.IGNORECASE),
-    "Church Service / Festival": re.compile(r'\b(thanksgiving|dedication|service|festival|evensong|matins|patronal|centenary|easter|christmas|advent|lent)\b', re.IGNORECASE),
-    "Royal / National": re.compile(r'\b(jubilee|coronation|queen|king|royal|majesty|accession|platinum|remembrance|armistice)\b', re.IGNORECASE),
-    "Farewell / Welcome": re.compile(r'\b(farewell|leaving|welcome|retiring|retirement|induction)\b', re.IGNORECASE),
-    "Compliment / Celebration": re.compile(r'\b(celebrate|celebration|compliment|congratulations|birth of)\b', re.IGNORECASE)
+    "Memorial / Funeral": re.compile(f"(?:{P_MEMORIAL.pattern})|(?:{P_FUNERAL.pattern})", re.IGNORECASE),
+    "Birthday": P_BIRTHDAY,
+    "Wedding / Anniversary": re.compile(f"(?:{P_WEDDING.pattern})|(?:{P_ANNIVERSARY.pattern})", re.IGNORECASE),
+    "Firsts / Milestones": P_FIRST_PERF,
+    "Church Service / Festival": P_SEASONAL,
+    "Royal / National": P_CIVIC,
+    "Compliment / Celebration": P_COMPLIMENT,
+    "Practice": P_PRACTICE
 }
 
 def fetch_and_classify():
