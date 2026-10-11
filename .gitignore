@@ -27,3 +27,7 @@ data/complib/*
 scratch/
 *_output.txt
 *.log
+
+# Dashboard datasets: build products of scripts/build_dashboard_data.py,
+# attached to the dashboard rather than committed (see docs/dashboard.md).
+dashboard/data/

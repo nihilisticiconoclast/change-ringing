@@ -1,0 +1,594 @@
+<style>
+  .cr { max-width: 84rem; margin-inline: auto; font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .cr-tabs { display: flex; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); margin-bottom: var(--cds-gap-lg); overflow-x: auto; }
+  .cr-tab { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--color-fg-muted); font: inherit; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; white-space: nowrap; }
+  .cr-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+  .cr-tab:focus-visible, .cr-seg button:focus-visible, .cr-table th button:focus-visible, .cr-reset:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; border-radius: var(--cds-radius); }
+  .cr-page { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+  .cr-page[hidden] { display: none; }
+  .cr-head { display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+  .cr-title { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.2; }
+  .cr-takeaway { margin: 0; max-width: 62rem; min-height: 1.5em; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
+  .cr-takeaway .cr-fig { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+
+  .cr-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm) var(--cds-gap-md); }
+  .cr-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+  .cr-seg button { appearance: none; border: 0; background: none; color: var(--color-fg-muted); font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); display: inline-flex; align-items: center; gap: var(--cds-gap-xs); cursor: pointer; }
+  .cr-seg button + button { border-left: 1px solid var(--color-border-line); }
+  .cr-seg button[aria-pressed="true"] { background: var(--color-panel); color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+  .cr-select { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-select select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+  .cr-reset { appearance: none; background: none; border: 0; color: var(--color-fg-muted); font: inherit; font-size: var(--cds-font-size-caption); text-decoration: underline; cursor: pointer; padding: var(--cds-pad-xs); }
+  .cr-reset[hidden] { display: none; }
+  .cr-sw { display: inline-block; flex: none; width: .625rem; height: .625rem; border-radius: 2px; }
+
+  .cr-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--cds-gap-md); }
+  .cr-tile { display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); }
+  .cr-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-tile-value { min-height: 1.15em; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.15; }
+  .cr-of { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
+  .cr-tile-delta, .cr-tile-total { min-height: 1.4em; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-delta { font-variant-numeric: tabular-nums; font-weight: var(--cds-font-weight-medium); }
+  .cr-up { color: var(--color-ok); }
+  .cr-down { color: var(--color-bad); }
+  .cr-spark { height: 30px; }
+  .cr-spark svg { display: block; }
+  .cr-spark-line { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .cr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+  .cr-card { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; container-type: inline-size; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+  .cr-card-head { display: flex; flex-direction: column; gap: 2px; }
+  .cr-h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .cr-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); margin-top: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-legend:empty { display: none; }
+  .cr-li { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+  .cr-li-val { color: var(--color-fg); font-variant-numeric: tabular-nums; }
+
+  .cr-chart { position: relative; min-width: 0; }
+  #chart-monthly { min-height: 250px; }
+  #chart-peals, #chart-quarters { min-height: 190px; }
+  #chart-firsts { min-height: 200px; }
+  #chart-stages { min-height: 330px; }
+  #chart-counties { min-height: 330px; }
+  #chart-coverage { min-height: 300px; }
+  #chart-lengthmix { min-height: 220px; }
+  #chart-unlinked { min-height: 200px; }
+  #chart-commits { min-height: 220px; }
+  #chart-verdicts { min-height: 64px; }
+  .cr-chart > .cr-failed { min-height: inherit; }
+  .cr-svg { display: block; overflow: visible; }
+  .cr-svg text, .cr-tick { fill: var(--color-fg-muted); font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); }
+  .cr-svg text.cr-valuelabel { fill: var(--color-fg); font-variant-numeric: tabular-nums; }
+  .cr-gridline { stroke: var(--cds-chart-grid); stroke-width: 1; shape-rendering: crispEdges; }
+  .cr-axisline { stroke: var(--cds-chart-axis); stroke-width: 1; shape-rendering: crispEdges; }
+  .cr-refline { stroke: var(--cds-chart-reference); stroke-width: 1; stroke-dasharray: 3 3; }
+  .cr-band { fill: var(--color-fg); opacity: .07; }
+  .cr-hover { fill: var(--color-fg); opacity: .08; pointer-events: none; }
+  .cr-overlay { fill: transparent; pointer-events: all; cursor: crosshair; }
+  .cr-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .cr-tip { position: absolute; z-index: 3; display: grid; gap: 2px; pointer-events: none; white-space: nowrap; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg); }
+  .cr-tip[hidden] { display: none; }
+  .cr-tip-head { color: var(--cds-text-secondary); }
+  .cr-tip-row { display: flex; align-items: center; gap: var(--cds-gap-xs); }
+  .cr-tip-val { margin-left: auto; padding-left: var(--cds-gap-md); font-variant-numeric: tabular-nums; font-weight: var(--cds-font-weight-medium); }
+
+  .cr-hbars { display: grid; gap: 6px; }
+  .cr-hbar { display: grid; grid-template-columns: minmax(6rem, 34%) minmax(0, 1fr) auto; align-items: center; gap: var(--cds-gap-sm); padding: 1px 2px; border-radius: 4px; font-size: var(--cds-font-size-caption); }
+  .cr-hbar:hover { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+  .cr-hbar-label { color: var(--color-fg); overflow-wrap: anywhere; }
+  .cr-hbar-sub { display: block; color: var(--color-fg-muted); }
+  .cr-hbar-track { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cr-hbar-fill { height: 10px; border-radius: 0 4px 4px 0; }
+  .cr-hbar-prev { height: 3px; border-radius: 0 2px 2px 0; background: var(--cds-chart-muted); }
+  .cr-hbar-value { min-width: 3.5rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--color-fg-muted); }
+  .cr-empty-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+
+  .cr-heat { display: grid; gap: 2px; font-size: var(--cds-font-size-caption); }
+  .cr-heat-col { padding-bottom: 2px; text-align: center; color: var(--color-fg-muted); }
+  .cr-heat-row { display: flex; align-items: center; padding-right: var(--cds-gap-sm); color: var(--color-fg); }
+  .cr-heat-cell { display: flex; align-items: center; justify-content: center; min-height: 26px; border-radius: 3px; font-variant-numeric: tabular-nums; }
+  .cr-heat-all { outline: 1px solid var(--color-border-line); outline-offset: -1px; }
+
+  .cr-verdict-bar { display: flex; gap: 2px; height: 14px; }
+  .cr-verdict-seg { height: 100%; }
+  .cr-verdict-seg:first-child { border-radius: 4px 0 0 4px; }
+  .cr-verdict-seg:last-child { border-radius: 0 4px 4px 0; }
+  .cr-verdict-seg:only-child { border-radius: 4px; }
+
+  .cr-search { max-width: 16rem; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+  .cr-tablebox { max-height: 28rem; min-height: 6rem; overflow: auto; }
+  .cr-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+  .cr-table th { position: sticky; top: 0; z-index: 1; padding: 0; text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); background: var(--color-panel); border-bottom: 1px solid var(--color-border-line); }
+  .cr-table th.cr-n { text-align: right; }
+  .cr-table th button { appearance: none; width: 100%; background: none; border: 0; font: inherit; color: inherit; text-align: inherit; white-space: nowrap; cursor: pointer; padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+  .cr-table th[aria-sort="ascending"] button::after { content: " ↑"; }
+  .cr-table th[aria-sort="descending"] button::after { content: " ↓"; }
+  .cr-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .cr-table tbody tr:hover { background: color-mix(in srgb, var(--color-fg) 4%, transparent); }
+  .cr-table td.cr-failed { padding: var(--cds-pad-md); }
+  .cr-table-note { margin: var(--cds-gap-sm) 0 0; padding: var(--cds-pad-sm); }
+  .cr-table-note[hidden] { display: none; }
+  .cr-cellbar { display: inline-block; width: 3rem; height: 6px; margin-right: var(--cds-gap-xs); vertical-align: middle; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--color-fg) 8%, transparent); }
+  .cr-cellbar i { display: block; height: 100%; border-radius: 3px; }
+  #table-methods td:is(:nth-child(1), :nth-child(n+4)),
+  #table-towers td:is(:nth-child(1), :nth-child(n+5)),
+  #table-inventory td:nth-child(3),
+  #table-completeness td:is(:nth-child(n+2):nth-child(-n+6)),
+  #table-linkages td:is(:nth-child(2), :nth-child(3), :nth-child(4)),
+  #table-hazards td:is(:nth-child(2), :nth-child(3)),
+  #table-claims td:is(:nth-child(3), :nth-child(4)) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @container (max-width: 44rem) {
+    #table-methods :is(th, td):is(:nth-child(3), :nth-child(5), :nth-child(6), :nth-child(7)) { display: none; }
+    #table-towers :is(th, td):is(:nth-child(3), :nth-child(6), :nth-child(7)) { display: none; }
+    #table-claims :is(th, td):nth-child(6) { display: none; }
+  }
+  @container (max-width: 30rem) {
+    #table-towers :is(th, td):nth-child(4) { display: none; }
+    #table-inventory :is(th, td):nth-child(5) { display: none; }
+    #table-completeness :is(th, td):is(:nth-child(3), :nth-child(4), :nth-child(5)) { display: none; }
+    #table-linkages :is(th, td):nth-child(6) { display: none; }
+    #table-hazards :is(th, td):nth-child(5) { display: none; }
+    #table-roadmap :is(th, td):nth-child(3) { display: none; }
+    #table-hypotheses :is(th, td):nth-child(3) { display: none; }
+  }
+
+  .cr-defs { margin: 0; max-width: 62rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-foot { display: grid; gap: var(--cds-gap-xs); margin-top: var(--cds-gap-xl); padding-top: var(--cds-pad-md); border-top: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cr-foot p { margin: 0; }
+  .cr-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  .cr [data-dash-source-state="refreshing"] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .cr [data-dash-source-state="empty"] { color: transparent; }
+  .cr-failed { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-decoration: none; }
+  .cr-failed::before { content: ""; flex: none; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+</style>
+
+<div class="cr" id="cr">
+  <div class="cr-tabs" role="tablist" aria-label="Dashboard pages">
+    <button type="button" class="cr-tab" role="tab" id="tab-activity" aria-controls="activity" aria-selected="false" data-page="activity">Ringing activity</button>
+    <button type="button" class="cr-tab" role="tab" id="tab-health" aria-controls="health" aria-selected="false" data-page="health">Corpus health</button>
+    <button type="button" class="cr-tab" role="tab" id="tab-project" aria-controls="project" aria-selected="false" data-page="project">Project tracker</button>
+  </div>
+
+  <section class="cr-page" id="activity" role="tabpanel" aria-labelledby="tab-activity" hidden></section>
+  <section class="cr-page" id="health" role="tabpanel" aria-labelledby="tab-health" hidden></section>
+  <section class="cr-page" id="project" role="tabpanel" aria-labelledby="tab-project" hidden></section>
+
+  <footer class="cr-foot" id="cr-foot">
+    <p>Counted from nihilisticiconoclast/change-ringing at commit <span class="cr-code dash-skeleton" id="foot-commit" data-source="snapshot" data-field="commit" data-row="0">—</span>, <span class="dash-skeleton" id="foot-date" data-source="snapshot" data-field="commit_date" data-row="0">—</span>. Data derived from BellBoard (© The Ringing World), CompLib, Dove’s Guide and the CCCBR Methods Library, under CC BY-SA 4.0; see data/LICENCE-DATA.md in the repo before reusing it.</p>
+    <p>No ringer is named and no footnote text is shown. Towers are named, because a tower is a building.</p>
+  </footer>
+</div>
+
+<template id="tpl-activity">
+  <header class="cr-head">
+    <h1 class="cr-title" id="activity-title">Ringing activity, 2012–24</h1>
+    <p class="cr-takeaway" id="activity-takeaway"><span class="dash-skeleton">—</span></p>
+  </header>
+
+  <div class="cr-filters" id="activity-filters">
+    <div class="cr-seg" role="group" aria-label="Setting">
+      <button type="button" data-setting="all" aria-pressed="true">All ringing</button>
+      <button type="button" data-setting="tower" aria-pressed="false">Tower bells</button>
+      <button type="button" data-setting="hand" aria-pressed="false">Handbells</button>
+      <button type="button" data-setting="virtual" aria-pressed="false">Virtual</button>
+    </div>
+    <label class="cr-select"><span>Year</span><select id="activity-year" aria-label="Year" data-source="activity_yearly"></select></label>
+    <button type="button" class="cr-reset" id="activity-reset" hidden>Reset</button>
+  </div>
+
+  <div class="cr-tiles" id="activity-tiles">
+    <div class="cr-tile" id="tile-performances">
+      <div class="cr-tile-label">Performances</div>
+      <div class="cr-tile-value dash-skeleton" data-source="activity_yearly" data-field="performances" data-where="year=2024&amp;setting=all">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="activity_yearly" data-field="performances_change" data-where="year=2024&amp;setting=all"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="activity_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="activity_yearly" data-field="performances" data-where="year=all&amp;setting=all">—</span> in 2012–24</div>
+    </div>
+    <div class="cr-tile" id="tile-peals">
+      <div class="cr-tile-label">Peals</div>
+      <div class="cr-tile-value dash-skeleton" data-source="activity_yearly" data-field="peals" data-where="year=2024&amp;setting=all">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="activity_yearly" data-field="peals_change" data-where="year=2024&amp;setting=all"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="activity_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="activity_yearly" data-field="peals" data-where="year=all&amp;setting=all">—</span> in 2012–24</div>
+    </div>
+    <div class="cr-tile" id="tile-quarters">
+      <div class="cr-tile-label">Quarter peals</div>
+      <div class="cr-tile-value dash-skeleton" data-source="activity_yearly" data-field="quarters" data-where="year=2024&amp;setting=all">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="activity_yearly" data-field="quarters_change" data-where="year=2024&amp;setting=all"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="activity_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="activity_yearly" data-field="quarters" data-where="year=all&amp;setting=all">—</span> in 2012–24</div>
+    </div>
+    <div class="cr-tile" id="tile-ringers">
+      <div class="cr-tile-label">Ringers <span class="cr-tile-sub">· name clusters</span></div>
+      <div class="cr-tile-value dash-skeleton" data-source="activity_yearly" data-field="ringers" data-where="year=2024&amp;setting=all">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="activity_yearly" data-field="ringers_change" data-where="year=2024&amp;setting=all"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="activity_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="activity_yearly" data-field="ringers" data-where="year=all&amp;setting=all">—</span> in 2012–24</div>
+    </div>
+    <div class="cr-tile" id="tile-towers">
+      <div class="cr-tile-label">Towers rung <span class="cr-tile-sub">· tower bells</span></div>
+      <div class="cr-tile-value dash-skeleton" data-source="towers_yearly" data-field="towers" data-where="year=2024">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="towers_yearly" data-field="towers_change" data-where="year=2024"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="towers_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="towers_yearly" data-field="towers" data-where="year=all">—</span> in 2012–24</div>
+    </div>
+    <div class="cr-tile" id="tile-firsts">
+      <div class="cr-tile-label">First quarters</div>
+      <div class="cr-tile-value dash-skeleton" data-source="activity_yearly" data-field="first_quarters" data-where="year=2024&amp;setting=all">—</div>
+      <div class="cr-tile-delta"><span class="cr-delta" data-source="activity_yearly" data-field="first_quarters_change" data-where="year=2024&amp;setting=all"></span> <span class="cr-vs"></span></div>
+      <div class="cr-spark" data-source="activity_yearly"></div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="activity_yearly" data-field="first_quarters" data-where="year=all&amp;setting=all">—</span> in 2012–24</div>
+    </div>
+  </div>
+
+  <section class="cr-card" id="card-monthly">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-monthly">Performances by month</h2>
+      <p class="cr-note">Each bar is one month; the shaded band is the selected year.</p>
+      <div class="cr-legend" id="monthly-legend"></div>
+    </div>
+    <div class="cr-chart dash-skeleton" id="chart-monthly" data-source="activity_monthly"></div>
+  </section>
+
+  <div class="cr-grid">
+    <section class="cr-card" id="card-peals">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-peals">Peals by year</h2>
+        <p class="cr-note">5,000 or more changes on seven or more bells; 5,040 or more on fewer.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-peals" data-source="activity_yearly"></div>
+    </section>
+    <section class="cr-card" id="card-quarters">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-quarters">Quarter peals by year</h2>
+        <p class="cr-note">1,250 or more changes, and not a peal.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-quarters" data-source="activity_yearly"></div>
+    </section>
+    <section class="cr-card" id="card-firsts">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-firsts">Firsts flagged on BellBoard</h2>
+        <p class="cr-note">Ringers marked as ringing their first quarter or first peal.</p>
+        <div class="cr-legend" id="firsts-legend"></div>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-firsts" data-source="activity_yearly"></div>
+    </section>
+  </div>
+
+  <div class="cr-grid">
+    <section class="cr-card" id="card-stages">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-stages">What was rung</h2>
+        <p class="cr-note" id="stages-note">Performances by stage in the selected year.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-stages" data-source="stage_mix"></div>
+    </section>
+    <section class="cr-card" id="card-counties">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-counties">Counties</h2>
+        <p class="cr-note">The top 20 for the selected year and setting, by the county BellBoard records.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-counties" data-source="counties"></div>
+    </section>
+  </div>
+
+  <section class="cr-card" id="card-methods">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-methods">Most-rung methods</h2>
+      <p class="cr-note">The top 100 method names for the selected year and setting, as BellBoard records them. Tolling, call changes, rounds and general ringing are left out.</p>
+    </div>
+    <input class="cr-search" id="methods-search" type="search" placeholder="Find a method" aria-label="Find a method">
+    <div class="cr-tablebox">
+      <table class="cr-table" id="table-methods" data-source="top_methods" data-row-key="key">
+        <thead>
+          <tr>
+            <th class="cr-n" data-field="rank"><button type="button">#</button></th>
+            <th data-field="method"><button type="button">Method</button></th>
+            <th data-field="stage_group"><button type="button">Stage</button></th>
+            <th class="cr-n" data-field="performances"><button type="button">Performances</button></th>
+            <th class="cr-n" data-field="peals"><button type="button">Peals</button></th>
+            <th class="cr-n" data-field="quarters"><button type="button">Quarters</button></th>
+            <th class="cr-n" data-field="performances_prev"><button type="button">Year before</button></th>
+            <th class="cr-n" data-field="performances_change"><button type="button">Change</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="cr-card" id="card-towers">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-towers">Busiest towers</h2>
+      <p class="cr-note">Tower-bell performances only, whatever the setting above: the top 100 towers for the selected year.</p>
+    </div>
+    <input class="cr-search" id="towers-search" type="search" placeholder="Find a tower" aria-label="Find a tower">
+    <div class="cr-tablebox">
+      <table class="cr-table" id="table-towers" data-source="top_towers" data-row-key="key">
+        <thead>
+          <tr>
+            <th class="cr-n" data-field="rank"><button type="button">#</button></th>
+            <th data-field="place"><button type="button">Place</button></th>
+            <th data-field="dedication"><button type="button">Dedication</button></th>
+            <th data-field="county"><button type="button">County</button></th>
+            <th class="cr-n" data-field="performances"><button type="button">Performances</button></th>
+            <th class="cr-n" data-field="peals"><button type="button">Peals</button></th>
+            <th class="cr-n" data-field="quarters"><button type="button">Quarters</button></th>
+            <th class="cr-n" data-field="performances_change"><button type="button">Change</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="cr-defs" id="activity-defs">How these are counted. A peal is 5,040 or more changes at any stage, or 5,000 to 5,039 on seven or more bells; a quarter is 1,250 or more changes and not a peal; a length is unknown when none is recorded, or when it falls between 5,000 and 5,039 with no resolved method. These are the rules in the repo’s scripts/semantics.py; where the stage decides, it is read from the method name BellBoard records. Virtual means BellBoard flags simulated sound, whatever the ring type; tower bells and handbells are the rest, by ring type. Ringers are the repo’s resolved name clusters, not verified people. First quarters and first peals are BellBoard’s per-ringer flags.</p>
+</template>
+
+<template id="tpl-health">
+  <header class="cr-head">
+    <h1 class="cr-title" id="health-title">Corpus health</h1>
+    <p class="cr-takeaway" id="health-takeaway"><span class="dash-skeleton">—</span></p>
+  </header>
+
+  <div class="cr-tiles" id="health-tiles">
+    <div class="cr-tile" id="tile-exact">
+      <div class="cr-tile-label">Years matching BellBoard’s count</div>
+      <div class="cr-tile-value"><span class="dash-skeleton" id="exact-n" data-source="years_exact" data-field="exact" data-row="0">—</span><span class="cr-of"> of <span id="exact-of" data-source="years_exact" data-field="years" data-row="0">—</span></span></div>
+      <div class="cr-tile-total">against BellBoard’s own search count</div>
+    </div>
+    <div class="cr-tile" id="tile-decidable">
+      <div class="cr-tile-label">Peal or quarter decidable</div>
+      <div class="cr-tile-value dash-skeleton" data-source="field_coverage" data-field="share" data-where="year=all&amp;field_id=decidable">—</div>
+      <div class="cr-tile-total">of <span class="cr-total" data-source="field_coverage" data-field="performances" data-where="year=all&amp;field_id=decidable">—</span> performances</div>
+    </div>
+    <div class="cr-tile" id="tile-method">
+      <div class="cr-tile-label">Linked to a library method</div>
+      <div class="cr-tile-value dash-skeleton" data-source="linkages" data-field="rate" data-where="key=method">—</div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="linkages" data-field="linked" data-where="key=method">—</span> performances</div>
+    </div>
+    <div class="cr-tile" id="tile-tower">
+      <div class="cr-tile-label">Tower bells linked to Dove</div>
+      <div class="cr-tile-value dash-skeleton" data-source="linkages" data-field="rate" data-where="key=tower">—</div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="linkages" data-field="linked" data-where="key=tower">—</span> of <span class="cr-total2" data-source="linkages" data-field="of" data-where="key=tower">—</span></div>
+    </div>
+    <div class="cr-tile" id="tile-composer">
+      <div class="cr-tile-label">Composer credits bridged</div>
+      <div class="cr-tile-value dash-skeleton" data-source="linkages" data-field="rate" data-where="key=composer">—</div>
+      <div class="cr-tile-total"><span class="cr-total" data-source="linkages" data-field="linked" data-where="key=composer">—</span> of <span class="cr-total2" data-source="linkages" data-field="of" data-where="key=composer">—</span></div>
+    </div>
+  </div>
+
+  <div class="cr-grid">
+    <section class="cr-card" id="card-inventory">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-inventory">What the corpus holds</h2>
+        <p class="cr-note">Counted here from the committed files, or as the repo states it where the source can’t be fetched from this workspace.</p>
+      </div>
+      <div class="cr-tablebox">
+        <table class="cr-table" id="table-inventory" data-source="corpus_tables" data-row-key="key">
+          <thead>
+            <tr>
+              <th data-field="corpus"><button type="button">Corpus</button></th>
+              <th data-field="table"><button type="button">Table</button></th>
+              <th class="cr-n" data-field="rows"><button type="button">Rows</button></th>
+              <th data-field="basis"><button type="button">Basis</button></th>
+              <th data-field="source"><button type="button">Source</button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="cr-card" id="card-completeness">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-completeness">Completeness by year</h2>
+        <p class="cr-note">Each year recounted from the CSVs. BellBoard’s count is the repo’s 15 August 2026 re-check of search.php.</p>
+      </div>
+      <div class="cr-tablebox">
+        <table class="cr-table" id="table-completeness" data-source="completeness_by_year" data-row-key="year">
+          <thead>
+            <tr>
+              <th data-field="year"><button type="button">Year</button></th>
+              <th class="cr-n" data-field="performances"><button type="button">Performances</button></th>
+              <th class="cr-n" data-field="ringer_rows"><button type="button">Ringer rows</button></th>
+              <th class="cr-n" data-field="footnotes"><button type="button">Footnotes</button></th>
+              <th class="cr-n" data-field="flags"><button type="button">Flags</button></th>
+              <th class="cr-n" data-field="bellboard_count"><button type="button">BellBoard</button></th>
+              <th data-field="status"><button type="button">Status</button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="cr-card" id="card-coverage">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-coverage">What each performance carries</h2>
+      <p class="cr-note">The share of each year’s performances with each field filled in or linked; darker is fuller.</p>
+    </div>
+    <div class="cr-chart dash-skeleton" id="chart-coverage" data-source="field_coverage"></div>
+  </section>
+
+  <div class="cr-grid">
+    <section class="cr-card" id="card-lengthmix">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-lengthmix">Peal, quarter or unknown</h2>
+        <p class="cr-note">Each year’s performances by length class, on the repo’s semantics.py rules.</p>
+        <div class="cr-legend" id="lengthmix-legend"></div>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-lengthmix" data-source="activity_yearly"></div>
+    </section>
+    <section class="cr-card" id="card-unlinked">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-unlinked">Performances with no method link</h2>
+        <p class="cr-note">The repo’s own classification of what its resolver couldn’t tie to a library method.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-unlinked" data-source="unresolved_methods"></div>
+    </section>
+  </div>
+
+  <section class="cr-card" id="card-linkages">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-linkages">Joins between the corpora</h2>
+      <p class="cr-note">How far each link reaches, counted from the repo’s own resolution files where they are committed.</p>
+    </div>
+    <div class="cr-tablebox">
+      <table class="cr-table" id="table-linkages" data-source="linkages" data-row-key="key">
+        <thead>
+          <tr>
+            <th data-field="linkage"><button type="button">Link</button></th>
+            <th class="cr-n" data-field="linked"><button type="button">Linked</button></th>
+            <th class="cr-n" data-field="of"><button type="button">Of</button></th>
+            <th class="cr-n" data-field="rate"><button type="button">Rate</button></th>
+            <th data-field="basis"><button type="button">Basis</button></th>
+            <th data-field="note"><button type="button">Note</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="cr-card" id="card-hazards">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-hazards">Known traps</h2>
+      <p class="cr-note">Traps the repo documents, with the records each one touches. Virtual ringing under ring type “tower” is new here.</p>
+    </div>
+    <div class="cr-tablebox">
+      <table class="cr-table" id="table-hazards" data-source="hazards" data-row-key="key">
+        <thead>
+          <tr>
+            <th data-field="hazard"><button type="button">Trap</button></th>
+            <th class="cr-n" data-field="rows"><button type="button">Records</button></th>
+            <th class="cr-n" data-field="share"><button type="button">Share</button></th>
+            <th data-field="state"><button type="button">State</button></th>
+            <th data-field="handling"><button type="button">How the repo handles it</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</template>
+
+<template id="tpl-project">
+  <header class="cr-head">
+    <h1 class="cr-title" id="project-title">Project tracker</h1>
+    <p class="cr-takeaway" id="project-takeaway"><span class="dash-skeleton">—</span></p>
+  </header>
+
+  <div class="cr-tiles" id="project-tiles">
+    <div class="cr-tile" id="tile-open">
+      <div class="cr-tile-label">Open roadmap items</div>
+      <div class="cr-tile-value dash-skeleton" data-source="roadmap_states" data-field="items" data-where="state=Open">—</div>
+      <div class="cr-tile-total"><span data-source="roadmap_states" data-field="items" data-where="state=Blocked">—</span> blocked, <span data-source="roadmap_states" data-field="items" data-where="state=Held">—</span> held</div>
+    </div>
+    <div class="cr-tile" id="tile-done">
+      <div class="cr-tile-label">Done</div>
+      <div class="cr-tile-value dash-skeleton" data-source="roadmap_states" data-field="items" data-where="state=Done">—</div>
+      <div class="cr-tile-total"><span data-source="roadmap_states" data-field="items" data-where="state=Superseded">—</span> more superseded</div>
+    </div>
+    <div class="cr-tile" id="tile-held">
+      <div class="cr-tile-label">Predictions that held</div>
+      <div class="cr-tile-value"><span class="dash-skeleton" data-source="verdict_tally" data-field="entries" data-where="verdict=Held">—</span><span class="cr-of"> of <span data-source="verdict_tally" data-field="of" data-where="verdict=Held">—</span></span></div>
+      <div class="cr-tile-total">in docs/HYPOTHESES.md</div>
+    </div>
+    <div class="cr-tile" id="tile-tests">
+      <div class="cr-tile-label">Tests in the suite</div>
+      <div class="cr-tile-value dash-skeleton" data-source="doc_claims" data-field="counted" data-where="key=tests-readme">—</div>
+      <div class="cr-tile-total">README says <span data-source="doc_claims" data-field="stated" data-where="key=tests-readme">—</span></div>
+    </div>
+    <div class="cr-tile" id="tile-commits">
+      <div class="cr-tile-label">Commits</div>
+      <div class="cr-tile-value dash-skeleton" data-source="snapshot" data-field="commits" data-row="0">—</div>
+      <div class="cr-tile-total">last on <span data-source="snapshot" data-field="commit_date" data-row="0">—</span></div>
+    </div>
+  </div>
+
+  <section class="cr-card" id="card-commits">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-commits">Commits by day</h2>
+      <p class="cr-note">Every commit in the history, by who made it; agent commits are grouped by tool.</p>
+      <div class="cr-legend" id="commits-legend" data-source="commits_by_contributor"></div>
+    </div>
+    <div class="cr-chart dash-skeleton" id="chart-commits" data-source="commits_daily"></div>
+  </section>
+
+  <div class="cr-grid">
+    <section class="cr-card" id="card-roadmap">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-roadmap">Roadmap</h2>
+        <p class="cr-note">Every R- item in docs/ROADMAP.md, open work first.</p>
+      </div>
+      <input class="cr-search" id="roadmap-search" type="search" placeholder="Find an item" aria-label="Find a roadmap item">
+      <div class="cr-tablebox">
+        <table class="cr-table" id="table-roadmap" data-source="roadmap" data-row-key="id">
+          <thead>
+            <tr>
+              <th data-field="id"><button type="button">ID</button></th>
+              <th data-field="title"><button type="button">Item</button></th>
+              <th data-field="type"><button type="button">Type</button></th>
+              <th data-field="owner"><button type="button">Owner</button></th>
+              <th data-field="state"><button type="button">State</button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="cr-card" id="card-hypotheses">
+      <div class="cr-card-head">
+        <h2 class="cr-h2" id="h-hypotheses">Predictions, and how they fared</h2>
+        <p class="cr-note">Each entry in docs/HYPOTHESES.md, with the verdict written under it.</p>
+      </div>
+      <div class="cr-chart dash-skeleton" id="chart-verdicts" data-source="verdict_tally"></div>
+      <div class="cr-tablebox">
+        <table class="cr-table" id="table-hypotheses" data-source="hypotheses" data-row-key="id">
+          <thead>
+            <tr>
+              <th data-field="id"><button type="button">ID</button></th>
+              <th data-field="claim"><button type="button">Expected</button></th>
+              <th data-field="section"><button type="button">About</button></th>
+              <th data-field="verdict"><button type="button">Verdict</button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="cr-card" id="card-claims">
+    <div class="cr-card-head">
+      <h2 class="cr-h2" id="h-claims">Figures the docs state, recounted</h2>
+      <p class="cr-note">Figures quoted in the README and docs, recounted from the repo at this commit: the kind of check R-50 asks for, run once.</p>
+    </div>
+    <div class="cr-tablebox">
+      <table class="cr-table" id="table-claims" data-source="doc_claims" data-row-key="key">
+        <thead>
+          <tr>
+            <th data-field="where"><button type="button">Where</button></th>
+            <th data-field="claim"><button type="button">Claim</button></th>
+            <th class="cr-n" data-field="stated"><button type="button">Stated</button></th>
+            <th class="cr-n" data-field="counted"><button type="button">Counted</button></th>
+            <th data-field="verdict"><button type="button">Verdict</button></th>
+            <th data-field="how"><button type="button">How it was counted</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</template>
+
+<script src="common.js"></script>
+<script src="activity.js"></script>
+<script src="health.js"></script>
+<script src="project.js"></script>
+<script src="app.js"></script>
